@@ -1,13 +1,13 @@
 ﻿using Chronokeep.Helpers;
-using Chronokeep.IO;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Chronokeep
+namespace Chronokeep.IO
 {
-    public class CSVImporter : IDataImporter
+    public partial class CSVImporter : IDataImporter
     {
-        Regex regex = new Regex("\"[^\"]*\",|[^,]*,|[^,]*$");
+        [GeneratedRegex("\"[^\"]*\",|[^,]*,|[^,]*$")]
+        private static partial Regex DataRegex();
 
         public ImportData Data { get; private set; }
         protected readonly string FilePath;
@@ -16,7 +16,7 @@ namespace Chronokeep
         public CSVImporter(string filePath)
         {
             Log.D("IO.CSVImporter", "Opening file.");
-            file = new StreamReader(filePath);
+            file = new(filePath);
             FilePath = filePath;
         }
 
@@ -28,14 +28,14 @@ namespace Chronokeep
 
         protected void ProcessFirstLine(string line)
         {
-            MatchCollection matches = regex.Matches(line);
+            MatchCollection matches = DataRegex().Matches(line);
             string[] headers = new string[matches.Count];
             int counter = 0;
             foreach (Match m in matches)
             {
                 headers[counter++] = m.Value.Replace('"', ' ').TrimEnd(',').Trim();
             }
-            Data = new ImportData(headers, FilePath, ImportData.FileType.CSV);
+            Data = new(headers, FilePath, ImportData.FileType.CSV);
         }
 
         public void FetchData()
@@ -44,7 +44,7 @@ namespace Chronokeep
             string line;
             while ((line = file.ReadLine()) != null)
             {
-                MatchCollection matches = regex.Matches(line);
+                MatchCollection matches = DataRegex().Matches(line);
                 string[] dataLine = new string[matches.Count];
                 int counter = 0;
                 string match;

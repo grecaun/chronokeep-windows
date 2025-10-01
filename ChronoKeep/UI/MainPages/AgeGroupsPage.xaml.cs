@@ -100,7 +100,7 @@ namespace Chronokeep.UI.MainPages
             {
                 divId = Convert.ToInt32(((ComboBoxItem)Distances.SelectedItem).Uid);
             }
-            AgeGroupsBox.Items.Add(new AAgeGroup(this, new AgeGroup(theEvent.Identifier, divId, 0, 0)));
+            AgeGroupsBox.Items.Add(new AAgeGroup(this, new(theEvent.Identifier, divId, 0, 0)));
         }
 
         private void AddDefault_Click(object sender, RoutedEventArgs e)
@@ -116,17 +116,17 @@ namespace Chronokeep.UI.MainPages
             switch (DefaultGroupsBox.SelectedIndex)
             {
                 case 2:
-                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 0, 39));
-                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 40, 59));
-                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 60, 99));
+                    database.AddAgeGroup(new(theEvent.Identifier, divId, 0, 39));
+                    database.AddAgeGroup(new(theEvent.Identifier, divId, 40, 59));
+                    database.AddAgeGroup(new(theEvent.Identifier, divId, 60, 99));
                     break;
                 case 3:
-                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 0, 19));
+                    database.AddAgeGroup(new(theEvent.Identifier, divId, 0, 19));
                     for (int i = 20; i < 80; i += increment)
                     {
-                        database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, i, i + increment - 1));
+                        database.AddAgeGroup(new(theEvent.Identifier, divId, i, i + increment - 1));
                     }
-                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 80, 99));
+                    database.AddAgeGroup(new(theEvent.Identifier, divId, 80, 99));
                     break;
                 case 0:
                     increment = 10;
@@ -168,12 +168,12 @@ namespace Chronokeep.UI.MainPages
                     }
                     else if (previous.EndAge != current.StartAge - 1)
                     {
-                        toAdd.Add(new AgeGroup(current.EventId, current.DistanceId, previous.EndAge + 1, current.StartAge - 1));
+                        toAdd.Add(new(current.EventId, current.DistanceId, previous.EndAge + 1, current.StartAge - 1));
                     }
                 }
                 else if (current.StartAge > 1)
                 {
-                    toAdd.Add(new AgeGroup(current.EventId, current.DistanceId, 0, current.StartAge - 1));
+                    toAdd.Add(new(current.EventId, current.DistanceId, 0, current.StartAge - 1));
                 }
                 previous = current;
             }
@@ -293,14 +293,14 @@ namespace Chronokeep.UI.MainPages
         {
             public ALabel()
             {
-                Grid theGrid = new Grid()
+                Grid theGrid = new()
                 {
                     MaxWidth = 400
                 };
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                TextBlock l = new TextBlock()
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                TextBlock l = new()
                 {
                     Text = "Start Age",
                     FontSize = 16,
@@ -309,7 +309,7 @@ namespace Chronokeep.UI.MainPages
                 };
                 theGrid.Children.Add(l);
                 Grid.SetColumn(l, 0);
-                l = new TextBlock()
+                l = new()
                 {
                     Text = "End Age",
                     FontSize = 16,
@@ -323,30 +323,31 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
-        private class AAgeGroup : ListBoxItem
+        private partial class AAgeGroup : ListBoxItem
         {
             public TextBox StartAge { get; private set; }
             public TextBox EndAge { get; private set; }
             public Button Remove { get; private set; }
             public Button Update { get; private set; }
 
-            private AgeGroupsPage page;
+            private readonly AgeGroupsPage page;
             public AgeGroup MyGroup { get; private set; }
 
-            private readonly Regex allowedChars = new Regex("[^0-9]+");
+            [GeneratedRegex("[^0-9]+")]
+            private static partial Regex AllowedChars();
 
             public AAgeGroup(AgeGroupsPage page, AgeGroup group)
             {
                 this.page = page;
                 this.MyGroup = group;
-                Grid theGrid = new Grid()
+                Grid theGrid = new()
                 {
                     MaxWidth = 400
                 };
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                StartAge = new TextBox()
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                StartAge = new()
                 {
                     Text = group.StartAge.ToString(),
                     FontSize = 16,
@@ -357,7 +358,7 @@ namespace Chronokeep.UI.MainPages
                 StartAge.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
                 theGrid.Children.Add(StartAge);
                 Grid.SetColumn(StartAge, 0);
-                EndAge = new TextBox()
+                EndAge = new()
                 {
                     Text = group.EndAge.ToString(),
                     FontSize = 16,
@@ -368,7 +369,7 @@ namespace Chronokeep.UI.MainPages
                 EndAge.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
                 theGrid.Children.Add(EndAge);
                 Grid.SetColumn(EndAge, 1);
-                Remove = new Button()
+                Remove = new()
                 {
                     Content = "Remove",
                     FontSize = 16,
@@ -384,7 +385,7 @@ namespace Chronokeep.UI.MainPages
 
             private void NumberValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = allowedChars.IsMatch(e.Text);
+                e.Handled = AllowedChars().IsMatch(e.Text);
             }
 
             private void Remove_Click(object sender, RoutedEventArgs e)

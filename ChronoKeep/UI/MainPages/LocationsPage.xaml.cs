@@ -41,8 +41,8 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             LocationsBox.Items.Clear();
-            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", theEvent.StartMaxOccurrences, theEvent.StartWindow), theEvent));
-            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin), theEvent));
+            LocationsBox.Items.Add(new ALocation(this, new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", theEvent.StartMaxOccurrences, theEvent.StartWindow), theEvent));
+            LocationsBox.Items.Add(new ALocation(this, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin), theEvent));
             List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
             LocationCount = 1;
             locations.Sort();
@@ -60,7 +60,7 @@ namespace Chronokeep.UI.MainPages
             {
                 UpdateDatabase();
             }
-            database.AddTimingLocation(new TimingLocation(theEvent.Identifier, "Location " + LocationCount));
+            database.AddTimingLocation(new(theEvent.Identifier, "Location " + LocationCount));
             UpdateTimingWorker = true;
             UpdateView();
         }
@@ -149,7 +149,7 @@ namespace Chronokeep.UI.MainPages
             UpdateView();
         }
 
-        private class ALocation : ListBoxItem
+        private partial class ALocation : ListBoxItem
         {
             public TextBox LocationName { get; private set; }
             public TextBox MaxOccurrences { get; private set; }
@@ -160,20 +160,21 @@ namespace Chronokeep.UI.MainPages
             readonly LocationsPage page;
             public TimingLocation myLocation;
 
-            private readonly Regex allowedChars = new Regex("[^0-9]+");
+            [GeneratedRegex("[^0-9]+")]
+            private static partial Regex AllowedChars();
 
             public ALocation(LocationsPage page, TimingLocation location, Event theEvent)
             {
                 this.page = page;
                 this.myLocation = location;
-                StackPanel thePanel = new StackPanel()
+                StackPanel thePanel = new()
                 {
                     MaxWidth = 450
                 };
                 this.Content = thePanel;
                 this.IsTabStop = false;
                 // Name information.
-                DockPanel namePanel = new DockPanel();
+                DockPanel namePanel = new();
                 namePanel.Children.Add(new TextBlock()
                 {
                     Text = "Name",
@@ -183,7 +184,7 @@ namespace Chronokeep.UI.MainPages
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Right
                 });
-                LocationName = new TextBox()
+                LocationName = new()
                 {
                     Text = myLocation.Name,
                     FontSize = 16,
@@ -195,10 +196,10 @@ namespace Chronokeep.UI.MainPages
                 thePanel.Children.Add(namePanel);
 
                 // Max Occurrences - Ignore Within
-                Grid settingsGrid = new Grid();
-                settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                DockPanel occPanel = new DockPanel();
+                Grid settingsGrid = new();
+                settingsGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                settingsGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                DockPanel occPanel = new();
                 occPanel.Children.Add(new TextBlock()
                 {
                     Text = "Max Occurrences",
@@ -208,7 +209,7 @@ namespace Chronokeep.UI.MainPages
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Right
                 });
-                MaxOccurrences = new TextBox()
+                MaxOccurrences = new()
                 {
                     Text = myLocation.MaxOccurrences.ToString(),
                     FontSize = 16,
@@ -220,7 +221,7 @@ namespace Chronokeep.UI.MainPages
                 occPanel.Children.Add(MaxOccurrences);
                 settingsGrid.Children.Add(occPanel);
                 Grid.SetColumn(occPanel, 0);
-                DockPanel ignPanel = new DockPanel();
+                DockPanel ignPanel = new();
                 string labelLabel = myLocation.Identifier == Constants.Timing.LOCATION_START ? "Start Window" : "Ignore Within";
                 int labelWidth = 120;
                 if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType
@@ -239,7 +240,7 @@ namespace Chronokeep.UI.MainPages
                     HorizontalAlignment = HorizontalAlignment.Right
                 });
                 string ignorewithin = string.Format(TimeFormat, myLocation.IgnoreWithin / 3600, (myLocation.IgnoreWithin % 3600) / 60, myLocation.IgnoreWithin % 60);
-                IgnoreWithin = new MaskedTextBox()
+                IgnoreWithin = new()
                 {
                     Text = ignorewithin,
                     Mask = "00:00:00",
@@ -263,7 +264,7 @@ namespace Chronokeep.UI.MainPages
                     Grid.SetColumnSpan(ignPanel, 2);
                 }
                 thePanel.Children.Add(settingsGrid);
-                Remove = new Button()
+                Remove = new()
                 {
                     Content = "Remove",
                     FontSize = 16,
@@ -339,7 +340,7 @@ namespace Chronokeep.UI.MainPages
 
             private void NumberValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = allowedChars.IsMatch(e.Text);
+                e.Handled = AllowedChars().IsMatch(e.Text);
             }
         }
 

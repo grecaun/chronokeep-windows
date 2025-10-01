@@ -91,14 +91,14 @@ namespace Chronokeep.UI.MainPages
             locations = database.GetTimingLocations(theEvent.Identifier);
             if (!theEvent.CommonStartFinish)
             {
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+                locations.Insert(0, new(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
+                locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
             }
             else
             {
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
+                locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
             }
             List<TimingSystem> systems = mWindow.GetConnectedSystems();
             int numSystems = systems.Count;
@@ -117,14 +117,14 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.MainPages.TimingPage", systems.Count + " systems found.");
                 for (int i = 0; i < 3 - numSystems; i++)
                 {
-                    systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
+                    systems.Add(new(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
                 }
             }
-            systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
+            systems.Add(new(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
             connected = 0;
             foreach (TimingSystem sys in systems)
             {
-                ReadersBox.Items.Add(new MinReaderBox(this, sys, locations));
+                ReadersBox.Items.Add(new(this, sys, locations));
                 if (sys.Status == SYSTEM_STATUS.CONNECTED || sys.Status == SYSTEM_STATUS.WORKING)
                 {
                     connected++;
@@ -170,14 +170,14 @@ namespace Chronokeep.UI.MainPages
             locations = database.GetTimingLocations(theEvent.Identifier);
             if (!theEvent.CommonStartFinish)
             {
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+                locations.Insert(0, new(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
+                locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
             }
             else
             {
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
+                locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
             }
 
             // Update locations in the list of readers
@@ -217,7 +217,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     ReadersBox.Items.Add(new MinReaderBox(
                         this,
-                        new TimingSystem(
+                        new(
                             string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
                             system),
                             locations));
@@ -248,7 +248,7 @@ namespace Chronokeep.UI.MainPages
         public void OpenTimeWindow(TimingSystem system)
         {
             Log.D("UI.MainPages.TimingPage", "Opening Set Time Window.");
-            timeWindow = new SetTimeWindow(this, system);
+            timeWindow = new(this, system);
             timeWindow.ShowDialog();
             timeWindow = null;
         }
@@ -256,7 +256,7 @@ namespace Chronokeep.UI.MainPages
         public void OpenRewindWindow(TimingSystem system)
         {
             Log.D("UI.MainPages.TimingPage", "Opening Rewind Window.");
-            rewindWindow = new RewindWindow(system);
+            rewindWindow = new(system);
             rewindWindow.ShowDialog();
             rewindWindow = null;
 
@@ -313,7 +313,7 @@ namespace Chronokeep.UI.MainPages
                     Log.D("UI.MainPages.TimingPage", "Error fetching default timing system information.");
                     system = Readers.DEFAULT_TIMING_SYSTEM;
                 }
-                ReadersBox.Items.Add(new MinReaderBox(this, new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system), locations));
+                ReadersBox.Items.Add(new MinReaderBox(this, new(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system), locations));
                 total = ReadersBox.Items.Count;
             }
             return sys.Status != SYSTEM_STATUS.DISCONNECTED;
@@ -355,7 +355,7 @@ namespace Chronokeep.UI.MainPages
 
         public void SetReaders(string[] readers, bool visible) { }
 
-        private class MinReaderBox : ListBoxItem
+        private partial class MinReaderBox : ListBoxItem
         {
             public ComboBox ReaderType { get; private set; }
             public TextBox ReaderIP { get; private set; }
@@ -373,31 +373,34 @@ namespace Chronokeep.UI.MainPages
 
             public RewindWindow rewind = null;
 
-            private const string IPPattern = "^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$";
-            private const string allowedChars = "[^0-9.]";
-            private const string allowedNums = "[^0-9]";
+            [GeneratedRegex("^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$")]
+            private static partial Regex IPPattern();
+            [GeneratedRegex("[^0-9.]")]
+            private static partial Regex AllowedChars();
+            [GeneratedRegex("[^0-9]")]
+            private static partial Regex AllowedNums();
 
             public MinReaderBox(ITimingPage window, TimingSystem sys, List<TimingLocation> locations)
             {
                 this.parent = window;
                 this.locations = locations;
                 this.reader = sys;
-                Grid thePanel = new Grid()
+                Grid thePanel = new()
                 {
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
                 };
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) }); // Reader Type
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) }); // Reader IP
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(80) });  // Reader Port
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) }); // Location
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });  // Clock
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });  // Rewind
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });  // Settings
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });  // Connect
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });  // Disconnect
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(140) }); // Reader Type
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(140) }); // Reader IP
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(80) });  // Reader Port
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(140) }); // Location
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(60) });  // Clock
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(60) });  // Rewind
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(60) });  // Settings
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(60) });  // Connect
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(60) });  // Disconnect
                 this.Content = thePanel;
-                ReaderType = new ComboBox()
+                ReaderType = new()
                 {
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -407,7 +410,7 @@ namespace Chronokeep.UI.MainPages
                 ComboBoxItem current = null, selected = null;
                 foreach (string SYSTEM_IDVAL in Readers.SYSTEM_NAMES.Keys)
                 {
-                    current = new ComboBoxItem()
+                    current = new()
                     {
                         Content = Readers.SYSTEM_NAMES[SYSTEM_IDVAL],
                         Uid = SYSTEM_IDVAL
@@ -429,7 +432,7 @@ namespace Chronokeep.UI.MainPages
                 ReaderType.SelectionChanged += new SelectionChangedEventHandler(ReaderTypeChanged);
                 thePanel.Children.Add(ReaderType);
                 Grid.SetColumn(ReaderType, 0);
-                ReaderIP = new TextBox()
+                ReaderIP = new()
                 {
                     Text = reader.IPAddress,
                     FontSize = 14,
@@ -441,7 +444,7 @@ namespace Chronokeep.UI.MainPages
                 ReaderIP.PreviewTextInput += new TextCompositionEventHandler(this.IPValidation);
                 thePanel.Children.Add(ReaderIP);
                 Grid.SetColumn(ReaderIP, 1);
-                ReaderPort = new TextBox()
+                ReaderPort = new()
                 {
                     Text = reader.Port.ToString(),
                     FontSize = 14,
@@ -453,7 +456,7 @@ namespace Chronokeep.UI.MainPages
                 ReaderPort.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
                 thePanel.Children.Add(ReaderPort);
                 Grid.SetColumn(ReaderPort, 2);
-                ReaderLocation = new ComboBox()
+                ReaderLocation = new()
                 {
                     VerticalContentAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(5, 5, 5, 5),
@@ -463,7 +466,7 @@ namespace Chronokeep.UI.MainPages
                 current = null; selected = null;
                 foreach (TimingLocation loc in this.locations)
                 {
-                    current = new ComboBoxItem()
+                    current = new()
                     {
                         Content = loc.Name,
                         Uid = loc.Identifier.ToString()
@@ -484,7 +487,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 thePanel.Children.Add(ReaderLocation);
                 Grid.SetColumn(ReaderLocation, 3);
-                ClockButton = new Wpf.Ui.Controls.Button()
+                ClockButton = new()
                 {
                     Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Clock24 },
                     Margin = new Thickness(5, 5, 5, 5),
@@ -497,7 +500,7 @@ namespace Chronokeep.UI.MainPages
                 ClockButton.Click += new RoutedEventHandler(this.Clock);
                 thePanel.Children.Add(ClockButton);
                 Grid.SetColumn(ClockButton, 4);
-                RewindButton = new Wpf.Ui.Controls.Button()
+                RewindButton = new()
                 {
                     Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Rewind24 },
                     Margin = new Thickness(5, 5, 5, 5),
@@ -510,7 +513,7 @@ namespace Chronokeep.UI.MainPages
                 RewindButton.Click += new RoutedEventHandler(this.Rewind);
                 thePanel.Children.Add(RewindButton);
                 Grid.SetColumn(RewindButton, 5);
-                SettingsButton = new Wpf.Ui.Controls.Button()
+                SettingsButton = new()
                 {
                     Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Settings24 },
                     Margin = new Thickness(5, 5, 5, 5),
@@ -521,7 +524,7 @@ namespace Chronokeep.UI.MainPages
                 SettingsButton.Click += new RoutedEventHandler(this.Settings);
                 thePanel.Children.Add(SettingsButton);
                 Grid.SetColumn(SettingsButton, 6);
-                ConnectButton = new Wpf.Ui.Controls.Button()
+                ConnectButton = new()
                 {
                     Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Play24 },
                     Uid = "connect",
@@ -533,7 +536,7 @@ namespace Chronokeep.UI.MainPages
                 ConnectButton.Click += new RoutedEventHandler(this.Connect);
                 thePanel.Children.Add(ConnectButton);
                 Grid.SetColumn(ConnectButton, 7);
-                RemoveButton = new Wpf.Ui.Controls.Button()
+                RemoveButton = new()
                 {
                     Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Delete24 },
                     Margin = new Thickness(5, 5, 5, 5),
@@ -555,10 +558,10 @@ namespace Chronokeep.UI.MainPages
                 this.locations = locations;
                 int selectedLocation = Convert.ToInt32(((ComboBoxItem)ReaderLocation.SelectedItem).Uid);
                 ReaderLocation.Items.Clear();
-                ComboBoxItem current = null, selected = null;
+                ComboBoxItem current, selected = null;
                 foreach (TimingLocation loc in this.locations)
                 {
-                    current = new ComboBoxItem()
+                    current = new()
                     {
                         Content = loc.Name,
                         Uid = loc.Identifier.ToString()
@@ -603,18 +606,18 @@ namespace Chronokeep.UI.MainPages
 
             private void IPValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = Regex.IsMatch(e.Text, allowedChars);
+                e.Handled = AllowedChars().IsMatch(e.Text);
             }
 
             private void NumberValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = Regex.IsMatch(e.Text, allowedNums);
+                e.Handled = AllowedNums().IsMatch(e.Text);
             }
 
             public void UpdateReader()
             {
                 // Check if IP is a valid IP address
-                if (!Regex.IsMatch(ReaderIP.Text.Trim(), IPPattern))
+                if (!IPPattern().IsMatch(ReaderIP.Text.Trim()))
                 {
                     reader.IPAddress = "";
                 }
@@ -678,7 +681,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 Log.D("UI.MainPages.TimingPage", "Connect button pressed. IP is " + ReaderIP.Text);
                 // Check if IP is a valid IP address
-                if (!Regex.IsMatch(ReaderIP.Text.Trim(), IPPattern))
+                if (!IPPattern().IsMatch(ReaderIP.Text.Trim()))
                 {
                     DialogBox.Show("IP address given not valid.");
                     return;

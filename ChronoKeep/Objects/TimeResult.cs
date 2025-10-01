@@ -7,7 +7,7 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace Chronokeep.Objects
 {
-    public class TimeResult: IEquatable<TimeResult>
+    public partial class TimeResult: IEquatable<TimeResult>
     {
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, readId, place, agePlace, genderPlace,
@@ -21,7 +21,8 @@ namespace Chronokeep.Objects
         DateTime systemTime;
         Event theEvent;
 
-        public static readonly Regex timeRegex = new Regex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})");
+        [GeneratedRegex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})")]
+        public static partial Regex TimeRegex();
 
         // database constructor
         public TimeResult(
@@ -184,7 +185,7 @@ namespace Chronokeep.Objects
             this.gender = gender ?? "";
             this.ageGroupId = ageGroupId;
             this.ageGroupName = ageGroupName ?? "";
-            Match chipTimeMatch = timeRegex.Match(chipTime);
+            Match chipTimeMatch = TimeRegex().Match(chipTime);
             chipSeconds = 0;
             chipMilliseconds = 0;
             if (chipTimeMatch.Success)
@@ -194,7 +195,7 @@ namespace Chronokeep.Objects
                    + Convert.ToInt64(chipTimeMatch.Groups[3].Value);
                 chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
             }
-            Match timeMatch = timeRegex.Match(time);
+            Match timeMatch = TimeRegex().Match(time);
             seconds = 0;
             milliseconds = 0;
             if (timeMatch.Success)
