@@ -25,11 +25,11 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class ParticipantsPage : IMainPage
     {
-        private IMainWindow mWindow;
-        private IDBInterface database;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
         private Event theEvent;
-        List<Participant> participants = new List<Participant>();
-        List<Participant> conflicts = new List<Participant>();
+        readonly List<Participant> participants = [];
+        readonly List<Participant> conflicts = [];
 
         public ParticipantsPage(IMainWindow mainWindow, IDBInterface database)
         {
@@ -55,7 +55,7 @@ namespace Chronokeep.UI.MainPages
             {
                 distanceId = -1;
             }
-            List<Participant> newParts = new List<Participant>();
+            List<Participant> newParts = [];
             await Task.Run(() =>
             {
                 if (distanceId == -1)
@@ -67,28 +67,29 @@ namespace Chronokeep.UI.MainPages
                     newParts.AddRange(database.GetParticipants(theEvent.Identifier, distanceId));
                 }
             });
-            Dictionary<string, BibStats> bibStats = new Dictionary<string, BibStats>();
+            Dictionary<string, BibStats> bibStats = [];
             foreach (Participant p in newParts)
             {
-                if (!bibStats.ContainsKey(p.Distance))
+                if (!bibStats.TryGetValue(p.Distance, out BibStats bStats))
                 {
-                    bibStats[p.Distance] = new BibStats
+                    bStats = new()
                     {
                         With = 0,
                         Without = 0,
                         DistanceName = p.Distance,
                     };
+                    bibStats[p.Distance] = bStats;
                 }
                 if (p.Bib.Length > 0)
                 {
-                    bibStats[p.Distance].With += 1;
+                    bStats.With += 1;
                 }
                 else
                 {
-                    bibStats[p.Distance].Without += 1;
+                    bStats.Without += 1;
                 }
             }
-            BibStats totals = new BibStats
+            BibStats totals = new()
             {
                 With = 0,
                 Without = 0,
@@ -188,7 +189,7 @@ namespace Chronokeep.UI.MainPages
         private void Import_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ParticipantsPage", "Import Excel clicked.");
-            OpenFileDialog open_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.xls,*.csv)|*.xlsx;*.xls;*.csv|All files|*" };
+            OpenFileDialog open_dialog = new() { Filter = "Excel files (*.xlsx,*.xls,*.csv)|*.xlsx;*.xls;*.csv|All files|*" };
             if (open_dialog.ShowDialog() == true)
             {
                 string ext = Path.GetExtension(open_dialog.FileName);
@@ -234,7 +235,7 @@ namespace Chronokeep.UI.MainPages
         private void Modify_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ParticipantsPage", "Modify clicked.");
-            List<Participant> selected = new List<Participant>();
+            List<Participant> selected = [];
             foreach (Participant p in ParticipantsList.SelectedItems)
             {
                 selected.Add(p);
@@ -242,7 +243,7 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.ParticipantsPage", selected.Count + " participants selected.");
             if (selected.Count > 1)
             {
-                ChangeMultiParticipantWindow changeMultiParticipantWindow = new ChangeMultiParticipantWindow(mWindow, database, selected);
+                ChangeMultiParticipantWindow changeMultiParticipantWindow = new(mWindow, database, selected);
                 mWindow.AddWindow(changeMultiParticipantWindow);
                 changeMultiParticipantWindow.ShowDialog();
                 return;
@@ -265,7 +266,7 @@ namespace Chronokeep.UI.MainPages
         {
             Log.D("UI.MainPages.ParticipantsPage", "Remove clicked.");
             IList selected = ParticipantsList.SelectedItems;
-            List<Participant> parts = new List<Participant>();
+            List<Participant> parts = [];
             foreach (Participant p in selected)
             {
                 parts.Add(p);
@@ -282,7 +283,7 @@ namespace Chronokeep.UI.MainPages
         private async void Export_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ParticipantsPage", "Export clicked.");
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Entrants.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
@@ -296,7 +297,7 @@ namespace Chronokeep.UI.MainPages
                     {
                         Log.D("UI.MainPages.ParticipantsPage", "Event has name " + theEvent.Name + " and date of " + theEvent.Date + " and finally has ID " + theEvent.Identifier);
                         List<Participant> parts = database.GetParticipants(theEvent.Identifier);
-                        string[] headers = new string[] {
+                        string[] headers = [
                             "Bib",
                             "Distance",
                             "Status",
@@ -324,8 +325,8 @@ namespace Chronokeep.UI.MainPages
                             "Emergency Contact Phone",
                             "Anonymous",
                             "Apparel" // new
-                        };
-                        List<object[]> data = new List<object[]>();
+                        ];
+                        List<object[]> data = [];
                         foreach (Participant p in parts)
                         {
                             data.Add([
@@ -362,13 +363,13 @@ namespace Chronokeep.UI.MainPages
                         IDataExporter exporter = null;
                         string extension = Path.GetExtension(saveFileDialog.FileName);
                         Log.D("UI.MainPages.ParticipantsPage", string.Format("Extension is '{0}'", extension));
-                        if (extension.IndexOf("xls") != -1)
+                        if (extension.Contains("xls", StringComparison.CurrentCulture))
                         {
                             exporter = new ExcelExporter();
                         }
                         else
                         {
-                            StringBuilder format = new StringBuilder();
+                            StringBuilder format = new();
                             for (int i = 0; i < headers.Length; i++)
                             {
                                 format.Append("\"{");
@@ -449,7 +450,7 @@ namespace Chronokeep.UI.MainPages
 
         private void SearchBox_TextChanged(Wpf.Ui.Controls.AutoSuggestBox sender, Wpf.Ui.Controls.AutoSuggestBoxTextChangedEventArgs args)
         {
-            List<Participant> newParts = new List<Participant>(participants);
+            List<Participant> newParts = [.. participants];
             switch (((ComboBoxItem)SortBox.SelectedItem).Content)
             {
                 case "Name":
@@ -511,7 +512,7 @@ namespace Chronokeep.UI.MainPages
             try
             {
                 int page = 1;
-                List<APIPerson> newPersons = new();
+                List<APIPerson> newPersons = [];
                 do
                 {
                     GetParticipantsResponse response = await APIHandlers.GetParticipants(api, event_ids[0], event_ids[1], 50, page);
@@ -525,9 +526,9 @@ namespace Chronokeep.UI.MainPages
                 } while (true);
                 Log.D("UI.MainPages.ParticipantsPage", newPersons.Count.ToString() + " total participants downloaded.");
                 // Key is (First, Last, Birthdate, Distance)
-                Dictionary<(string, string, string, string), Participant> partDictionary = new();
-                Dictionary<string, Participant> partESDictionary = new();
-                Dictionary<string, Distance> distDictionary = new();
+                Dictionary<(string, string, string, string), Participant> partDictionary = [];
+                Dictionary<string, Participant> partESDictionary = [];
+                Dictionary<string, Distance> distDictionary = [];
                 string uniqueID = "";
                 AppSetting programID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
                 if (programID != null)
@@ -547,8 +548,8 @@ namespace Chronokeep.UI.MainPages
                 {
                     if (!distDictionary.TryGetValue(person.Distance.ToLower(), out Distance dist))
                     {
-                        distDictionary[person.Distance.ToLower()] = new Distance(person.Distance, theEvent.Identifier);
-                        database.AddDistance(new Distance(person.Distance, theEvent.Identifier));
+                        distDictionary[person.Distance.ToLower()] = new(person.Distance, theEvent.Identifier);
+                        database.AddDistance(new(person.Distance, theEvent.Identifier));
                     }
                 }
                 foreach (Distance d in database.GetDistances(theEvent.Identifier))
@@ -556,8 +557,8 @@ namespace Chronokeep.UI.MainPages
                     distDictionary[d.Name.ToLower()] = d;
                 }
                 conflicts.Clear();
-                List<Participant> partsToUpdate = new();
-                List<Participant> partsToAdd = new();
+                List<Participant> partsToUpdate = [];
+                List<Participant> partsToAdd = [];
                 foreach (APIPerson person in newPersons)
                 {
                     person.Trim();
@@ -579,7 +580,7 @@ namespace Chronokeep.UI.MainPages
                                     old.State,
                                     old.Zip,
                                     person.Birthdate,
-                                    new EventSpecific(
+                                    new(
                                         old.EventSpecific.Identifier,
                                         theEvent.Identifier,
                                         distDictionary[person.Distance.ToLower()].Identifier,
@@ -634,7 +635,7 @@ namespace Chronokeep.UI.MainPages
                                     oldTwo.State,
                                     oldTwo.Zip,
                                     person.Birthdate,
-                                    new EventSpecific(
+                                    new(
                                         oldTwo.EventSpecific.Identifier,
                                         theEvent.Identifier,
                                         distDictionary[person.Distance.ToLower()].Identifier,
@@ -677,7 +678,7 @@ namespace Chronokeep.UI.MainPages
                         else if (person.First.Length > 0 || person.Last.Length > 0)
                         {
                             partsToAdd.Add(
-                                new Participant(
+                                new(
                                     person.First,
                                     person.Last,
                                     "",
@@ -685,7 +686,7 @@ namespace Chronokeep.UI.MainPages
                                     "",
                                     "",
                                     person.Birthdate,
-                                    new EventSpecific(
+                                    new(
                                         theEvent.Identifier,
                                         distDictionary[person.Distance.ToLower()].Identifier,
                                         distDictionary[person.Distance.ToLower()].Name,
@@ -813,8 +814,8 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             // Change Participant to APIPerson
-            List<APIPerson> upParticipants = new();
-            List<BibChip> upBibChips = new();
+            List<APIPerson> upParticipants = [];
+            List<BibChip> upBibChips = [];
             Log.D("UI.MainPages.ParticipantsPage", "Participants count: " + participants.Count.ToString());
             string uniqueID = "";
             AppSetting programID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
@@ -824,12 +825,12 @@ namespace Chronokeep.UI.MainPages
             }
             foreach (Participant part in participants)
             {
-                upParticipants.Add(new APIPerson(part, uniqueID));
+                upParticipants.Add(new(part, uniqueID));
             }
             Log.D("UI.MainPages.ParticipantsPage", "BibChips count: " + bibChips.Count.ToString());
             foreach (BibChipAssociation bc in bibChips)
             {
-                upBibChips.Add(new BibChip
+                upBibChips.Add(new()
                 {
                     Bib = bc.Bib,
                     Chip = bc.Chip,

@@ -1,6 +1,5 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
-using Chronokeep.Timing.API;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -16,8 +15,8 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class AgeGroupsPage : IMainPage
     {
-        private IMainWindow mWindow;
-        private IDBInterface database;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
         private Event theEvent;
 
         private bool touched = false;

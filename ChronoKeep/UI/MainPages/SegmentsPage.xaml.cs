@@ -23,16 +23,16 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class SegmentsPage : IMainPage
     {
-        private IMainWindow mWindow;
-        private IDBInterface database;
-        private Event theEvent;
-        private List<TimingLocation> locations;
-        private List<Distance> distances;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
+        private readonly List<TimingLocation> locations;
+        private readonly List<Distance> distances;
 
         private bool UpdateTimingWorker = false;
 
-        private Dictionary<int, List<Segment>> allSegments = new Dictionary<int, List<Segment>>();
-        private Dictionary<int, TimingLocation> LocationDict = new Dictionary<int, TimingLocation>();
+        private readonly Dictionary<int, List<Segment>> allSegments = [];
+        private readonly Dictionary<int, TimingLocation> LocationDict = [];
 
         public SegmentsPage(IMainWindow mWindow, IDBInterface database)
         {
@@ -45,12 +45,12 @@ namespace Chronokeep.UI.MainPages
                 locations = database.GetTimingLocations(theEvent.Identifier);
                 if (theEvent.CommonStartFinish)
                 {
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences - 1, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences - 1, theEvent.FinishIgnoreWithin));
                 }
                 else
                 {
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences - 1, theEvent.FinishIgnoreWithin));
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", theEvent.StartMaxOccurrences - 1, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences - 1, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", theEvent.StartMaxOccurrences - 1, theEvent.FinishIgnoreWithin));
                 }
                 foreach (TimingLocation loc in locations)
                 {
@@ -77,12 +77,12 @@ namespace Chronokeep.UI.MainPages
             {
                 return;
             }
-            List<ListBoxItem> items = new List<ListBoxItem>();
+            List<ListBoxItem> items = [];
             if (theEvent.DistanceSpecificSegments)
             {
                 foreach (Distance d in distances)
                 {
-                    ADistanceSegmentHolder newHolder = new ADistanceSegmentHolder(theEvent, this, d, distances, allSegments[d.Identifier], locations);
+                    ADistanceSegmentHolder newHolder = new(theEvent, this, d, distances, allSegments[d.Identifier], locations);
                     items.Add(newHolder);
                     foreach (ListBoxItem item in newHolder.SegmentItems)
                     {
@@ -92,7 +92,7 @@ namespace Chronokeep.UI.MainPages
             }
             else
             {
-                ADistanceSegmentHolder newHolder = new ADistanceSegmentHolder(theEvent, this, null, distances, allSegments[Constants.Timing.COMMON_SEGMENTS_DISTANCEID], locations);
+                ADistanceSegmentHolder newHolder = new(theEvent, this, null, distances, allSegments[Constants.Timing.COMMON_SEGMENTS_DISTANCEID], locations);
                 items.Add(newHolder);
                 foreach (ListBoxItem item in newHolder.SegmentItems)
                 {
@@ -169,19 +169,19 @@ namespace Chronokeep.UI.MainPages
 
         public void UpdateDatabase()
         {
-            List<Segment> upSegs = new List<Segment>();
-            List<Segment> newSegs = new List<Segment>();
-            HashSet<int> segSet = new HashSet<int>();
+            List<Segment> upSegs = [];
+            List<Segment> newSegs = [];
+            HashSet<int> segSet = [];
             foreach (Segment s in database.GetSegments(theEvent.Identifier))
             {
                 segSet.Add(s.Identifier);
             }
             foreach (Object seg in SegmentsBox.Items)
             {
-                if (seg is ASegment)
+                if (seg is ASegment tSeg)
                 {
-                    ((ASegment)seg).UpdateSegment();
-                    Segment thisSegment = ((ASegment)seg).mySegment;
+                    tSeg.UpdateSegment();
+                    Segment thisSegment = tSeg.mySegment;
                     if (thisSegment.Identifier < 1)
                     {
                         newSegs.Add(thisSegment);
@@ -249,7 +249,7 @@ namespace Chronokeep.UI.MainPages
         public void AddSegment(int distanceId)
         {
             Log.D("UI.MainPages.SegmentsPage", "Adding segment.");
-            Segment newSeg = new Segment(theEvent.Identifier, distanceId, Constants.Timing.LOCATION_FINISH, 0, 0.0, 0.0, Constants.Distances.MILES, "", "", "");
+            Segment newSeg = new(theEvent.Identifier, distanceId, Constants.Timing.LOCATION_FINISH, 0, 0.0, 0.0, Constants.Distances.MILES, "", "", "");
             allSegments[distanceId].Add(newSeg);
             UpdateView();
         }
@@ -265,8 +265,10 @@ namespace Chronokeep.UI.MainPages
             allSegments[intoDistance].Clear();
             foreach (Segment seg in allSegments[fromDistance])
             {
-                Segment newSeg = new Segment(seg);
-                newSeg.DistanceId = intoDistance;
+                Segment newSeg = new(seg)
+                {
+                    DistanceId = intoDistance
+                };
                 allSegments[intoDistance].Add(newSeg);
             }
             UpdateView();
@@ -280,11 +282,11 @@ namespace Chronokeep.UI.MainPages
         private class ADistanceSegmentHolder : ListBoxItem
         {
             private SegmentsPage page;
-            private ComboBox copyFromDistance = null;
-            private int finish_occurrences;
-            private List<Distance> otherDistances;
-            public List<ListBoxItem> SegmentItems = new List<ListBoxItem>();
-            private TextBox numAdd;
+            private readonly ComboBox copyFromDistance;
+            private readonly int finish_occurrences;
+            private readonly List<Distance> otherDistances;
+            public readonly List<ListBoxItem> SegmentItems = [];
+            private readonly TextBox numAdd;
 
             //public ListBox segmentHolder;
             public Distance distance;
@@ -352,7 +354,7 @@ namespace Chronokeep.UI.MainPages
                 Grid.SetColumn(addButton, 2);
                 if (distance != null)
                 {
-                    DockPanel copyPanel = new DockPanel();
+                    DockPanel copyPanel = new();
                     copyPanel.Children.Add(new TextBlock()
                     {
                         Text = "Copy from",
@@ -457,7 +459,7 @@ namespace Chronokeep.UI.MainPages
 
         private class ASegmentHeader : ListBoxItem
         {
-            public TextBlock Where = new TextBlock()
+            public TextBlock Where = new()
             {
                 Text = "Where",
                 FontSize = 14,
@@ -465,7 +467,7 @@ namespace Chronokeep.UI.MainPages
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(10, 0, 5, 0)
             };
-            public TextBlock NameLabel = new TextBlock()
+            public TextBlock NameLabel = new()
             {
                 Text = "Name",
                 FontSize = 14,
@@ -473,7 +475,7 @@ namespace Chronokeep.UI.MainPages
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock Occurrence = new TextBlock()
+            public TextBlock Occurrence = new()
             {
                 Text = "Occ",
                 FontSize = 14,
@@ -481,7 +483,7 @@ namespace Chronokeep.UI.MainPages
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock SegDistance = new TextBlock()
+            public TextBlock SegDistance = new()
             {
                 Text = "Dist",
                 FontSize = 14,
@@ -489,7 +491,7 @@ namespace Chronokeep.UI.MainPages
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock Unit = new TextBlock()
+            public TextBlock Unit = new()
             {
                 Text = "Unit",
                 FontSize = 14,
@@ -497,7 +499,7 @@ namespace Chronokeep.UI.MainPages
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock GPSLabel = new TextBlock()
+            public TextBlock GPSLabel = new()
             {
                 Text = "GPS",
                 FontSize = 14,
@@ -505,7 +507,7 @@ namespace Chronokeep.UI.MainPages
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock MapLinkLabel = new TextBlock()
+            public TextBlock MapLinkLabel = new()
             {
                 Text = "Map Link",
                 FontSize = 14,
@@ -513,7 +515,7 @@ namespace Chronokeep.UI.MainPages
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock Remove = new TextBlock()
+            public TextBlock Remove = new()
             {
                 Text = "",
                 FontSize = 14,
@@ -524,7 +526,7 @@ namespace Chronokeep.UI.MainPages
             public ASegmentHeader(Event theEvent)
             {
                 this.IsTabStop = false;
-                DockPanel dockPanel = new DockPanel()
+                DockPanel dockPanel = new()
                 {
                     MaxWidth = 1150
                 };
@@ -544,7 +546,7 @@ namespace Chronokeep.UI.MainPages
                 dockPanel.Children.Add(Remove);
             }
         }
-        private class ASegment : ListBoxItem
+        private partial class ASegment : ListBoxItem
         {
             public TextBox SegName { get; private set; }
             public ComboBox Location { get; private set; }
@@ -557,19 +559,21 @@ namespace Chronokeep.UI.MainPages
 
             readonly SegmentsPage page;
             public Segment mySegment;
-            private Dictionary<string, int> locationDictionary;
+            private readonly Dictionary<string, int> locationDictionary;
             public Event theEvent;
 
-            private readonly Regex allowedChars = new Regex("[^0-9.]+");
-            private readonly Regex allowedNums = new Regex("[^0-9]+");
+            [GeneratedRegex("[^0-9.]+")]
+            private static partial Regex AllowedChars();
+            [GeneratedRegex("[^0-9]+")]
+            private static partial Regex AllowedNums();
 
             public ASegment(Event theEvent, SegmentsPage page, Segment segment, List<TimingLocation> locations)
             {
                 this.page = page;
                 this.theEvent = theEvent;
                 this.mySegment = segment;
-                this.locationDictionary = new Dictionary<string, int>();
-                DockPanel thePanel = new DockPanel()
+                this.locationDictionary = [];
+                DockPanel thePanel = new()
                 {
                     MaxWidth = 1150
                 };
@@ -606,7 +610,7 @@ namespace Chronokeep.UI.MainPages
                 Location.SelectionChanged += new SelectionChangedEventHandler(this.Location_Changed);
                 thePanel.Children.Add(Location);
                 // Name
-                SegName = new TextBox()
+                SegName = new()
                 {
                     Text = mySegment.Name,
                     FontSize = 14,
@@ -619,7 +623,7 @@ namespace Chronokeep.UI.MainPages
                 // Occurrence
                 if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                 {
-                    Occurrence = new ComboBox()
+                    Occurrence = new()
                     {
                         FontSize = 14,
                         Width = 70,
@@ -639,7 +643,7 @@ namespace Chronokeep.UI.MainPages
                     }
                     for (int i = start; i <= maxOccurrences; i++)
                     {
-                        current = new ComboBoxItem()
+                        current = new()
                         {
                             Content = i.ToString(),
                             Uid = i.ToString()
@@ -661,7 +665,7 @@ namespace Chronokeep.UI.MainPages
                     thePanel.Children.Add(Occurrence);
                 }
                 // Distance information
-                CumDistance = new TextBox()
+                CumDistance = new()
                 {
                     Text = mySegment.CumulativeDistance.ToString(),
                     Width = 70,
@@ -672,7 +676,7 @@ namespace Chronokeep.UI.MainPages
                 CumDistance.GotFocus += new RoutedEventHandler(this.SelectAll);
                 CumDistance.PreviewTextInput += new TextCompositionEventHandler(this.DoubleValidation);
                 thePanel.Children.Add(CumDistance);
-                DistanceUnit = new ComboBox()
+                DistanceUnit = new()
                 {
                     FontSize = 14,
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -723,7 +727,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 thePanel.Children.Add(DistanceUnit);
                 // GPS
-                GPS = new TextBox()
+                GPS = new()
                 {
                     Text = mySegment.GPS,
                     FontSize = 14,
@@ -734,7 +738,7 @@ namespace Chronokeep.UI.MainPages
                 GPS.GotFocus += new RoutedEventHandler(this.SelectAll);
                 thePanel.Children.Add(GPS);
                 // MapLink
-                MapLink = new TextBox()
+                MapLink = new()
                 {
                     Text = mySegment.MapLink,
                     FontSize = 14,
@@ -744,7 +748,7 @@ namespace Chronokeep.UI.MainPages
                 };
                 MapLink.GotFocus += new RoutedEventHandler(this.SelectAll);
                 thePanel.Children.Add(MapLink);
-                Remove = new Button()
+                Remove = new()
                 {
                     Content = "X",
                     FontSize = 14,
@@ -834,12 +838,12 @@ namespace Chronokeep.UI.MainPages
 
             private void DoubleValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = allowedChars.IsMatch(e.Text);
+                e.Handled = AllowedChars().IsMatch(e.Text);
             }
 
             private void NumberValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = allowedNums.IsMatch(e.Text);
+                e.Handled = AllowedNums().IsMatch(e.Text);
             }
         }
 
@@ -881,20 +885,20 @@ namespace Chronokeep.UI.MainPages
                 UpdateDatabase();
                 UpdateSegments();
                 // Get Distances and Locations to get their names
-                Dictionary<int, Distance> distances = new Dictionary<int, Distance>();
+                Dictionary<int, Distance> distances = [];
                 foreach (Distance d in database.GetDistances(theEvent.Identifier))
                 {
                     distances.Add(d.Identifier, d);
                 }
-                Dictionary<int, TimingLocation> locations = new Dictionary<int, TimingLocation>();
+                Dictionary<int, TimingLocation> locations = [];
                 foreach (TimingLocation l in database.GetTimingLocations(theEvent.Identifier))
                 {
                     locations.Add(l.Identifier, l);
                 }
-                locations.Add(Constants.Timing.LOCATION_ANNOUNCER, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
-                locations.Add(Constants.Timing.LOCATION_FINISH, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", 0, 0));
-                locations.Add(Constants.Timing.LOCATION_START, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, 0));
-                Dictionary<int, string> distanceUnits = new Dictionary<int, string>
+                locations.Add(Constants.Timing.LOCATION_ANNOUNCER, new(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
+                locations.Add(Constants.Timing.LOCATION_FINISH, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", 0, 0));
+                locations.Add(Constants.Timing.LOCATION_START, new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, 0));
+                Dictionary<int, string> distanceUnits = new()
                 {
                     { Constants.Distances.FEET, "ft" },
                     { Constants.Distances.KILOMETERS, "km" },
@@ -903,7 +907,7 @@ namespace Chronokeep.UI.MainPages
                     { Constants.Distances.MILES, "mi" }
                 };
                 // Convert Segments to APISegments
-                List<APISegment> segments = new List<APISegment>();
+                List<APISegment> segments = [];
                 foreach (Segment seg in database.GetSegments(theEvent.Identifier))
                 {
                     if (locations.TryGetValue(seg.LocationId, out TimingLocation segmentLocation))
@@ -912,7 +916,7 @@ namespace Chronokeep.UI.MainPages
                         {
                             if (distances.TryGetValue(seg.DistanceId, out Distance segmentDistance))
                             {
-                                segments.Add(new APISegment
+                                segments.Add(new()
                                 {
                                     Location = segmentLocation.Name,
                                     DistanceName = segmentDistance.Name,
@@ -928,7 +932,7 @@ namespace Chronokeep.UI.MainPages
                         {
                             foreach (Distance dist in distances.Values)
                             {
-                                segments.Add(new APISegment
+                                segments.Add(new()
                                 {
                                     Location = segmentLocation.Name,
                                     DistanceName = dist.Name,
@@ -945,15 +949,15 @@ namespace Chronokeep.UI.MainPages
                 // add finish segments
                 foreach (Distance d in distances.Values)
                 {
-                    if (Constants.Timing.DISTANCE_NO_LINKED_ID == d.LinkedDistance && distanceUnits.ContainsKey(d.DistanceUnit))
+                    if (Constants.Timing.DISTANCE_NO_LINKED_ID == d.LinkedDistance && distanceUnits.TryGetValue(d.DistanceUnit, out string oDistUnit))
                     {
-                        segments.Add(new APISegment
+                        segments.Add(new()
                         {
                             Location = "Finish",
                             DistanceName = d.Name,
                             Name = "Finish",
                             DistanceValue = d.DistanceValue,
-                            DistanceUnit = distanceUnits[d.DistanceUnit],
+                            DistanceUnit = oDistUnit,
                             GPS = "",
                             MapLink = "",
                         });

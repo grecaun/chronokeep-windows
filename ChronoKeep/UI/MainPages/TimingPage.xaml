@@ -301,7 +301,7 @@
                                 MouseDoubleClick="StatsListView_MouseDoubleClick"
                                 ScrollViewer.CanContentScroll="False"
                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                PreviewMouseWheel="statsListView_PreviewMouseWheel"
+                                PreviewMouseWheel="StatsListView_PreviewMouseWheel"
                                 >
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
@@ -413,7 +413,7 @@
                                         Height="35"
                                         HorizontalAlignment="Stretch"
                                         Margin="0,5,5,0" 
-                                        Click="sendEmailsButton_Click"
+                                        Click="SendEmailsButton_Click"
                                         />
                                     <Button
                                         Name="modifySMSButton" 
@@ -421,7 +421,7 @@
                                         Height="35"
                                         HorizontalAlignment="Stretch"
                                         Margin="0,5,5,0" 
-                                        Click="modifySMSButton_Click"
+                                        Click="ModifySMSButton_Click"
                                         />
                                     <Button
                                         Name="dnsMode"
@@ -429,7 +429,7 @@
                                         Height="35"
                                         HorizontalAlignment="Stretch"
                                         Margin="0,5,5,0" 
-                                        Click="dnsMode_Click"
+                                        Click="DnsMode_Click"
                                         />
                                     <Button
                                         x:Name="HttpServerButton"
@@ -626,8 +626,8 @@
                             Margin="0,0,10,0" 
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
-                            Checked="remoteControllerSwitch_Checked"
-                            Unchecked="remoteControllerSwitch_Unchecked"
+                            Checked="RemoteControllerSwitch_Checked"
+                            Unchecked="RemoteControllerSwitch_Unchecked"
                             Visibility="Collapsed"
                             />
                         <ui:Button

@@ -12,8 +12,7 @@ namespace Chronokeep.IO.HtmlTemplates
         public HtmlResultsTemplate(
             Event theEvent,
             List<TimeResult> resultList,
-            bool linkPart = false
-            )
+            bool linkPart = false)
         {
             this.theEvent = theEvent;
             resultList.Sort(TimeResult.CompareByDistancePlace);
@@ -40,8 +39,7 @@ namespace Chronokeep.IO.HtmlTemplates
 
         public HtmlParticipantTemplate(
             Event theEvent,
-            List<TimeResult> rList
-            )
+            List<TimeResult> rList)
         {
             this.theEvent = theEvent;
             resultList = rList;
@@ -99,8 +97,7 @@ namespace Chronokeep.IO.HtmlTemplates
             TimeResult result,
             string email,
             bool singleDist,
-            APIObject api
-            )
+            APIObject api)
         {
             eventName = string.Format("{0} {1}", theEvent.Year, theEvent.Name);
             distanceName = "";

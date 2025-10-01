@@ -42,17 +42,17 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class TimingPage : IMainPage, ITimingPage
     {
-        private IMainWindow mWindow;
-        private IDBInterface database;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
         private ISubPage subPage;
 
         private CancellationTokenSource cts;
 
         private Event theEvent;
-        List<TimingLocation> locations;
+        readonly List<TimingLocation> locations;
 
         private DateTime startTime;
-        DispatcherTimer Timer = new DispatcherTimer();
+        readonly DispatcherTimer Timer = new();
         private bool TimerStarted = false;
         private SetTimeWindow timeWindow = null;
         private RewindWindow rewindWindow = null;
@@ -60,17 +60,17 @@ namespace Chronokeep.UI.MainPages
         private static bool alreadyRecalculating = false;
         private static readonly int uploadTimer = 1000;
 
-        ObservableCollection<DistanceStat> stats = new ObservableCollection<DistanceStat>();
+        readonly ObservableCollection<DistanceStat> stats = [];
 
         int total = 0, known = 0;
 
         private const string ipformat = "{0:D}.{1:D}.{2:D}.{3:D}";
-        private int[] baseIP = { 0, 0, 0, 0 };
+        private readonly int[] baseIP = { 0, 0, 0, 0 };
 
-        private bool remote_api = false;
+        private readonly bool remote_api = false;
 
-        Dictionary<int, (long seconds, int milliseconds)> waveTimes = new Dictionary<int, (long, int)>();
-        HashSet<int> waves = new HashSet<int>();
+        readonly Dictionary<int, (long seconds, int milliseconds)> waveTimes = [];
+        HashSet<int> waves = [];
         int selectedWave = -1;
         List<TimeRelativeWave> relativeToWaveList = [];
 
@@ -167,14 +167,14 @@ namespace Chronokeep.UI.MainPages
             int locCount = locations.Count;
             if (!theEvent.CommonStartFinish)
             {
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+                locations.Insert(0, new(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
+                locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
             }
             else
             {
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
+                locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
             }
 
             locationBox.Items.Clear();
@@ -207,7 +207,7 @@ namespace Chronokeep.UI.MainPages
             string system = Readers.DEFAULT_TIMING_SYSTEM;
             try
             {
-                system = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM).Value;
+                system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM).Value;
             }
             catch
             {
@@ -219,14 +219,14 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.MainPages.TimingPage", systems.Count + " systems found.");
                 for (int i = 0; i < 3 - numSystems; i++)
                 {
-                    systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
+                    systems.Add(new(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
                 }
             }
             systems.Sort((x, y) =>
             {
                 return x.Status == y.Status ? x.IPAddress.CompareTo(y.IPAddress) : x.Status.CompareTo(y.Status);
             });
-            systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
+            systems.Add(new(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
             known = 0;
             foreach (TimingSystem sys in systems)
             {
@@ -320,7 +320,7 @@ namespace Chronokeep.UI.MainPages
             if (readerMsgs.Count > 0)
             {
                 ReaderMessageButton.Visibility = Visibility.Visible;
-                ReaderMessageNumberBox.Value = readerMsgs.FindAll(x => !x.Notified).Count().ToString();
+                ReaderMessageNumberBox.Value = readerMsgs.FindAll(x => !x.Notified).Count.ToString();
             }
             else
             {
@@ -349,7 +349,7 @@ namespace Chronokeep.UI.MainPages
         public void Closing()
         {
             List<TimingSystem> removedSystems = database.GetTimingSystems();
-            List<TimingSystem> ourSystems = new List<TimingSystem>();
+            List<TimingSystem> ourSystems = [];
             foreach (AReaderBox box in ReadersBox.Items)
             {
                 box.UpdateReader();
@@ -433,15 +433,13 @@ namespace Chronokeep.UI.MainPages
                 {
                     ReadersBox.Items.Add(new AReaderBox(
                         this,
-                        new TimingSystem(
-                            string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
+                        new(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
                             system),
                             locations));
                 }
                 ReadersBox.Items.Add(new AReaderBox(
                     this,
-                    new TimingSystem(
-                        string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
+                    new(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
                         system),
                         locations));
             }
@@ -498,7 +496,7 @@ namespace Chronokeep.UI.MainPages
             UpdateDNSButton();
 
             // Check if there are waves we don't know about and only update the box if so.
-            HashSet<int> newWaves = new();
+            HashSet<int> newWaves = [];
             foreach (Distance div in database.GetDistances(theEvent.Identifier))
             {
                 newWaves.Add(div.Wave);
@@ -571,7 +569,7 @@ namespace Chronokeep.UI.MainPages
                 cts.Cancel();
                 cts = null;
             }
-            cts = new CancellationTokenSource();
+            cts = new();
             try
             {
                 subPage.CancelableUpdateView(cts.Token);
@@ -619,7 +617,7 @@ namespace Chronokeep.UI.MainPages
         private void ChangeWaves(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Set Wave Times clicked.");
-            WaveWindow waves = new WaveWindow(mWindow, database);
+            WaveWindow waves = new(mWindow, database);
             mWindow.AddWindow(waves);
             waves.ShowDialog();
         }
@@ -638,12 +636,12 @@ namespace Chronokeep.UI.MainPages
         private async void LoadLog(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Loading from log.");
-            OpenFileDialog csv_dialog = new OpenFileDialog() { Filter = "Log Files (*.csv,*.txt,*.log)|*.csv;*.txt;*.log|All Files|*" };
+            OpenFileDialog csv_dialog = new() { Filter = "Log Files (*.csv,*.txt,*.log)|*.csv;*.txt;*.log|All Files|*" };
             if (csv_dialog.ShowDialog() == true)
             {
                 try
                 {
-                    LogImporter importer = new LogImporter(csv_dialog.FileName);
+                    LogImporter importer = new(csv_dialog.FileName);
                     await Task.Run(() =>
                     {
                         importer.FindType();
@@ -754,7 +752,7 @@ namespace Chronokeep.UI.MainPages
         public void OpenTimeWindow(TimingSystem system)
         {
             Log.D("UI.MainPages.TimingPage", "Opening Set Time Window.");
-            timeWindow = new SetTimeWindow(this, system);
+            timeWindow = new(this, system);
             timeWindow.ShowDialog();
             timeWindow = null;
         }
@@ -762,7 +760,7 @@ namespace Chronokeep.UI.MainPages
         public void OpenRewindWindow(TimingSystem system)
         {
             Log.D("UI.MainPages.TimingPage", "Opening Rewind Window.");
-            rewindWindow = new RewindWindow(system);
+            rewindWindow = new(system);
             rewindWindow.ShowDialog();
             rewindWindow = null;
 
@@ -832,10 +830,10 @@ namespace Chronokeep.UI.MainPages
                 TimingFrame.NavigationService.RemoveBackEntry();
                 TimingFrame.Content = subPage;
             }
-            else if (subPage is TimingRawReadsPage)
+            else if (subPage is TimingRawReadsPage rawReadsPage)
             {
                 // Refresh data
-                ((TimingRawReadsPage)subPage).PrivateUpdateView();
+                rawReadsPage.PrivateUpdateView();
             }
             else
             {
@@ -1073,7 +1071,7 @@ namespace Chronokeep.UI.MainPages
                 cts.Cancel();
                 cts = null;
             }
-            cts = new CancellationTokenSource();
+            cts = new();
             try
             {
                 subPage.Search(cts.Token, searchBox.Text.Trim());
@@ -1088,7 +1086,7 @@ namespace Chronokeep.UI.MainPages
         private void Export_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Export clicked.");
-            ExportResults exportResults = new ExportResults(mWindow, database);
+            ExportResults exportResults = new(mWindow, database);
             if (!exportResults.SetupError())
             {
                 mWindow.AddWindow(exportResults);
@@ -1099,7 +1097,7 @@ namespace Chronokeep.UI.MainPages
         private void Export_Abbott_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Export Abbott Clicked.");
-            ExportDistanceResults exportAbbott = new ExportDistanceResults(mWindow, database, OutputType.Abbott);
+            ExportDistanceResults exportAbbott = new(mWindow, database, OutputType.Abbott);
             if (!exportAbbott.SetupError())
             {
                 mWindow.AddWindow(exportAbbott);
@@ -1115,7 +1113,7 @@ namespace Chronokeep.UI.MainPages
                 DialogBox.Show("Exporting time based events not supported.");
                 return;
             }
-            ExportDistanceResults exportBAA = new ExportDistanceResults(mWindow, database, OutputType.Boston);
+            ExportDistanceResults exportBAA = new(mWindow, database, OutputType.Boston);
             if (!exportBAA.SetupError())
             {
                 mWindow.AddWindow(exportBAA);
@@ -1130,7 +1128,7 @@ namespace Chronokeep.UI.MainPages
                 DialogBox.Show("Exporting time based events not supported.");
                 return;
             }
-            ExportDistanceResults exportUS = new ExportDistanceResults(mWindow, database, OutputType.UltraSignup);
+            ExportDistanceResults exportUS = new(mWindow, database, OutputType.UltraSignup);
             if (!exportUS.SetupError())
             {
                 mWindow.AddWindow(exportUS);
@@ -1190,7 +1188,7 @@ namespace Chronokeep.UI.MainPages
         private void CreateHTML_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Create HTML clicked.");
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "HTML file (*.htm,*.html)|*.htm;*.html",
                 FileName = string.Format("{0} {1} Web.{2}", theEvent.YearCode, theEvent.Name, "html"),
@@ -1200,7 +1198,7 @@ namespace Chronokeep.UI.MainPages
             {
                 List<TimeResult> finishResults = database.GetFinishTimes(theEvent.Identifier);
                 Dictionary<int, Participant> partDict = database.GetParticipants(theEvent.Identifier).ToDictionary(v => v.EventSpecific.Identifier, v => v);
-                HtmlResultsTemplate template = new HtmlResultsTemplate(theEvent, finishResults);
+                HtmlResultsTemplate template = new(theEvent, finishResults);
                 File.WriteAllText(saveFileDialog.FileName, template.TransformText());
                 DialogBox.Show("File saved.");
             }
@@ -1310,7 +1308,7 @@ namespace Chronokeep.UI.MainPages
         private void SaveLog(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Save Log clicked.");
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Log.{2}", theEvent.YearCode, theEvent.Name, "csv"),
@@ -1318,7 +1316,7 @@ namespace Chronokeep.UI.MainPages
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                Dictionary<string, List<ChipRead>> locationReadDict = new Dictionary<string, List<ChipRead>>();
+                Dictionary<string, List<ChipRead>> locationReadDict = [];
                 string[] headers =
                 {
                     "status",
@@ -1341,13 +1339,15 @@ namespace Chronokeep.UI.MainPages
                 List<ChipRead> chipReads = database.GetChipReads(theEvent.Identifier);
                 foreach (ChipRead read in chipReads)
                 {
-                    if (!locationReadDict.ContainsKey(read.LocationName))
+                    if (!locationReadDict.TryGetValue(read.LocationName, out List<ChipRead> locChipReads))
                     {
-                        locationReadDict[read.LocationName] = new List<ChipRead>();
+                        locChipReads = [];
+                        locationReadDict[read.LocationName] = locChipReads;
                     }
-                    locationReadDict[read.LocationName].Add(read);
+
+                    locChipReads.Add(read);
                 }
-                StringBuilder format = new StringBuilder();
+                StringBuilder format = new();
                 for (int i = 0; i < headers.Length; i++)
                 {
                     format.Append("\"{");
@@ -1358,10 +1358,10 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.MainPages.TimingPage", string.Format("The format is '{0}'", format.ToString()));
                 if (locationReadDict.Keys.Count == 1)
                 {
-                    List<object[]> data = new List<object[]>();
+                    List<object[]> data = [];
                     foreach (ChipRead read in chipReads)
                     {
-                        data.Add(new object[] {
+                        data.Add([
                             read.Status,
                             read.ChipNumber,
                             read.Seconds,
@@ -1378,9 +1378,9 @@ namespace Chronokeep.UI.MainPages
                             read.StartTime,
                             read.ReadBib,
                             read.Type
-                        });
+                        ]);
                     }
-                    IDataExporter exporter = new CSVExporter(format.ToString());
+                    CSVExporter exporter = new(format.ToString());
                     exporter.SetData(headers, data);
                     exporter.ExportData(saveFileDialog.FileName);
                 }
@@ -1389,10 +1389,10 @@ namespace Chronokeep.UI.MainPages
                 {
                     foreach (string key in locationReadDict.Keys)
                     {
-                        List<object[]> data = new List<object[]>();
+                        List<object[]> data = [];
                         foreach (ChipRead read in locationReadDict[key])
                         {
-                            data.Add(new object[] {
+                            data.Add([
                             read.Status,
                             read.ChipNumber,
                             read.Seconds,
@@ -1409,9 +1409,9 @@ namespace Chronokeep.UI.MainPages
                             read.StartTime,
                             read.ReadBib,
                             read.Type
-                        });
+                        ]);
                         }
-                        IDataExporter exporter = new CSVExporter(format.ToString());
+                        CSVExporter exporter = new(format.ToString());
                         exporter.SetData(headers, data);
                         Log.D("UI.MainPages.TimingPage", "Saving file to: " + Path.GetDirectoryName(saveFileDialog.FileName) + "\\" + Regex.Replace(key.ToLower(), @"[^a-z0-9\-]", "") + "-" + Path.GetFileName(saveFileDialog.FileName));
                         exporter.ExportData(Path.GetDirectoryName(saveFileDialog.FileName) + "\\" + Regex.Replace(key.ToLower(), @"[^a-z0-9\-]", "") + "-" + Path.GetFileName(saveFileDialog.FileName));
@@ -1421,7 +1421,7 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
-        private void statsListView_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private void StatsListView_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             ScrollViewer scv = controlScroll;
             if (e.Delta < 0)
@@ -1448,9 +1448,9 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
-        private void dnsMode_Click(object sender, RoutedEventArgs e)
+        private void DnsMode_Click(object sender, RoutedEventArgs e)
         {
-            bool worked = false;
+            bool worked;
             if (dnsMode.Content.Equals("Start DNS Mode"))
             {
                 Log.D("UI.MainPages.TimingPage", "Starting DNS Mode.");
@@ -1511,7 +1511,7 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
-        private void remoteControllerSwitch_Checked(object sender, RoutedEventArgs e)
+        private void RemoteControllerSwitch_Checked(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Remote toggle switch checked.");
             remoteControllerSwitch.IsEnabled = false;
@@ -1519,7 +1519,7 @@ namespace Chronokeep.UI.MainPages
 
         }
 
-        private void remoteControllerSwitch_Unchecked(object sender, RoutedEventArgs e)
+        private void RemoteControllerSwitch_Unchecked(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Remote toggle switch unchecked.");
             remoteControllerSwitch.IsEnabled = false;
@@ -1530,20 +1530,20 @@ namespace Chronokeep.UI.MainPages
         {
             Log.D("UI.MainPages.TimingPage", "EllapsedRelativeToBox selection changed.");
             selectedWave = -1;
-            if (EllapsedRelativeToBox.SelectedIndex >= 0 && EllapsedRelativeToBox.SelectedItem is TimeRelativeWave)
+            if (EllapsedRelativeToBox.SelectedIndex >= 0 && EllapsedRelativeToBox.SelectedItem is TimeRelativeWave wave)
             {
-                selectedWave = ((TimeRelativeWave)EllapsedRelativeToBox.SelectedItem).Wave;
+                selectedWave = wave.Wave;
             }
         }
 
-        private void modifySMSButton_Click(object sender, RoutedEventArgs e)
+        private void ModifySMSButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Modify SMS button clicked.");
-            SMSWaveEnabledWindow smsWindow = new SMSWaveEnabledWindow(mWindow, database);
+            SMSWaveEnabledWindow smsWindow = new(mWindow, database);
             smsWindow.Show();
         }
 
-        private async void sendEmailsButton_Click(object sender, RoutedEventArgs e)
+        private async void SendEmailsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Send Emails button clicked.");
             if ((string)sendEmailsButton.Content != "Send Emails")
@@ -1553,7 +1553,7 @@ namespace Chronokeep.UI.MainPages
             sendEmailsButton.Content = "Sending...";
             await Task.Run(() =>
             {
-                HashSet<int> sentIDs = new HashSet<int>();
+                HashSet<int> sentIDs = [];
                 List<int> idents = database.GetEmailAlerts(theEvent.Identifier);
                 if (idents == null)
                 {
@@ -1565,7 +1565,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 List<TimeResult> finishTimes = database.GetFinishTimes(theEvent.Identifier);
                 APIObject api = database.GetAPI(theEvent.API_ID);
-                Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
+                Dictionary<string, Participant> participantDictionary = [];
                 int distances = 0;
                 foreach (Participant p in database.GetParticipants(theEvent.Identifier))
                 {
@@ -1589,24 +1589,24 @@ namespace Chronokeep.UI.MainPages
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(@"Basic", base64String);
                 foreach (TimeResult result in finishTimes)
                 {
-                    Participant part = participantDictionary.ContainsKey(result.ParticipantId) ? participantDictionary[result.ParticipantId] : null;
+                    Participant part = participantDictionary.TryGetValue(result.ParticipantId, out Participant oPart) ? oPart : null;
                     if (part != null && result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN)
                     {
                         if (part.Email.Length > 0 && !Globals.BannedEmails.Contains(part.Email) && !sentIDs.Contains(result.EventSpecificId))
                         {
-                            MultipartFormDataContent postData = new MultipartFormDataContent
-                    {
-                        { new StringContent(credentials.From()), "from" },
-                        { new StringContent(part.Email), "to" },
-                        { new StringContent(string.Format("{0} {1}", theEvent.Year, theEvent.Name)), "subject" },
-                        { new StringContent(new HtmlCertificateEmailTemplate(
-                            theEvent,
-                            result,
-                            part.Email,
-                            distances == 1,
-                            api
-                            ).TransformText()), "html" }
-                    };
+                            MultipartFormDataContent postData = new()
+                            {
+                                { new StringContent(credentials.From()), "from" },
+                                { new StringContent(part.Email), "to" },
+                                { new StringContent(string.Format("{0} {1}", theEvent.Year, theEvent.Name)), "subject" },
+                                { new StringContent(new HtmlCertificateEmailTemplate(
+                                    theEvent,
+                                    result,
+                                    part.Email,
+                                    distances == 1,
+                                    api
+                                    ).TransformText()), "html" }
+                            };
                             try
                             {
                                 client.PostAsync(string.Format("https://api.mailgun.net/v3/{0}/messages", credentials.Domain), postData);
@@ -1632,7 +1632,7 @@ namespace Chronokeep.UI.MainPages
             notificationWindow.Show();
         }
 
-        private class AReaderBox : ListBoxItem
+        private partial class AReaderBox : ListBoxItem
         {
             public ComboBox ReaderType { get; private set; }
             public TextBox ReaderIP { get; private set; }
@@ -1650,16 +1650,19 @@ namespace Chronokeep.UI.MainPages
 
             public RewindWindow rewind = null;
 
-            private const string IPPattern = "^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$";
-            private const string allowedChars = "[^0-9.]";
-            private const string allowedNums = "[^0-9]";
+            [GeneratedRegex("^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$")]
+            private static partial Regex IPPattern();
+            [GeneratedRegex("[^0-9.]")]
+            private static partial Regex AllowedChars();
+            [GeneratedRegex("[^0-9]")]
+            private static partial Regex AllowedNums();
 
             public AReaderBox(TimingPage window, TimingSystem sys, List<TimingLocation> locations)
             {
                 parent = window;
                 this.locations = locations;
                 reader = sys;
-                Grid thePanel = new Grid()
+                Grid thePanel = new()
                 {
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
@@ -1832,10 +1835,10 @@ namespace Chronokeep.UI.MainPages
                 this.locations = locations;
                 int selectedLocation = Convert.ToInt32(((ComboBoxItem)ReaderLocation.SelectedItem).Uid);
                 ReaderLocation.Items.Clear();
-                ComboBoxItem current = null, selected = null;
+                ComboBoxItem current, selected = null;
                 foreach (TimingLocation loc in this.locations)
                 {
-                    current = new ComboBoxItem()
+                    current = new()
                     {
                         Content = loc.Name,
                         Uid = loc.Identifier.ToString()
@@ -1881,18 +1884,18 @@ namespace Chronokeep.UI.MainPages
 
             private void IPValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = Regex.IsMatch(e.Text, allowedChars);
+                e.Handled = AllowedChars().IsMatch(e.Text);
             }
 
             private void NumberValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = Regex.IsMatch(e.Text, allowedNums);
+                e.Handled = AllowedNums().IsMatch(e.Text);
             }
 
             public void UpdateReader()
             {
                 // Check if IP is a valid IP address
-                if (!Regex.IsMatch(ReaderIP.Text.Trim(), IPPattern))
+                if (!IPPattern().IsMatch(ReaderIP.Text.Trim()))
                 {
                     reader.IPAddress = "";
                 }
@@ -1919,7 +1922,7 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.MainPages.TimingPage", "Updating to type: " + Readers.SYSTEM_NAMES[type]);
                 reader.UpdateSystemType(type);
                 ReaderPort.Text = reader.Port.ToString();
-                ReaderPort.IsEnabled = Readers.SYSTEM_CHRONOKEEP_PORTAL == type ? false : true;
+                ReaderPort.IsEnabled = Readers.SYSTEM_CHRONOKEEP_PORTAL != type;
             }
 
             private void Remove(object sender, RoutedEventArgs e)
@@ -1974,7 +1977,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 Log.D("UI.MainPages.TimingPage", "Connect button pressed. IP is " + ReaderIP.Text);
                 // Check if IP is a valid IP address
-                if (!Regex.IsMatch(ReaderIP.Text.Trim(), IPPattern))
+                if (!IPPattern().IsMatch(ReaderIP.Text.Trim()))
                 {
                     DialogBox.Show("IP address given not valid.");
                     return;
@@ -2040,7 +2043,7 @@ namespace Chronokeep.UI.MainPages
             {
                 ReaderType.IsEnabled = true;
                 ReaderIP.IsEnabled = true;
-                ReaderPort.IsEnabled = Readers.SYSTEM_CHRONOKEEP_PORTAL == reader.Type ? false : true;
+                ReaderPort.IsEnabled = Readers.SYSTEM_CHRONOKEEP_PORTAL != reader.Type;
                 ReaderLocation.IsEnabled = true;
                 // Set Remove and Connect buttons to enabled
                 RemoveButton.IsEnabled = true;
@@ -2125,7 +2128,7 @@ namespace Chronokeep.UI.MainPages
                 DialogBox.Show("Exporting time based events not supported.");
                 return;
             }
-            ExportDistanceResults exportRunsignup = new ExportDistanceResults(mWindow, database, OutputType.Runsignup);
+            ExportDistanceResults exportRunsignup = new(mWindow, database, OutputType.Runsignup);
             if (!exportRunsignup.SetupError())
             {
                 mWindow.AddWindow(exportRunsignup);

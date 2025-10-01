@@ -20,13 +20,13 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class DistancesPage : IMainPage
     {
-        private IMainWindow mWindow;
-        private IDBInterface database;
-        private Event theEvent;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
+        private readonly Dictionary<int, Distance> distanceDictionary = [];
+        private readonly Dictionary<int, List<Distance>> subDistanceDictionary = [];
+        private readonly HashSet<int> distancesChanged = [];
         private List<Distance> distances;
-        private Dictionary<int, Distance> distanceDictionary = new Dictionary<int, Distance>();
-        private Dictionary<int, List<Distance>> subDistanceDictionary = new Dictionary<int, List<Distance>>();
-        private HashSet<int> distancesChanged = new HashSet<int>();
         private bool UpdateTimingWorker = false;
         private int DistanceCount = 1;
 
@@ -59,17 +59,18 @@ namespace Chronokeep.UI.MainPages
             distances.Sort();
             distanceDictionary.Clear();
             subDistanceDictionary.Clear();
-            List<Distance> superDivs = new List<Distance>();
+            List<Distance> superDivs = [];
             foreach (Distance div in distances)
             {
                 // Check if we're a linked distance
                 if (div.LinkedDistance > 0)
                 {
-                    if (!subDistanceDictionary.ContainsKey(div.LinkedDistance))
+                    if (!subDistanceDictionary.TryGetValue(div.LinkedDistance, out List<Distance> oSubDistList))
                     {
-                        subDistanceDictionary[div.LinkedDistance] = new List<Distance>();
+                        oSubDistList = [];
+                        subDistanceDictionary[div.LinkedDistance] = oSubDistList;
                     }
-                    subDistanceDictionary[div.LinkedDistance].Add(div);
+                    oSubDistList.Add(div);
                 }
                 else
                 {
@@ -79,13 +80,13 @@ namespace Chronokeep.UI.MainPages
             foreach (Distance div in superDivs)
             {
                 distanceDictionary[div.Identifier] = div;
-                ADistance parent = new ADistance(this, div, theEvent.FinishMaxOccurrences, distances, distanceDictionary, theEvent);
+                ADistance parent = new(this, div, theEvent.FinishMaxOccurrences, distances, distanceDictionary, theEvent);
                 DistancesBox.Items.Add(parent);
                 DistanceCount = div.Identifier > DistanceCount - 1 ? div.Identifier + 1 : DistanceCount;
                 // Add linked distances
-                if (subDistanceDictionary.ContainsKey(div.Identifier))
+                if (subDistanceDictionary.TryGetValue(div.Identifier, out List<Distance> tSubDistList))
                 {
-                    foreach (Distance sub in subDistanceDictionary[div.Identifier])
+                    foreach (Distance sub in tSubDistList)
                     {
                         DistancesBox.Items.Add(new ASubDistance(this, sub, parent));
                         DistanceCount = sub.Identifier > DistanceCount - 1 ? sub.Identifier + 1 : DistanceCount;
@@ -109,7 +110,7 @@ namespace Chronokeep.UI.MainPages
             {
                 UpdateDatabase();
             }
-            database.AddDistance(new Distance("New Distance " + DistanceCount, theEvent.Identifier));
+            database.AddDistance(new("New Distance " + DistanceCount, theEvent.Identifier));
             UpdateTimingWorker = true;
             UpdateView();
         }
@@ -194,7 +195,7 @@ namespace Chronokeep.UI.MainPages
 
         public void UpdateDatabase()
         {
-            Dictionary<int, Distance> oldDistances = new Dictionary<int, Distance>();
+            Dictionary<int, Distance> oldDistances = [];
             foreach (Distance distance in database.GetDistances(theEvent.Identifier))
             {
                 oldDistances[distance.Identifier] = distance;
@@ -203,10 +204,10 @@ namespace Chronokeep.UI.MainPages
             {
                 listDiv.UpdateDistance();
                 int divId = listDiv.GetDistance().Identifier;
-                if (oldDistances.ContainsKey(divId) &&
-                    (oldDistances[divId].StartOffsetSeconds != listDiv.GetDistance().StartOffsetSeconds
-                    || oldDistances[divId].StartOffsetMilliseconds != listDiv.GetDistance().StartOffsetMilliseconds
-                    || oldDistances[divId].FinishOccurrence != listDiv.GetDistance().FinishOccurrence) )
+                if (oldDistances.TryGetValue(divId, out Distance oDist) &&
+                    (oDist.StartOffsetSeconds != listDiv.GetDistance().StartOffsetSeconds
+                    || oDist.StartOffsetMilliseconds != listDiv.GetDistance().StartOffsetMilliseconds
+                    || oDist.FinishOccurrence != listDiv.GetDistance().FinishOccurrence) )
                 {
                     distancesChanged.Add(divId);
                     UpdateTimingWorker = true;
@@ -272,7 +273,7 @@ namespace Chronokeep.UI.MainPages
             {
                 UpdateDatabase();
             }
-            database.AddDistance(new Distance(theDistance.Name + " Linked " + DistanceCount, theDistance.EventIdentifier, theDistance.Identifier, Constants.Timing.DISTANCE_TYPE_EARLY, 1, theDistance.Wave, theDistance.StartOffsetSeconds, theDistance.StartOffsetMilliseconds));
+            database.AddDistance(new(theDistance.Name + " Linked " + DistanceCount, theDistance.EventIdentifier, theDistance.Identifier, Constants.Timing.DISTANCE_TYPE_EARLY, 1, theDistance.Wave, theDistance.StartOffsetSeconds, theDistance.StartOffsetMilliseconds));
             UpdateTimingWorker = true;
             UpdateView();
         }
@@ -283,7 +284,7 @@ namespace Chronokeep.UI.MainPages
             void UpdateDistance();
         }
 
-        private class ASubDistance : ListBoxItem, ADistanceInterface
+        private partial class ASubDistance : ListBoxItem, ADistanceInterface
         {
             public TextBox DistanceName { get; private set; }
             public TextBox Wave { get; private set; }
@@ -301,15 +302,17 @@ namespace Chronokeep.UI.MainPages
             private ADistance parent;
             private int waveType = 1;
 
-            private readonly Regex allowedWithDot = new Regex("[^0-9.]");
-            private readonly Regex allowedChars = new Regex("[^0-9]");
+            [GeneratedRegex("[^0-9.]")]
+            private static partial Regex AllowedWithDot();
+            [GeneratedRegex("[^0-9]")]
+            private static partial Regex AllowedChars();
 
             public ASubDistance(DistancesPage page, Distance distance, ADistance parent)
             {
                 this.page = page;
                 this.parent = parent;
                 this.theDistance = distance;
-                StackPanel thePanel = new StackPanel()
+                StackPanel thePanel = new()
                 {
                     Margin = new Thickness(50, 0, 0, 0),
                     MaxWidth = 600
@@ -324,7 +327,7 @@ namespace Chronokeep.UI.MainPages
                 nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
                 thePanel.Children.Add(nameGrid);
                 // Name information.
-                DockPanel namePanel = new DockPanel();
+                DockPanel namePanel = new();
                 namePanel.Children.Add(new TextBlock()
                 {
                     Text = "Name",
@@ -344,7 +347,7 @@ namespace Chronokeep.UI.MainPages
                 namePanel.Children.Add(DistanceName);
                 nameGrid.Children.Add(namePanel);
                 Grid.SetColumn(namePanel, 0);
-                DockPanel rankPanel = new DockPanel();
+                DockPanel rankPanel = new();
                 rankPanel.Children.Add(new TextBlock()
                 {
                     Text = "Rank Priority",
@@ -380,7 +383,7 @@ namespace Chronokeep.UI.MainPages
                 Grid.SetColumn(Remove, 2);
 
                 // Wave # - Start Offset - Type - Ranking Order
-                DockPanel wavePanel = new DockPanel();
+                DockPanel wavePanel = new();
                 wavePanel.Children.Add(new TextBlock()
                 {
                     Text = "Wave",
@@ -547,12 +550,12 @@ namespace Chronokeep.UI.MainPages
 
             private void DotValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = allowedWithDot.IsMatch(e.Text);
+                e.Handled = AllowedWithDot().IsMatch(e.Text);
             }
 
             private void NumberValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = allowedChars.IsMatch(e.Text);
+                e.Handled = AllowedChars().IsMatch(e.Text);
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)
@@ -635,7 +638,7 @@ namespace Chronokeep.UI.MainPages
 
         }
 
-        private class ADistance : ListBoxItem, ADistanceInterface
+        private partial class ADistance : ListBoxItem, ADistanceInterface
         {
             public TextBox DistanceName { get; private set; }
             public TextBox Certification { get; private set; }
@@ -658,18 +661,20 @@ namespace Chronokeep.UI.MainPages
             private Dictionary<int, Distance> distanceDictionary;
             private int waveType = 1;
 
-            private readonly Regex allowedWithDot = new Regex("[^0-9.]");
-            private readonly Regex allowedChars = new Regex("[^0-9]");
+            [GeneratedRegex("[^0-9.]")]
+            private static partial Regex AllowedWithDot();
+            [GeneratedRegex("[^0-9]")]
+            private static partial Regex AllowedChars();
 
             public ADistance(DistancesPage page, Distance distance, int maxOccurrences,
                 List<Distance> distances, Dictionary<int, Distance> distanceDictionary, Event theEvent)
             {
-                List<Distance> otherDistances = new List<Distance>(distances);
+                List<Distance> otherDistances = [.. distances];
                 this.distanceDictionary = distanceDictionary;
                 otherDistances.Remove(distance);
                 this.page = page;
                 this.theDistance = distance;
-                StackPanel thePanel = new StackPanel()
+                StackPanel thePanel = new()
                 {
                     MaxWidth = theEvent.UploadSpecific == true ? 700 : 600
                 };
@@ -681,7 +686,7 @@ namespace Chronokeep.UI.MainPages
                 nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
                 nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
                 // Name information.
-                DockPanel namePanel = new DockPanel();
+                DockPanel namePanel = new();
                 namePanel.Children.Add(new TextBlock()
                 {
                     Text = "Name",
@@ -701,7 +706,7 @@ namespace Chronokeep.UI.MainPages
                 namePanel.Children.Add(DistanceName);
                 nameGrid.Children.Add(namePanel);
                 Grid.SetColumn(namePanel, 0);
-                DockPanel copyPanel = new DockPanel();
+                DockPanel copyPanel = new();
                 copyPanel.Children.Add(new TextBlock()
                 {
                     Text = "Copy From",
@@ -738,12 +743,12 @@ namespace Chronokeep.UI.MainPages
                 thePanel.Children.Add(nameGrid);
 
                 // Distance - DistanceUnit - Occurrence
-                Grid settingsGrid = new Grid();
+                Grid settingsGrid = new();
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                DockPanel distPanel = new DockPanel();
+                DockPanel distPanel = new();
                 distPanel.Children.Add(new TextBlock()
                 {
                     Text = "Distance",
@@ -830,7 +835,7 @@ namespace Chronokeep.UI.MainPages
                 if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                 {
                     // Occurence
-                    DockPanel occPanel = new DockPanel();
+                    DockPanel occPanel = new();
                     occPanel.Children.Add(new TextBlock()
                     {
                         Text = "Occurrence",
@@ -873,7 +878,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 else
                 {
-                    DockPanel limitPanel = new DockPanel();
+                    DockPanel limitPanel = new();
                     limitPanel.Children.Add(new TextBlock()
                     {
                         Text = "Max Time",
@@ -909,7 +914,7 @@ namespace Chronokeep.UI.MainPages
                 numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(4, GridUnitType.Star) });
                 numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
                 int columnOffset = theEvent.UploadSpecific ? 1 : 0;
-                DockPanel wavePanel = new DockPanel()
+                DockPanel wavePanel = new()
                 {
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Right
@@ -997,7 +1002,7 @@ namespace Chronokeep.UI.MainPages
                 numGrid.Children.Add(wavePanel);
                 Grid.SetColumn(wavePanel, columnOffset);
                 columnOffset++;
-                DockPanel certificationPanel = new DockPanel()
+                DockPanel certificationPanel = new()
                 {
                     VerticalAlignment = VerticalAlignment.Center
                 };
@@ -1113,7 +1118,7 @@ namespace Chronokeep.UI.MainPages
             {
                 Log.D("UI.MainPages.DistancesPage", "Updating distance.");
                 theDistance.Name = DistanceName.Text;
-                double dist = 0.0;
+                double dist;
                 try
                 {
                     dist = Convert.ToDouble(Distance.Text);
@@ -1142,7 +1147,10 @@ namespace Chronokeep.UI.MainPages
                 int wave = -1;
                 if (Wave != null)
                 {
-                    int.TryParse(Wave.Text, out wave);
+                    if (!int.TryParse(Wave.Text, out wave))
+                    {
+                        theDistance.Wave = -1;
+                    }
                 }
                 if (wave >= 0)
                 {
@@ -1198,9 +1206,8 @@ namespace Chronokeep.UI.MainPages
                 // and there's a distance related to it
                 if (CopyFromBox.SelectedItem != null
                     && int.TryParse(((ComboBoxItem)CopyFromBox.SelectedItem).Uid, out int newDivId)
-                    && distanceDictionary.ContainsKey(newDivId))
+                    && distanceDictionary.TryGetValue(newDivId, out Distance newDiv))
                 {
-                    Distance newDiv = distanceDictionary[newDivId];
                     theDistance.Name = DistanceName.Text;
                     theDistance.DistanceValue = newDiv.DistanceValue;
                     theDistance.DistanceUnit = newDiv.DistanceUnit;
@@ -1215,12 +1222,12 @@ namespace Chronokeep.UI.MainPages
 
             private void DotValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = allowedWithDot.IsMatch(e.Text);
+                e.Handled = AllowedWithDot().IsMatch(e.Text);
             }
 
             private void NumberValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = allowedChars.IsMatch(e.Text);
+                e.Handled = AllowedChars().IsMatch(e.Text);
             }
         }
 
@@ -1262,12 +1269,12 @@ namespace Chronokeep.UI.MainPages
                 UpdateDatabase();
                 UpdateView();
                 // Get Distances and Locations to get their names
-                List<APIDistance> distances = new();
+                List<APIDistance> distances = [];
                 foreach (Distance d in database.GetDistances(theEvent.Identifier))
                 {
                     if (d.Certification.Trim().Length > 0)
                     {
-                        distances.Add(new APIDistance
+                        distances.Add(new()
                         {
                             Name = d.Name.Trim(),
                             Certification = d.Certification.Trim(),
