@@ -12,20 +12,18 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class APIPage1
     {
-        APIWindow window;
-        IDBInterface database;
-        Dictionary<string, APIObject> apiDict;
+        readonly APIWindow window;
+        readonly Dictionary<string, APIObject> apiDict;
 
         public APIPage1(APIWindow window, IDBInterface database)
         {
             InitializeComponent();
             this.window = window;
-            this.database = database;
 
             AppSetting last_api = database.GetAppSetting(Constants.Settings.LAST_USED_API_ID);
             List<APIObject> apis = database.GetAllAPI();
             apis.RemoveAll(x => !Constants.APIConstants.API_RESULTS[x.Type]);
-            apiDict = new Dictionary<string, APIObject>();
+            apiDict = [];
             int api_id = -1;
             if (last_api != null)
             {

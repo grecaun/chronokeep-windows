@@ -12,14 +12,14 @@ namespace Chronokeep.Database.SQLite
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO results_api (api_type, api_url, api_auth_token, api_nickname, api_web_url)" +
                 " VALUES (@type, @url, @token, @nickname, @weburl);";
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                new SQLiteParameter("@type", anAPI.Type),
-                new SQLiteParameter("@url", anAPI.URL),
-                new SQLiteParameter("@token", anAPI.AuthToken),
-                new SQLiteParameter("@nickname", anAPI.Nickname),
-                new SQLiteParameter("@weburl", anAPI.WebURL)
-            });
+            command.Parameters.AddRange(
+            [
+                new("@type", anAPI.Type),
+                new("@url", anAPI.URL),
+                new("@token", anAPI.AuthToken),
+                new("@nickname", anAPI.Nickname),
+                new("@weburl", anAPI.WebURL)
+            ]);
             command.ExecuteNonQuery();
             long outVal = connection.LastInsertRowId;
             return (int)outVal;
@@ -29,15 +29,15 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE results_api SET api_type=@type, api_url=@url, api_auth_token=@token, api_nickname=@nickname, api_web_url=@weburl WHERE api_id=@id;";
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                new SQLiteParameter("@type", anAPI.Type),
-                new SQLiteParameter("@url", anAPI.URL),
-                new SQLiteParameter("@token", anAPI.AuthToken),
-                new SQLiteParameter("@nickname", anAPI.Nickname),
-                new SQLiteParameter("@id", anAPI.Identifier),
-                new SQLiteParameter("@weburl", anAPI.WebURL)
-            });
+            command.Parameters.AddRange(
+            [
+                new("@type", anAPI.Type),
+                new("@url", anAPI.URL),
+                new("@token", anAPI.AuthToken),
+                new("@nickname", anAPI.Nickname),
+                new("@id", anAPI.Identifier),
+                new("@weburl", anAPI.WebURL)
+            ]);
             command.ExecuteNonQuery();
         }
 
@@ -47,7 +47,7 @@ namespace Chronokeep.Database.SQLite
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandText = "UPDATE events SET api_id=-1, api_event_id='' WHERE api_id=@id; DELETE FROM results_api WHERE api_id=@id;";
-                command.Parameters.Add(new SQLiteParameter("@id", identifier));
+                command.Parameters.Add(("@id", identifier));
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
@@ -61,7 +61,7 @@ namespace Chronokeep.Database.SQLite
             }
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM results_api WHERE api_id=@id";
-            command.Parameters.Add(new SQLiteParameter("@id", identifier));
+            command.Parameters.Add(new("@id", identifier));
             SQLiteDataReader reader = command.ExecuteReader();
             APIObject output = null;
             if (reader.Read())
@@ -81,7 +81,7 @@ namespace Chronokeep.Database.SQLite
 
         internal static List<APIObject> GetAllAPI(SQLiteConnection connection)
         {
-            List<APIObject> output = new List<APIObject>();
+            List<APIObject> output = [];
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM results_api;";
             SQLiteDataReader reader = command.ExecuteReader();

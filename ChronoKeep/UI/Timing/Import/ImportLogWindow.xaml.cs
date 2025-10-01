@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using Chronokeep.IO;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,8 @@ namespace Chronokeep.UI.Timing.Import
         Event theEvent;
         int locationId = Constants.Timing.LOCATION_DUMMY;
 
-        private static readonly Regex DateRegex = new Regex("\\d{4}-\\d{2}-\\d{2}");
+        [GeneratedRegex("\\d{4}-\\d{2}-\\d{2}")]
+        private static partial Regex DateRegex();
 
         private ImportLogWindow(IMainWindow window, LogImporter importer, IDBInterface database)
         {
@@ -38,12 +40,12 @@ namespace Chronokeep.UI.Timing.Import
             List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
             if (!theEvent.CommonStartFinish)
             {
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+                locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
             }
             else
             {
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
             }
             Frame.Content = new ImportLogPage1(this, importer, locations);
         }
@@ -56,12 +58,12 @@ namespace Chronokeep.UI.Timing.Import
                 List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
                 if (!theEvent.CommonStartFinish)
                 {
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+                    locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
                 }
                 else
                 {
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 }
                 ((ImportLogPage1)Frame.Content).UpdateLocations(locations);
             }
@@ -93,14 +95,14 @@ namespace Chronokeep.UI.Timing.Import
                 ImportData data = importer.Data;
                 int chip = ChipColumn, time = TimeColumn;
                 locationId = iLocationId != Constants.Timing.LOCATION_DUMMY ? iLocationId : locationId;
-                List<ChipRead> chipreads = new List<ChipRead>();
+                List<ChipRead> chipreads = new();
                 if (type == LogImporter.Type.IPICO)
                 {
                     DateTime date = DateTime.ParseExact(data.Headers[1].Substring(20, 12), "yyMMddHHmmss", CultureInfo.InvariantCulture);
                     int.TryParse(data.Headers[1].Substring(32, 2), NumberStyles.HexNumber, null, out int milliseconds);
                     milliseconds *= 10;
                     date = date.AddMilliseconds(milliseconds);
-                    chipreads.Add(new ChipRead(
+                    chipreads.Add(new(
                         theEvent.Identifier,
                         locationId,
                         data.Headers[1].Substring(4, 12),
@@ -115,7 +117,7 @@ namespace Chronokeep.UI.Timing.Import
                         int.TryParse(data.Data[counter][1].Substring(32, 2), NumberStyles.HexNumber, null, out milliseconds);
                         milliseconds *= 10;
                         date = date.AddMilliseconds(milliseconds);
-                        chipreads.Add(new ChipRead(
+                        chipreads.Add(new(
                             theEvent.Identifier,
                             locationId,
                             data.Data[counter][1].Substring(4, 12),
@@ -129,7 +131,7 @@ namespace Chronokeep.UI.Timing.Import
                 {
                     foreach (object[] line in data.Data)
                     {
-                        chipreads.Add(new ChipRead(
+                        chipreads.Add(new(
                             theEvent.Identifier,        // event id
                             locationId,                 // location id
                             Constants.Timing.CHIPREAD_STATUS_NONE,   // status
@@ -167,7 +169,7 @@ namespace Chronokeep.UI.Timing.Import
                             time = 4;
                         }
                     }
-                    bool dateIncluded = DateRegex.IsMatch(data.Headers[time]);
+                    bool dateIncluded = DateRegex().IsMatch(data.Headers[time]);
                     DateTime date;
                     if (!dateIncluded)
                     {
@@ -177,7 +179,7 @@ namespace Chronokeep.UI.Timing.Import
                     {
                         date = DateTime.Parse(data.Headers[time]);
                     }
-                    chipreads.Add(new ChipRead(theEvent.Identifier, locationId, data.Headers[chip], date));
+                    chipreads.Add(new(theEvent.Identifier, locationId, data.Headers[chip], date));
                     int numEntries = data.Data.Count;
                     for (int counter = 0; counter < numEntries; counter++)
                     {
@@ -189,7 +191,7 @@ namespace Chronokeep.UI.Timing.Import
                         {
                             date = DateTime.Parse(data.Data[counter][time]);
                         }
-                        chipreads.Add(new ChipRead(theEvent.Identifier, locationId, data.Data[counter][chip], date));
+                        chipreads.Add(new(theEvent.Identifier, locationId, data.Data[counter][chip], date));
                     }
                 }
                 database.AddChipReads(chipreads);
@@ -202,7 +204,7 @@ namespace Chronokeep.UI.Timing.Import
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             importer.Finish();
-            if (window != null) window.WindowFinalize(this);
+            window?.WindowFinalize(this);
         }
     }
 }

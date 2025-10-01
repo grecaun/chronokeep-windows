@@ -133,7 +133,7 @@ namespace Chronokeep.Constants
             return RFIDDateToEpoch(UnixEpochToDate(seconds).ToLocalTime());
         }
 
-        public static readonly Dictionary<int, string> EVENTSPECIFIC_STATUS_NAMES = new Dictionary<int, string>()
+        public static readonly Dictionary<int, string> EVENTSPECIFIC_STATUS_NAMES = new()
         {
             { EVENTSPECIFIC_UNKNOWN, "Unknown" },
             { EVENTSPECIFIC_STARTED, "Started" },

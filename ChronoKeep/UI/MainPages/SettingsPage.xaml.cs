@@ -222,10 +222,10 @@ namespace Chronokeep.UI.MainPages
             database.SetAppSetting(Constants.Settings.ALARM_SOUND, ((ComboBoxItem)AlarmSoundBox.SelectedItem).Uid);
             database.SetAppSetting(Constants.Settings.SERVER_NAME, RegistrationServerNameBox.Text.Trim());
 
-            Constants.Globals.SetTwilioCredentials(TwilioAccountSIDBox.Text.Trim(), TwilioAuthTokenBox.Text.Trim(), TwilioPhoneNumberBox.Text.Trim());
-            database.SetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID, Constants.Globals.TwilioCredentials.AccountSID);
-            database.SetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN, Constants.Globals.TwilioCredentials.AuthToken);
-            database.SetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER, Constants.Globals.TwilioCredentials.PhoneNumber);
+            Constants.GlobalVars.SetTwilioCredentials(TwilioAccountSIDBox.Text.Trim(), TwilioAuthTokenBox.Text.Trim(), TwilioPhoneNumberBox.Text.Trim());
+            database.SetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID, Constants.GlobalVars.TwilioCredentials.AccountSID);
+            database.SetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN, Constants.GlobalVars.TwilioCredentials.AuthToken);
+            database.SetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER, Constants.GlobalVars.TwilioCredentials.PhoneNumber);
 
             database.SetAppSetting(Constants.Settings.MAILGUN_FROM_NAME, MailgunFromNameBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL, MailgunFromEmailBox.Text.Trim());

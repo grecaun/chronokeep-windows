@@ -14,6 +14,7 @@ using Chronokeep.UI.UIObjects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.UI.MainPages;
 using static Chronokeep.Helpers.Globals;
+using Chronokeep.Helpers;
 
 namespace Chronokeep.UI
 {

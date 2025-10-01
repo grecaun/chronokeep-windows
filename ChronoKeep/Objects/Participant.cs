@@ -699,9 +699,9 @@ namespace Chronokeep.Objects
 
         public bool IsNotMatch(string value)
         {
-            return EventSpecific.Bib.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
-                && FirstName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
-                && LastName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
+            return !EventSpecific.Bib.ToString().Contains(value, StringComparison.OrdinalIgnoreCase)
+                && !FirstName.Contains(value, StringComparison.OrdinalIgnoreCase)
+                && !LastName.Contains(value, StringComparison.OrdinalIgnoreCase);
         }
 
         public string PrettyAnonymous

@@ -1,4 +1,5 @@
-﻿using Chronokeep.Objects;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -15,7 +16,7 @@ namespace Chronokeep.Database.SQLite
 
         internal static void UpdateDatabase(int oldversion, int newversion, string connectionInfo)
         {
-            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             using (var transaction = connection.BeginTransaction())
@@ -729,10 +730,10 @@ namespace Chronokeep.Database.SQLite
                         command = connection.CreateCommand();
                         command.CommandText = "SELECT * FROM chipreads;";
                         SQLiteDataReader reader = command.ExecuteReader();
-                        List<ChipRead> output = new List<ChipRead>();
+                        List<ChipRead> output = [];
                         while (reader.Read())
                         {
-                            output.Add(new ChipRead(
+                            output.Add(new(
                                 Convert.ToInt32(reader["read_id"]),
                                 Convert.ToInt32(reader["event_id"]),
                                 Convert.ToInt32(reader["read_status"]),
@@ -1070,7 +1071,7 @@ namespace Chronokeep.Database.SQLite
                         List<Distance> distances = [];
                         while (reader.Read())
                         {
-                            distances.Add(new Distance(Convert.ToInt32(reader["distance_id"]),
+                            distances.Add(new(Convert.ToInt32(reader["distance_id"]),
                                 reader["distance_name"].ToString(),
                                 Convert.ToInt32(reader["event_id"]),
                                 Convert.ToDouble(reader["distance_distance"]),
@@ -1107,7 +1108,7 @@ namespace Chronokeep.Database.SQLite
                         List<Participant> people = [];
                         while (reader.Read())
                         {
-                            people.Add(new Participant(
+                            people.Add(new(
                                 Convert.ToInt32(reader["participant_id"]),
                                 reader["participant_first"].ToString(),
                                 reader["participant_last"].ToString(),
@@ -1116,7 +1117,7 @@ namespace Chronokeep.Database.SQLite
                                 reader["participant_state"].ToString(),
                                 reader["participant_zip"].ToString(),
                                 reader["participant_birthday"].ToString(),
-                                new EventSpecific(
+                                new(
                                     Convert.ToInt32(reader["eventspecific_id"]),
                                     Convert.ToInt32(reader["event_id"]),
                                     Convert.ToInt32(reader["distance_id"]),

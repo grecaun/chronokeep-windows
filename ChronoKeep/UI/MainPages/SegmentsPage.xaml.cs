@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Database.SQLite;
+using Chronokeep.Helpers;
 using Chronokeep.Interfaces;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
@@ -307,12 +308,12 @@ namespace Chronokeep.UI.MainPages
                 {
                     Margin = new Thickness(5)
                 };
-                namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
-                namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(85) });
+                namePanel.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                namePanel.ColumnDefinitions.Add(new() { Width = new GridLength(50) });
+                namePanel.ColumnDefinitions.Add(new() { Width = new GridLength(85) });
                 if (distance != null)
                 {
-                    namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(250) });
+                    namePanel.ColumnDefinitions.Add(new() { Width = new GridLength(250) });
                 }
                 TextBlock distanceName = new()
                 {
@@ -323,7 +324,7 @@ namespace Chronokeep.UI.MainPages
                 };
                 namePanel.Children.Add(distanceName);
                 Grid.SetColumn(distanceName, 0);
-                numAdd = new TextBox
+                numAdd = new()
                 {
                     Text = "1",
                     FontSize = 16,
@@ -363,7 +364,7 @@ namespace Chronokeep.UI.MainPages
                         HorizontalAlignment = HorizontalAlignment.Right,
                         Margin = new Thickness(10, 0, 2, 0)
                     });
-                    copyFromDistance = new ComboBox()
+                    copyFromDistance = new()
                     {
                         FontSize = 14,
                         Height = 35,
@@ -399,7 +400,7 @@ namespace Chronokeep.UI.MainPages
                     Height = 1,
                     Fill = new SolidColorBrush(Colors.Gray)
                 });
-                /*segmentHolder = new ListBox()
+                /*segmentHolder = new()
                 {
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Center,
@@ -582,7 +583,7 @@ namespace Chronokeep.UI.MainPages
                 this.VerticalContentAlignment = VerticalAlignment.Center;
 
                 // Where
-                Location = new ComboBox()
+                Location = new()
                 {
                     FontSize = 16,
                     Width = 140,

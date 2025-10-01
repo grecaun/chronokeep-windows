@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using Wpf.Ui.Controls;
 using Xceed.Wpf.Toolkit;
 using Button = Wpf.Ui.Controls.Button;
+using Chronokeep.Helpers;
 
 namespace Chronokeep.UI.API
 {
@@ -21,17 +22,17 @@ namespace Chronokeep.UI.API
     {
         private static RemoteReadersWindow theOne = null;
 
-        IMainWindow window;
-        IDBInterface database;
-        Event theEvent;
+        readonly IMainWindow window;
+        readonly IDBInterface database;
+        readonly Event theEvent;
 
-        List<APIObject> remoteAPIs;
+        readonly List<APIObject> remoteAPIs;
 
         public static RemoteReadersWindow CreateWindow(IMainWindow window, IDBInterface database)
         {
             if (theOne == null)
             {
-                theOne = new RemoteReadersWindow(window, database);
+                theOne = new(window, database);
             }
             return theOne;
         }
@@ -165,7 +166,7 @@ namespace Chronokeep.UI.API
 
             public Dictionary<RemoteReader, bool> GetAutoDownloadDictionary()
             {
-                var output = new Dictionary<RemoteReader, bool>();
+                Dictionary<RemoteReader, bool> output = [];
                 foreach (ReaderListItem item in readerListView.Items)
                 {
                     output[item.GetUpdatedReader()] = item.AutoDownloadReads();
@@ -176,18 +177,17 @@ namespace Chronokeep.UI.API
 
         internal class ReaderListItem : Wpf.Ui.Controls.ListViewItem
         {
-            private RemoteReader reader;
-            private APIObject api;
-            private IDBInterface database;
-            private IMainWindow mainWindow;
+            private readonly RemoteReader reader;
+            private readonly APIObject api;
+            private readonly IDBInterface database;
 
-            ToggleSwitch autoFetch;
-            Wpf.Ui.Controls.TextBlock nameBlock;
-            ComboBox locationBox;
-            DatePicker startDatePicker;
-            DatePicker endDatePicker;
-            MaskedTextBox startTimeBox;
-            MaskedTextBox endTimeBox;
+            readonly ToggleSwitch autoFetch;
+            readonly Wpf.Ui.Controls.TextBlock nameBlock;
+            readonly ComboBox locationBox;
+            readonly DatePicker startDatePicker;
+            readonly DatePicker endDatePicker;
+            readonly MaskedTextBox startTimeBox;
+            readonly MaskedTextBox endTimeBox;
 
             public ReaderListItem(
                 RemoteReader reader,
@@ -200,7 +200,6 @@ namespace Chronokeep.UI.API
                 this.reader = reader;
                 this.api = api;
                 this.database = database;
-                this.mainWindow = mainWindow;
 
                 string dateStr = DateTime.Now.ToString("MM/dd/yyyy");
                 var theEvent = database.GetCurrentEvent();
@@ -210,15 +209,15 @@ namespace Chronokeep.UI.API
                 }
                 this.reader.EventID = theEvent.Identifier;
                 List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
+                locations.Insert(0, new(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
                 if (!theEvent.CommonStartFinish)
                 {
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+                    locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
                 }
                 else
                 {
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 }
                 StackPanel thePanel = new()
                 {
@@ -394,7 +393,7 @@ namespace Chronokeep.UI.API
 
             public RemoteReader GetUpdatedReader()
             {
-                var output = new RemoteReader();
+                RemoteReader output = new();
                 output.Name = reader.Name;
                 output.EventID = reader.EventID;
                 output.APIIDentifier = api.Identifier;

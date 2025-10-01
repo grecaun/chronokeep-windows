@@ -1,4 +1,6 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
+using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.IO;
 using Chronokeep.UI.UIObjects;
@@ -25,15 +27,15 @@ namespace Chronokeep.UI.Export
     /// </summary>
     public partial class ExportDistanceResults : FluentWindow
     {
-        IMainWindow window;
-        IDBInterface database;
-        Event theEvent;
+        readonly IMainWindow window;
+        readonly IDBInterface database;
+        readonly Event theEvent;
 
-        OutputType type;
+        readonly OutputType type;
 
-        bool noOpen = false;
+        private readonly bool noOpen;
 
-        Dictionary<string, Distance> distanceDictionary;
+        readonly Dictionary<string, Distance> distanceDictionary;
 
         public ExportDistanceResults(IMainWindow window, IDBInterface database, OutputType type = OutputType.Boston)
         {
@@ -46,7 +48,7 @@ namespace Chronokeep.UI.Export
                 noOpen = true;
                 return;
             }
-            distanceDictionary = new Dictionary<string, Distance>();
+            distanceDictionary = [];
             Log.D("ExportDistanceResults", "Adding distances to combobox.");
             foreach (Distance distance in database.GetDistances(theEvent.Identifier))
             {
@@ -214,7 +216,7 @@ namespace Chronokeep.UI.Export
 
         private void SaveAllBoston()
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Boston.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
@@ -239,7 +241,7 @@ namespace Chronokeep.UI.Export
 
         private void SaveAllUltraSignup()
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Ultrasignup.{2}", theEvent.YearCode, theEvent.Name, "csv"),
@@ -263,7 +265,7 @@ namespace Chronokeep.UI.Export
 
         private void SaveAllRunsignup()
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Runsignup.{2}", theEvent.YearCode, theEvent.Name, "csv"),
@@ -287,7 +289,7 @@ namespace Chronokeep.UI.Export
 
         private void SaveAbbot(string distance)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} {2} AbbotWMM.{3}", theEvent.YearCode, theEvent.Name, distance, "xlsx"),
@@ -316,9 +318,9 @@ namespace Chronokeep.UI.Export
                 "place",        // overall
                 "place_no_sex"  // gender place
             };
-            List<object[]> data = new List<object[]>();
+            List<object[]> data = [];
             List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-            Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
+            Dictionary<string, Participant> participantDictionary = [];
             foreach (Participant person in participants)
             {
                 participantDictionary[person.Bib] = person;
@@ -428,8 +430,8 @@ namespace Chronokeep.UI.Export
                             country = "";
                         }
                     }
-                    data.Add(new object[]
-                    {
+                    data.Add(
+                    [
                         "",
                         "",
                         result.Last,
@@ -442,18 +444,18 @@ namespace Chronokeep.UI.Export
                         result.ChipTime.Substring(0, result.ChipTime.Length > 4 ? result.ChipTime.Length -4 : 0),
                         result.PlaceStr,
                         result.GenderPlaceStr
-                    });
+                    ]);
                 }
             }
             IDataExporter exporter;
             Log.D("UI.Export.ExportDistanceResults", string.Format("Extension is '{0}'", extension));
-            if (extension.IndexOf("xls") != -1)
+            if (extension.Contains("xls", System.StringComparison.CurrentCulture))
             {
                 exporter = new ExcelExporter();
             }
             else
             {
-                StringBuilder format = new StringBuilder();
+                StringBuilder format = new();
                 for (int i = 0; i < headers.Length; i++)
                 {
                     format.Append("\"{");
@@ -470,7 +472,7 @@ namespace Chronokeep.UI.Export
 
         private void SaveBoston(string distance)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} {2} Boston.{3}", theEvent.YearCode, theEvent.Name, distance, "xlsx"),
@@ -494,11 +496,11 @@ namespace Chronokeep.UI.Export
                     break;
                 }
             }
-            List<string> headers = new List<string>
-            {
+            List<string> headers =
+            [
                 theEvent.Name,         // event name
                 "", "", "", "", "", "", "", "", ""
-            };
+            ];
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
             segments.RemoveAll(x => dist == null || x.DistanceId != dist.Identifier);
             segments.Sort((a, b) => a.CumulativeDistance.CompareTo(b.CumulativeDistance));
@@ -506,30 +508,30 @@ namespace Chronokeep.UI.Export
             {
                 headers.Add("");
             }
-            List<object[]> data = new List<object[]>();
-            List<string> tmp = new()
-            {
+            List<object[]> data = [];
+            List<string> tmp =
+            [
                 theEvent.Date,         // event date
                 "", "", "", "", "", "", "", "", ""
-            };
+            ];
             for (int i = 0; i < segments.Count; i++)
             {
                 tmp.Add("");
             }
             data.Add(tmp.ToArray());
-            tmp = new()
-            {
+            tmp =
+            [
                 "INSERT EVENT CERTIFICATION HERE",         // event certification number
                 "", "", "", "", "", "", "", "", ""
-            };
+            ];
             for (int i = 0; i < segments.Count; i++)
             {
                 tmp.Add("");
             }
             data.Add(tmp.ToArray());
             // actual header
-            tmp = new()
-            {
+            tmp =
+            [
                 "Last Name",
                 "First Name",
                 "City",
@@ -540,9 +542,9 @@ namespace Chronokeep.UI.Export
                 "Clock Time",
                 "Chip/Net Time",
                 "Wheelchair"
-            };
+            ];
             // Get segments for header.
-            Dictionary<int, int> segmentsHeaderPos = new Dictionary<int, int>();
+            Dictionary<int, int> segmentsHeaderPos = [];
             foreach (Segment seg in segments)
             {
                 Log.D("UI.Export.ExportDistanceResults", "Segment:  " + seg.Name);
@@ -551,12 +553,12 @@ namespace Chronokeep.UI.Export
             }
             data.Add(tmp.ToArray());
             List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-            Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
+            Dictionary<string, Participant> participantDictionary = [];
             foreach (Participant person in participants)
             {
                 participantDictionary[person.Bib] = person;
             }
-            Dictionary<(string, int), TimeResult> segmentResults = new();
+            Dictionary<(string, int), TimeResult> segmentResults = [];
             List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
             foreach (TimeResult result in results)
             {
@@ -566,8 +568,8 @@ namespace Chronokeep.UI.Export
             {
                 if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant tPart) && (result.DistanceName == distance) && result.Time.Length > 4)
                 {
-                    List<string> values = new()
-                    {
+                    List<string> values =
+                    [
                             result.Last,
                             result.First,
                             tPart.City,
@@ -578,7 +580,7 @@ namespace Chronokeep.UI.Export
                             result.Time[..(result.Time.Length > 4 ? result.Time.Length - 4 : 0)],
                             result.ChipTime[..(result.ChipTime.Length > 4 ? result.ChipTime.Length -4 : 0)],
                             ""
-                    };
+                    ];
                     foreach(Segment seg in segments)
                     {
                         if (segmentResults.TryGetValue((result.Bib, seg.Identifier), out TimeResult res))
@@ -590,18 +592,18 @@ namespace Chronokeep.UI.Export
                             values.Add("");
                         }
                     }
-                    data.Add(values.ToArray());
+                    data.Add([.. values]);
                 }
             }
             IDataExporter exporter;
             Log.D("UI.Export.ExportDistanceResults", string.Format("Extension is '{0}'", extension));
-            if (extension.IndexOf("xls") != -1)
+            if (extension.Contains("xls", System.StringComparison.CurrentCulture))
             {
                 exporter = new ExcelExporter();
             }
             else
             {
-                StringBuilder format = new StringBuilder();
+                StringBuilder format = new();
                 for (int i = 0; i < headers.Count; i++)
                 {
                     format.Append("\"{");
@@ -618,7 +620,7 @@ namespace Chronokeep.UI.Export
 
         private void SaveUltraSignup(string distance)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} {2} Ultrasignup.{3}", theEvent.YearCode, theEvent.Name, distance, "csv"),
@@ -644,7 +646,7 @@ namespace Chronokeep.UI.Export
 
         private void SaveRunsignup(string distance)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} {2} Runsignup.{3}", theEvent.YearCode, theEvent.Name, distance, "csv"),
@@ -670,8 +672,8 @@ namespace Chronokeep.UI.Export
 
         private void SaveUltraSignupInternal(string distance, string fileName)
         {
-            string[] headers = new string[]
-            {
+            string[] headers =
+            [
                 "place",
                 "time",
                 "first",
@@ -683,8 +685,8 @@ namespace Chronokeep.UI.Export
                 "city",
                 "state",
                 "status"
-            };
-            Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
+            ];
+            Dictionary<string, Participant> participantDictionary = [];
             foreach (Participant person in database.GetParticipants(theEvent.Identifier))
             {
                 participantDictionary[person.Bib] = person;
@@ -764,7 +766,7 @@ namespace Chronokeep.UI.Export
                     data.Add(newLine);
                 }
             }
-            StringBuilder format = new StringBuilder();
+            StringBuilder format = new();
             for (int i = 0; i < headers.Length; i++)
             {
                 format.Append("\"{");
@@ -793,12 +795,12 @@ namespace Chronokeep.UI.Export
                 "city",
                 "state"
             ];
-            Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
+            Dictionary<string, Participant> participantDictionary = [];
             foreach (Participant person in database.GetParticipants(theEvent.Identifier))
             {
                 participantDictionary[person.Bib] = person;
             }
-            List<object[]> data = new List<object[]>();
+            List<object[]> data = [];
             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
             {
                 if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant zPart) && (result.DistanceName == distance))
@@ -818,7 +820,7 @@ namespace Chronokeep.UI.Export
                     ]);
                 }
             }
-            IDataExporter exporter;
+
             StringBuilder format = new();
             for (int i = 0; i < headers.Length; i++)
             {
@@ -828,7 +830,7 @@ namespace Chronokeep.UI.Export
             }
             format.Remove(format.Length - 1, 1);
             Log.D("UI.Export.ExportDistanceResults", string.Format("The format is '{0}'", format.ToString()));
-            exporter = new CSVExporter(format.ToString());
+            CSVExporter exporter = new(format.ToString());
             exporter.SetData(headers, data);
             exporter.ExportData(fileName);
         }

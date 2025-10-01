@@ -17,26 +17,26 @@ namespace Chronokeep.Database.SQLite
                 "event_start_max_occurrences)" +
                 " VALUES(@name,@date,@yearcode,@gun,@age,@start,@sepseg,@startsec,@startmill,@occ,@ign,@window," +
                 "@type,@display,@agDiv,@daysAllowed,@uploadSpecific,@startOcc)";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                new SQLiteParameter("@name", anEvent.Name),
-                new SQLiteParameter("@date", anEvent.Date),
-                new SQLiteParameter("@yearcode", anEvent.YearCode),
-                new SQLiteParameter("@gun", anEvent.RankByGun),
-                new SQLiteParameter("@age", anEvent.CommonAgeGroups),
-                new SQLiteParameter("@start", anEvent.CommonStartFinish),
-                new SQLiteParameter("@sepseg", anEvent.DistanceSpecificSegments),
-                new SQLiteParameter("@startsec", anEvent.StartSeconds),
-                new SQLiteParameter("@startmill", anEvent.StartMilliseconds),
-                new SQLiteParameter("@occ", anEvent.FinishMaxOccurrences),
-                new SQLiteParameter("@ign", anEvent.FinishIgnoreWithin),
-                new SQLiteParameter("@window", anEvent.StartWindow),
-                new SQLiteParameter("@type", anEvent.EventType),
-                new SQLiteParameter("@display", anEvent.DisplayPlacements),
-                new SQLiteParameter("@agDiv", anEvent.DivisionsEnabled),
-                new SQLiteParameter("@daysAllowed", anEvent.DaysAllowed),
-                new SQLiteParameter("@uploadSpecific", anEvent.UploadSpecific ? 1 : 0),
-                new SQLiteParameter("@startOcc", anEvent.StartMaxOccurrences),
-            });
+            command.Parameters.AddRange([
+                new("@name", anEvent.Name),
+                new("@date", anEvent.Date),
+                new("@yearcode", anEvent.YearCode),
+                new("@gun", anEvent.RankByGun),
+                new("@age", anEvent.CommonAgeGroups),
+                new("@start", anEvent.CommonStartFinish),
+                new("@sepseg", anEvent.DistanceSpecificSegments),
+                new("@startsec", anEvent.StartSeconds),
+                new("@startmill", anEvent.StartMilliseconds),
+                new("@occ", anEvent.FinishMaxOccurrences),
+                new("@ign", anEvent.FinishIgnoreWithin),
+                new("@window", anEvent.StartWindow),
+                new("@type", anEvent.EventType),
+                new("@display", anEvent.DisplayPlacements),
+                new("@agDiv", anEvent.DivisionsEnabled),
+                new("@daysAllowed", anEvent.DaysAllowed),
+                new("@uploadSpecific", anEvent.UploadSpecific ? 1 : 0),
+                new("@startOcc", anEvent.StartMaxOccurrences),
+            ]);
             command.ExecuteNonQuery();
             long outVal = connection.LastInsertRowId;
             return (int)outVal;
@@ -62,8 +62,8 @@ namespace Chronokeep.Database.SQLite
                     "DELETE FROM timing_locations WHERE event_id=@event;" +
                     "DELETE FROM eventspecific WHERE event_id=@event;" +
                     "DELETE FROM events WHERE event_id=@event;";
-                command.Parameters.AddRange(new SQLiteParameter[] {
-                    new SQLiteParameter("@event", identifier) });
+                command.Parameters.AddRange([
+                    new("@event", identifier) ]);
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
@@ -95,42 +95,42 @@ namespace Chronokeep.Database.SQLite
                 "event_upload_specific_distance_results=@uploadSpecific," +
                 "event_start_max_occurrences=@startOcc" +
                 " WHERE event_id=@id";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                new SQLiteParameter("@id", anEvent.Identifier),
-                new SQLiteParameter("@name", anEvent.Name),
-                new SQLiteParameter("@date", anEvent.Date),
-                new SQLiteParameter("@yearcode", anEvent.YearCode),
-                new SQLiteParameter("@age", anEvent.CommonAgeGroups),
-                new SQLiteParameter("@start", anEvent.CommonStartFinish),
-                new SQLiteParameter("@gun", anEvent.RankByGun),
-                new SQLiteParameter("@seg", anEvent.DistanceSpecificSegments),
-                new SQLiteParameter("@startsec", anEvent.StartSeconds),
-                new SQLiteParameter("@startmill", anEvent.StartMilliseconds),
-                new SQLiteParameter("@type", anEvent.EventType),
-                new SQLiteParameter("@maxocc", anEvent.FinishMaxOccurrences),
-                new SQLiteParameter("@ignore", anEvent.FinishIgnoreWithin),
-                new SQLiteParameter("@startWindow", anEvent.StartWindow),
-                new SQLiteParameter("@apiid", anEvent.API_ID),
-                new SQLiteParameter("@apieventid", anEvent.API_Event_ID),
-                new SQLiteParameter("@display", anEvent.DisplayPlacements),
-                new SQLiteParameter("@agDiv", anEvent.DivisionsEnabled),
-                new SQLiteParameter("@daysAllowed", anEvent.DaysAllowed),
-                new SQLiteParameter("@uploadSpecific", anEvent.UploadSpecific ? 1 : 0),
-                new SQLiteParameter("@startOcc", anEvent.StartMaxOccurrences),
-            });
+            command.Parameters.AddRange([
+                new("@id", anEvent.Identifier),
+                new("@name", anEvent.Name),
+                new("@date", anEvent.Date),
+                new("@yearcode", anEvent.YearCode),
+                new("@age", anEvent.CommonAgeGroups),
+                new("@start", anEvent.CommonStartFinish),
+                new("@gun", anEvent.RankByGun),
+                new("@seg", anEvent.DistanceSpecificSegments),
+                new("@startsec", anEvent.StartSeconds),
+                new("@startmill", anEvent.StartMilliseconds),
+                new("@type", anEvent.EventType),
+                new("@maxocc", anEvent.FinishMaxOccurrences),
+                new("@ignore", anEvent.FinishIgnoreWithin),
+                new("@startWindow", anEvent.StartWindow),
+                new("@apiid", anEvent.API_ID),
+                new("@apieventid", anEvent.API_Event_ID),
+                new("@display", anEvent.DisplayPlacements),
+                new("@agDiv", anEvent.DivisionsEnabled),
+                new("@daysAllowed", anEvent.DaysAllowed),
+                new("@uploadSpecific", anEvent.UploadSpecific ? 1 : 0),
+                new("@startOcc", anEvent.StartMaxOccurrences),
+            ]);
             command.ExecuteNonQuery();
         }
 
         internal static List<Event> GetEvents(SQLiteConnection connection)
         {
 
-            List<Event> output = new List<Event>();
+            List<Event> output = [];
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM events";
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Event(Convert.ToInt32(reader["event_id"]),
+                output.Add(new(Convert.ToInt32(reader["event_id"]),
                     reader["event_name"].ToString(),
                     reader["event_date"].ToString(),
                     Convert.ToInt32(reader["event_common_age_groups"]),
@@ -161,11 +161,11 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT event_id FROM events WHERE event_name=@name AND event_date=@date";
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                new SQLiteParameter("@name", anEvent.Name),
-                new SQLiteParameter("@date", anEvent.Date)
-            });
+            command.Parameters.AddRange(
+            [
+                new("@name", anEvent.Name),
+                new("@date", anEvent.Date)
+            ]);
             SQLiteDataReader reader = command.ExecuteReader();
             int output = -1;
             if (reader.Read())
@@ -184,12 +184,12 @@ namespace Chronokeep.Database.SQLite
             }
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM events WHERE event_id=@id";
-            command.Parameters.Add(new SQLiteParameter("@id", id));
+            command.Parameters.Add(new("@id", id));
             SQLiteDataReader reader = command.ExecuteReader();
             Event output = null;
             if (reader.Read())
             {
-                output = new Event(Convert.ToInt32(reader["event_id"]),
+                output = new(Convert.ToInt32(reader["event_id"]),
                     reader["event_name"].ToString(),
                     reader["event_date"].ToString(),
                     Convert.ToInt32(reader["event_common_age_groups"]),
@@ -220,12 +220,12 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE events SET event_start_window=@window, event_start_max_occurrences=@startOcc WHERE event_id=@event;";
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                new SQLiteParameter("@window", anEvent.StartWindow),
-                new SQLiteParameter("@event", anEvent.Identifier),
-                new SQLiteParameter("@startOcc", anEvent.StartMaxOccurrences),
-            });
+            command.Parameters.AddRange(
+            [
+                new("@window", anEvent.StartWindow),
+                new("@event", anEvent.Identifier),
+                new("@startOcc", anEvent.StartMaxOccurrences),
+            ]);
             command.ExecuteNonQuery();
         }
 
@@ -233,12 +233,12 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE events SET event_finish_max_occurances=@occ, event_finish_ignore_within=@ignore WHERE event_id=@event;";
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                new SQLiteParameter("@occ", anEvent.FinishMaxOccurrences),
-                new SQLiteParameter("@ignore", anEvent.FinishIgnoreWithin),
-                new SQLiteParameter("@event", anEvent.Identifier)
-            });
+            command.Parameters.AddRange(
+            [
+                new("@occ", anEvent.FinishMaxOccurrences),
+                new("@ignore", anEvent.FinishIgnoreWithin),
+                new("@event", anEvent.Identifier)
+            ]);
             command.ExecuteNonQuery();
         }
 
@@ -248,11 +248,11 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "UPDATE events SET event_start_window=@window, event_start_max_occurrences=@startOcc, event_finish_max_occurances=@occ, event_finish_ignore_within=@ignore WHERE event_id=@event;";
             command.Parameters.AddRange(
             [
-                new SQLiteParameter("@window", anEvent.StartWindow),
-                new SQLiteParameter("@startOcc", anEvent.StartMaxOccurrences),
-                new SQLiteParameter("@occ", anEvent.FinishMaxOccurrences),
-                new SQLiteParameter("@ignore", anEvent.FinishIgnoreWithin),
-                new SQLiteParameter("@event", anEvent.Identifier)
+                new("@window", anEvent.StartWindow),
+                new("@startOcc", anEvent.StartMaxOccurrences),
+                new("@occ", anEvent.FinishMaxOccurrences),
+                new("@ignore", anEvent.FinishIgnoreWithin),
+                new("@event", anEvent.Identifier)
             ]);
             command.ExecuteNonQuery();
         }

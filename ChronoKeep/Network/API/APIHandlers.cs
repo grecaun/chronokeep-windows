@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using static Chronokeep.Network.Util.Helpers;
 using Chronokeep.Objects.ChronoKeepAPI;
+using Chronokeep.Helpers;
 
 namespace Chronokeep.Network.API
 {
@@ -838,7 +839,7 @@ namespace Chronokeep.Network.API
 
         public static async Task<int> AddBannedPhone(string phone)
         {
-            string validPhone = Constants.Globals.GetValidPhone(phone);
+            string validPhone = Constants.GlobalVars.GetValidPhone(phone);
             if (validPhone == null || validPhone.Length == 0)
             {
                 throw new APIException("Invalid phone number.");
@@ -884,7 +885,7 @@ namespace Chronokeep.Network.API
 
         public static async void UnblockBannedPhone(string phone)
         {
-            string validPhone = Constants.Globals.GetValidPhone(phone);
+            string validPhone = Constants.GlobalVars.GetValidPhone(phone);
             if (validPhone == null || validPhone.Length == 0)
             {
                 throw new APIException("Invalid phone number.");

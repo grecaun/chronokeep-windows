@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Constants;
+using Chronokeep.Helpers;
 using Chronokeep.Interfaces;
 using Chronokeep.IO;
 using Chronokeep.IO.HtmlTemplates;
@@ -1578,7 +1579,7 @@ namespace Chronokeep.UI.MainPages
                         distances++;
                     }
                 }
-                Globals.UpdateBannedEmails();
+                GlobalVars.UpdateBannedEmails();
                 HttpClient client = new();
                 MailgunCredentials credentials = MailgunCredentials.GetCredentials(database);
                 if (!credentials.Valid())
@@ -1592,7 +1593,7 @@ namespace Chronokeep.UI.MainPages
                     Participant part = participantDictionary.TryGetValue(result.ParticipantId, out Participant oPart) ? oPart : null;
                     if (part != null && result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN)
                     {
-                        if (part.Email.Length > 0 && !Globals.BannedEmails.Contains(part.Email) && !sentIDs.Contains(result.EventSpecificId))
+                        if (part.Email.Length > 0 && !GlobalVars.BannedEmails.Contains(part.Email) && !sentIDs.Contains(result.EventSpecificId))
                         {
                             MultipartFormDataContent postData = new()
                             {

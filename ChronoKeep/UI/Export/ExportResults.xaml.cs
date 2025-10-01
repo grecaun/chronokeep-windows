@@ -1,4 +1,6 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
+using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.IO;
 using Chronokeep.UI.UIObjects;
@@ -18,30 +20,30 @@ namespace Chronokeep.UI.Export
     /// </summary>
     public partial class ExportResults : FluentWindow
     {
-        IMainWindow window;
-        IDBInterface database;
-        Event theEvent;
+        readonly IMainWindow window;
+        readonly IDBInterface database;
+        readonly Event theEvent;
 
-        bool noOpen = false;
+        readonly bool noOpen = false;
 
-        int maxNumSegments;
-        List<string> commonHeaders = new List<string>
-        {
+        readonly int maxNumSegments;
+        readonly List<string> commonHeaders =
+        [
             "Place", "Age Group Place", "Gender Place",
             "Bib", "Distance", "Status", "First", "Last", "Birthday",
             "Age", "Gender", "Start", "Street", "Apartment",
             "City", "State", "Zip", "Country", "Mobile", "Email", "Parent", "Comments",
             "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone",
             "Anonymous", "Apparel", "Division"
-        };
-        List<string> distanceHeaders = new List<string>
-        {
+        ];
+        readonly List<string> distanceHeaders =
+        [
             "Clock Finish", "Chip Finish"
-        };
-        List<string> timeHeaders = new List<string>
-        {
+        ];
+        readonly List<string> timeHeaders =
+        [
             "Laps Completed", "Ellapsed Time (Clock)", "Ellapsed Time (Chip)"
-        };
+        ];
 
         public bool SetupError()
         {
@@ -109,8 +111,8 @@ namespace Chronokeep.UI.Export
         private void Done_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Export.ExportResults", "Done clicked.");
-            List<string> headersToOutput = new List<string>();
-            Dictionary<string, int> headerIndex = new Dictionary<string, int>();
+            List<string> headersToOutput = [];
+            Dictionary<string, int> headerIndex = [];
             foreach (AHeaderBox headerBox in headersList.Items)
             {
                 if (headerBox.Include.IsChecked == true)
@@ -118,7 +120,7 @@ namespace Chronokeep.UI.Export
                     headersToOutput.Add(headerBox.NameValue);
                 }
             }
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Results.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
@@ -132,16 +134,16 @@ namespace Chronokeep.UI.Export
                 //results.RemoveAll(x => x.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON);
                 results.Sort(TimeResult.CompareBySystemTime);
                 // Key is BIB -- Using BIB here instead of event specific because we want to know about unknown runners.
-                Dictionary<string, List<TimeResult>> resultDictionary = new Dictionary<string, List<TimeResult>>();
-                Dictionary<string, bool> outputDictionary = new Dictionary<string, bool>();
+                Dictionary<string, List<TimeResult>> resultDictionary = [];
+                Dictionary<string, bool> outputDictionary = [];
                 // (Bib, Occurence) - for Time Based Race exporting.
-                Dictionary<(string, int), TimeResult> occurrenceResultDictionary = new Dictionary<(string, int), TimeResult>();
+                Dictionary<(string, int), TimeResult> occurrenceResultDictionary = [];
                 int maxLaps = 0;
                 foreach (TimeResult result in results)
                 {
                     if (!resultDictionary.TryGetValue(result.Bib, out List<TimeResult> value))
                     {
-                        value = new List<TimeResult>();
+                        value = [];
                         resultDictionary[result.Bib] = value;
                     }
                     value.Add(result);
@@ -158,13 +160,13 @@ namespace Chronokeep.UI.Export
                     headerIndex[header] = headersToOutput.IndexOf(header);
                     headers[headerIndex[header]] = header;
                 }
-                List<object[]> data = new();
+                List<object[]> data = [];
                 Dictionary<int, List<Segment>> distanceSegmentDict = new();
                 foreach (Segment seg in database.GetSegments(theEvent.Identifier))
                 {
                     if (!distanceSegmentDict.TryGetValue(seg.DistanceId, out List<Segment> value))
                     {
-                        value = new List<Segment>();
+                        value = [];
                         distanceSegmentDict[seg.DistanceId] = value;
                     }
                     value.Add(seg);
@@ -519,13 +521,13 @@ namespace Chronokeep.UI.Export
                 IDataExporter exporter;
                 string extension = Path.GetExtension(saveFileDialog.FileName);
                 Log.D("UI.Export.ExportResults", string.Format("Extension is '{0}'", extension));
-                if (extension.IndexOf("xls") != -1)
+                if (extension.Contains("xls", StringComparison.CurrentCulture))
                 {
                     exporter = new ExcelExporter();
                 }
                 else
                 {
-                    StringBuilder format = new StringBuilder();
+                    StringBuilder format = new();
                     for (int i = 0; i < headers.Length; i++)
                     {
                         format.Append("\"{");
@@ -567,7 +569,7 @@ namespace Chronokeep.UI.Export
             {
                 NameValue = name;
 #pragma warning disable CA1416 // Validate platform compatibility
-                Include = new ToggleSwitch()
+                Include = new()
                 {
                     Content = name,
                     FontSize = 16,

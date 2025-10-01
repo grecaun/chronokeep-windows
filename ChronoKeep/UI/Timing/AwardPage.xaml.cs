@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using Chronokeep.IO.HtmlTemplates.Printables;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
@@ -10,7 +11,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;

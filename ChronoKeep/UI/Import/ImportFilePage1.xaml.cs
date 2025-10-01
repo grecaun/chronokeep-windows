@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Chronokeep.Helpers;
+using System.Collections.Generic;
 using System.Windows.Controls;
 
 namespace Chronokeep
@@ -39,8 +40,7 @@ namespace Chronokeep
             }
             if (!first && !last)
             {
-                output = new List<string>();
-                output.Add("First and/or Last Name");
+                output = ["First and/or Last Name"];
             }
             return output;
         }
@@ -50,7 +50,7 @@ namespace Chronokeep
             Log.D("UI.ImportFilePage1", "Checking for repeat headers in user selection.");
             int[] check = new int[ImportFileWindow.human_fields.Length];
             bool repeat = false;
-            List<string> output = new List<string>();
+            List<string> output = [];
             foreach (ListBoxItem item in headerListBox.Items)
             {
                 int val = ((HeaderListBoxItem)item).HeaderBox.SelectedIndex;

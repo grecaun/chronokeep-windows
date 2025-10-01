@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -14,11 +15,11 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class TimingRawReadsPage : ISubPage
     {
-        IDBInterface database;
-        ITimingPage parent;
+        readonly IDBInterface database;
+        readonly ITimingPage parent;
         Event theEvent;
 
-        List<ChipRead> chipReads = new List<ChipRead>();
+        readonly List<ChipRead> chipReads = [];
 
         public TimingRawReadsPage(ITimingPage parent, IDBInterface database)
         {
@@ -45,7 +46,7 @@ namespace Chronokeep.UI.Timing
         private void IgnoreButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.TimingRawReadsPage", "Ignore Button clicked.");
-            List<ChipRead> newChipReads = new List<ChipRead>();
+            List<ChipRead> newChipReads = [];
             foreach (ChipRead read in updateListView.SelectedItems)
             {
                 // Check what the previous status was. If it was FORCEIGNORE, then we can set to NONE
@@ -103,12 +104,12 @@ namespace Chronokeep.UI.Timing
         private void Shift_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.TimingRawReadsPage", "Shift button clicked.");
-            List<ChipRead> localReads = new List<ChipRead>();
+            List<ChipRead> localReads = [];
             foreach (ChipRead read in updateListView.SelectedItems)
             {
                 localReads.Add(read);
             }
-            EditRawReadsWindow editRawReadsWindow = new EditRawReadsWindow(parent, database, localReads);
+            EditRawReadsWindow editRawReadsWindow = new(parent, database, localReads);
             editRawReadsWindow.ShowDialog();
         }
 
@@ -127,7 +128,7 @@ namespace Chronokeep.UI.Timing
 
         internal void PrivateUpdateView()
         {
-            List<ChipRead> reads = new List<ChipRead>();
+            List<ChipRead> reads = [];
             SortType sortType = parent.GetSortType();
             PeopleType peopleType = parent.GetPeopleType();
             string location = parent.GetLocation();
@@ -156,7 +157,7 @@ namespace Chronokeep.UI.Timing
             if (theEvent == null){
                 return;
             }
-            List<ChipRead> reads = new List<ChipRead>();
+            List<ChipRead> reads = [];
             SortType sortType = parent.GetSortType();
             PeopleType peopleType = parent.GetPeopleType();
             reads.AddRange(database.GetChipReadsSafemode(theEvent.Identifier));
@@ -300,7 +301,7 @@ namespace Chronokeep.UI.Timing
                 "No",
                 () =>
                 {
-                    List<ChipRead> readsToDelete = new List<ChipRead>();
+                    List<ChipRead> readsToDelete = [];
                     foreach (ChipRead read in updateListView.SelectedItems)
                     {
                         readsToDelete.Add(read);
@@ -322,7 +323,7 @@ namespace Chronokeep.UI.Timing
         private void ChangeDNS_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.TimingRawReadsPage", "ChangeDNS Button clicked.");
-            List<ChipRead> newChipReads = new List<ChipRead>();
+            List<ChipRead> newChipReads = [];
             foreach (ChipRead read in updateListView.SelectedItems)
             {
                 // Check what the previous status was. If it was CHIPREAD_STATUS_DNS we change it to NONE
@@ -353,7 +354,7 @@ namespace Chronokeep.UI.Timing
         private void ChangeDNF_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.TimingRawReadsPage", "ChangeDNF Button clicked.");
-            List<ChipRead> newChipReads = new List<ChipRead>();
+            List<ChipRead> newChipReads = [];
             foreach (ChipRead read in updateListView.SelectedItems)
             {
                 // Check what the previous status was. If it was CHIPREAD_STATUS_DNF we change it to NONE

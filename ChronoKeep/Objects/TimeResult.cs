@@ -1,4 +1,5 @@
-﻿using Chronokeep.Timing;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Timing;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -808,12 +809,12 @@ namespace Chronokeep.Objects
         public bool IsNotMatch(string value)
         {
             return !Bib.Equals(value.Trim(), StringComparison.OrdinalIgnoreCase) &&
-                ParticipantName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
+                !ParticipantName.Contains(value, StringComparison.OrdinalIgnoreCase);
         }
 
         public bool SMSCanBeSent(TimingDictionary dictionary)
         {
-            if (Constants.Globals.TwilioCredentials.AccountSID.Length < 1 || Constants.Globals.TwilioCredentials.AuthToken.Length < 1)
+            if (Constants.GlobalVars.TwilioCredentials.AccountSID.Length < 1 || Constants.GlobalVars.TwilioCredentials.AuthToken.Length < 1)
             {
                 return false;
             }
@@ -821,13 +822,13 @@ namespace Chronokeep.Objects
             {
                 return false;
             }
-            string validPhone = Constants.Globals.GetValidPhone(part.Mobile);
+            string validPhone = Constants.GlobalVars.GetValidPhone(part.Mobile);
             if (validPhone.Length == 0)
             {
-                validPhone = Constants.Globals.GetValidPhone(part.Phone);
+                validPhone = Constants.GlobalVars.GetValidPhone(part.Phone);
             }
             // Invalid length. +15555551234 is a valid phone
-            if (validPhone.Length != 12 || Constants.Globals.TwilioCredentials.PhoneNumber.Length != 12)
+            if (validPhone.Length != 12 || Constants.GlobalVars.TwilioCredentials.PhoneNumber.Length != 12)
             {
                 return false;
             }
@@ -836,18 +837,18 @@ namespace Chronokeep.Objects
 
         public static SMSState SendSMSAlert(string phone, string sms)
         {
-            if (Constants.Globals.TwilioCredentials.AccountSID.Length < 1 || Constants.Globals.TwilioCredentials.AuthToken.Length < 1)
+            if (Constants.GlobalVars.TwilioCredentials.AccountSID.Length < 1 || Constants.GlobalVars.TwilioCredentials.AuthToken.Length < 1)
             {
                 return SMSState.Invalid;
             }
             // Invalid length. +15555551234 is a valid phone
-            if (phone.Length != 12 || Constants.Globals.TwilioCredentials.PhoneNumber.Length != 12)
+            if (phone.Length != 12 || Constants.GlobalVars.TwilioCredentials.PhoneNumber.Length != 12)
             {
                 return SMSState.Invalid;
             }
             // Verify phone number isn't in our list of banned phone numbers (i.e. they've told us to not send texts)
             // return true if it is in the banned list, otherwise try to send it, and return true if we were able to send it
-            if (Constants.Globals.BannedPhones.Contains(phone))
+            if (Constants.GlobalVars.BannedPhones.Contains(phone))
             {
                 Log.D("Objects.TimeResult", "Phone number is banned.");
                 return SMSState.Invalid;
@@ -858,7 +859,7 @@ namespace Chronokeep.Objects
                 var messageOptions = new CreateMessageOptions(
                     new Twilio.Types.PhoneNumber(phone)
                     );
-                messageOptions.From = new Twilio.Types.PhoneNumber(Constants.Globals.TwilioCredentials.PhoneNumber);
+                messageOptions.From = new Twilio.Types.PhoneNumber(Constants.GlobalVars.TwilioCredentials.PhoneNumber);
                 messageOptions.Body = sms;
                 var message = MessageResource.Create(messageOptions);
                 if (message.ErrorMessage != null)

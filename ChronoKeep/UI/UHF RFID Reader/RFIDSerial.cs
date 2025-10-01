@@ -1,24 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Ports;
 using System.Threading;
 
 namespace Chronokeep
 {
-    class RFIDSerial
+    class RFIDSerial(string ComPort, int BaudRate)
     {
-        private string ComPort = "N/A";
-        private int BaudRate = 0;
+        private string ComPort = ComPort;
+        private int BaudRate = BaudRate;
         private SerialPort Port;
-
-        List<Info> ChipReads = new List<Info>();
-
-        public RFIDSerial(string ComPort, int BaudRate)
-        {
-            this.ComPort = ComPort;
-            this.BaudRate = BaudRate;
-        }
 
         public Error DeviceInit(string ComPort, int BaudRate)
         {
@@ -35,7 +26,7 @@ namespace Chronokeep
             }
             try
             {
-                Port = new SerialPort(ComPort, BaudRate)
+                Port = new(ComPort, BaudRate)
                 {
                     ReadTimeout = 500,
                     WriteTimeout = 500
@@ -54,7 +45,7 @@ namespace Chronokeep
             try
             {
                 Port.Open();
-                byte[] OutMsg = new byte[5] { 0xA0, 0x03, 0x50, 0x00, 0x0D };
+                byte[] OutMsg = [0xA0, 0x03, 0x50, 0x00, 0x0D];
                 byte[] InMsg = new byte[56];
                 OutMsg[4] = CheckSum(OutMsg, 4);
                 Port.BaseStream.Write(OutMsg, 0, 5);
@@ -82,9 +73,7 @@ namespace Chronokeep
             Port.Close();
         }
 
-        public void DeviceDeinit()
-        {
-        }
+        public static void DeviceDeinit() { }
 
         public Error Connect()
         {
@@ -138,130 +127,21 @@ namespace Chronokeep
                 }
                 else if (pos > 255)
                 {
-                    return new Info
+                    return new()
                     {
                         ErrorCode = Error.NODATA
                     };
                 }
-                return new Info(InMsg);
+                return new(InMsg);
             }
             catch
             {
-                return new Info
+                return new()
                 {
                     ErrorCode = Error.CONERROR
                 };
             }
         }
-
-        /*/
-        public List<RFIDInfo> ReadMultiple()
-        {
-            ChipReads.Clear();
-            byte[] OutMsg = { 0xA0, 0x03, 0x82, 0x00, 0xDB };
-            try
-            {
-                Console.WriteLine("About to send data to reader.");
-                Port.BaseStream.Write(OutMsg, 0, 5);
-                int tries = 5;
-                for (int i=0; i < tries; i++)
-                {
-                    int BytesToRead = Port.BytesToRead;
-                    if (BytesToRead > 0)
-                    {
-                        int recvd = Port.BaseStream.Read(buffer, bufferSz, 256);
-                        Console.WriteLine("Received data from reader. Length is " + recvd + ".");
-                        bufferSz += recvd;
-                        break;
-                    }
-                }
-            } catch (IOException exc)
-            {
-                Console.WriteLine(exc.StackTrace);
-            }
-            while (bufferSz > 0)
-            {
-                if (buffer[0] == 0xE4 || buffer[0] == 0xE0)
-                {
-                    int len = buffer[1] + 2;
-                    if (len <= bufferSz)
-                    {
-                        ProcessMessage(buffer, len);
-                        for (int i = 0; i < bufferSz - len; i++)
-                        {
-                            buffer[i] = buffer[i + len];
-                        }
-                        bufferSz -= len;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                else
-                {
-                    int count = 0;
-                    while (bufferSz > count && buffer[count] != 0xE4 && buffer[count] != 0xE0)
-                    {
-                        count++;
-                    }
-                    if (bufferSz <= count)
-                    {
-                        bufferSz = 0;
-                    }
-                    else
-                    {
-                        for (int i=0; i < bufferSz - count; i++)
-                        {
-                            buffer[i] = buffer[i + count];
-                        }
-                        bufferSz -= count;
-                    }
-                }
-            }
-            return ChipReads;
-        }
-
-        public void ProcessMessage(byte[] data, int length)
-        {
-            if (data[0] != 0xE4 && data[0] != 0xE0)
-            {
-                Console.Write("Hmm, something went wrong and we're processing a message we shouldn't. ");
-            }
-            if (data[1] + 2 != length)
-            {
-                Console.Write("Hmm, the length doesn't match... ");
-            }
-            if (data[length-1] != CheckSum(data, length-1))
-            {
-                Console.WriteLine("Hmm, the checksum is wrong. Value is " + data[length-1] + " and it should be " + CheckSum(data, length-1));
-            }
-            switch (data[0])
-            {
-                case 0xE4:
-                    Console.WriteLine("Data is " + BitConverter.ToString(data, 0, data[1]));
-                    break;
-                case 0xE0:
-                    switch (data[2])
-                    {
-                        case 0x82:
-                            Console.WriteLine(string.Format("Device Number {0} Antenna Number {1} Hex Chip {2:X2} {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} {13:X2} ", data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15], data[16]));
-                            ChipReads.Add(new RFIDInfo(data));
-                            break;
-                        case 0x80:
-                            Console.WriteLine("Data is " + BitConverter.ToString(data, 0, data[1]));
-                            break;
-                        default:
-                            Console.WriteLine("0xE0 with command of " + data[2]);
-                            break;
-                    }
-                    break;
-                default:
-                    Console.WriteLine("Processing data with command code of " + data[0]);
-                    break;
-            }
-        }
-        //*/
 
         public class Info
         {
@@ -286,7 +166,7 @@ namespace Chronokeep
 
             public Info()
             {
-                Data = new byte[1] { 0x00 };
+                Data = [0x00];
             }
 
             public Info(byte[] inData)
@@ -297,7 +177,7 @@ namespace Chronokeep
                 {
                     Data[i] = inData[i];
                 }
-                if (Data[Data.Length - 1] != CheckSum(Data, Data.Length-1))
+                if (Data[^1] != CheckSum(Data, Data.Length - 1))
                 {
                     ErrorCode = Error.BADDATA;
                 }

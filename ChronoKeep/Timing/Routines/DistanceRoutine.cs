@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
@@ -267,7 +268,7 @@ namespace Chronokeep.Timing.Routines
                                     secondsDiff--;
                                     millisecDiff = 1000 + millisecDiff;
                                 }
-                                startResult = new TimeResult(theEvent.Identifier,
+                                startResult = new(theEvent.Identifier,
                                     read.ReadId,
                                     part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
                                     read.LocationID,
@@ -576,7 +577,7 @@ namespace Chronokeep.Timing.Routines
                                     secondsDiff--;
                                     millisecDiff += 1000;
                                 }
-                                startResult = new TimeResult(theEvent.Identifier,
+                                startResult = new(theEvent.Identifier,
                                     read.ReadId,
                                     Constants.Timing.TIMERESULT_DUMMYPERSON,
                                     read.LocationID,
@@ -914,12 +915,12 @@ namespace Chronokeep.Timing.Routines
         // Process timing placements for a distance based event.
         public static List<TimeResult> ProcessPlacements(Event theEvent, IDBInterface database, TimingDictionary dictionary)
         {
-            List<TimeResult> output = new List<TimeResult>();
+            List<TimeResult> output = [];
             // Create a dictionary so we can check if placements have changed. (place, location, occurrence, distance)
-            Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = new Dictionary<(int, int, int, string), TimeResult>();
+            Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = [];
             // Get a list of all segments
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
-            Dictionary<int, List<TimeResult>> segmentDictionary = new Dictionary<int, List<TimeResult>>();
+            Dictionary<int, List<TimeResult>> segmentDictionary = [];
             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
             {
                 // We probably have unprocessed results in there, so only worry about results with a place set.

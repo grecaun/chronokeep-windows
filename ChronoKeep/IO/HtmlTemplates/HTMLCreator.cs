@@ -1,4 +1,5 @@
-﻿using Chronokeep.Objects;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Objects;
 using System.Collections.Generic;
 
 namespace Chronokeep.IO.HtmlTemplates

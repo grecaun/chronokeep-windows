@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using Chronokeep.IO.HtmlTemplates.Printables;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;

@@ -1,4 +1,6 @@
-﻿namespace Chronokeep
+﻿using Chronokeep.IO;
+
+namespace Chronokeep
 {
     public interface IDataImporter
     {

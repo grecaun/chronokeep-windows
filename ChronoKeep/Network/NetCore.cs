@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chronokeep.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -19,7 +20,7 @@ namespace Chronokeep.Network
         public static int GetAvailableTCPPort(int start, int end)
         {
             Log.D("Network.NetCore", "Getting TCP Port.");
-            List<int> portArray = new List<int>();
+            List<int> portArray = [];
             IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
             TcpConnectionInformation[] connections = properties.GetActiveTcpConnections();
             portArray.AddRange(from n in connections

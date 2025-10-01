@@ -15,13 +15,13 @@ namespace Chronokeep.Database.SQLite
                 command.CommandText = "INSERT INTO remote_readers (event_id, api_id, location_id, reader_name) VALUES (@event, @api, @location, @name);";
                 foreach (RemoteReader reader in remoteReaders)
                 {
-                    command.Parameters.AddRange(new SQLiteParameter[]
-                    {
-                    new SQLiteParameter("@event", eventId),
-                    new SQLiteParameter("@api", reader.APIIDentifier),
-                    new SQLiteParameter("@location", reader.LocationID),
-                    new SQLiteParameter("@name", reader.Name)
-                    });
+                    command.Parameters.AddRange(
+                    [
+                    new("@event", eventId),
+                    new("@api", reader.APIIDentifier),
+                    new("@location", reader.LocationID),
+                    new("@name", reader.Name)
+                    ]);
                     command.ExecuteNonQuery();
                 }
                 transaction.Commit();
@@ -44,12 +44,12 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM remote_readers WHERE event_id=@event AND api_id=@api AND reader_name=@name;";
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                    new SQLiteParameter("@event", eventId),
-                    new SQLiteParameter("@api", reader.APIIDentifier),
-                    new SQLiteParameter("@name", reader.Name)
-            });
+            command.Parameters.AddRange(
+            [
+                    new("@event", eventId),
+                    new("@api", reader.APIIDentifier),
+                    new("@name", reader.Name)
+            ]);
             command.ExecuteNonQuery();
         }
 
@@ -57,9 +57,9 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM remote_readers WHERE event_id=@event;";
-            command.Parameters.Add(new SQLiteParameter("@event", eventId));
+            command.Parameters.Add(new("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            List<RemoteReader> output = new List<RemoteReader>();
+            List<RemoteReader> output = [];
             while (reader.Read())
             {
                 output.Add(new RemoteReader(

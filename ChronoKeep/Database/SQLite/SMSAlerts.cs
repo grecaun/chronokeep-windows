@@ -9,9 +9,9 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM sms_alert WHERE event_id=@event;";
-            command.Parameters.Add(new SQLiteParameter("@event", eventId));
+            command.Parameters.Add(new("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            List<(int, int)> output = new List<(int, int)>();
+            List<(int, int)> output = [];
             int id;
             int seg;
             while (reader.Read())
@@ -29,12 +29,12 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO sms_alert (event_id, eventspecific_id, segment_id) VALUES (@event, @eventspec, @segment);";
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                new SQLiteParameter("@event", eventId),
-                new SQLiteParameter("@eventspec", eventspecific_id),
-                new SQLiteParameter("@segment", segment_id)
-            });
+            command.Parameters.AddRange(
+            [
+                new("@event", eventId),
+                new("@eventspec", eventspecific_id),
+                new("@segment", segment_id)
+            ]);
             command.ExecuteNonQuery();
         }
     }

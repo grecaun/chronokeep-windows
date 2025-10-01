@@ -10,7 +10,7 @@ namespace Chronokeep.Database.SQLite
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM sms_ban_list;";
             SQLiteDataReader reader = command.ExecuteReader();
-            List<string> output = new List<string>();
+            List<string> output = [];
             while (reader.Read())
             {
                 output.Add(reader["banned_phone"].ToString());
@@ -23,7 +23,7 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO sms_ban_list (banned_phone) VALUES (@phone);";
-            command.Parameters.Add(new SQLiteParameter("@phone", phone));
+            command.Parameters.Add(new("@phone", phone));
             command.ExecuteNonQuery();
         }
 
@@ -35,7 +35,7 @@ namespace Chronokeep.Database.SQLite
                 command.CommandText = "INSERT INTO sms_ban_list (banned_phone) VALUES (@phone);";
                 foreach (string phone in phones)
                 {
-                    command.Parameters.Add(new SQLiteParameter("@phone", phone));
+                    command.Parameters.Add(new("@phone", phone));
                     command.ExecuteNonQuery();
                 }
                 transaction.Commit();
@@ -46,7 +46,7 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM sms_ban_list WHERE banned_phone=@phone;";
-            command.Parameters.Add(new SQLiteParameter("@phone", phone));
+            command.Parameters.Add(new("@phone", phone));
             command.ExecuteNonQuery();
         }
 
@@ -58,7 +58,7 @@ namespace Chronokeep.Database.SQLite
                 command.CommandText = "DELETE FROM sms_ban_list WHERE banned_phone=@phone;";
                 foreach (string phone in phones)
                 {
-                    command.Parameters.Add(new SQLiteParameter("@phone", phone));
+                    command.Parameters.Add(new("@phone", phone));
                     command.ExecuteNonQuery();
                 }
                 transaction.Commit();
@@ -77,7 +77,7 @@ namespace Chronokeep.Database.SQLite
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM email_ban_list;";
             SQLiteDataReader reader = command.ExecuteReader();
-            List<string> output = new List<string>();
+            List<string> output = [];
             while (reader.Read())
             {
                 output.Add(reader["banned_email"].ToString());
@@ -90,7 +90,7 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO email_ban_list (banned_email) VALUES (@email);";
-            command.Parameters.Add(new SQLiteParameter("@email", email));
+            command.Parameters.Add(new("@email", email));
             command.ExecuteNonQuery();
         }
 
@@ -102,7 +102,7 @@ namespace Chronokeep.Database.SQLite
                 command.CommandText = "INSERT INTO email_ban_list (banned_email) VALUES (@email);";
                 foreach (string email in emails)
                 {
-                    command.Parameters.Add(new SQLiteParameter("@email", email));
+                    command.Parameters.Add(new("@email", email));
                     command.ExecuteNonQuery();
                 }
                 transaction.Commit();
@@ -113,7 +113,7 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM email_ban_list WHERE banned_email=@email;";
-            command.Parameters.Add(new SQLiteParameter("@email", email));
+            command.Parameters.Add(new("@email", email));
             command.ExecuteNonQuery();
         }
 
@@ -125,7 +125,7 @@ namespace Chronokeep.Database.SQLite
                 command.CommandText = "DELETE FROM email_ban_list WHERE banned_email=@email;";
                 foreach (string email in emails)
                 {
-                    command.Parameters.Add(new SQLiteParameter("@email", email));
+                    command.Parameters.Add(new("@email", email));
                     command.ExecuteNonQuery();
                 }
                 transaction.Commit();

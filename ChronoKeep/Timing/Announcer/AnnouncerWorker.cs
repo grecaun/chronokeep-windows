@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
@@ -29,10 +30,7 @@ namespace Chronokeep.Timing.Announcer
 
         public static AnnouncerWorker NewAnnouncer(IMainWindow window, IDBInterface database)
         {
-            if (announcer == null)
-            {
-                announcer = new AnnouncerWorker(window, database);
-            }
+            announcer ??= new(window, database);
             QuittingTime = false;
             return announcer;
         }
@@ -117,7 +115,7 @@ namespace Chronokeep.Timing.Announcer
                     {
                         newParticipants = true;
                         bibSeen.Add(read.Bib, timeRightNow);
-                        participants.Add(new AnnouncerParticipant(part, read.Seconds));
+                        participants.Add(new(part, read.Seconds));
                         // Mark this chipread as USED
                         read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED;
                     }
@@ -136,7 +134,7 @@ namespace Chronokeep.Timing.Announcer
         {
             // Get the event we're looking at and fill the participant bib dictionary.
             Event theEvent = database.GetCurrentEvent();
-            Dictionary<string, Participant> participantBibDictionary = new Dictionary<string, Participant>();
+            Dictionary<string, Participant> participantBibDictionary = [];
             foreach (Participant part in database.GetParticipants(theEvent.Identifier))
             {
                 if (!participantBibDictionary.TryAdd(part.Bib, part))

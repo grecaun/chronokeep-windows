@@ -163,7 +163,7 @@ namespace Chronokeep.UI
             }
 
             // Setup global twilio account credentials.
-            Constants.Globals.SetTwilioCredentials(database);
+            Constants.GlobalVars.SetTwilioCredentials(database);
         }
 
         public void UpdateTheme(Wpf.Ui.Appearance.ApplicationTheme theme, bool system)

@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Database.SQLite;
+using Chronokeep.Helpers;
 using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using System;
@@ -13,13 +14,13 @@ namespace Chronokeep.Timing.Routines
             Log.D("Timing.TimingWorker", "Processing chip reads for a time based event.");
             // Check if there's anything to process.
             // Get start TimeREsults
-            Dictionary<string, TimeResult> startTimes = new Dictionary<string, TimeResult>();
+            Dictionary<string, TimeResult> startTimes = [];
             foreach (TimeResult result in database.GetStartTimes(theEvent.Identifier))
             {
                 startTimes[result.Identifier] = result;
             }
             // Dictionary of timeresults for a specific identifier
-            Dictionary<string, List<TimeResult>> finishTimes = new Dictionary<string , List<TimeResult>>();
+            Dictionary<string, List<TimeResult>> finishTimes = [];
             foreach (TimeResult result in database.GetFinishTimes(theEvent.Identifier))
             {
                 if (!finishTimes.TryGetValue(result.Identifier, out List<TimeResult> finResults))
@@ -235,7 +236,7 @@ namespace Chronokeep.Timing.Routines
                                 secondsDiff--;
                                 millisecDiff += 1000;
                             }
-                            startResult = new TimeResult(theEvent.Identifier,
+                            startResult = new(theEvent.Identifier,
                                 read.ReadId,
                                 part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
                                 read.LocationID,
@@ -335,7 +336,7 @@ namespace Chronokeep.Timing.Routines
                                     chipSecDiff--;
                                     chipMillisecDiff += 1000;
                                 }
-                                newResults.Add(new TimeResult(theEvent.Identifier,
+                                newResults.Add(new(theEvent.Identifier,
                                     read.ReadId,
                                     part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
                                     read.LocationID,
@@ -411,7 +412,7 @@ namespace Chronokeep.Timing.Routines
                                 secondsDiff--;
                                 millisecDiff += 1000;
                             }
-                            startResult = new TimeResult(theEvent.Identifier,
+                            startResult = new(theEvent.Identifier,
                                 read.ReadId,
                                 Constants.Timing.TIMERESULT_DUMMYPERSON,
                                 read.LocationID,
@@ -503,7 +504,7 @@ namespace Chronokeep.Timing.Routines
                                     chipSecDiff--;
                                     chipMillisecDiff += 1000;
                                 }
-                                newResults.Add(new TimeResult(theEvent.Identifier,
+                                newResults.Add(new(theEvent.Identifier,
                                     read.ReadId,
                                     Constants.Timing.TIMERESULT_DUMMYPERSON,
                                     read.LocationID,
@@ -627,7 +628,7 @@ namespace Chronokeep.Timing.Routines
         // Process lap times.
         public static void ProcessLapTimes(Event theEvent, IDBInterface database)
         {
-            Dictionary<(string, int), TimeResult> RaceResults = new Dictionary<(string, int), TimeResult>();
+            Dictionary<(string, int), TimeResult> RaceResults = [];
             foreach (TimeResult startTime in database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_START))
             {
                 RaceResults[(startTime.Identifier, 0)] = startTime;
@@ -668,10 +669,10 @@ namespace Chronokeep.Timing.Routines
         {
             List<TimeResult> output = [];
             // Create a dictionary so we can check if placements have changed. (place, location, occurrence, distance)
-            Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = new Dictionary<(int, int, int, string), TimeResult>();
+            Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = [];
             // Get a list of all segments
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
-            Dictionary<int, List<TimeResult>> segmentDictionary = new Dictionary<int, List<TimeResult>>();
+            Dictionary<int, List<TimeResult>> segmentDictionary = [];
             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
             {
                 // We probably have unprocessed results in there, so only worry about results with a place set.
@@ -724,8 +725,8 @@ namespace Chronokeep.Timing.Routines
         private static List<TimeResult> ProcessSegmentPlacements(Event theEvent,
             List<TimeResult> segmentResults, TimingDictionary dictionary)
         {
-            Dictionary<int, List<TimeResult>> personResults = new Dictionary<int, List<TimeResult>>();
-            Dictionary<int, TimeResult> personLastResult = new Dictionary<int, TimeResult>();
+            Dictionary<int, List<TimeResult>> personResults = [];
+            Dictionary<int, TimeResult> personLastResult = [];
             foreach (TimeResult result in segmentResults)
             {
                 // If we don't have a Top Result for the person, or the result we have

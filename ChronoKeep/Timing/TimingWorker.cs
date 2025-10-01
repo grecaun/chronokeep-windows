@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Constants;
+using Chronokeep.Helpers;
 using Chronokeep.Interfaces;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
@@ -482,7 +483,7 @@ namespace Chronokeep.Timing
                             foreach (APISmsSubscription sub in database.GetSmsSubscriptions(theEvent.Identifier))
                             {
                                 string bib = sub.Bib;
-                                string phone = Globals.GetValidPhone(sub.Phone);
+                                string phone = GlobalVars.GetValidPhone(sub.Phone);
                                 if (bib.Length < 1 && sub.First.Length + sub.Last.Length > 0)
                                 {
                                     string name = sub.First.ToLower() + sub.Last.ToLower();
@@ -548,7 +549,7 @@ namespace Chronokeep.Timing
                             if (toSendTo.Count > 0)
                             {
                                 // Update banned phones list.
-                                Constants.Globals.UpdateBannedPhones();
+                                Constants.GlobalVars.UpdateBannedPhones();
                                 foreach (TimeResult result in toSendTo.Keys)
                                 {
                                     // Only send alert if participant wants it sent
@@ -588,7 +589,7 @@ namespace Chronokeep.Timing
                                                 // add to banned phones list
                                                 if (status == SMSState.AddToBanned)
                                                 {
-                                                    Globals.AddBannedPhone(phone);
+                                                    GlobalVars.AddBannedPhone(phone);
                                                 }
                                                 else if (status == SMSState.Success)
                                                 {

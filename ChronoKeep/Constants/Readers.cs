@@ -21,7 +21,7 @@ namespace Chronokeep.Constants
 
         public const int TIMEOUT = 3000;
 
-        public static readonly Dictionary<string, string> SYSTEM_NAMES = new Dictionary<string, string>()
+        public static readonly Dictionary<string, string> SYSTEM_NAMES = new()
         {
             { SYSTEM_RFID, "RFID Timing Systems" },
             { SYSTEM_IPICO, "Ipico Elite Reader" },

@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using Chronokeep.Interfaces.Timing;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepPortal;
@@ -20,16 +21,14 @@ using System.Windows.Threading;
 
 namespace Chronokeep.Timing.Interfaces
 {
-    internal class ChronokeepInterface : ITimingSystemInterface
+    internal partial class ChronokeepInterface : ITimingSystemInterface
     {
-        private const int PARTICIPANTS_COUNT = 50;
-
-        IDBInterface database;
+        readonly IDBInterface database;
         readonly int locationId;
-        Event theEvent;
-        StringBuilder buffer = new StringBuilder();
+        readonly Event theEvent;
+        readonly StringBuilder buffer = new();
         Socket sock;
-        IMainWindow window = null;
+        readonly IMainWindow window = null;
 
         private bool wasShutdown = false;
 
@@ -37,8 +36,10 @@ namespace Chronokeep.Timing.Interfaces
         private string reader_ip = "";
         private string reader_name = "";
 
-        private static readonly Regex zeroconf = new Regex(@"^\[(?'PORTAL_NAME'[^|]*)\|(?'PORTAL_ID'[^|]*)\|(?'PORTAL_PORT'\d{1,5})\]");
-        private static readonly Regex msg = new Regex(@"^[^\n]*\n");
+        [GeneratedRegex(@"^\[(?'PORTAL_NAME'[^|]*)\|(?'PORTAL_ID'[^|]*)\|(?'PORTAL_PORT'\d{1,5})\]")]
+        private static partial Regex Zeroconf();
+        [GeneratedRegex(@"^[^\n]*\n")]
+        private static partial Regex Msg();
 
         public ChronokeepInterface(IDBInterface database, int locationId, IMainWindow window)
         {
@@ -52,19 +53,19 @@ namespace Chronokeep.Timing.Interfaces
         {
             reader_ip = IP_Address;
             List<Socket> output = [];
-            sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            sock = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
                 Log.D("Timing.Interfaces.ChronokeepInterface", "Attempting to get port from server.");
-                using (UdpClient client = new UdpClient(AddressFamily.InterNetwork))
+                using (UdpClient client = new(AddressFamily.InterNetwork))
                 {
                     byte[] msg = Encoding.Default.GetBytes(Constants.Network.CHRONOKEEP_ZCONF_CONNECT_MSG);
-                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(IP_Address), Constants.Network.CHRONOKEEP_ZCONF_PORT);
+                    IPEndPoint endPoint = new(IPAddress.Parse(IP_Address), Constants.Network.CHRONOKEEP_ZCONF_PORT);
                     client.Send(msg, msg.Length, endPoint);
                     client.Client.ReceiveTimeout = Constants.Readers.TIMEOUT;
                     byte[] data = client.Receive(ref endPoint);
                     string response = Encoding.Default.GetString(data);
-                    Match match = zeroconf.Match(response);
+                    Match match = Zeroconf().Match(response);
                     if (match.Success)
                     {
                         Log.D("Timing.Interfaces.ChronokeepInterface", "Successfully received message from reader. Name is "
@@ -82,7 +83,7 @@ namespace Chronokeep.Timing.Interfaces
                             return null;
                         }
                         sock.Connect(IP_Address, port);
-                        SendMessage(JsonSerializer.Serialize(new ConnectRequest
+                        SendMessage(JsonSerializer.Serialize(new ConnectRequest()
                         {
                             Reads = true,
                         }));
@@ -109,14 +110,14 @@ namespace Chronokeep.Timing.Interfaces
         public void GetTime()
         {
             Log.D("Timing.Interfaces.ChronokeepInterface", "Requesting time.");
-            SendMessage(JsonSerializer.Serialize(new TimeGetRequest { }));
+            SendMessage(JsonSerializer.Serialize(new TimeGetRequest() { }));
         }
 
         public Dictionary<MessageType, List<string>> ParseMessages(string inMessage, Socket sock)
         {
-            Dictionary<MessageType, List<string>> output = new Dictionary<MessageType, List<string>>();
+            Dictionary<MessageType, List<string>> output = [];
             buffer.Append(inMessage);
-            Match m = msg.Match(buffer.ToString());
+            Match m = Msg().Match(buffer.ToString());
             HashSet<string> ignoredChips = [];
             foreach (BibChipAssociation ignore in database.GetBibChips(-1))
             {
@@ -143,7 +144,7 @@ namespace Chronokeep.Timing.Interfaces
                                 ReadersResponse readRes = JsonSerializer.Deserialize<ReadersResponse>(message);
                                 if (settingsWindow != null)
                                 {
-                                    settingsWindow.UpdateView(new PortalSettingsHolder
+                                    settingsWindow.UpdateView(new()
                                         {
                                             Readers = readRes.List,
                                             Changes = { PortalSettingsHolder.ChangeType.READERS }
@@ -202,9 +203,9 @@ namespace Chronokeep.Timing.Interfaces
                                 ReaderAntennasResponse antRes = JsonSerializer.Deserialize<ReaderAntennasResponse>(message);
                                 if (settingsWindow != null)
                                 {
-                                    settingsWindow.UpdateView(new PortalSettingsHolder
+                                    settingsWindow.UpdateView(new()
                                     {
-                                        Antennas = new PortalSettingsHolder.ReaderAntennas()
+                                        Antennas = new()
                                         {
                                             ReaderName = antRes.ReaderName,
                                             Antennas = antRes.Antennas,
@@ -237,7 +238,7 @@ namespace Chronokeep.Timing.Interfaces
                                     output[MessageType.ERROR] = errorList;
                                 }
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error sent to us is of type '" + err.Value.Type + "' and has message '" + err.Value.Message + "'.");
-                                window.ShowNotificationDialog(reader_name, reader_ip, new RemoteNotification
+                                window.ShowNotificationDialog(reader_name, reader_ip, new()
                                 {
                                     Type = err.Value.Type,
                                     When = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -263,7 +264,7 @@ namespace Chronokeep.Timing.Interfaces
                                 SettingsResponse settingsList = JsonSerializer.Deserialize<SettingsResponse>(message);
                                 if (settingsWindow != null)
                                 {
-                                    PortalSettingsHolder updSettings = new PortalSettingsHolder();
+                                    PortalSettingsHolder updSettings = new();
                                     foreach (PortalSetting set in settingsList.List)
                                     {
                                         switch (set.Name)
@@ -347,7 +348,7 @@ namespace Chronokeep.Timing.Interfaces
                                 ApiListResponse apiList = JsonSerializer.Deserialize<ApiListResponse>(message);
                                 if (settingsWindow != null)
                                 {
-                                    settingsWindow.UpdateView(new PortalSettingsHolder
+                                    settingsWindow.UpdateView(new()
                                         {
                                             APIs = apiList.List,
                                             Changes = { PortalSettingsHolder.ChangeType.APIS }
@@ -380,7 +381,7 @@ namespace Chronokeep.Timing.Interfaces
                                 SettingsAllResponse allSettings = JsonSerializer.Deserialize<SettingsAllResponse>(message);
                                 if (settingsWindow != null)
                                 {
-                                    PortalSettingsHolder updSettings = new PortalSettingsHolder
+                                    PortalSettingsHolder updSettings = new()
                                     {
                                         Readers = allSettings.Readers,
                                         APIs = allSettings.APIs,
@@ -580,7 +581,7 @@ namespace Chronokeep.Timing.Interfaces
                             try
                             {
                                 ReadAutoUploadResponse autoUploadResponse = JsonSerializer.Deserialize<ReadAutoUploadResponse>(message);
-                                settingsWindow.UpdateView(new PortalSettingsHolder()
+                                settingsWindow.UpdateView(new()
                                     {
                                         AutoUpload = autoUploadResponse.Status,
                                     }
@@ -699,7 +700,7 @@ namespace Chronokeep.Timing.Interfaces
                 {
                     Log.E("Timing.Interfaces.ChronokeepInterface", "Error deserializing json. " + e.Message);
                 }
-                m = msg.Match(buffer.ToString());
+                m = Msg().Match(buffer.ToString());
             }
             if (chipReads.Count > 0)
             {
@@ -710,7 +711,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void Rewind(DateTime start, DateTime end, int reader = 1)
         {
-            SendMessage(JsonSerializer.Serialize(new ReadsGetRequest
+            SendMessage(JsonSerializer.Serialize(new ReadsGetRequest()
             {
                 StartSeconds = Constants.Timing.UnixDateToEpoch(start.ToUniversalTime()),
                 EndSeconds = Constants.Timing.UnixDateToEpoch(end.ToUniversalTime())
@@ -721,7 +722,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void Rewind(int reader = 1)
         {
-            SendMessage(JsonSerializer.Serialize(new ReadsGetAllRequest { }));
+            SendMessage(JsonSerializer.Serialize(new ReadsGetAllRequest() { }));
         }
 
         public void SetMainSocket(Socket sock) { }
@@ -730,7 +731,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void SetTime(DateTime date)
         {
-            SendMessage(JsonSerializer.Serialize(new TimeSetRequest
+            SendMessage(JsonSerializer.Serialize(new TimeSetRequest()
             {
                 Time = date.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss.fffzzz")
             }));
@@ -781,69 +782,69 @@ namespace Chronokeep.Timing.Interfaces
 
         public void SendSetSettings(PortalSettingsHolder settings)
         {
-            SettingsSetRequest settingsReq = new SettingsSetRequest
+            SettingsSetRequest settingsReq = new()
             {
                 Settings = []
             };
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_PORTAL_NAME,
                 Value = settings.Name
             });
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_READ_WINDOW,
                 Value = settings.ReadWindow.ToString()
             });
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_CHIP_TYPE,
                 Value = settings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? PortalSetting.TYPE_CHIP_DEC
                     : PortalSetting.TYPE_CHIP_HEX
             });
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_VOLUME,
                 Value = settings.Volume.ToString()
             });
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_PLAY_SOUND,
                 Value = settings.PlaySound == true ? "true" : "false"
             });
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_UPLOAD_INTERVAL,
                 Value = settings.UploadInterval.ToString()
             });
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_VOICE,
                 Value = settings.Voice == PortalSettingsHolder.VoiceType.EMILY ? PortalSetting.VOICE_EMILY
                     : settings.Voice == PortalSettingsHolder.VoiceType.MICHAEL ? PortalSetting.VOICE_MICHAEL
                     : PortalSetting.VOICE_CUSTOM
             });
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_NTFY_URL,
                 Value = settings.NtfyURL
             });
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_NTFY_TOPIC,
                 Value = settings.NtfyTopic
             });
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_NTFY_USER,
                 Value = settings.NtfyUser
             });
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_NTFY_PASS,
                 Value = settings.NtfyPass
             });
-            settingsReq.Settings.Add(new PortalSetting
+            settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_ENABLE_NTFY,
                 Value = settings.EnableNTFY == true ? "true" : "false",
@@ -853,7 +854,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void SendSaveApi(PortalAPI api)
         {
-            SendMessage(JsonSerializer.Serialize(new ApiSaveRequest
+            SendMessage(JsonSerializer.Serialize(new ApiSaveRequest()
             {
                 ID = api.Id,
                 Name = api.Nickname,
@@ -865,7 +866,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void SendDeleteApi(PortalAPI api)
         {
-            SendMessage(JsonSerializer.Serialize(new ApiRemoveRequest
+            SendMessage(JsonSerializer.Serialize(new ApiRemoveRequest()
             {
                 ID = api.Id
             }));
@@ -873,7 +874,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void SendSaveReader(PortalReader reader)
         {
-            SendMessage(JsonSerializer.Serialize(new ReaderAddRequest
+            SendMessage(JsonSerializer.Serialize(new ReaderAddRequest()
             {
                 Id = reader.Id,
                 Name = reader.Name,
@@ -886,7 +887,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void SendStartReader(PortalReader reader)
         {
-            SendMessage(JsonSerializer.Serialize(new ReaderStartRequest
+            SendMessage(JsonSerializer.Serialize(new ReaderStartRequest()
             {
                 Id = reader.Id,
             }));
@@ -894,7 +895,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void SendStopReader(PortalReader reader)
         {
-            SendMessage(JsonSerializer.Serialize(new ReaderStopRequest
+            SendMessage(JsonSerializer.Serialize(new ReaderStopRequest()
             {
                 Id = reader.Id,
             }));
@@ -902,7 +903,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void SendRemoveReader(PortalReader reader)
         {
-            SendMessage(JsonSerializer.Serialize(new ReaderRemoveRequest
+            SendMessage(JsonSerializer.Serialize(new ReaderRemoveRequest()
             {
                 Id = reader.Id,
             }));
@@ -928,7 +929,7 @@ namespace Chronokeep.Timing.Interfaces
                     q_string = Request.AUTO_UPLOAD_QUERY_STATUS;
                     break;
             }
-            SendMessage(JsonSerializer.Serialize(new ApiRemoteAutoUploadRequest
+            SendMessage(JsonSerializer.Serialize(new ApiRemoteAutoUploadRequest()
             {
                 Query = q_string
             }));
@@ -941,7 +942,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void Disconnect()
         {
-            SendMessage(JsonSerializer.Serialize(new DisconnectRequest { }));
+            SendMessage(JsonSerializer.Serialize(new DisconnectRequest() { }));
         }
 
         private void SendMessage(string msg)
@@ -962,7 +963,7 @@ namespace Chronokeep.Timing.Interfaces
                 DialogBox.Show("Settings window already open.");
                 return;
             }
-            settingsWindow = new ChronokeepSettings(this, database);
+            settingsWindow = new(this, database);
             window.AddWindow(settingsWindow);
             settingsWindow.Show();
         }

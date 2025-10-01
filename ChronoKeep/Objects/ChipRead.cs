@@ -503,9 +503,9 @@ namespace Chronokeep
 
         public bool IsNotMatch(string value)
         {
-            return this.Bib.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
-                && this.Name.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
-                && this.ChipNumber.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
+            return !Bib.ToString().Contains(value, StringComparison.OrdinalIgnoreCase)
+                && !Name.Contains(value, StringComparison.OrdinalIgnoreCase)
+                && !ChipNumber.ToString().Contains(value, StringComparison.OrdinalIgnoreCase);
         }
 
         public bool IsIgnored()

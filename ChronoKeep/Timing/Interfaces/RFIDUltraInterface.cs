@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using Chronokeep.Interfaces.Timing;
 using Chronokeep.Objects;
 using Chronokeep.Objects.RFID;
@@ -14,26 +15,34 @@ using System.Text.RegularExpressions;
 
 namespace Chronokeep.Timing.Interfaces
 {
-    public class RFIDUltraInterface(IDBInterface database, int locationId, IMainWindow window) : ITimingSystemInterface
+    public partial class RFIDUltraInterface(IDBInterface database, int locationId, IMainWindow window) : ITimingSystemInterface
     {
         readonly Event theEvent = database.GetCurrentEvent();
         readonly StringBuilder buffer = new();
         private RFIDSettings settingsWindow = null;
         Socket sock;
 
-        private static readonly Regex voltage = new Regex(@"^V=.*");
-        private static readonly Regex connected = new Regex(@"^Connected,.*");
-        private static readonly Regex chipread = new Regex(@"^0,.*");
-        private static readonly Regex settinginfo = new Regex(@"^U.*");
-        private static readonly Regex settingconfirmation = new Regex(@"^u.*");
-        private static readonly Regex time = new Regex(@"^(\d{1,2}:\d{1,2}:\d{1,2} \d{1,2}-\d{1,2}-\d{4}) \(\d*\)");
-        private static readonly Regex status = new Regex(@"^S=(\d)(\d)");
-        private static readonly Regex msg = new Regex(@"^[^\n]*\n");
+        [GeneratedRegex(@"^V=.*")]
+        private static partial Regex Voltage();
+        [GeneratedRegex(@"^Connected,.*")]
+        private static partial Regex Connected();
+        [GeneratedRegex(@"^0,.*")]
+        private static partial Regex Chipread();
+        [GeneratedRegex(@"^U.*")]
+        private static partial Regex Settinginfo();
+        [GeneratedRegex(@"^u.*")]
+        private static partial Regex Settingconfirmation();
+        [GeneratedRegex(@"^(\d{1,2}:\d{1,2}:\d{1,2} \d{1,2}-\d{1,2}-\d{4}) \(\d*\)")]
+        private static partial Regex Time();
+        [GeneratedRegex(@"^S=(\d)(\d)")]
+        private static partial Regex Status();
+        [GeneratedRegex(@"^[^\n]*\n")]
+        private static partial Regex Msg();
 
         public List<Socket> Connect(string IpAddress, int Port)
         {
             List<Socket> output = [];
-            sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            sock = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Log.D("Timing.Interfaces.RFIDUltraInterface", "Attempting to connect to " + IpAddress + ":" + Port.ToString());
             try
             {
@@ -55,7 +64,7 @@ namespace Chronokeep.Timing.Interfaces
                 Log.D("Timing.Interfaces.RFIDUltraInterface", "Unable to connect.");
                 return null;
             }
-            Log.D("Timing.Interfaces.RFIDUltraInterface", "Connected. Returning socket.");
+            Log.D("Timing.Interfaces.RFIDUltraInterface", "connected. Returning socket.");
             // Query current status of the reader
             GetStatus();
             return output;
@@ -63,9 +72,9 @@ namespace Chronokeep.Timing.Interfaces
 
         public Dictionary<MessageType, List<string>> ParseMessages(string inMessage, Socket sock)
         {
-            Dictionary<MessageType, List<string>> output = new Dictionary<MessageType, List<string>>();
+            Dictionary<MessageType, List<string>> output = [];
             buffer.Append(inMessage);
-            Match m = msg.Match(buffer.ToString());
+            Match m = Msg().Match(buffer.ToString());
             HashSet<string> ignoredChips = [];
             foreach (BibChipAssociation ignore in database.GetBibChips(-1))
             {
@@ -79,7 +88,7 @@ namespace Chronokeep.Timing.Interfaces
                 string message = m.Value;
                 // all incoming messages are terminated by a linefeed character (0x0A)
                 // If "0,[...]" Chip read
-                if (chipread.IsMatch(message))
+                if (Chipread().IsMatch(message))
                 {
                     // Only add a chip read if it isn't on the ignore list.
                     string[] chipVals = message.Split(',');
@@ -111,7 +120,7 @@ namespace Chronokeep.Timing.Interfaces
                     }
                 }
                 // If "V=" then it's a voltage status.
-                else if (voltage.IsMatch(message))
+                else if (Voltage().IsMatch(message))
                 {
                     double voltVal = 0;
                     try
@@ -139,12 +148,12 @@ namespace Chronokeep.Timing.Interfaces
                     }
                 }
                 // If "U[...]" Setting information
-                else if (settinginfo.IsMatch(message))
+                else if (Settinginfo().IsMatch(message))
                 {
                     Log.D("Timing.Interfaces.RFIDUltraInterface", "It's a setting information message. " + message);
                     if (settingsHolder == null)
                     {
-                        settingsHolder = new RFIDSettingsHolder();
+                        settingsHolder = new();
                     }
                     char settingID = message[1];
                     string subMsg = message.Substring(2, message.Length - 3);
@@ -259,12 +268,12 @@ namespace Chronokeep.Timing.Interfaces
                     output[MessageType.SETTINGVALUE] = null;
                 }
                 // If "u[...]" setting changed
-                else if (settingconfirmation.IsMatch(message))
+                else if (Settingconfirmation().IsMatch(message))
                 {
                     Log.D("Timing.Interfaces.RFIDUltraInterface", "It's a settings confirmation message. " + message + BitConverter.ToString(message.Select(c => (byte)c).ToArray()));
                     if (settingsHolder == null)
                     {
-                        settingsHolder = new RFIDSettingsHolder();
+                        settingsHolder = new();
                     }
                     char settingID = message[1];
                     switch (settingID)
@@ -331,10 +340,10 @@ namespace Chronokeep.Timing.Interfaces
                     output[MessageType.SETTINGCHANGE] = null;
                 }
                 // If "HH:MM:SS DD-MM-YYYY" then it's a time message
-                else if (time.IsMatch(message))
+                else if (Time().IsMatch(message))
                 {
                     Log.D("Timing.Interfaces.RFIDUltraInterface", "It's a time message.");
-                    Match match = time.Match(message);
+                    Match match = Time().Match(message);
                     if (!output.TryGetValue(MessageType.TIME, out List<string> timeList))
                     {
                         timeList = ([]);
@@ -346,14 +355,14 @@ namespace Chronokeep.Timing.Interfaces
                     timeList.Add(timeDT.ToString("dd MMM yyyy  HH:mm:ss"));
                 }
                 // If "S=[...]" then status
-                else if (status.IsMatch(message))
+                else if (Status().IsMatch(message))
                 {
                     Log.D("Timing.Interfaces.RFIDUltraInterface", "It's a status message.");
                     if (settingsHolder == null)
                     {
-                        settingsHolder = new RFIDSettingsHolder();
+                        settingsHolder = new();
                     }
-                    Match match = status.Match(message);
+                    Match match = Status().Match(message);
                     if (!output.TryGetValue(MessageType.STATUS, out List<string> statusList))
                     {
                         statusList = ([]);
@@ -376,7 +385,7 @@ namespace Chronokeep.Timing.Interfaces
                     }
                 }
                 // If "Connected,[LastTimeSent]" that's a connection successful message.
-                else if (connected.IsMatch(message))
+                else if (Connected().IsMatch(message))
                 {
                     // Nothing other than connected care about for right now.
                     output[MessageType.CONNECTED] = null;
@@ -385,7 +394,7 @@ namespace Chronokeep.Timing.Interfaces
                 {
                     output[MessageType.UNKNOWN] = null;
                 }
-                m = msg.Match(buffer.ToString());
+                m = Msg().Match(buffer.ToString());
             }
             if (chipReads.Count > 0)
             {
@@ -889,7 +898,7 @@ namespace Chronokeep.Timing.Interfaces
                 DialogBox.Show("Settings window already open.");
                 return;
             }
-            settingsWindow = new RFIDSettings(this);
+            settingsWindow = new(this);
             window.AddWindow(settingsWindow);
             settingsWindow.Show();
         }

@@ -1,4 +1,5 @@
-﻿using Chronokeep.Objects.RFID;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Objects.RFID;
 using Chronokeep.Timing.Interfaces;
 using Chronokeep.UI.UIObjects;
 using System;

@@ -1,4 +1,5 @@
-﻿using Chronokeep.Objects;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.Objects.ChronokeepRemote;
 using System;
@@ -73,7 +74,7 @@ namespace Chronokeep.MemStore
 
         public static MemStore GetMemStore(IDBInterface database)
         {
-            instance ??= new MemStore(database);
+            instance ??= new(database);
             return instance;
         }
 
@@ -110,14 +111,14 @@ namespace Chronokeep.MemStore
             // load locations
             if (!theEvent.CommonStartFinish)
             {
-                locations[Constants.Timing.LOCATION_ANNOUNCER] = new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0);
-                locations[Constants.Timing.LOCATION_FINISH] = new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
-                locations[Constants.Timing.LOCATION_START] = new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow);
+                locations[Constants.Timing.LOCATION_ANNOUNCER] = new(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0);
+                locations[Constants.Timing.LOCATION_FINISH] = new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
+                locations[Constants.Timing.LOCATION_START] = new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow);
             }
             else
             {
-                locations[Constants.Timing.LOCATION_ANNOUNCER] = new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0);
-                locations[Constants.Timing.LOCATION_FINISH] = new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
+                locations[Constants.Timing.LOCATION_ANNOUNCER] = new(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0);
+                locations[Constants.Timing.LOCATION_FINISH] = new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
             }
             foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))
             {
@@ -145,7 +146,7 @@ namespace Chronokeep.MemStore
             {
                 if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
                 {
-                    value = new List<AgeGroup>();
+                    value = [];
                     ageGroups[group.DistanceId] = value;
                 }
                 value.Add(group);

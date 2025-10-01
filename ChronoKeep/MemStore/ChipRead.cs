@@ -1,4 +1,5 @@
-﻿using Chronokeep.Objects;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 
@@ -89,7 +90,7 @@ namespace Chronokeep.MemStore
                 {
                     try
                     {
-                        Dictionary<string, Participant> partDictionary = new Dictionary<string, Participant>();
+                        Dictionary<string, Participant> partDictionary = [];
                         foreach (Participant part in participants.Values)
                         {
                             if (part.Bib.Length > 0)

@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Database.SQLite;
+using Chronokeep.Helpers;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.Objects.ChronokeepRemote;
@@ -54,7 +55,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Distances.AddDistance(d, connection);
                 connection.Close();
@@ -77,7 +78,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 foreach (Distance dis in distances)
                 {
@@ -103,7 +104,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Distances.RemoveDistance(identifier, connection);
                 connection.Close();
@@ -129,7 +130,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Distances.UpdateDistance(d, connection);
                 connection.Close();
@@ -151,7 +152,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Distances.GetDistances(connection);
                 connection.Close();
@@ -174,7 +175,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Distances.GetDistances(eventId, connection);
                 connection.Close();
@@ -197,7 +198,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Distances.GetDistanceID(d, connection);
                 connection.Close();
@@ -220,7 +221,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Distances.GetDistance(distanceId, connection);
                 connection.Close();
@@ -242,7 +243,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Distances.SetWaveTimes(eventId, wave, seconds, milliseconds, connection);
                 connection.Close();
@@ -268,7 +269,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Events.AddEvent(anEvent, connection);
                 connection.Close();
@@ -295,7 +296,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Events.RemoveEvent(identifier, connection);
                 connection.Close();
@@ -316,7 +317,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Events.UpdateEvent(anEvent, connection);
                 connection.Close();
@@ -338,7 +339,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Events.GetEvents(connection);
                 connection.Close();
@@ -361,7 +362,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Events.GetEventID(anEvent, connection);
                 connection.Close();
@@ -407,7 +408,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Events.GetEvent(id, connection);
                 connection.Close();
@@ -429,7 +430,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Events.SetStartOptions(anEvent, connection);
                 connection.Close();
@@ -450,7 +451,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Events.SetFinishOptions(anEvent, connection);
                 connection.Close();
@@ -471,7 +472,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Events.SetStartFinishOptions(anEvent, connection);
                 connection.Close();
@@ -497,7 +498,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -524,7 +525,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -553,7 +554,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Participants.RemoveParticipant(identifier, connection);
                 connection.Close();
@@ -574,7 +575,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -599,7 +600,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -628,7 +629,7 @@ namespace Chronokeep
             try
             {
                 person.FormatData();
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -653,7 +654,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -683,7 +684,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Participants.GetParticipants(connection);
                 connection.Close();
@@ -706,7 +707,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Participants.GetParticipants(eventId, connection);
                 connection.Close();
@@ -729,7 +730,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Participants.GetParticipants(eventId, distanceId, connection);
                 connection.Close();
@@ -752,7 +753,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Participants.GetParticipantEventSpecific(eventIdentifier, eventSpecificId, connection);
                 connection.Close();
@@ -775,7 +776,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Participants.GetParticipantBib(eventIdentifier, bib, connection);
                 connection.Close();
@@ -798,7 +799,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Participants.GetParticipant(eventId, identifier, connection);
                 connection.Close();
@@ -821,7 +822,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Participants.GetParticipant(eventId, unknown, connection);
                 connection.Close();
@@ -844,7 +845,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Participants.GetParticipantID(person, connection);
                 connection.Close();
@@ -867,7 +868,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Participants.GetDivisions(eventIdentifier, connection);
                 connection.Close();
@@ -894,7 +895,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = TimingLocations.AddTimingLocation(tl, connection);
                 connection.Close();
@@ -916,7 +917,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 foreach (TimingLocation tl in locations)
                 {
@@ -947,7 +948,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 TimingLocations.RemoveTimingLocation(identifier, connection);
                 connection.Close();
@@ -968,7 +969,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 TimingLocations.UpdateTimingLocation(tl, connection);
                 connection.Close();
@@ -990,7 +991,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = TimingLocations.GetTimingLocations(eventId, connection);
                 connection.Close();
@@ -1013,7 +1014,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = TimingLocations.GetTimingLocationID(tl, connection);
                 connection.Close();
@@ -1040,7 +1041,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1067,7 +1068,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1097,7 +1098,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Segments.RemoveSegment(seg.Identifier, connection);
                 connection.Close();
@@ -1118,7 +1119,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1143,7 +1144,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1171,7 +1172,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1196,7 +1197,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1225,7 +1226,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Segments.GetSegmentId(seg, connection);
                 connection.Close();
@@ -1248,7 +1249,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Segments.GetSegments(eventId, connection);
                 connection.Close();
@@ -1270,7 +1271,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Segments.ResetSegments(eventId, connection);
                 connection.Close();
@@ -1292,7 +1293,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Segments.GetMaxSegments(eventId, connection);
                 connection.Close();
@@ -1318,7 +1319,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Results.AddTimingResult(result, connection);
                 connection.Close();
@@ -1343,7 +1344,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1371,7 +1372,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Results.RemoveTimingResult(tr, connection);
                 connection.Close();
@@ -1393,7 +1394,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Results.GetTimingResults(eventId, connection);
                 connection.Close();
@@ -1416,7 +1417,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Results.GetFinishTimes(eventId, connection);
                 connection.Close();
@@ -1439,7 +1440,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Results.GetLastSeenResults(eventId, connection);
                 connection.Close();
@@ -1462,7 +1463,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Results.GetStartTimes(eventId, connection);
                 connection.Close();
@@ -1485,7 +1486,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Results.GetSegmentTimes(eventId, segmentId, connection);
                 connection.Close();
@@ -1507,7 +1508,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Results.UpdateTimingResult(oldResult, newTime, connection);
                 connection.Close();
@@ -1528,7 +1529,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Results.SetUploadedTimingResults(results, connection);
                 connection.Close();
@@ -1550,7 +1551,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Results.GetNonUploadedResults(eventId, connection);
                 connection.Close();
@@ -1573,7 +1574,7 @@ namespace Chronokeep
             long output = 0;
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = ChipReads.UnprocessedReadsExist(eventId, connection);
                 connection.Close();
@@ -1596,7 +1597,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Results.UnprocessedResultsExist(eventId, connection);
                 connection.Close();
@@ -1622,7 +1623,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Results.ResetTimingResultsEvent(eventId, connection);
                 connection.Close();
@@ -1643,7 +1644,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Results.ResetTimingResultsPlacements(eventId, connection);
                 connection.Close();
@@ -1668,7 +1669,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 DatabaseHelpers.HardResetDatabase(connection);
                 connection.Close();
@@ -1690,7 +1691,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 DatabaseHelpers.ResetDatabase(connection);
                 connection.Close();
@@ -1715,7 +1716,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 BibChips.AddBibChipAssociation(eventId, assoc, connection);
                 connection.Close();
@@ -1737,7 +1738,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = BibChips.GetBibChips(connection);
                 connection.Close();
@@ -1760,7 +1761,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = BibChips.GetBibChips(eventId, connection);
                 connection.Close();
@@ -1782,7 +1783,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 BibChips.RemoveBibChipAssociation(eventId, chip, connection);
                 connection.Close();
@@ -1808,7 +1809,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 if (assoc != null) BibChips.RemoveBibChipAssociation(assoc.EventId, assoc.Chip, connection);
                 connection.Close();
@@ -1829,7 +1830,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1862,7 +1863,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1889,7 +1890,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1919,7 +1920,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1944,7 +1945,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -1972,7 +1973,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -2001,7 +2002,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -2030,7 +2031,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 ChipReads.DeleteChipReads(reads, connection);
                 connection.Close();
@@ -2052,7 +2053,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = ChipReads.GetChipReadsSafemode(eventId, connection);
                 connection.Close();
@@ -2076,7 +2077,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = ChipReads.GetChipReads(theEvent, connection);
                 connection.Close();
@@ -2100,7 +2101,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = ChipReads.GetChipReads(eventId, theEvent, connection);
                 connection.Close();
@@ -2124,7 +2125,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = ChipReads.GetUsefulChipReads(eventId, theEvent, connection);
                 connection.Close();
@@ -2148,7 +2149,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = ChipReads.GetAnnouncerChipReads(eventId, theEvent, connection);
                 connection.Close();
@@ -2172,7 +2173,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = ChipReads.GetAnnouncerUsedChipReads(eventId, theEvent, connection);
                 connection.Close();
@@ -2196,7 +2197,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = ChipReads.GetDNSChipReads(eventId, theEvent, connection);
                 connection.Close();
@@ -2223,7 +2224,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Settings.GetAppSetting(name, connection);
                 connection.Close();
@@ -2237,7 +2238,7 @@ namespace Chronokeep
 
         public void SetAppSetting(string n, string v)
         {
-            AppSetting setting = new AppSetting()
+            AppSetting setting = new()
             {
                 Name = n,
                 Value = v
@@ -2255,7 +2256,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Settings.SetAppSetting(setting, connection);
                 connection.Close();
@@ -2280,7 +2281,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -2307,7 +2308,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -2337,7 +2338,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 AgeGroups.UpdateAgeGroup(group, connection);
                 connection.Close();
@@ -2358,7 +2359,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 AgeGroups.RemoveAgeGroup(group, connection);
                 connection.Close();
@@ -2379,7 +2380,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 AgeGroups.RemoveAgeGroups(eventId, distanceId, connection);
                 connection.Close();
@@ -2400,7 +2401,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 AgeGroups.RemoveAgeGroups(groups, connection);
                 connection.Close();
@@ -2421,7 +2422,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 AgeGroups.ResetAgeGroups(eventId, connection);
                 connection.Close();
@@ -2443,7 +2444,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = AgeGroups.GetAgeGroups(eventId, connection);
                 connection.Close();
@@ -2466,7 +2467,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = AgeGroups.GetAgeGroups(eventId, distanceId, connection);
                 connection.Close();
@@ -2493,7 +2494,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = TimingSystems.AddTimingSystem(system, connection);
                 connection.Close();
@@ -2515,7 +2516,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 TimingSystems.UpdateTimingSystem(system, connection);
                 connection.Close();
@@ -2536,7 +2537,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 TimingSystems.SetTimingSystems(systems, connection);
                 connection.Close();
@@ -2562,7 +2563,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 TimingSystems.RemoveTimingSystem(systemId, connection);
                 connection.Close();
@@ -2584,7 +2585,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = TimingSystems.GetTimingSystems(connection);
                 connection.Close();
@@ -2607,7 +2608,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = DistanceStats.GetDistanceStats(eventId, connection);
                 connection.Close();
@@ -2621,7 +2622,7 @@ namespace Chronokeep
 
         public Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int distanceId)
         {
-            Dictionary<int, List<Participant>> output = new Dictionary<int, List<Participant>>();
+            Dictionary<int, List<Participant>> output = [];
             List<Participant> parts = (distanceId == -1) ? GetParticipants(eventId) : GetParticipants(eventId, distanceId);
             foreach (Participant person in parts)
             {
@@ -2651,7 +2652,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = APIs.AddAPI(anAPI, connection);
                 connection.Close();
@@ -2673,7 +2674,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 APIs.UpdateAPI(anAPI, connection);
                 connection.Close();
@@ -2694,7 +2695,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 APIs.RemoveAPI(identifier, connection);
                 connection.Close();
@@ -2720,7 +2721,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = APIs.GetAPI(identifier, connection);
                 connection.Close();
@@ -2743,7 +2744,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = APIs.GetAllAPI(connection);
                 connection.Close();
@@ -2766,7 +2767,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output.AddRange(Alarms.SaveAlarms(eventId, alarms, connection));
                 connection.Close();
@@ -2789,7 +2790,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Alarms.SaveAlarm(eventId, alarm, connection);
                 connection.Close();
@@ -2812,7 +2813,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Alarms.GetAlarms(eventId, connection);
                 connection.Close();
@@ -2834,7 +2835,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Alarms.DeleteAlarms(eventId, connection);
                 connection.Close();
@@ -2855,7 +2856,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Alarms.DeleteAlarm(alarm, connection);
                 connection.Close();
@@ -2876,7 +2877,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 RemoteReaders.AddRemoteReaders(eventId, readers, connection);
                 connection.Close();
@@ -2897,7 +2898,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 RemoteReaders.DeleteRemoteReaders(eventId, readers, connection);
                 connection.Close();
@@ -2918,7 +2919,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 RemoteReaders.DeleteRemoteReader(eventId, reader, connection);
                 connection.Close();
@@ -2940,7 +2941,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = RemoteReaders.GetRemoteReaders(eventId, connection);
                 connection.Close();
@@ -2962,7 +2963,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 SmsAlerts.AddSmsAlert(eventId, eventspecific_id, segment_id, connection);
                 connection.Close();
@@ -2984,7 +2985,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = SmsAlerts.GetSmsAlerts(eventId, connection);
                 connection.Close();
@@ -3006,7 +3007,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 EmailAlerts.AddEmailAlert(eventId, eventspecific_id, connection);
                 connection.Close();
@@ -3028,7 +3029,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = EmailAlerts.GetEmailAlerts(eventId, connection);
                 connection.Close();
@@ -3050,7 +3051,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 EmailAlerts.RemoveEmailAlert(eventId, eventspecific_id, connection);
                 connection.Close();
@@ -3072,7 +3073,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Banned.GetBannedPhones(connection);
                 connection.Close();
@@ -3094,7 +3095,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Banned.AddBannedPhone(phone, connection);
                 connection.Close();
@@ -3115,7 +3116,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Banned.AddBannedPhones(phones, connection);
                 connection.Close();
@@ -3136,7 +3137,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Banned.RemoveBannedPhones(phones, connection);
                 connection.Close();
@@ -3158,7 +3159,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Banned.GetBannedEmails(connection);
                 connection.Close();
@@ -3180,7 +3181,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Banned.AddBannedEmail(email, connection);
                 connection.Close();
@@ -3201,7 +3202,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Banned.AddBannedEmails(emails, connection);
                 connection.Close();
@@ -3222,7 +3223,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Banned.RemoveBannedEmails(emails, connection);
                 connection.Close();
@@ -3244,7 +3245,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = SmsSubscriptions.GetSmsSubscriptions(eventId, connection);
                 connection.Close();
@@ -3266,7 +3267,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -3294,7 +3295,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 SmsSubscriptions.DeleteSmsSubscriptions(eventId, connection);
                 connection.Close();
@@ -3315,7 +3316,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Banned.RemoveBannedEmail(email, connection);
                 connection.Close();
@@ -3336,7 +3337,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Banned.RemoveBannedPhone(phone, connection);
                 connection.Close();
@@ -3357,7 +3358,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Banned.ClearBannedEmails(connection);
                 connection.Close();
@@ -3378,7 +3379,7 @@ namespace Chronokeep
             }
             try
             {
-                SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 Banned.ClearBannedPhones(connection);
                 connection.Close();

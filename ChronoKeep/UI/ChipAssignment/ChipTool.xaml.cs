@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace Chronokeep.UI.ChipAssignment
 
         public static ChipTool NewWindow(IWindowCallback window, IDBInterface database)
         {
-            return new ChipTool(window, database);
+            return new(window, database);
         }
 
         private class ATagRange : ListBoxItem
@@ -53,7 +54,7 @@ namespace Chronokeep.UI.ChipAssignment
 
             public ATagRange(ListBox correlationBox)
             {
-                Grid theGrid = new Grid();
+                Grid theGrid = new();
                 this.Content = theGrid;
                 this.IsTabStop = false;
                 int lastEndBib = 0, lastEndChip = 0;
@@ -68,12 +69,12 @@ namespace Chronokeep.UI.ChipAssignment
                     }
                     catch { }
                 }
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                StartBib = new System.Windows.Controls.TextBox
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                StartBib = new()
                 {
                     Text = string.Format("{0}", lastEndBib + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -82,7 +83,7 @@ namespace Chronokeep.UI.ChipAssignment
                 StartBib.TextChanged += new TextChangedEventHandler(this.StartBib_TextChanged);
                 StartBib.GotFocus += new RoutedEventHandler(this.SelectAll);
                 StartBib.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                EndBib = new System.Windows.Controls.TextBox
+                EndBib = new()
                 {
                     Text = string.Format("{0}", lastEndBib + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -91,7 +92,7 @@ namespace Chronokeep.UI.ChipAssignment
                 EndBib.TextChanged += new TextChangedEventHandler(this.EndBib_TextChanged);
                 EndBib.GotFocus += new RoutedEventHandler(SelectAll);
                 EndBib.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                StartChip = new System.Windows.Controls.TextBox
+                StartChip = new()
                 {
                     Text = string.Format("{0}", lastEndChip + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -100,13 +101,13 @@ namespace Chronokeep.UI.ChipAssignment
                 StartChip.TextChanged += new TextChangedEventHandler(this.StartChip_TextChanged);
                 StartChip.GotFocus += new RoutedEventHandler(SelectAll);
                 StartChip.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                EndChip = new Wpf.Ui.Controls.TextBlock
+                EndChip = new()
                 {
                     Text = string.Format("{0}", lastEndChip + 1),
                     Margin = new Thickness(7, 2, 2, 2),
                     VerticalAlignment = VerticalAlignment.Center,
                 };
-                Remove = new System.Windows.Controls.Button
+                Remove = new()
                 {
                     Content = "Remove",
                     Width = 75
@@ -211,7 +212,7 @@ namespace Chronokeep.UI.ChipAssignment
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            List<Objects.Range> ranges = new List<Objects.Range>();
+            List<Objects.Range> ranges = [];
             foreach (ATagRange tag in correlationBox.Items)
             {
                 int startBib = -1, endBib = -1, startChip = -1, endChip = -1;
@@ -220,7 +221,7 @@ namespace Chronokeep.UI.ChipAssignment
                 int.TryParse(tag.StartChip.Text, out startChip);
                 int.TryParse(tag.EndChip.Text.ToString(), out endChip);
                 Log.D("UI.ChipAssignment.ChipTool", "StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
-                Objects.Range curRange = new Objects.Range
+                Objects.Range curRange = new()
                 {
                     StartBib = startBib,
                     EndBib = endBib,
@@ -243,12 +244,12 @@ namespace Chronokeep.UI.ChipAssignment
                 ranges.Add(curRange);
             }
             ranges.Sort();
-            List<BibChipAssociation> list = new List<BibChipAssociation>();
+            List<BibChipAssociation> list = [];
             foreach (Objects.Range r in ranges)
             {
                 for (int bib = r.StartBib, tag = r.StartChip; bib <= r.EndBib && tag <= r.EndChip; bib++, tag++)
                 {
-                    list.Add(new BibChipAssociation()
+                    list.Add(new()
                     {
                         Bib = bib.ToString(),
                         Chip = tag.ToString()

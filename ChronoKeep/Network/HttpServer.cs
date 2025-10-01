@@ -1,4 +1,5 @@
-﻿using Chronokeep.IO.HtmlTemplates;
+﻿using Chronokeep.Helpers;
+using Chronokeep.IO.HtmlTemplates;
 using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
@@ -47,7 +48,7 @@ namespace Chronokeep.Network
 
         public HttpServer(IDBInterface database)
         {
-            TcpListener l = new TcpListener(IPAddress.Loopback, 0);
+            TcpListener l = new(IPAddress.Loopback, 0);
             l.Start();
             int port = ((IPEndPoint)l.LocalEndpoint).Port;
             l.Stop();
@@ -80,7 +81,7 @@ namespace Chronokeep.Network
                     }
                     if (!participantResults.TryGetValue(r.Bib, out List<TimeResult> pResList))
                     {
-                        pResList = new List<TimeResult>();
+                        pResList = [];
                         participantResults[r.Bib] = pResList;
                     }
 
@@ -174,7 +175,7 @@ namespace Chronokeep.Network
                     {
                         if (resultsCache == null)
                         {
-                            HtmlResultsTemplate results = new HtmlResultsTemplate(
+                            HtmlResultsTemplate results = new(
                                 theEvent,
                                 finishResults,
                                 true
@@ -318,11 +319,11 @@ namespace Chronokeep.Network
             UpdateInformation();
 
             // Test to ensure we can listen.
-            _listener = new HttpListener();
+            _listener = new();
             _listener.Prefixes.Add("http://*:" + _port.ToString() + "/");
             _listener.Start();
 
-            _serverThread = new Thread(this.Listen);
+            _serverThread = new(this.Listen);
             _serverThread.Start();
         }
     }

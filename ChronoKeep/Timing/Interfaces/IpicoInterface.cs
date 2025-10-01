@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using Chronokeep.Interfaces.Timing;
 using System;
 using System.Collections.Generic;
@@ -9,25 +10,28 @@ using System.Text.RegularExpressions;
 
 namespace Chronokeep.Timing.Interfaces
 {
-    class IpicoInterface : ITimingSystemInterface
+    partial class IpicoInterface : ITimingSystemInterface
     {
-        IDBInterface database;
+        readonly IDBInterface database;
         readonly int locationId;
-        Event theEvent;
-        Dictionary<Socket, StringBuilder> bufferDict = new Dictionary<Socket, StringBuilder>();
+        readonly Event theEvent;
+        readonly Dictionary<Socket, StringBuilder> bufferDict = [];
         Socket controlSocket;
         Socket streamSocket;
         Socket rewindSocket;
         string ipadd;
-        string Type;
+        readonly string Type;
 
-        IMainWindow window = null;
+        readonly IMainWindow window = null;
 
 
         // private static readonly Regex voltage/connected/chipread/settinginfo/settingconfirmation/time/status/msg
-        private static readonly Regex chipread = new Regex(@"aa[0-9a-fA-F]{34,36}");
-        private static readonly Regex time = new Regex(@"date\.\w{3} \w{3} {1,2}\d{1,2} \d{2}:\d{2}:\d{2} \w{3} \d{4} *");
-        private static readonly Regex msg = new Regex(@"^[^\n]+\n");
+        [GeneratedRegex(@"aa[0-9a-fA-F]{34,36}")]
+        private static partial Regex Chipread();
+        [GeneratedRegex(@"date\.\w{3} \w{3} {1,2}\d{1,2} \d{2}:\d{2}:\d{2} \w{3} \d{4} *")]
+        private static partial Regex Time();
+        [GeneratedRegex(@"^[^\n]+\n")]
+        private static partial Regex Msg();
 
         public IpicoInterface(IDBInterface database, int locationId, string type, IMainWindow window)
         {
@@ -41,9 +45,9 @@ namespace Chronokeep.Timing.Interfaces
         public List<Socket> Connect(string IpAddress, int Port)
         {
             this.ipadd = IpAddress;
-            List<Socket> output = new List<Socket>();
-            controlSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            streamSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            List<Socket> output = [];
+            controlSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            streamSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             if (Type != Constants.Readers.SYSTEM_IPICO_LITE)
             {
                 try
@@ -111,13 +115,13 @@ namespace Chronokeep.Timing.Interfaces
             }
             if (!bufferDict.TryGetValue(sock, out StringBuilder buff))
             {
-                buff = new StringBuilder();
+                buff = new();
                 bufferDict[sock] = buff;
             }
 
             buff.Append(inMessage);
             Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- new message is '" + inMessage + "' with a length of " + inMessage.Length);
-            Match m = msg.Match(buff.ToString());
+            Match m = Msg().Match(buff.ToString());
             HashSet<string> ignoredChips = [];
             foreach (BibChipAssociation ignore in database.GetBibChips(-1))
             {
@@ -134,7 +138,7 @@ namespace Chronokeep.Timing.Interfaces
                 Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- message is : " + message);
                 // a chipread is as follows: (note that milliseconds don't appear to be an actual millisecond but a hundredth of a second)
                 // aa[ReaderId{2}][TagID{12}(Starts with 058)][ICount?{2}][QCount{2}][Date{yyMMdd}][Time{HHmmss}][Milliseconds{2}(Hex)][Checksum{2}][FS|LS]
-                if (chipread.IsMatch(message))
+                if (Chipread().IsMatch(message))
                 {
                     // Only add the chip if it isn't in the ignored list.
                     string chip = message.Substring(4, 12).Trim();
@@ -163,7 +167,7 @@ namespace Chronokeep.Timing.Interfaces
                 }
                 // Time is as follows:
                 // date.Wed Nov 12 15:30:30 CST 2008
-                else if (time.IsMatch(message))
+                else if (Time().IsMatch(message))
                 {
                     Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- It's a time message.");
                     string month = message.Substring(9, 3);
@@ -173,12 +177,12 @@ namespace Chronokeep.Timing.Interfaces
                     string year = message.Substring(29, 4);
                     string dateStr = string.Format("{0:D2} {1} {2}  {3}", dayVal, month, year, time);
                     Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- date string is " + dateStr);
-                    output[MessageType.TIME] = new List<string>
-                    {
+                    output[MessageType.TIME] =
+                    [
                         dateStr
-                    };
+                    ];
                 }
-                m = msg.Match(buff.ToString());
+                m = Msg().Match(buff.ToString());
             }
             Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- messages parsed successfully adding chipreads");
             if (chipReads.Count > 0)
@@ -212,7 +216,7 @@ namespace Chronokeep.Timing.Interfaces
         public void GetRewind()
         {
             Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- connecting to rewind socket");
-            rewindSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            rewindSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
                 rewindSocket.Connect(ipadd, 10300);

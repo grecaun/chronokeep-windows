@@ -14,6 +14,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Chronokeep.UI.UIObjects;
+using Chronokeep.Helpers;
+using Chronokeep.IO;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -22,14 +24,17 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class ChipAssigmentPage : IMainPage
     {
-        private IMainWindow mWindow;
-        private IDBInterface database;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
         private Event theEvent;
         private AppSetting chipType;
 
         private bool BibsChanged = false;
-        private readonly Regex allowedChars = new Regex("[^0-9]");
-        private readonly Regex allowedHexChars = new Regex("[^0-9a-fA-F]");
+
+        [GeneratedRegex("[^0-9]")]
+        private static partial Regex AllowedChars();
+        [GeneratedRegex("[^0-9a-fA-F]")]
+        private static partial Regex AllowedHexChars();
 
         public ChipAssigmentPage(IMainWindow mWindow, IDBInterface database)
         {
@@ -96,14 +101,14 @@ namespace Chronokeep.UI.MainPages
                 SingleChipBox.Text = maxChip.ToString("X");
                 RangeStartChipBox.Text = maxChip.ToString("X");
             }
-            List<Event> events = new List<Event>();
+            List<Event> events = [];
             await Task.Run(() =>
             {
                 events = database.GetEvents();
                 events.Sort();
             });
             previousEvents.Items.Clear();
-            ComboBoxItem boxItem = new ComboBoxItem
+            ComboBoxItem boxItem = new()
             {
                 Content = "None",
                 Uid = "-1"
@@ -115,7 +120,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     string name = e.YearCode + " " + e.Name;
                     name = name.Trim();
-                    boxItem = new ComboBoxItem
+                    boxItem = new()
                     {
                         Content = name,
                         Uid = e.Identifier.ToString()
@@ -148,14 +153,14 @@ namespace Chronokeep.UI.MainPages
                 DialogBox.Show("The chip is not valid.");
                 return;
             }
-            List<BibChipAssociation> bibChips = new List<BibChipAssociation>
-            {
-                new BibChipAssociation()
+            List<BibChipAssociation> bibChips =
+            [
+                new()
                 {
                     Bib = SingleBibBox.Text,
                     Chip = Constants.Settings.CHIP_TYPE_DEC == chipType.Value ? chip.ToString() : chip.ToString("X")
                 }
-            };
+            ];
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
             BibsChanged = true;
             UpdateView();
@@ -204,10 +209,10 @@ namespace Chronokeep.UI.MainPages
                 DialogBox.Show("One or more values is not valid.");
                 return;
             }
-            List<BibChipAssociation> bibChips = new List<BibChipAssociation>();
+            List<BibChipAssociation> bibChips = [];
             for (long bib = startBib, tag = startChip; bib <= endBib && tag <= endChip; bib++, tag++)
             {
-                bibChips.Add(new BibChipAssociation() {
+                bibChips.Add(new() {
                     Bib = bib.ToString(),
                     Chip = Constants.Settings.CHIP_TYPE_HEX == chipType.Value ? tag.ToString("X") : tag.ToString()
                 });
@@ -223,7 +228,7 @@ namespace Chronokeep.UI.MainPages
         private async void FileImport_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ChipAssignmentPage", "Import from file clicked.");
-            OpenFileDialog bib_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.xls,*.csv,*.txt)|*.xlsx;*.xls;*.csv;*.txt|All files|*" };
+            OpenFileDialog bib_dialog = new() { Filter = "Excel files (*.xlsx,*.xls,*.csv,*.txt)|*.xlsx;*.xls;*.csv;*.txt|All files|*" };
             if (bib_dialog.ShowDialog() == true)
             {
                 string ext = Path.GetExtension(bib_dialog.FileName);
@@ -278,7 +283,7 @@ namespace Chronokeep.UI.MainPages
         {
             Log.D("UI.MainPages.ChipAssignmentPage", "Delete clicked.");
             IList selected = bibChipList.SelectedItems;
-            List<BibChipAssociation> items = new List<BibChipAssociation>();
+            List<BibChipAssociation> items = [];
             foreach (BibChipAssociation b in selected)
             {
                 items.Add(b);
@@ -378,7 +383,7 @@ namespace Chronokeep.UI.MainPages
         private void Export_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ChipAssignmentPage", "Export clicked.");
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Chips.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
@@ -386,28 +391,28 @@ namespace Chronokeep.UI.MainPages
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                List<object[]> data = new List<object[]>();
+                List<object[]> data = [];
                 List<BibChipAssociation> associations = database.GetBibChips(theEvent.Identifier);
                 associations.Sort();
                 foreach (BibChipAssociation association in associations)
                 {
                     Log.D("UI.MainPages.ChipAssignmentPage", "Checking associations ... Bib " + association.Bib + " Chip " + association.Chip);
                 }
-                string[] headers = new string[] { "Bib", "Chip" };
+                string[] headers = ["Bib", "Chip"];
                 foreach (BibChipAssociation bca in associations)
                 {
-                    data.Add(new object[] { bca.Bib, bca.Chip });
+                    data.Add([bca.Bib, bca.Chip]);
                 }
                 IDataExporter exporter;
                 string extension = Path.GetExtension(saveFileDialog.FileName);
                 Log.D("UI.MainPages.ChipAssignmentPage", string.Format("Extension is '{0}'", extension));
-                if (extension.IndexOf("xls") != -1)
+                if (extension.Contains("xls", StringComparison.CurrentCulture))
                 {
                     exporter = new ExcelExporter();
                 }
                 else
                 {
-                    StringBuilder format = new StringBuilder();
+                    StringBuilder format = new();
                     for (int i = 0; i < headers.Length; i++)
                     {
                         format.Append("\"{");
@@ -468,11 +473,11 @@ namespace Chronokeep.UI.MainPages
         {
             if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
-                e.Handled = allowedChars.IsMatch(e.Text);
+                e.Handled = AllowedChars().IsMatch(e.Text);
             }
             else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
             {
-                e.Handled = allowedHexChars.IsMatch(e.Text);
+                e.Handled = AllowedHexChars().IsMatch(e.Text);
             }
         }
 

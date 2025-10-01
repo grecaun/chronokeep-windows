@@ -9,6 +9,7 @@ using Chronokeep.Objects.API;
 using System.Threading.Tasks;
 using System.Text;
 using static Chronokeep.Network.Util.Helpers;
+using Chronokeep.Helpers;
 
 namespace Chronokeep.Network.Remote
 {

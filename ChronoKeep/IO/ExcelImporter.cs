@@ -1,4 +1,6 @@
-﻿using ClosedXML.Excel;
+﻿using Chronokeep.Helpers;
+using Chronokeep.IO;
+using ClosedXML.Excel;
 using System;
 using System.Collections.Generic;
 
@@ -7,7 +9,7 @@ namespace Chronokeep
     class ExcelImporter : IDataImporter
     {
         public ImportData Data { get; private set; }
-        string FilePath;
+        readonly string FilePath;
 
         XLWorkbook workbook;
         IXLWorksheet worksheet;
@@ -22,13 +24,13 @@ namespace Chronokeep
             try
             {
                 Log.D("IO.ExcelImporter", "Opening workbook.");
-                workbook = new XLWorkbook(filename);
+                workbook = new(filename);
                 NumSheets = workbook.Worksheets.Count;
                 if (NumSheets > 0)
                 {
                     worksheet = workbook.Worksheets.Worksheet(1);
                 }
-                SheetNames = new List<string>();
+                SheetNames = [];
                 for (int i = 1; i <= NumSheets; i++)
                 {
                     string name = workbook.Worksheets.Worksheet(i).Name;
@@ -82,13 +84,13 @@ namespace Chronokeep
                 {
                     headers[i-1] = worksheet.Cell(1, i).Value.IsBlank ? "" : worksheet.Cell(1,i).Value.ToString();
                 }
-                Data = new ImportData(headers, FilePath, ImportData.FileType.EXCEL);
+                Data = new(headers, FilePath, ImportData.FileType.EXCEL);
             }
             catch (Exception excep)
             {
                 Log.E("IO.ExcelImporter", $"Something went wrong when trying to get headers. {excep.StackTrace}");
-                string[] headers = new string[0];
-                Data = new ImportData(headers, FilePath, ImportData.FileType.EXCEL);
+                string[] headers = [];
+                Data = new(headers, FilePath, ImportData.FileType.EXCEL);
             }
         }
 

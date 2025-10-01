@@ -1,8 +1,9 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using ClosedXML.Excel;
 using System.Collections.Generic;
 
-namespace Chronokeep.UI.IO
+namespace Chronokeep.IO
 {
     class ExcelExporter : IDataExporter
     {
@@ -11,16 +12,12 @@ namespace Chronokeep.UI.IO
 
         public void ExportData(string Path)
         {
-            using XLWorkbook workbook = new XLWorkbook();
+            using XLWorkbook workbook = new();
             IXLWorksheet worksheet = workbook.Worksheets.Add();
-            List<object[]> localData = new List<object[]>
-            {
-                headers
-            };
-            foreach (object[] line in data)
-            {
-                localData.Add(line);
-            }
+            List<object[]> localData =
+            [
+                headers, .. data
+            ];
             for (int i = 0; i < localData.Count; i++)
             {
                 for (int j = 0; j < localData[0].Length; j++)

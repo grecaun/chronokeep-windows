@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Database.SQLite;
+using Chronokeep.Helpers;
 using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
@@ -15,11 +16,11 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class TimingResultsPage : ISubPage
     {
-        TimingPage parent;
-        IDBInterface database;
-        Event theEvent;
+        readonly TimingPage parent;
+        readonly IDBInterface database;
+        readonly Event theEvent;
 
-        List<TimeResult> results = [];
+        readonly List<TimeResult> results = [];
 
         public TimingResultsPage(TimingPage parent, IDBInterface database)
         {
@@ -86,7 +87,7 @@ namespace Chronokeep.UI.Timing
                 if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                 {
                     Log.D("UI.Timing.TimingResultsPage", "Time based event.");
-                    Dictionary<int, TimeResult> validResults = new Dictionary<int, TimeResult>();
+                    Dictionary<int, TimeResult> validResults = [];
                     foreach (TimeResult result in newResults)
                     {
                         if (Constants.Timing.TIMERESULT_DUMMYPERSON != result.EventSpecificId)
@@ -110,7 +111,7 @@ namespace Chronokeep.UI.Timing
                 if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                 {
                     Log.D("UI.Timing.TimingResultsPage", "Time based event.");
-                    Dictionary<int, TimeResult> validResults = new Dictionary<int, TimeResult>();
+                    Dictionary<int, TimeResult> validResults = [];
                     foreach (TimeResult result in newResults)
                     {
                         if (Constants.Timing.TIMERESULT_DUMMYPERSON != result.EventSpecificId)
@@ -284,7 +285,7 @@ namespace Chronokeep.UI.Timing
         {
             if (updateListView.SelectedItem == null) return;
             TimeResult selected = (TimeResult)updateListView.SelectedItem;
-            ModifyParticipantWindow modifyParticipant = new ModifyParticipantWindow(parent, database, selected.EventSpecificId, selected.Bib);
+            ModifyParticipantWindow modifyParticipant = new(parent, database, selected.EventSpecificId, selected.Bib);
             modifyParticipant.ShowDialog();
         }
 

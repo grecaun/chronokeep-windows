@@ -1,4 +1,6 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
+using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.Import;
 using Chronokeep.UI.UIObjects;
@@ -89,8 +91,8 @@ namespace Chronokeep
          */
         List<Participant> existingParticipants;
         List<Participant> importParticipants;
-        List<Participant> updatedParticipants = new List<Participant>();
-        List<Participant> existingToRemoveParticipants = new List<Participant>();
+        List<Participant> updatedParticipants = [];
+        List<Participant> existingToRemoveParticipants = [];
 
         private ImportFileWindow(IMainWindow window, IDataImporter importer, IDBInterface database)
         {
@@ -100,9 +102,9 @@ namespace Chronokeep
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
             Header.Height = new GridLength(55);
-            HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
-            HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            HeaderGrid.ColumnDefinitions.Add(new() { Width = new GridLength(2, GridUnitType.Star) });
+            HeaderGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+            HeaderGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
             HeaderGrid.Children.Clear();
             HeaderGrid.Children.Add(Done);
             Done.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -156,7 +158,7 @@ namespace Chronokeep
                 List<string> requiredNotFound = page1.RequiredNotFound();
                 if (repeats != null)
                 {
-                    StringBuilder sb = new StringBuilder("Repeats for the following headers were found:");
+                    StringBuilder sb = new("Repeats for the following headers were found:");
                     foreach (string s in repeats)
                     {
                         sb.Append("\n");
@@ -166,7 +168,7 @@ namespace Chronokeep
                 }
                 else if (requiredNotFound != null)
                 {
-                    StringBuilder sb = new StringBuilder("Required fields not found:");
+                    StringBuilder sb = new("Required fields not found:");
                     foreach (string s in requiredNotFound)
                     {
                         sb.Append("\n");
@@ -333,7 +335,7 @@ namespace Chronokeep
                     }
                     else
                     {
-                        backyardDistance = new Distance("Backyard", theEvent.Identifier);
+                        backyardDistance = new("Backyard", theEvent.Identifier);
                         database.AddDistance(backyardDistance);
                         backyardDistance.Identifier = database.GetDistanceID(backyardDistance);
                         window.UpdateRegistrationDistances();
@@ -369,7 +371,7 @@ namespace Chronokeep
                     {
                         birthday = data.Data[counter][keys[BIRTHDAY]]; // birthday
                     }
-                    Participant output = new Participant(
+                    Participant output = new(
                         data.Data[counter][keys[FIRST]], // First Name
                         data.Data[counter][keys[LAST]], // Last Name
                         data.Data[counter][keys[STREET]], // Street
@@ -377,7 +379,7 @@ namespace Chronokeep
                         data.Data[counter][keys[STATE]], // State
                         data.Data[counter][keys[ZIP]], // Zip
                         birthday, // Birthday
-                        new EventSpecific(
+                        new(
                             theEvent.Identifier,
                             thisDiv.Identifier,
                             thisDiv.Name,
@@ -432,7 +434,7 @@ namespace Chronokeep
                  */
                 // Check import participants for multiples.
                 existingParticipants = database.GetParticipants(theEvent.Identifier);
-                HashSet<Participant> duplicatesImport = new HashSet<Participant>();
+                HashSet<Participant> duplicatesImport = [];
                 for (int inner=0; inner<importParticipants.Count; inner++)
                 {
                     // Check against others imported
@@ -498,7 +500,7 @@ namespace Chronokeep
             // if we have multiples to mess around with display the page
             if (multiples.Count > 0)
             {
-                page = new ImportFilePageConflicts(new List<Participant>(multiples), theEvent);
+                page = new ImportFilePageConflicts([.. multiples], theEvent);
                 Frame.Content = page;
                 Done.IsEnabled = true;
                 Cancel.IsEnabled = true;
@@ -506,17 +508,17 @@ namespace Chronokeep
             // otherwise process the multiples (none)
             else
             {
-                ProcessMultiplestoRemove(new List<Participant>());
+                ProcessMultiplestoRemove([]);
             }
         }
 
         private async void ProcessMultiplestoRemove(List<Participant> toRemove)
         {
-            List<Participant> conflicts = new List<Participant>();
+            List<Participant> conflicts = [];
             await Task.Run(() =>
             {
-                Dictionary<string, HashSet<Participant>> BibConflictsDict = new Dictionary<string, HashSet<Participant>>();
-                Dictionary<string, Participant> ExistingParticipantsDict = new Dictionary<string, Participant>();
+                Dictionary<string, HashSet<Participant>> BibConflictsDict = [];
+                Dictionary<string, Participant> ExistingParticipantsDict = [];
                 // keep track of who we need to tell the database to remove
                 existingToRemoveParticipants.AddRange(toRemove);
                 existingToRemoveParticipants.RemoveAll(x => importParticipants.Contains(x));
@@ -552,7 +554,7 @@ namespace Chronokeep
                                 ));
                             if (!BibConflictsDict.TryGetValue(import.Bib, out HashSet<Participant> bibConflictSet))
                             {
-                                bibConflictSet = new HashSet<Participant>();
+                                bibConflictSet = [];
                                 BibConflictsDict[import.Bib] = bibConflictSet;
                             }
                             bibConflictSet.Add(import);
@@ -576,7 +578,7 @@ namespace Chronokeep
             // otherwise process the multiples (none)
             else
             {
-                ProcessBibConflicts(new List<Participant>());
+                ProcessBibConflicts([]);
             }
         }
 

@@ -59,7 +59,7 @@ namespace Chronokeep.Objects
                     Constants.Timing.UnixDateToEpoch(start.ToUniversalTime()),
                     Constants.Timing.UnixDateToEpoch(end.ToUniversalTime())
                 );
-            List<ChipRead> output = new List<ChipRead>();
+            List<ChipRead> output = [];
             if (result.Reads == null)
             {
                 return (output, result.Notification);

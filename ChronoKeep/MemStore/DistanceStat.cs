@@ -1,4 +1,5 @@
-﻿using Chronokeep.Objects;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 
@@ -99,7 +100,7 @@ namespace Chronokeep.MemStore
             {
                 if (!output.TryGetValue(person.Status, out List<Participant> localParts))
                 {
-                    localParts = new List<Participant>();
+                    localParts = [];
                     output[person.Status] = localParts;
                 }
                 localParts.Add(person);

@@ -1,4 +1,6 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
+using Chronokeep.IO;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -56,7 +58,7 @@ namespace Chronokeep
 
         public static BibChipAssociationWindow NewWindow(IWindowCallback window, IDataImporter importer, IDBInterface database)
         {
-            return new BibChipAssociationWindow(window, importer, database);
+            return new(window, importer, database);
         }
 
         internal List<string> RepeatHeaders()
@@ -64,7 +66,7 @@ namespace Chronokeep
             Log.D("UI.BibChipAssociationWindow", "Checking for repeat headers in user selection.");
             int[] check = new int[ImportFileWindow.human_fields.Length];
             bool repeat = false;
-            List<string> output = new List<string>();
+            List<string> output = [];
             foreach (ListBoxItem item in headerListBox.Items)
             {
                 int val = ((BibChipHeaderListBoxItem)item).HeaderBox.SelectedIndex;
@@ -140,12 +142,12 @@ namespace Chronokeep
                 await Task.Run(() =>
                 {
                     Dictionary<string, string> currentAssociations = database.GetBibChips(eventId).ToDictionary(x => x.Chip, x => x.Bib);
-                    List<BibChipAssociation> items = new List<BibChipAssociation>();
+                    List<BibChipAssociation> items = [];
                     ImportData data = importer.Data;
                     int numEntries = data.Data.Count;
                     if (extraAssoc)
                     {
-                        items.Add(new BibChipAssociation
+                        items.Add(new()
                         {
                             Bib = data.Headers[keys[1]],
                             Chip = data.Headers[keys[2]]
@@ -155,7 +157,7 @@ namespace Chronokeep
                     {
                         try
                         {
-                            items.Add(new BibChipAssociation
+                            items.Add(new()
                             {
                                 Bib = data.Data[counter][keys[1]],
                                 Chip = data.Data[counter][keys[2]]
@@ -167,7 +169,7 @@ namespace Chronokeep
                         }
                     }
                     // Check new associations against old ones.
-                    List<BibChipAssociation> conflicts = new List<BibChipAssociation>();
+                    List<BibChipAssociation> conflicts = [];
                     foreach (BibChipAssociation assoc in items)
                     {
                         // Check to ensure we aren't trying to associate this chip with a different bib
@@ -180,7 +182,7 @@ namespace Chronokeep
                     // if there are conflicts, alter the user to them and verify clobbering
                     if (conflicts.Count > 0)
                     {
-                        StringBuilder error = new StringBuilder("There were conflicts found in the import file. Please confirm you want to clobber current values.");
+                        StringBuilder error = new("There were conflicts found in the import file. Please confirm you want to clobber current values.");
                         foreach (BibChipAssociation assoc in conflicts)
                         {
                             error.Append(string.Format("\nChip {0} - Bib {1}", assoc.Chip, assoc.Bib));

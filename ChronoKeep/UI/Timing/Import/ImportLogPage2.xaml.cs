@@ -1,4 +1,5 @@
-﻿using Chronokeep.IO;
+﻿using Chronokeep.Helpers;
+using Chronokeep.IO;
 using Chronokeep.UI.UIObjects;
 using System.Collections.Generic;
 using System.Text;
@@ -11,23 +12,21 @@ namespace Chronokeep.UI.Timing.Import
     /// </summary>
     public partial class ImportLogPage2
     {
-        internal static string[] human_fields = new string[]
-        {
+        internal static string[] human_fields =
+        [
             "",
             "Chip",
             "Time"
-        };
+        ];
         private static readonly int CHIP = 1;
         private static readonly int TIME = 2;
 
-        ImportLogWindow parent;
-        LogImporter importer;
+        readonly ImportLogWindow parent;
 
         public ImportLogPage2(ImportLogWindow parent, LogImporter importer)
         {
             InitializeComponent();
             this.parent = parent;
-            this.importer = importer;
             for (int i=1; i < importer.Data.GetNumHeaders(); i++)
             {
                 itemListBox.Items.Add(new LogListBoxItem(importer.Data.Headers[i], i, human_fields, 0));
@@ -39,7 +38,7 @@ namespace Chronokeep.UI.Timing.Import
             Log.D("UI.Timing.ImportLog", "Checking for repeat headers in user selection.");
             int[] check = new int[human_fields.Length];
             bool repeat = false;
-            List<string> output = new List<string>();
+            List<string> output = [];
             foreach (LogListBoxItem item in itemListBox.Items)
             {
                 int val = item.HeaderBox.SelectedIndex;
@@ -65,11 +64,11 @@ namespace Chronokeep.UI.Timing.Import
             List<string> repeats = RepeatHeaders();
             if (repeats != null)
             {
-                StringBuilder message = new StringBuilder("The following are repeats:\n");
+                StringBuilder message = new("The following are repeats:\n");
                 foreach (string s in repeats)
                 {
                     message.Append(s);
-                    message.Append("\n");
+                    message.Append('\n');
                 }
                 DialogBox.Show(message.ToString());
                 return;
