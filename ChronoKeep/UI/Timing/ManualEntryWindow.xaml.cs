@@ -16,13 +16,13 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class ManualEntryWindow : FluentWindow
     {
-        IMainWindow window;
-        IDBInterface database;
-        Event theEvent;
+        readonly IMainWindow window;
+        readonly IDBInterface database;
+        readonly Event theEvent;
 
-        HashSet<string> bibsAdded = new HashSet<string>();
-        
-        private bool dnf = false;
+        readonly HashSet<string> bibsAdded = new HashSet<string>();
+
+        private readonly bool dnf = false;
 
         private ManualEntryWindow(IMainWindow window, IDBInterface database, List<TimingLocation> locations)
         {
@@ -117,9 +117,9 @@ namespace Chronokeep.UI.Timing
         {
             if (locations == null)
             {
-                return new ManualEntryWindow(window, database);
+                return new(window, database);
             }
-            return new ManualEntryWindow(window, database, locations);
+            return new(window, database, locations);
         }
 
 
@@ -183,9 +183,9 @@ namespace Chronokeep.UI.Timing
                     List<Participant> participants = database.GetParticipants(theEvent.Identifier);
                     List<Distance> distances = database.GetDistances(theEvent.Identifier);
                     // Store the offset start values for each distance by distance ID
-                    Dictionary<int, (int seconds, int milliseconds)> distanceStartOffsetDictionary = new Dictionary<int, (int, int)>();
+                    Dictionary<int, (int seconds, int milliseconds)> distanceStartOffsetDictionary = [];
                     // Store participants by their bib number
-                    Dictionary<string, Participant> participantsDictionary = new Dictionary<string, Participant>();
+                    Dictionary<string, Participant> participantsDictionary = [];
                     foreach (Distance div in distances)
                     {
                         distanceStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
@@ -196,10 +196,9 @@ namespace Chronokeep.UI.Timing
                     }
                     (int seconds, int milliseconds) startOffset = (0, 0);
                     // Check if the bib corresponds to a person, then if that person has a valid distance ID
-                    if (participantsDictionary.ContainsKey(bib) && distanceStartOffsetDictionary
-                        .ContainsKey(participantsDictionary[bib].EventSpecific.DistanceIdentifier))
+                    if (participantsDictionary.TryGetValue(bib, out Participant oPart) && distanceStartOffsetDictionary.TryGetValue(oPart.EventSpecific.DistanceIdentifier, out (int seconds, int milliseconds) oStart))
                     {
-                        startOffset = distanceStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DistanceIdentifier];
+                        startOffset = oStart;
                     }
                     time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
                     milliseconds += theEvent.StartMilliseconds + startOffset.milliseconds;
@@ -223,7 +222,7 @@ namespace Chronokeep.UI.Timing
                 time = time.AddSeconds(seconds);
                 time = time.AddMilliseconds(milliseconds);
             }
-            ChipRead newEntry = new ChipRead(theEvent.Identifier, locationId, bib, time, Constants.Timing.CHIPREAD_STATUS_DNF);
+            ChipRead newEntry = new(theEvent.Identifier, locationId, bib, time, Constants.Timing.CHIPREAD_STATUS_DNF);
             Log.D("UI.Timing.ManualEntryWindow", "Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
             database.AddChipRead(newEntry);
             bibsAdded.Add(bib);
@@ -261,9 +260,9 @@ namespace Chronokeep.UI.Timing
                 List<Participant> participants = database.GetParticipants(theEvent.Identifier);
                 List<Distance> distances = database.GetDistances(theEvent.Identifier);
                 // Store the offset start values for each distance by distance ID
-                Dictionary<int, (int seconds, int milliseconds)> distanceStartOffsetDictionary = new Dictionary<int, (int, int)>();
+                Dictionary<int, (int seconds, int milliseconds)> distanceStartOffsetDictionary = [];
                 // Store participants by their bib number
-                Dictionary<string, Participant> participantsDictionary = new Dictionary<string, Participant>();
+                Dictionary<string, Participant> participantsDictionary = [];
                 foreach (Distance div in distances)
                 {
                     distanceStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
@@ -274,10 +273,9 @@ namespace Chronokeep.UI.Timing
                 }
                 (int seconds, int milliseconds) startOffset = (0, 0);
                 // Check if the bib corresponds to a person, then if that person has a valid distance ID
-                if (participantsDictionary.ContainsKey(bib) && distanceStartOffsetDictionary
-                    .ContainsKey(participantsDictionary[bib].EventSpecific.DistanceIdentifier))
+                if (participantsDictionary.TryGetValue(bib, out Participant oPart) && distanceStartOffsetDictionary.TryGetValue(oPart.EventSpecific.DistanceIdentifier, out (int seconds, int milliseconds) oStart))
                 {
-                    startOffset = distanceStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DistanceIdentifier];
+                    startOffset = oStart;
                 }
                 time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
                 milliseconds += theEvent.StartMilliseconds + startOffset.milliseconds;
@@ -300,7 +298,7 @@ namespace Chronokeep.UI.Timing
             }
             time = time.AddSeconds(seconds);
             time = time.AddMilliseconds(milliseconds);
-            ChipRead newEntry = new ChipRead(theEvent.Identifier, locationId, bib, time, Constants.Timing.CHIPREAD_STATUS_NONE);
+            ChipRead newEntry = new(theEvent.Identifier, locationId, bib, time, Constants.Timing.CHIPREAD_STATUS_NONE);
             Log.D("UI.Timing.ManualEntryWindow", "Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
             database.AddChipRead(newEntry);
             bibsAdded.Add(bib);

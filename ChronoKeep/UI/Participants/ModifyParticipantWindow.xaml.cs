@@ -79,7 +79,7 @@ namespace Chronokeep.UI.Participants
 
         public static ModifyParticipantWindow NewWindow(IMainWindow window, IDBInterface database, Participant person = null)
         {
-            return new ModifyParticipantWindow(window, database, person);
+            return new(window, database, person);
         }
 
         private void UpdateDistances()
@@ -400,7 +400,7 @@ namespace Chronokeep.UI.Participants
                 birthdate = "1/1/" + (year - age);
             }
             Log.D("UI.Participants.ModifyParticipantWindow", "----- Birthdate -----" + birthdate);
-            Participant output = new Participant(
+            Participant output = new(
                 participantId,
                 FirstBox.Text,
                 LastBox.Text,
@@ -441,15 +441,15 @@ namespace Chronokeep.UI.Participants
                 "" // placeholder chip value
                 );
             age = output.GetAge(theEvent.Date);
-            Dictionary<(int, int), AgeGroup> AgeGroups = new();
-            Dictionary<int, AgeGroup> LastAgeGroup = new();
+            Dictionary<(int, int), AgeGroup> AgeGroups = [];
+            Dictionary<int, AgeGroup> LastAgeGroup = [];
             foreach (AgeGroup g in database.GetAgeGroups(theEvent.Identifier))
             {
                 for (int i = g.StartAge; i <= g.EndAge; i++)
                 {
                     AgeGroups[(g.DistanceId, i)] = g;
                 }
-                if (!LastAgeGroup.ContainsKey(g.DistanceId) || LastAgeGroup[g.DistanceId].StartAge < g.StartAge)
+                if (!LastAgeGroup.TryGetValue(g.DistanceId, out AgeGroup oAgeGrp) || oAgeGrp.StartAge < g.StartAge)
                 {
                     LastAgeGroup[g.DistanceId] = g;
                 }
@@ -491,10 +491,7 @@ namespace Chronokeep.UI.Participants
             if (ParticipantChanged)
             {
                 database.ResetTimingResultsEvent(theEvent.Identifier);
-                if (window != null)
-                {
-                    window.NotifyTimingWorker();
-                }
+                window?.NotifyTimingWorker();
                 if (tPage != null)
                 {
                     tPage.DatasetChanged();
@@ -502,7 +499,7 @@ namespace Chronokeep.UI.Participants
                     tPage.NotifyTimingWorker();
                 }
             }
-            if (window != null) window.WindowFinalize(this);
+            window?.WindowFinalize(this);
         }
 
         private void Box_KeyDown(object sender, KeyEventArgs e)

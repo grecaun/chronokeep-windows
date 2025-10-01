@@ -15,12 +15,12 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class WaveWindow : FluentWindow
     {
-        IMainWindow window;
-        IDBInterface database;
-        Event theEvent;
-        Dictionary<int, Distance> distanceDictionary = new Dictionary<int, Distance>();
-        Dictionary<int, (long seconds, int milliseconds)> waveTimes = new Dictionary<int, (long, int)>();
-        HashSet<int> waves = new HashSet<int>();
+        readonly IMainWindow window;
+        readonly IDBInterface database;
+        readonly Event theEvent;
+        readonly Dictionary<int, Distance> distanceDictionary = [];
+        readonly Dictionary<int, (long seconds, int milliseconds)> waveTimes = [];
+        readonly HashSet<int> waves = [];
 
         private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
 
@@ -40,7 +40,7 @@ namespace Chronokeep.UI.Timing
                 waves.Add(div.Wave);
                 waveTimes[div.Wave] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
             }
-            List<int> sortedWaves = new List<int>(waves);
+            List<int> sortedWaves = [.. waves];
             sortedWaves.Sort();
             foreach (int waveNum in sortedWaves)
             {
@@ -78,9 +78,9 @@ namespace Chronokeep.UI.Timing
             bool update = false;
             foreach (Distance div in newDistances)
             {
-                if (!distanceDictionary.ContainsKey(div.Identifier)
-                    || distanceDictionary[div.Identifier].StartOffsetSeconds != div.StartOffsetSeconds
-                    || distanceDictionary[div.Identifier].StartOffsetMilliseconds != div.StartOffsetMilliseconds)
+                if (!distanceDictionary.TryGetValue(div.Identifier, out Distance oDist)
+                    || oDist.StartOffsetSeconds != div.StartOffsetSeconds
+                    || oDist.StartOffsetMilliseconds != div.StartOffsetMilliseconds)
                 {
                     update = true;
                 }
@@ -135,7 +135,7 @@ namespace Chronokeep.UI.Timing
             public AWave(int num, long startSeconds, int startMilliseconds)
             {
                 Wave = num;
-                DockPanel thePanel = new DockPanel();
+                DockPanel thePanel = new();
                 this.Content = thePanel;
                 thePanel.VerticalAlignment = VerticalAlignment.Center;
                 thePanel.Children.Add(new Wpf.Ui.Controls.TextBlock()
@@ -156,7 +156,7 @@ namespace Chronokeep.UI.Timing
                     startSeconds *= -1;
                     startMilliseconds *= -1;
                 }
-                WaveType = new Wpf.Ui.Controls.TextBlock()
+                WaveType = new()
                 {
                     Width = 25,
                     Margin = new Thickness(0, 0, 3, 0),
@@ -171,7 +171,7 @@ namespace Chronokeep.UI.Timing
                 string sOffset = string.Format(TimeFormat, startSeconds / 3600,
                     (startSeconds % 3600) / 60, startSeconds % 60,
                     startMilliseconds);
-                StartOffset = new MaskedTextBox()
+                StartOffset = new()
                 {
                     Text = sOffset,
                     Mask = "00:00:00.000",

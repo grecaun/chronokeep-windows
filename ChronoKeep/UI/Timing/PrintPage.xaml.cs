@@ -72,12 +72,12 @@ namespace Chronokeep.UI.Timing
             // if we're a time based event, exclude all but the last result
             if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
             {
-                Dictionary<string, TimeResult> lastResult = new Dictionary<string, TimeResult>();
+                Dictionary<string, TimeResult> lastResult = [];
                 foreach (TimeResult individual in results)
                 {
-                    if (lastResult.ContainsKey(individual.ParticipantName))
+                    if (lastResult.TryGetValue(individual.ParticipantName, out TimeResult oLResult))
                     {
-                        if (lastResult[individual.ParticipantName].Occurrence < individual.Occurrence)
+                        if (oLResult.Occurrence < individual.Occurrence)
                         {
                             lastResult[individual.ParticipantName] = individual;
                         }
@@ -87,27 +87,30 @@ namespace Chronokeep.UI.Timing
                         lastResult[individual.ParticipantName] = individual;
                     }
                 }
-                results = lastResult.Values.ToList();
+                results = [.. lastResult.Values];
             }
-            Dictionary<string, List<TimeResult>> distanceResults = new Dictionary<string, List<TimeResult>>();
-            Dictionary<string, List<TimeResult>> dnfResultDictionary = new Dictionary<string, List<TimeResult>>();
+            Dictionary<string, List<TimeResult>> distanceResults = [];
+            Dictionary<string, List<TimeResult>> dnfResultDictionary = [];
             foreach (TimeResult result in results)
             {
-                if (!distanceResults.ContainsKey(result.DistanceName))
+                if (!distanceResults.TryGetValue(result.DistanceName, out List<TimeResult> oDistResultList))
                 {
-                    distanceResults[result.DistanceName] = new List<TimeResult>();
+                    oDistResultList = [];
+                    distanceResults[result.DistanceName] = oDistResultList;
                 }
                 if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
                 {
-                    if (dnfResultDictionary.ContainsKey(result.DistanceName) == false)
+                    if (!dnfResultDictionary.TryGetValue(result.DistanceName, out List<TimeResult> oDNFResList))
                     {
-                        dnfResultDictionary[result.DistanceName] = new List<TimeResult>();
+                        oDNFResList = [];
+                        dnfResultDictionary[result.DistanceName] = oDNFResList;
                     }
-                    dnfResultDictionary[result.DistanceName].Add(result);
+
+                    oDNFResList.Add(result);
                 }
                 else
                 {
-                    distanceResults[result.DistanceName].Add(result);
+                    oDistResultList.Add(result);
                 }
             }
             foreach (string divName in distanceResults.Keys.OrderBy(i => i))
@@ -117,7 +120,7 @@ namespace Chronokeep.UI.Timing
                 // sort by distance place
                 distanceResults[divName].Sort(TimeResult.CompareByDistancePlace);
             }
-            ResultsPrintableOverall output = new ResultsPrintableOverall(theEvent, distanceResults, dnfResultDictionary);
+            ResultsPrintableOverall output = new(theEvent, distanceResults, dnfResultDictionary);
             return output.TransformText();
         }
 
@@ -139,12 +142,12 @@ namespace Chronokeep.UI.Timing
             // if we're a time based event, exclude all but the last result
             if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
             {
-                Dictionary<string, TimeResult> lastResult = new Dictionary<string, TimeResult>();
+                Dictionary<string, TimeResult> lastResult = [];
                 foreach (TimeResult individual in results)
                 {
-                    if (lastResult.ContainsKey(individual.ParticipantName))
+                    if (lastResult.TryGetValue(individual.ParticipantName, out TimeResult oLResult))
                     {
-                        if (lastResult[individual.ParticipantName].Occurrence < individual.Occurrence)
+                        if (oLResult.Occurrence < individual.Occurrence)
                         {
                             lastResult[individual.ParticipantName] = individual;
                         }
@@ -154,36 +157,41 @@ namespace Chronokeep.UI.Timing
                         lastResult[individual.ParticipantName] = individual;
                     }
                 }
-                results = lastResult.Values.ToList();
+                results = [.. lastResult.Values];
             }
             // separate each grouping by distance, then by gender
-            Dictionary<string, Dictionary<string, List<TimeResult>>> distanceResults = new Dictionary<string, Dictionary<string, List<TimeResult>>>();
-            Dictionary<string, Dictionary<string, List<TimeResult>>> dnfResultsDictionary = new Dictionary<string, Dictionary<string, List<TimeResult>>>();
+            Dictionary<string, Dictionary<string, List<TimeResult>>> distanceResults = [];
+            Dictionary<string, Dictionary<string, List<TimeResult>>> dnfResultsDictionary = [];
             foreach (TimeResult result in results)
             {
-                if (!distanceResults.ContainsKey(result.DistanceName))
+                if (!distanceResults.TryGetValue(result.DistanceName, out Dictionary<string, List<TimeResult>> oDistResDict))
                 {
-                    distanceResults[result.DistanceName] = new Dictionary<string, List<TimeResult>>();
+                    oDistResDict = [];
+                    distanceResults[result.DistanceName] = oDistResDict;
                 }
-                if (!distanceResults[result.DistanceName].ContainsKey(result.Gender))
+                if (!oDistResDict.TryGetValue(result.Gender, out List<TimeResult> oDistGendResList))
                 {
-                    distanceResults[result.DistanceName][result.Gender] = new List<TimeResult>();
+                    oDistGendResList = [];
+                    oDistResDict[result.Gender] = oDistGendResList;
                 }
                 if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
                 {
-                    if (!dnfResultsDictionary.ContainsKey(result.DistanceName))
+                    if (!dnfResultsDictionary.TryGetValue(result.DistanceName, out Dictionary<string, List<TimeResult>> oDnfResDict))
                     {
-                        dnfResultsDictionary[result.DistanceName] = new Dictionary<string, List<TimeResult>>();
+                        oDnfResDict = [];
+                        dnfResultsDictionary[result.DistanceName] = oDnfResDict;
                     }
-                    if (!dnfResultsDictionary[result.DistanceName].ContainsKey(result.Gender))
+                    if (!oDnfResDict.TryGetValue(result.Gender, out List<TimeResult> oDnfGndResList))
                     {
-                        dnfResultsDictionary[result.DistanceName][result.Gender] = new List<TimeResult>();
+                        oDnfGndResList = [];
+                        oDnfResDict[result.Gender] = oDnfGndResList;
                     }
-                    dnfResultsDictionary[result.DistanceName][result.Gender].Add(result);
+
+                    oDnfGndResList.Add(result);
                 }
                 else
                 {
-                    distanceResults[result.DistanceName][result.Gender].Add(result);
+                    oDistGendResList.Add(result);
                 }
             }
             foreach (string divName in distanceResults.Keys.OrderBy(i => i))
@@ -196,7 +204,7 @@ namespace Chronokeep.UI.Timing
                     distanceResults[divName][gender].Sort(TimeResult.CompareByDistancePlace);
                 }
             }
-            ResultsPrintableGender output = new ResultsPrintableGender(theEvent, distanceResults, dnfResultsDictionary);
+            ResultsPrintableGender output = new(theEvent, distanceResults, dnfResultsDictionary);
             return output.TransformText();
         }
 
@@ -205,7 +213,7 @@ namespace Chronokeep.UI.Timing
             // Get all of the age groups for the race
             Dictionary<int, AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier).ToDictionary(x => x.GroupId, x => x);
             // Add an age group for our unknown age people/
-            ageGroups[Constants.Timing.TIMERESULT_DUMMYAGEGROUP] = new AgeGroup(theEvent.Identifier, Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, -1, 3000);
+            ageGroups[Constants.Timing.TIMERESULT_DUMMYAGEGROUP] = new(theEvent.Identifier, Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, -1, 3000);
             // Get all finish results for the race
             List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
             // Remove all unknown participants
@@ -222,12 +230,12 @@ namespace Chronokeep.UI.Timing
             // if we're a time based event, exclude all but the last result
             if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
             {
-                Dictionary<string, TimeResult> lastResult = new Dictionary<string, TimeResult>();
+                Dictionary<string, TimeResult> lastResult = [];
                 foreach (TimeResult individual in results)
                 {
-                    if (lastResult.ContainsKey(individual.ParticipantName))
+                    if (lastResult.TryGetValue(individual.ParticipantName, out TimeResult oLastRes))
                     {
-                        if (lastResult[individual.ParticipantName].Occurrence < individual.Occurrence)
+                        if (oLastRes.Occurrence < individual.Occurrence)
                         {
                             lastResult[individual.ParticipantName] = individual;
                         }
@@ -237,48 +245,54 @@ namespace Chronokeep.UI.Timing
                         lastResult[individual.ParticipantName] = individual;
                     }
                 }
-                results = lastResult.Values.ToList();
+                results = [.. lastResult.Values];
             }
-            Dictionary<string, Dictionary<(int, string), List<TimeResult>>> distanceResults = new Dictionary<string, Dictionary<(int, string), List<TimeResult>>>();
-            Dictionary<string, Dictionary<(int, string), List<TimeResult>>> dnfResultsDictionary = new Dictionary<string, Dictionary<(int, string), List<TimeResult>>>();
+            Dictionary<string, Dictionary<(int, string), List<TimeResult>>> distanceResults = [];
+            Dictionary<string, Dictionary<(int, string), List<TimeResult>>> dnfResultsDictionary = [];
             foreach (TimeResult result in results)
             {
-                if (!distanceResults.ContainsKey(result.DistanceName))
+                if (!distanceResults.TryGetValue(result.DistanceName, out Dictionary<(int, string), List<TimeResult>> oDistResDict))
                 {
-                    distanceResults[result.DistanceName] = new Dictionary<(int, string), List<TimeResult>>();
+                    oDistResDict = [];
+                    distanceResults[result.DistanceName] = oDistResDict;
                 }
-                if (!distanceResults[result.DistanceName].ContainsKey((result.AgeGroupId, result.Gender)))
+                if (!oDistResDict.TryGetValue((result.AgeGroupId, result.Gender), out List<TimeResult> oDistResList))
                 {
-                    distanceResults[result.DistanceName][(result.AgeGroupId, result.Gender)] = new List<TimeResult>();
+                    oDistResList = [];
+                    oDistResDict[(result.AgeGroupId, result.Gender)] = oDistResList;
                 }
                 if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
                 {
-                    if (!dnfResultsDictionary.ContainsKey(result.DistanceName))
+                    if (!dnfResultsDictionary.TryGetValue(result.DistanceName, out Dictionary<(int, string), List<TimeResult>> oDnfResDict))
                     {
-                        dnfResultsDictionary[result.DistanceName] = new Dictionary<(int, string), List<TimeResult>>();
+                        oDnfResDict = [];
+                        dnfResultsDictionary[result.DistanceName] = oDnfResDict;
                     }
-                    if (!dnfResultsDictionary[result.DistanceName].ContainsKey((result.AgeGroupId, result.Gender)))
+                    if (!oDnfResDict.TryGetValue((result.AgeGroupId, result.Gender), out List<TimeResult> oDnfResList))
                     {
-                        dnfResultsDictionary[result.DistanceName][(result.AgeGroupId, result.Gender)] = new List<TimeResult>();
+                        oDnfResList = [];
+                        oDnfResDict[(result.AgeGroupId, result.Gender)] = oDnfResList;
                     }
-                    dnfResultsDictionary[result.DistanceName][(result.AgeGroupId, result.Gender)].Add(result);
+                    oDnfResList.Add(result);
                 }
                 else
                 {
-                    distanceResults[result.DistanceName][(result.AgeGroupId, result.Gender)].Add(result);
+                    oDistResList.Add(result);
                 }
             }
             foreach (string divName in distanceResults.Keys.OrderBy(i => i))
             {
-                foreach ((int ag, string gender) in distanceResults[divName].Keys)
+                Dictionary<(int, string), List<TimeResult>>  lDistResDict = distanceResults[divName];
+                foreach ((int ag, string gender) in lDistResDict.Keys)
                 {
+                    List<TimeResult> lDistResList = lDistResDict[(ag, gender)];
                     // get rid of non-finish results
-                    distanceResults[divName][(ag, gender)].RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
+                    lDistResList.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
                     // sort results
-                    distanceResults[divName][(ag, gender)].Sort(TimeResult.CompareByDistancePlace);
+                    lDistResList.Sort(TimeResult.CompareByDistancePlace);
                 }
             }
-            ResultsPrintableAgeGroup output = new ResultsPrintableAgeGroup(theEvent, distanceResults, dnfResultsDictionary, ageGroups);
+            ResultsPrintableAgeGroup output = new(theEvent, distanceResults, dnfResultsDictionary, ageGroups);
             return output.TransformText();
         }
 
@@ -306,7 +320,7 @@ namespace Chronokeep.UI.Timing
         private void Print_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.PrintPage", "All times - print clicked.");
-            List<string> divsToPrint = new List<string>();
+            List<string> divsToPrint = [];
             foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
             {
                 if (divItem.Content.Equals("All"))
@@ -345,11 +359,11 @@ namespace Chronokeep.UI.Timing
                 string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
                 string tmpPdf = Path.Combine(Path.GetTempPath(), "print_pdf.pdf");
                 // Write the HTML file to a temp file because wkhtmltopdf requires a URI.
-                using StreamWriter streamwriter = new StreamWriter(File.Open(tmpFile, FileMode.Create));
+                using StreamWriter streamwriter = new(File.Open(tmpFile, FileMode.Create));
                 streamwriter.Write(HTML_String);
                 streamwriter.Close();
                 // Use wkhtmltopdf to convert the temp HTML file to a temp PDF file.
-                using Process create_pdf = new Process();
+                using Process create_pdf = new();
                 create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
                 create_pdf.StartInfo.Arguments = $"-s A4 -B 30mm {tmpFile} {tmpPdf}";
                 create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -360,7 +374,7 @@ namespace Chronokeep.UI.Timing
                 create_pdf.Kill();
                 create_pdf.Close();
                 // Use ghostscript to print the temp PDF file.
-                using Process print_pdf = new Process();
+                using Process print_pdf = new();
                 print_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "gswin32.exe");
                 print_pdf.StartInfo.Arguments = $"-dPrinted -dBATCH -dNOPAUSE -dNOSAFER -dNumCopies=1 -sDEVICE=mswinpr2 {tmpPdf}";
                 print_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -384,13 +398,13 @@ namespace Chronokeep.UI.Timing
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.PrintPage", "All times - save clicked.");
-            SaveFileDialog saveFileDialog = new SaveFileDialog()
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "PDF (*.pdf)|*.pdf",
                 FileName = string.Format("{0} {1} Results.{2}", theEvent.YearCode, theEvent.Name, "pdf"),
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
-            List<string> divsToPrint = new List<string>();
+            List<string> divsToPrint = [];
             foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
             {
                 if (divItem.Content.Equals("All"))
@@ -428,7 +442,7 @@ namespace Chronokeep.UI.Timing
                 {
                     // Write HTML to a temp file.
                     string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
-                    using StreamWriter streamwriter = new StreamWriter(File.Open(tmpFile, FileMode.Create));
+                    using StreamWriter streamwriter = new(File.Open(tmpFile, FileMode.Create));
                     streamwriter.Write(HTML_String);
                     streamwriter.Close();
                     // Delete old file if it exists.
@@ -437,7 +451,7 @@ namespace Chronokeep.UI.Timing
                         File.Delete(saveFileDialog.FileName);
                     }
                     // Use wkhtmltopdf to convert our temp html file to a saved pdf file.
-                    using Process create_pdf = new Process();
+                    using Process create_pdf = new();
                     create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
                     create_pdf.StartInfo.Arguments = $"-s A4 {tmpFile} {saveFileDialog.FileName}";
                     create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

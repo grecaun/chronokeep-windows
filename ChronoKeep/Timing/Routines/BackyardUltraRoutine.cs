@@ -354,7 +354,7 @@ namespace Chronokeep.Timing.Routines
                                         oLastRead.Read.Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
                                     }
                                     // Update the last read we've seen at this location
-                                    oLastRead = (Read: read, Occurrence: hour * 2);
+                                    bibLastReadDictionary[(bib, read.LocationID)] = (read, hour * 2);
                                     // check for start results in our list that we're pushing to the database and remove it if it is there
                                     TimeResult startResult = null;
                                     if (backyardResultDictionary.TryGetValue((hour, TimeResult.BibToIdentifier(bib)), out (TimeResult start, TimeResult end) hourRes))
@@ -580,8 +580,8 @@ namespace Chronokeep.Timing.Routines
                                         if (bibLastReadDictionary.TryGetValue((bib, read.LocationID), out (ChipRead Read, int Occurrence) bLastRead))
                                         {
                                             occurrence = bLastRead.Occurrence + 1;
-                                            minSeconds = bibLastReadDictionary[(bib, read.LocationID)].Read.TimeSeconds + ignoreWithin;
-                                            minMilliseconds = bibLastReadDictionary[(bib, read.LocationID)].Read.Milliseconds;
+                                            minSeconds = bLastRead.Read.TimeSeconds + ignoreWithin;
+                                            minMilliseconds = bLastRead.Read.Milliseconds;
                                         }
                                         // Check if we're within the ignore period
                                         if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && millisecDiff <= minMilliseconds))
@@ -875,11 +875,11 @@ namespace Chronokeep.Timing.Routines
                                         // Make sure to remove the hour portion of the last read chip time
                                         long minSeconds = 0;
                                         long minMilliseconds = 0;
-                                        if (chipLastReadDictionary.ContainsKey((chip, read.LocationID)))
+                                        if (chipLastReadDictionary.TryGetValue((chip, read.LocationID), out (ChipRead Read, int Occurrence) oChipLast))
                                         {
-                                            occurrence = chipLastReadDictionary[(chip, read.LocationID)].Occurrence + 1;
-                                            minSeconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeSeconds + ignoreWithin;
-                                            minMilliseconds = chipLastReadDictionary[(chip, read.LocationID)].Read.Milliseconds;
+                                            occurrence = oChipLast.Occurrence + 1;
+                                            minSeconds = oChipLast.Read.TimeSeconds + ignoreWithin;
+                                            minMilliseconds = oChipLast.Read.Milliseconds;
                                         }
                                         // Check if we're within the ignore period
                                         if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && millisecDiff <= minMilliseconds))

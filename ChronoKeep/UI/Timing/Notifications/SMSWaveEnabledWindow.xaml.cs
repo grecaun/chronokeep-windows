@@ -15,13 +15,13 @@ namespace Chronokeep.UI.Timing.Notifications
     /// </summary>
     public partial class SMSWaveEnabledWindow : FluentWindow
     {
-        IMainWindow window;
-        IDBInterface database;
-        Event theEvent;
+        readonly IMainWindow window;
+        readonly IDBInterface database;
+        readonly Event theEvent;
 
-        Dictionary<int, bool> initialValues = new Dictionary<int, bool>();
-        Dictionary<int, bool> updatedValues = new Dictionary<int, bool>();
-        Dictionary<int, List<Distance>> waveDistanceDictionary = new Dictionary<int, List<Distance>>();
+        readonly Dictionary<int, bool> initialValues = [];
+        readonly Dictionary<int, bool> updatedValues = [];
+        readonly Dictionary<int, List<Distance>> waveDistanceDictionary = [];
 
         public SMSWaveEnabledWindow(IMainWindow window, IDBInterface database)
         {
@@ -41,15 +41,16 @@ namespace Chronokeep.UI.Timing.Notifications
             foreach (Distance dist in database.GetDistances(theEvent.Identifier))
             {
                 initialValues[dist.Wave] = dist.SMSEnabled;
-                if (!waveDistanceDictionary.ContainsKey(dist.Wave))
+                if (!waveDistanceDictionary.TryGetValue(dist.Wave, out List<Distance> oDistList))
                 {
-                    waveDistanceDictionary[dist.Wave] = new List<Distance>();
+                    oDistList = [];
+                    waveDistanceDictionary[dist.Wave] = oDistList;
                 }
-                waveDistanceDictionary[dist.Wave].Add(dist);
+                oDistList.Add(dist);
             }
-            List<int> sortedWaves = new List<int>(initialValues.Keys);
+            List<int> sortedWaves = [.. initialValues.Keys];
             sortedWaves.Sort();
-            List<WaveSMS> waves = new List<WaveSMS>();
+            List<WaveSMS> waves = [];
             foreach (int waveNum in sortedWaves)
             {
                 waves.Add(new WaveSMS {
@@ -72,9 +73,9 @@ namespace Chronokeep.UI.Timing.Notifications
             }
             foreach (int wave in updatedValues.Keys)
             {
-                if (waveDistanceDictionary.ContainsKey(wave))
+                if (waveDistanceDictionary.TryGetValue(wave, out List<Distance> tDistList))
                 {
-                    foreach (Distance dist in waveDistanceDictionary[wave])
+                    foreach (Distance dist in tDistList)
                     {
                         dist.SMSEnabled = updatedValues[wave];
                         database.UpdateDistance(dist);

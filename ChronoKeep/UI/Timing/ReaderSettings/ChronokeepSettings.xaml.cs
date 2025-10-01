@@ -1,5 +1,4 @@
-﻿using Chronokeep.Objects;
-using Chronokeep.Objects.ChronokeepPortal;
+﻿using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Timing.Interfaces;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -19,13 +18,13 @@ namespace Chronokeep.UI.Timing.ReaderSettings
     /// </summary>
     public partial class ChronokeepSettings : FluentWindow
     {
-        private ChronokeepInterface reader = null;
-        private IDBInterface database = null;
+        private readonly ChronokeepInterface reader = null;
+        private readonly IDBInterface database = null;
 
         private bool saving = false;
 
-        private Dictionary<long, ReaderListItem> readerDict = new Dictionary<long, ReaderListItem>();
-        private Dictionary<long, APIListItem> apiDict = new Dictionary<long, APIListItem>();
+        private Dictionary<long, ReaderListItem> readerDict = [];
+        private Dictionary<long, APIListItem> apiDict = [];
 
         internal ChronokeepSettings(ChronokeepInterface reader, IDBInterface database)
         {
@@ -37,7 +36,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             reader.SendGetSettings();
         }
 
-        private void stopServerButton_Click(object sender, RoutedEventArgs e)
+        private void StopServerButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Stop button clicked.");
             DialogBox.Show(
@@ -53,7 +52,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 );
         }
 
-        private void shutdownServerButton_Click(object sender, RoutedEventArgs e)
+        private void ShutdownServerButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Shutdown button clicked.");
             DialogBox.Show(
@@ -69,13 +68,13 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 );
         }
 
-        private void saveButton_Click(object sender, RoutedEventArgs e)
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Save button clicked.");
             saving = true;
             try
             {
-                PortalSettingsHolder sett = new PortalSettingsHolder
+                PortalSettingsHolder sett = new()
                 {
                     Name = nameBox.Text.Trim(),
                     ReadWindow = int.Parse(readWindowBox.Text.Trim()),
@@ -102,16 +101,16 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             }
         }
 
-        private void closeButton_Click(object sender, RoutedEventArgs e)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Close button clicked.");
             this.Close();
         }
 
-        private void addAPIButton_Click(object sender, RoutedEventArgs e)
+        private void AddAPIButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Add API button clicked.");
-            reader.SendSaveApi(new PortalAPI
+            reader.SendSaveApi(new()
             {
                 Id = -1,
                 Nickname = "New API",
@@ -167,19 +166,19 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.READERS))
                 {
                     // keep track of which readers we are already displaying
-                    HashSet<long> found = new HashSet<long>();
+                    HashSet<long> found = [];
                     foreach (PortalReader read in allSettings.Readers)
                     {
                         found.Add(read.Id);
                         // update if we know about them
-                        if (readerDict.ContainsKey(read.Id))
+                        if (readerDict.TryGetValue(read.Id, out ReaderListItem oReaderItem))
                         {
-                            readerDict[read.Id].UpdateReader(read);
+                            oReaderItem.UpdateReader(read);
                         }
                         // otherwise add new
                         else
                         {
-                            readerDict[read.Id] = new ReaderListItem(read, reader);
+                            readerDict[read.Id] = new(read, reader);
                         }
                     }
                     var newDictionary = readerDict.Where(pair => found.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -193,18 +192,18 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.APIS))
                 {
                     // keep track of which apis we are already displaying
-                    HashSet<long> found = new HashSet<long>();
+                    HashSet<long> found = [];
                     foreach (PortalAPI api in allSettings.APIs)
                     {
                         found.Add(api.Id);
                         // update if we know about them
-                        if (apiDict.ContainsKey(api.Id))
+                        if (apiDict.TryGetValue(api.Id, out APIListItem oAPIItem))
                         {
-                            apiDict[api.Id].UpdateAPI(api);
+                            oAPIItem.UpdateAPI(api);
                         }
                         else
                         {
-                            apiDict[api.Id] = new APIListItem(api, reader);
+                            apiDict[api.Id] = new(api, reader);
                         }
                     }
                     var newDictionary = apiDict.Where(pair => found.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -217,7 +216,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 }
                 if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.ANTENNAS))
                 {
-                    Dictionary<string, ReaderListItem> readerNameDict = new Dictionary<string, ReaderListItem>();
+                    Dictionary<string, ReaderListItem> readerNameDict = [];
                     foreach (ReaderListItem reader in readerDict.Values)
                     {
                         if (reader.GetReaderName().Equals(allSettings.Antennas.ReaderName, StringComparison.OrdinalIgnoreCase))
@@ -287,10 +286,10 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             }
         }
 
-        private void addReaderButton_Click(object sender, RoutedEventArgs e)
+        private void AddReaderButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Adding new reader.");
-            reader.SendSaveReader(new PortalReader()
+            reader.SendSaveReader(new()
             {
                 Id = -1,
                 Name = "New Reader",
@@ -301,13 +300,13 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             });
         }
 
-        private void manualResultsButton_Click(object sender, RoutedEventArgs e)
+        private void ManualResultsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Manually uploading results.");
             reader.SendManualResultsUpload();
         }
 
-        private void autoResultsSwitch_Checked(object sender, RoutedEventArgs e)
+        private void AutoResultsSwitch_Checked(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Auto upload switched.");
             if (autoResultsSwitch.IsEnabled == false)
@@ -324,50 +323,53 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             }
         }
 
-        private class ReaderListItem : Wpf.Ui.Controls.ListViewItem
+        private partial class ReaderListItem : Wpf.Ui.Controls.ListViewItem
         {
             private PortalReader reader;
-            private ChronokeepInterface readerInterface;
+            private readonly ChronokeepInterface readerInterface;
 
-            private const string IPPattern = "^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$";
-            private const string allowedChars = "[^0-9.]";
-            private const string allowedNums = "[^0-9]";
+            [GeneratedRegex("^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$")]
+            private static partial Regex IPPattern();
+            [GeneratedRegex("[^0-9.]")]
+            private static partial Regex AllowedChars();
+            [GeneratedRegex("[^0-9]")]
+            private static partial Regex AllowedNums();
 
-            private System.Windows.Controls.TextBox nameBox;
-            private ComboBox kindBox;
-            private System.Windows.Controls.TextBox ipBox;
-            private System.Windows.Controls.TextBox portBox;
-            private ToggleSwitch autoConnectSwitch;
-            private ToggleSwitch connectedSwitch;
-            private StackPanel antennaPanel;
-            private Button saveReaderButton;
-            private Button removeReaderButton;
+            private readonly System.Windows.Controls.TextBox nameBox;
+            private readonly ComboBox kindBox;
+            private readonly System.Windows.Controls.TextBox ipBox;
+            private readonly System.Windows.Controls.TextBox portBox;
+            private readonly ToggleSwitch autoConnectSwitch;
+            private readonly ToggleSwitch connectedSwitch;
+            private readonly StackPanel antennaPanel;
+            private readonly Button saveReaderButton;
+            private readonly Button removeReaderButton;
 
             public ReaderListItem(PortalReader reader, ChronokeepInterface readerInterface)
             {
                 this.reader = reader;
                 this.readerInterface = readerInterface;
-                StackPanel thePanel = new StackPanel()
+                StackPanel thePanel = new()
                 {
                     Orientation = Orientation.Vertical,
                     HorizontalAlignment = HorizontalAlignment.Center,
                 };
                 this.Content = thePanel;
                 // first row
-                StackPanel subPanel = new StackPanel()
+                StackPanel subPanel = new()
                 {
                     Orientation = Orientation.Horizontal,
                     HorizontalAlignment = HorizontalAlignment.Center,
                 };
                 thePanel.Children.Add(subPanel);
-                nameBox = new System.Windows.Controls.TextBox()
+                nameBox = new()
                 {
                     Text = reader.Name,
                     Width = 190,
                     Margin = new Thickness(5)
                 };
                 subPanel.Children.Add(nameBox);
-                kindBox = new ComboBox()
+                kindBox = new()
                 {
                     Width = 120,
                     Margin = new Thickness(5),
@@ -391,13 +393,13 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 kindBox.SelectionChanged += new SelectionChangedEventHandler(this.UpdateReaderPort);
                 subPanel.Children.Add(kindBox);
                 // second row
-                subPanel = new StackPanel()
+                subPanel = new()
                 {
                     Orientation = Orientation.Horizontal,
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
                 thePanel.Children.Add(subPanel);
-                ipBox = new System.Windows.Controls.TextBox()
+                ipBox = new()
                 {
                     Text = reader.IPAddress,
                     Width = 120,
@@ -405,7 +407,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 ipBox.PreviewTextInput += new TextCompositionEventHandler(this.IPValidation);
                 subPanel.Children.Add(ipBox);
-                portBox = new System.Windows.Controls.TextBox()
+                portBox = new()
                 {
                     Text = reader.Port.ToString(),
                     Width = 60,
@@ -413,7 +415,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 portBox.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
                 subPanel.Children.Add(portBox);
-                autoConnectSwitch = new ToggleSwitch()
+                autoConnectSwitch = new()
                 {
                     IsChecked = reader.AutoConnect,
                     Content = "Auto Connect",
@@ -424,13 +426,13 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 subPanel.Children.Add(autoConnectSwitch);
                 // third row
-                subPanel = new StackPanel()
+                subPanel = new()
                 {
                     Orientation = Orientation.Horizontal,
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
                 thePanel.Children.Add(subPanel);
-                connectedSwitch = new ToggleSwitch()
+                connectedSwitch = new()
                 {
                     IsChecked = reader.Connected,
                     Content = "Connected",
@@ -441,7 +443,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 connectedSwitch.Click += new RoutedEventHandler(this.ConnectReader);
                 subPanel.Children.Add(connectedSwitch);
-                saveReaderButton = new Button()
+                saveReaderButton = new()
                 {
                     Icon = new SymbolIcon() { Symbol = SymbolRegular.Save24 },
                     Margin = new Thickness(5),
@@ -449,7 +451,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 saveReaderButton.Click += new RoutedEventHandler(this.SaveReader);
                 subPanel.Children.Add(saveReaderButton);
-                removeReaderButton = new Button()
+                removeReaderButton = new()
                 {
                     Icon = new SymbolIcon() { Symbol = SymbolRegular.Delete24 },
                     Margin = new Thickness(5),
@@ -458,7 +460,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 removeReaderButton.Click += new RoutedEventHandler(this.DeleteReader);
                 subPanel.Children.Add(removeReaderButton);
                 // fourth row
-                antennaPanel = new StackPanel()
+                antennaPanel = new()
                 {
                     Orientation = Orientation.Horizontal,
                     HorizontalAlignment = HorizontalAlignment.Center,
@@ -594,7 +596,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                         DialogBox.Show("Unknown kind specified. Unable to save.");
                         return;
                 }
-                if (!Regex.IsMatch(ipBox.Text.Trim(), IPPattern))
+                if (!IPPattern().IsMatch(ipBox.Text.Trim()))
                 {
                     reader.IPAddress = "";
                 }
@@ -622,52 +624,51 @@ namespace Chronokeep.UI.Timing.ReaderSettings
 
             private void IPValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = Regex.IsMatch(e.Text, allowedChars);
+                e.Handled = AllowedChars().IsMatch(e.Text);
             }
 
             private void NumberValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = Regex.IsMatch(e.Text, allowedNums);
+                e.Handled = AllowedNums().IsMatch(e.Text);
             }
         }
 
         private class APIListItem : Wpf.Ui.Controls.ListViewItem
         {
             private PortalAPI api = null;
-            private ChronokeepInterface reader = null;
+            private readonly ChronokeepInterface reader = null;
 
-            private System.Windows.Controls.TextBox nameBox;
-            private ComboBox kindBox;
-            private System.Windows.Controls.TextBox tokenBox;
-            private System.Windows.Controls.TextBox uriBox;
-
-            private Button saveAPIButton;
-            private Button removeAPIButton;
+            private readonly System.Windows.Controls.TextBox nameBox;
+            private readonly ComboBox kindBox;
+            private readonly System.Windows.Controls.TextBox tokenBox;
+            private readonly System.Windows.Controls.TextBox uriBox;
+            private readonly Button saveAPIButton;
+            private readonly Button removeAPIButton;
 
             public APIListItem(PortalAPI api, ChronokeepInterface reader)
             {
                 this.api = api;
                 this.reader = reader;
-                StackPanel thePanel = new StackPanel()
+                StackPanel thePanel = new()
                 {
                     Orientation = Orientation.Vertical,
                     HorizontalAlignment = HorizontalAlignment.Center,
                 };
                 this.Content = thePanel;
-                StackPanel subPanel = new StackPanel()
+                StackPanel subPanel = new()
                 {
                     Orientation = Orientation.Horizontal,
                     HorizontalAlignment = HorizontalAlignment.Center,
                 };
                 thePanel.Children.Add(subPanel);
-                nameBox = new System.Windows.Controls.TextBox()
+                nameBox = new()
                 {
                     Text = api.Nickname,
                     Width = 170,
                     Margin = new Thickness(5)
                 };
                 subPanel.Children.Add(nameBox);
-                kindBox = new ComboBox()
+                kindBox = new()
                 {
                     Width = 140,
                     Margin = new Thickness(5),
@@ -696,33 +697,33 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 }
                 kindBox.SelectionChanged += new SelectionChangedEventHandler(this.UpdateURI);
                 subPanel.Children.Add(kindBox);
-                subPanel = new StackPanel()
+                subPanel = new()
                 {
                     Orientation = Orientation.Horizontal,
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
                 thePanel.Children.Add(subPanel);
-                tokenBox = new System.Windows.Controls.TextBox()
+                tokenBox = new()
                 {
                     Text = api.Token,
                     Width = 320,
                     Margin = new Thickness(5),
                 };
                 subPanel.Children.Add(tokenBox);
-                subPanel = new StackPanel()
+                subPanel = new()
                 {
                     Orientation = Orientation.Horizontal,
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
                 thePanel.Children.Add(subPanel);
-                uriBox = new System.Windows.Controls.TextBox()
+                uriBox = new()
                 {
                     Text = api.Uri,
                     Width = 220,
                     Margin = new Thickness(5),
                 };
                 subPanel.Children.Add(uriBox);
-                saveAPIButton = new Button()
+                saveAPIButton = new()
                 {
                     Icon = new SymbolIcon() { Symbol = SymbolRegular.Save24 },
                     Margin = new Thickness(5),
@@ -731,7 +732,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 saveAPIButton.Click += new RoutedEventHandler(this.SaveAPI);
                 subPanel.Children.Add(saveAPIButton);
-                removeAPIButton = new Button()
+                removeAPIButton = new()
                 {
                     Icon = new SymbolIcon() { Symbol = SymbolRegular.Delete24 },
                     Margin = new Thickness(5),
@@ -837,11 +838,11 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 "Yes",
                 "No",
                 () =>
-                    {
-                        // send restart command
-                        reader.SendRestart();
-                        this.Close();
-                    }
+                {
+                    // send restart command
+                    reader.SendRestart();
+                    this.Close();
+                }
                 );
         }
 

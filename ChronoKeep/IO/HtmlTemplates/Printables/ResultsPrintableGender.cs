@@ -263,9 +263,9 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             this.Write("\n\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableGender.tt"
-  if (dnfResultsDictionary.TryGetValue(d, out Dictionary<string, List<TimeResult>> oDNFResDict) && oDNFResults.TryGetValue(gender, out List<TimeResult> oDNFResultsList))
+ if (dnfResultsDictionary.ContainsKey(d) && dnfResultsDictionary[d].ContainsKey(gender))
 						{
-							foreach (TimeResult r in oDNFResultsList)
+							foreach (TimeResult r in dnfResultsDictionary[d][gender])
 							{ 
             
             #line default

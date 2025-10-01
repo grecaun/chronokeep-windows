@@ -16,17 +16,17 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class DistanceStatsPage : ISubPage
     {
-        IDBInterface database;
-        IMainWindow window;
-        TimingPage parent;
-        Event theEvent;
-        int distanceId;
+        readonly IDBInterface database;
+        readonly IMainWindow window;
+        readonly TimingPage parent;
+        readonly Event theEvent;
+        readonly int distanceId;
 
-        private ObservableCollection<StatsParticipant> activeParticipants = new ObservableCollection<StatsParticipant>();
-        private ObservableCollection<Participant> dnsParticipants = new ObservableCollection<Participant>();
-        private ObservableCollection<Participant> unknownParticipants = new ObservableCollection<Participant>();
-        private ObservableCollection<Participant> dnfParticipants = new ObservableCollection<Participant>();
-        private ObservableCollection<Participant> finishedParticipants = new ObservableCollection<Participant>();
+        private readonly ObservableCollection<StatsParticipant> activeParticipants = [];
+        private readonly ObservableCollection<Participant> dnsParticipants = [];
+        private readonly ObservableCollection<Participant> unknownParticipants = [];
+        private readonly ObservableCollection<Participant> dnfParticipants = [];
+        private readonly ObservableCollection<Participant> finishedParticipants = [];
 
         public DistanceStatsPage(TimingPage parent, IMainWindow window, IDBInterface database, int distanceId, string DistanceName)
         {
@@ -79,7 +79,7 @@ namespace Chronokeep.UI.Timing
             finishedParticipants.Clear();
             Dictionary<int, List<Participant>> partDict = database.GetDistanceParticipantsStatus(theEvent.Identifier, distanceId);
             // Bib dictionary to add LastSeen string to active participants for display.
-            Dictionary<string, TimeResult> lastSeenDictionary = new Dictionary<string, TimeResult>();
+            Dictionary<string, TimeResult> lastSeenDictionary = [];
             foreach (TimeResult timeResult in database.GetLastSeenResults(theEvent.Identifier))
             {
                 if (timeResult.Bib != Constants.Timing.CHIPREAD_DUMMYBIB && timeResult.Bib.Length > 0)
@@ -87,32 +87,25 @@ namespace Chronokeep.UI.Timing
                     lastSeenDictionary[timeResult.Bib] = timeResult;
                 }
             }
-            if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_STARTED)) // ACTIVE
+            if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_STARTED, out List<Participant> oActiveList)) // ACTIVE
             {
                 activePanel.Visibility = Visibility.Visible;
-                foreach (Participant p in partDict[Constants.Timing.EVENTSPECIFIC_STARTED])
+                foreach (Participant p in oActiveList)
                 {
-                    string lastSeen = p.Bib != Constants.Timing.CHIPREAD_DUMMYBIB
-                                        && p.Bib.Length > 0
-                                        && lastSeenDictionary.ContainsKey(p.Bib)
-                                        ? lastSeenDictionary[p.Bib].SegmentName
-                                        : "";
-                    string lastSeenTime = p.Bib != Constants.Timing.CHIPREAD_DUMMYBIB
-                                        && p.Bib.Length > 0
-                                        && lastSeenDictionary.ContainsKey(p.Bib)
-                                        ? lastSeenDictionary[p.Bib].SysTime
-                                        : "";
-                    activeParticipants.Add(new StatsParticipant(p, lastSeen, lastSeenTime));
+                    bool lastSeenExists = lastSeenDictionary.TryGetValue(p.Bib, out TimeResult oLastSeenRes);
+                    string lastSeen = lastSeenExists ? oLastSeenRes.SegmentName : "";
+                    string lastSeenTime = lastSeenExists ? oLastSeenRes.SysTime : "";
+                    activeParticipants.Add(new(p, lastSeen, lastSeenTime));
                 }
             }
             else
             {
                 activePanel.Visibility = Visibility.Collapsed;
             }
-            if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_DNS)) // DNS
+            if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_DNS, out List<Participant> oDNSList)) // DNS
             {
                 dnsPanel.Visibility = Visibility.Visible;
-                foreach (Participant p in partDict[Constants.Timing.EVENTSPECIFIC_DNS])
+                foreach (Participant p in oDNSList)
                 {
                     dnsParticipants.Add(p);
                 }
@@ -121,10 +114,10 @@ namespace Chronokeep.UI.Timing
             {
                 dnsPanel.Visibility = Visibility.Collapsed;
             }
-            if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_UNKNOWN)) // UNKOWN
+            if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_UNKNOWN, out List<Participant> oUnknownList)) // UNKOWN
             {
                 unknownPanel.Visibility = Visibility.Visible;
-                foreach (Participant p in partDict[Constants.Timing.EVENTSPECIFIC_UNKNOWN])
+                foreach (Participant p in oUnknownList)
                 {
                     unknownParticipants.Add(p);
                 }
@@ -133,10 +126,10 @@ namespace Chronokeep.UI.Timing
             {
                 unknownPanel.Visibility = Visibility.Collapsed;
             }
-            if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_DNF)) // DNF
+            if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_DNF, out List<Participant> oDNFList)) // DNF
             {
                 dnfPanel.Visibility = Visibility.Visible;
-                foreach (Participant p in partDict[Constants.Timing.EVENTSPECIFIC_DNF])
+                foreach (Participant p in oDNFList)
                 {
                     dnfParticipants.Add(p);
                 }
@@ -145,10 +138,10 @@ namespace Chronokeep.UI.Timing
             {
                 dnfPanel.Visibility = Visibility.Collapsed;
             }
-            if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_FINISHED)) // FINISHED
+            if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_FINISHED, out List<Participant> oFinishedList)) // FINISHED
             {
                 finishedPanel.Visibility = Visibility.Visible;
-                foreach (Participant p in partDict[Constants.Timing.EVENTSPECIFIC_FINISHED])
+                foreach (Participant p in oFinishedList)
                 {
                     finishedParticipants.Add(p);
                 }
@@ -235,7 +228,7 @@ namespace Chronokeep.UI.Timing
                 {
                     selected = listView.SelectedItem as Participant;
                 }
-                ModifyParticipantWindow modifyParticipant = new ModifyParticipantWindow(window, database, selected);
+                ModifyParticipantWindow modifyParticipant = new(window, database, selected);
                 modifyParticipant.ShowDialog();
             }
         }

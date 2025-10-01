@@ -171,7 +171,7 @@
                                 DockPanel.Dock="Right"
                                 Margin="0,0,10,0"
                                 VerticalAlignment="Center"
-                                Click="addReaderButton_Click"
+                                Click="AddReaderButton_Click"
                                 Visibility="Collapsed"
                                 >
                                 <ui:Button.Icon>
@@ -208,7 +208,7 @@
                                 DockPanel.Dock="Right"
                                 Margin="0,0,10,0"
                                 VerticalAlignment="Center"
-                                Click="addAPIButton_Click"
+                                Click="AddAPIButton_Click"
                                 Visibility="Collapsed"
                                 >
                                 <ui:Button.Icon>
@@ -324,7 +324,7 @@
                     <ui:ToggleSwitch
                         Content="Auto Upload Results"
                         x:Name="autoResultsSwitch"
-                        Click="autoResultsSwitch_Checked"
+                        Click="AutoResultsSwitch_Checked"
                         Height="35"
                         Margin="5,5,5,10"
                         />
@@ -339,7 +339,7 @@
                     <Button
                         Content="Manual Results Upload"
                         x:Name="manualResultsButton"
-                        Click="manualResultsButton_Click"
+                        Click="ManualResultsButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"
@@ -375,7 +375,7 @@
                     <Button
                         Content="Stop Server"
                         x:Name="stopServerButton"
-                        Click="stopServerButton_Click"
+                        Click="StopServerButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"
@@ -383,7 +383,7 @@
                     <Button
                         Content="Shutdown Server"
                         x:Name="shutdownServerButton"
-                        Click="shutdownServerButton_Click"
+                        Click="ShutdownServerButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"
@@ -393,7 +393,7 @@
                     <Button
                         Content="Save Settings"
                         x:Name="saveButton"
-                        Click="saveButton_Click"
+                        Click="SaveButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"
@@ -401,7 +401,7 @@
                     <Button
                         Content="Close"
                         x:Name="closeButton"
-                        Click="closeButton_Click"
+                        Click="CloseButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"

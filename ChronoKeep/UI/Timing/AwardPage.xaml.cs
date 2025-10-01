@@ -24,13 +24,14 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class AwardPage : ISubPage
     {
-        IDBInterface database;
-        TimingPage parent;
-        Event theEvent;
+        readonly IDBInterface database;
+        readonly TimingPage parent;
+        readonly Event theEvent;
 
-        private ObservableCollection<AgeGroup> customAgeGroups = new ObservableCollection<AgeGroup>();
+        private readonly ObservableCollection<AgeGroup> customAgeGroups = [];
 
-        private readonly Regex allowedChars = new Regex("[^0-9]");
+        [GeneratedRegex("[^0-9]")]
+        private static partial Regex AllowedChars();
 
         public AwardPage(TimingPage parent, IDBInterface database)
         {
@@ -59,7 +60,7 @@ namespace Chronokeep.UI.Timing
 
         private void IsNumber(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = allowedChars.IsMatch(e.Text);
+            e.Handled = AllowedChars().IsMatch(e.Text);
         }
 
         private void AddCustom_Click(object sender, RoutedEventArgs e)
@@ -77,8 +78,7 @@ namespace Chronokeep.UI.Timing
                 if (start > -1 || end < 101)
                 {
                     database.AddAgeGroup(
-                        new AgeGroup(
-                            theEvent.Identifier,
+                        new(theEvent.Identifier,
                             Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID,
                             start,
                             end,
@@ -105,7 +105,7 @@ namespace Chronokeep.UI.Timing
         private void DeleteCustom_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AwardPage", "Deleting some entries... maybe.");
-            List<AgeGroup> items = new List<AgeGroup>();
+            List<AgeGroup> items = [];
             IList selected = customGroupsListView.SelectedItems;
             if (selected.Count < 1)
             {
@@ -122,13 +122,13 @@ namespace Chronokeep.UI.Timing
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AwardPage", "Print clicked.");
-            System.Windows.Forms.PrintDialog printDialog = new System.Windows.Forms.PrintDialog
+            System.Windows.Forms.PrintDialog printDialog = new()
             {
                 AllowSomePages = true,
                 UseEXDialog = true
             };
             AwardOptions options = GetOptions();
-            List<string> divsToPrint = new List<string>();
+            List<string> divsToPrint = [];
             foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
             {
                 if (divItem.Content.Equals("All"))
@@ -151,11 +151,11 @@ namespace Chronokeep.UI.Timing
                     string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
                     string tmpPdf = Path.Combine(Path.GetTempPath(), "print_pdf.pdf");
                     // Write the HTML file to a temp file because wkhtmltopdf requires a URI.
-                    using StreamWriter streamwriter = new StreamWriter(File.Open(tmpFile, FileMode.Create));
+                    using StreamWriter streamwriter = new(File.Open(tmpFile, FileMode.Create));
                     streamwriter.Write(GetPrintableAwards(divsToPrint, options));
                     streamwriter.Close();
                     // Use wkhtmltopdf to convert the temp HTML file to a temp PDF file.
-                    using Process create_pdf = new Process();
+                    using Process create_pdf = new();
                     create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
                     create_pdf.StartInfo.Arguments = $"-s A4 -B 30mm {tmpFile} {tmpPdf}";
                     create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -166,7 +166,7 @@ namespace Chronokeep.UI.Timing
                     create_pdf.Kill();
                     create_pdf.Close();
                     // Use ghostscript to print the temp PDF file.
-                    using Process print_pdf = new Process();
+                    using Process print_pdf = new();
                     print_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "gswin32.exe");
                     print_pdf.StartInfo.Arguments = $"-dPrinted -dBATCH -dNOPAUSE -dNOSAFER -dNumCopies=1 -sDEVICE=mswinpr2 {tmpPdf}";
                     print_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -190,7 +190,7 @@ namespace Chronokeep.UI.Timing
 
         private AwardOptions GetOptions()
         {
-            return new AwardOptions()
+            return new()
             {
                 PrintOverall = overallYes.IsChecked == true,
                 PrintAgeGroups = agYes.IsChecked == true,
@@ -207,14 +207,14 @@ namespace Chronokeep.UI.Timing
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AwardPage", "Save clicked.");
-            SaveFileDialog saveFileDialog = new SaveFileDialog()
+            SaveFileDialog saveFileDialog = new()
             {
                 Filter = "PDF (*.pdf)|*.pdf",
                 FileName = string.Format("{0} {1} Awards.{2}", theEvent.YearCode, theEvent.Name, "pdf"),
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             AwardOptions options = GetOptions();
-            List<string> divsToPrint = new List<string>();
+            List<string> divsToPrint = [];
             foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
             {
                 if (divItem.Content.Equals("All"))
@@ -239,7 +239,7 @@ namespace Chronokeep.UI.Timing
                 {
                     // Write HTML to a temp file.
                     string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
-                    using StreamWriter streamwriter = new StreamWriter(File.Open(tmpFile, FileMode.Create));
+                    using StreamWriter streamwriter = new(File.Open(tmpFile, FileMode.Create));
                     streamwriter.Write(GetPrintableAwards(divsToPrint, options));
                     streamwriter.Close();
                     // Delete old file if it exists.
@@ -248,7 +248,7 @@ namespace Chronokeep.UI.Timing
                         File.Delete(saveFileDialog.FileName);
                     }
                     // Use wkhtmltopdf to convert our temp html file to a saved pdf file.
-                    using Process create_pdf = new Process();
+                    using Process create_pdf = new();
                     create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
                     create_pdf.StartInfo.Arguments = $"-s A4 {tmpFile} {saveFileDialog.FileName}";
                     create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -288,12 +288,12 @@ namespace Chronokeep.UI.Timing
             // If we're a time based event, exclude all but the last result
             if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
             {
-                Dictionary<string, TimeResult> lastResult = new Dictionary<string, TimeResult>();
+                Dictionary<string, TimeResult> lastResult = [];
                 foreach (TimeResult individual in results)
                 {
-                    if (lastResult.ContainsKey(individual.ParticipantName))
+                    if (lastResult.TryGetValue(individual.ParticipantName, out TimeResult oResult))
                     {
-                        if (lastResult[individual.ParticipantName].Occurrence < individual.Occurrence)
+                        if (oResult.Occurrence < individual.Occurrence)
                         {
                             lastResult[individual.ParticipantName] = individual;
                         }
@@ -303,14 +303,14 @@ namespace Chronokeep.UI.Timing
                         lastResult[individual.ParticipantName] = individual;
                     }
                 }
-                results = lastResult.Values.ToList();
+                results = [.. lastResult.Values];
             }
             results.Sort(TimeResult.CompareByDistancePlace);
             // This dictionary stores the list of results with the key being the distance and the header for the grouping (Overall, Age Group, Custom)
-            Dictionary<string, Dictionary<string, List<TimeResult>>> resultsDictionary = new Dictionary<string, Dictionary<string, List<TimeResult>>>();
+            Dictionary<string, Dictionary<string, List<TimeResult>>> resultsDictionary = [];
             // This dictionary keeps track of the number of individuals in an age group so we can choose to not print age group awards
             // and still exclude them from the results.
-            Dictionary<(string, string), int> ageGroupCounter = new Dictionary<(string, string), int>();
+            Dictionary<(string, string), int> ageGroupCounter = [];
             foreach (TimeResult result in results)
             {
                 // Gather the gender and modify it to what we want for use in results.
@@ -328,9 +328,10 @@ namespace Chronokeep.UI.Timing
                     gend = "";
                 }
                 bool addedToAgeGroupResults = false;
-                if (!resultsDictionary.ContainsKey(result.DistanceName))
+                if (!resultsDictionary.TryGetValue(result.DistanceName, out Dictionary<string, List<TimeResult>> distResultsDict))
                 {
-                    resultsDictionary[result.DistanceName] = new Dictionary<string, List<TimeResult>>();
+                    distResultsDict = [];
+                    resultsDictionary[result.DistanceName] = distResultsDict;
                 }
                 // Get the overall results.
                 if (result.Place <= options.NumOverall)
@@ -338,11 +339,12 @@ namespace Chronokeep.UI.Timing
                     // Check if we're printing the overall results.
                     if (options.PrintOverall == true)
                     {
-                        if (!resultsDictionary[result.DistanceName].ContainsKey("Overall"))
+                        if (!distResultsDict.TryGetValue("Overall", out List<TimeResult> ovResults))
                         {
-                            resultsDictionary[result.DistanceName]["Overall"] = new List<TimeResult>();
+                            ovResults = [];
+                            distResultsDict["Overall"] = ovResults;
                         }
-                        resultsDictionary[result.DistanceName]["Overall"].Add(result);
+                        ovResults.Add(result);
                     }
                     // Check if we were told to exclude overall from age group awards.
                     // Also ensure we've been told to print age groups and that the person is in the age group results.
@@ -353,19 +355,20 @@ namespace Chronokeep.UI.Timing
                         && gend != "")
                     {
                         string ageGroup = string.Format("{0} {1}", gend, result.AgeGroupName);
-                        if (!ageGroupCounter.ContainsKey((result.DistanceName, ageGroup)))
+                        if (!ageGroupCounter.TryGetValue((result.DistanceName, ageGroup), out int oAGCount))
                         {
-                            ageGroupCounter[(result.DistanceName, ageGroup)] = 0;
+                            oAGCount = 0;
                         }
                         if (options.PrintAgeGroups == true)
                         {
-                            if (!resultsDictionary[result.DistanceName].ContainsKey(ageGroup))
+                            if (!distResultsDict.TryGetValue(ageGroup, out List<TimeResult> oResList))
                             {
-                                resultsDictionary[result.DistanceName][ageGroup] = new List<TimeResult>();
+                                oResList = [];
+                                distResultsDict[ageGroup] = oResList;
                             }
-                            resultsDictionary[result.DistanceName][ageGroup].Add(result);
+                            oResList.Add(result);
                         }
-                        ageGroupCounter[(result.DistanceName, ageGroup)]++;
+                        ageGroupCounter[(result.DistanceName, ageGroup)] = oAGCount + 1;
                         addedToAgeGroupResults = true;
                     }
                     // This is almost the same as the age groups category.
@@ -386,14 +389,15 @@ namespace Chronokeep.UI.Timing
                             if (age >= group.StartAge && age <= group.EndAge)
                             {
                                 string ageGroup = string.Format("{0} {1}", gend, group.PrettyName());
-                                if (!resultsDictionary[result.DistanceName].ContainsKey(ageGroup))
+                                if (!distResultsDict.TryGetValue(ageGroup, out List<TimeResult> oResList))
                                 {
-                                    resultsDictionary[result.DistanceName][ageGroup] = new List<TimeResult>();
+                                    oResList = [];
+                                    distResultsDict[ageGroup] = oResList;
                                 }
                                 // only add to the results if we're under the number of results we can print
-                                if (resultsDictionary[result.DistanceName][ageGroup].Count < options.NumCustom)
+                                if (oResList.Count < options.NumCustom)
                                 {
-                                    resultsDictionary[result.DistanceName][ageGroup].Add(result);
+                                    oResList.Add(result);
                                 }
                             }
                         }
@@ -404,22 +408,23 @@ namespace Chronokeep.UI.Timing
                     // We're not in the overall results.
                     // Check for age groups.
                     string ageGroup = string.Format("{0} {1}", gend, result.AgeGroupName);
-                    if (!resultsDictionary[result.DistanceName].ContainsKey(ageGroup))
+                    if (!distResultsDict.TryGetValue(ageGroup, out List<TimeResult> oResList))
                     {
-                        resultsDictionary[result.DistanceName][ageGroup] = new List<TimeResult>();
+                        oResList = [];
+                        distResultsDict[ageGroup] = oResList;
                     }
                     // We're doing it this way so we can exclude people from custom if we want even if we don't print the age group.
-                    if (!ageGroupCounter.ContainsKey((result.DistanceName, ageGroup)))
+                    if (!ageGroupCounter.TryGetValue((result.DistanceName, ageGroup), out int oAGCount))
                     {
-                        ageGroupCounter[(result.DistanceName, ageGroup)] = 0;
+                        oAGCount = 0;
                     }
-                    if (ageGroupCounter[(result.DistanceName, ageGroup)] < options.NumAgeGroups)
+                    if (oAGCount < options.NumAgeGroups)
                     {
                         if (options.PrintAgeGroups == true)
                         {
-                            resultsDictionary[result.DistanceName][ageGroup].Add(result);
+                            oResList.Add(result);
                         }
-                        ageGroupCounter[(result.DistanceName, ageGroup)]++;
+                        ageGroupCounter[(result.DistanceName, ageGroup)] = oAGCount + 1;
                         addedToAgeGroupResults = true;
                     }
                     // Check for custom groups.
@@ -433,14 +438,10 @@ namespace Chronokeep.UI.Timing
                             if (age >= group.StartAge && age <= group.EndAge)
                             {
                                 ageGroup = string.Format("{0} {1}", gend, group.PrettyName());
-                                if (!resultsDictionary[result.DistanceName].ContainsKey(ageGroup))
-                                {
-                                    resultsDictionary[result.DistanceName][ageGroup] = new List<TimeResult>();
-                                }
                                 // only add to the results if we're under the number of results we can print
-                                if (resultsDictionary[result.DistanceName][ageGroup].Count < options.NumCustom)
+                                if (oResList.Count < options.NumCustom)
                                 {
-                                    resultsDictionary[result.DistanceName][ageGroup].Add(result);
+                                    oResList.Add(result);
                                 }
                             }
                         }
@@ -449,21 +450,23 @@ namespace Chronokeep.UI.Timing
             }
             // Collect all of the groups into lists according to their distance
             // We do this so we can sort them by age group.
-            Dictionary<string, List<string>> distanceGroups = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> distanceGroups = [];
             foreach (string dist in resultsDictionary.Keys)
             {
-                foreach (string group in resultsDictionary[dist].Keys)
+                Dictionary<string, List<TimeResult>> distResultsDictionary = resultsDictionary[dist];
+                foreach (string group in distResultsDictionary.Keys)
                 {
                     // only add to our list if they actually have results in them
-                    if (resultsDictionary[dist][group].Count > 0)
+                    if (distResultsDictionary[group].Count > 0)
                     {
-                        if (!distanceGroups.ContainsKey(dist))
+                        if (!distanceGroups.TryGetValue(dist, out List<string> distGroupList))
                         {
-                            distanceGroups[dist] = new List<string>();
+                            distGroupList = [];
+                            distanceGroups[dist] = distGroupList;
                         }
-                        if (!distanceGroups[dist].Contains(group))
+                        if (!distGroupList.Contains(group))
                         {
-                            distanceGroups[dist].Add(group);
+                            distGroupList.Add(group);
                         }
                     }
                 }
@@ -473,11 +476,11 @@ namespace Chronokeep.UI.Timing
             {
                 distanceGroups[dist].Sort((x1, x2) => CompareGroups(x1, x2));
             }
-            AwardsPrintable output = new AwardsPrintable(theEvent, distanceGroups, resultsDictionary);
+            AwardsPrintable output = new(theEvent, distanceGroups, resultsDictionary);
             return output.TransformText();
         }
 
-        public int CompareGroups(string group1, string group2)
+        public static int CompareGroups(string group1, string group2)
         {
             if (group1 == "Overall")
             {
