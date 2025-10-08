@@ -23,7 +23,7 @@ namespace Chronokeep
             InitializeComponent();
         }
 
-        public async void UpdateInfo(Participant person)
+        public async void UpdateInfo(Participant person, string chip)
         {
             await Task.Run(() =>
             {
@@ -36,7 +36,7 @@ namespace Chronokeep
             if (person != null)
             {
                 Bib.Text = "Bib: " + person.EventSpecific.Bib;
-                Chip.Text = "Chip: " + person.Chip;
+                Chip.Text = "Chip: " + chip;
                 PersonName.Text = string.Format("{0} {1}", person.FirstName, person.LastName);
                 AgeGender.Text = string.Format("{0} {1}", person.Age(eventDate), person.Gender);
                 Distance.Text = "" + person.EventSpecific.DistanceName;
@@ -63,7 +63,6 @@ namespace Chronokeep
                 }
             });
             Bib.Text = "";
-            Chip.Text = "";
             PersonName.Text = "";
             AgeGender.Text = "";
             Distance.Text = "";

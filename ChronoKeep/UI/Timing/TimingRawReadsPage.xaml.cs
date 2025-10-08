@@ -443,5 +443,20 @@ namespace Chronokeep.UI.Timing
             updateListView.SelectedIndex = updateListView.Items.Count - 1;
             updateListView.ScrollIntoView(updateListView.SelectedItem);
         }
+
+        private void GlobalIgnore_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.TimingRawReadsPage", "Ignore Chip Button clicked.");
+            List<BibChipAssociation> bibChips = [];
+            foreach (ChipRead read in updateListView.SelectedItems)
+            {
+                bibChips.Add(new() {
+                    Bib = read.ChipNumber,
+                    Chip = read.ChipNumber,
+                });
+            }
+            database.AddBibChipAssociation(-1, bibChips);
+            Globals.UpdateIgnoredChips(database);
+        }
     }
 }

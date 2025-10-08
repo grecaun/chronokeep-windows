@@ -54,9 +54,12 @@ namespace Chronokeep.MemStore
                         {
                             if (part.Bib.Length > 0)
                             {
-                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation> chipList))
                                 {
-                                    chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                    foreach (BibChipAssociation bc in chipList.Values)
+                                    {
+                                        chipParticipantsList[bc.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                    }
                                 }
                                 bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
                             }
@@ -139,9 +142,12 @@ namespace Chronokeep.MemStore
                         {
                             if (part.Bib.Length > 0)
                             {
-                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation> chipList))
                                 {
-                                    chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                    foreach (BibChipAssociation bc in chipList.Values)
+                                    {
+                                        chipParticipantsList[bc.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                    }
                                 }
                                 bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
                             }
@@ -226,12 +232,7 @@ namespace Chronokeep.MemStore
                         {
                             foreach (Participant person in participants.Values)
                             {
-                                if (unknown.Chip.Length > 0 && person.Chip.Equals(unknown.Chip, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    output = person;
-                                    break;
-                                }
-                                else if (unknown.FirstName != null && unknown.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
+                                if (unknown.FirstName != null && unknown.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
                                     && unknown.LastName != null && unknown.LastName.Equals(person.LastName, StringComparison.OrdinalIgnoreCase)
                                     && unknown.Street != null && unknown.Street.Equals(person.Street, StringComparison.OrdinalIgnoreCase)
                                     && unknown.City != null && unknown.City.Equals(person.City, StringComparison.OrdinalIgnoreCase)
@@ -277,6 +278,45 @@ namespace Chronokeep.MemStore
                                 {
                                     output = person;
                                     break;
+                                }
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new ChronoLockException("memStoreLock");
+            }
+            return output;
+        }
+
+        public Participant GetParticipantChip(int eventId, string chip)
+        {
+            Log.D("MemStore", "GetParticipantBib");
+            Participant output = null;
+            try
+            {
+                if (memStoreLock.TryEnter(lockTimeout))
+                {
+                    try
+                    {
+                        if (theEvent != null && theEvent.Identifier == eventId)
+                        {
+                            if (chipToBibAssociations.TryGetValue(chip, out BibChipAssociation assoc))
+                            {
+                                foreach (Participant person in participants.Values)
+                                {
+                                    if (person.Bib.Equals(assoc.Bib, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        output = person;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -605,9 +645,12 @@ namespace Chronokeep.MemStore
                         {
                             if (part.Bib.Length > 0)
                             {
-                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation> chipList))
                                 {
-                                    chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                    foreach (BibChipAssociation bc in chipList.Values)
+                                    {
+                                        chipParticipantsList[bc.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                    }
                                 }
                                 bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
                             }
@@ -701,9 +744,12 @@ namespace Chronokeep.MemStore
                         {
                             if (part.Bib.Length > 0)
                             {
-                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation> chipList))
                                 {
-                                    chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                    foreach (BibChipAssociation bc in chipList.Values)
+                                    {
+                                        chipParticipantsList[bc.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                    }
                                 }
                                 bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
                             }

@@ -609,8 +609,7 @@ namespace Chronokeep.UI.MainPages
                                     old.Street2,
                                     person.Gender,
                                     old.ECName,
-                                    old.ECPhone,
-                                    old.Chip
+                                    old.ECPhone
                                     );
                                 // Check if we've updated the Bib or distance.
                                 if ((old.Bib.Length > 0 && !old.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase)) || !old.Distance.Equals(person.Distance, StringComparison.OrdinalIgnoreCase))
@@ -664,8 +663,7 @@ namespace Chronokeep.UI.MainPages
                                     oldTwo.Street2,
                                     person.Gender,
                                     oldTwo.ECName,
-                                    oldTwo.ECPhone,
-                                    oldTwo.Chip
+                                    oldTwo.ECPhone
                                     );
                                 // Check if we've updated the Bib or distance.
                                 if ((old.Bib.Length > 0 && !oldTwo.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase)) || !oldTwo.Distance.Equals(person.Distance, StringComparison.OrdinalIgnoreCase))

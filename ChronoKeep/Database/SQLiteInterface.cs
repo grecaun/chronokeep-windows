@@ -14,8 +14,8 @@ namespace Chronokeep
     class SQLiteInterface(string info) : IDBInterface
     {
         /**
-         * HIGHEST LOCK ID = 170
-         * NEXT AVAILABLE   = 171
+         * HIGHEST LOCK ID = 171
+         * NEXT AVAILABLE   = 172
          */
         private readonly int version = 71;
         public const int minimum_compatible_version = 63;
@@ -780,6 +780,29 @@ namespace Chronokeep
                 SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
                 output = Participants.GetParticipantBib(eventIdentifier, bib, connection);
+                connection.Close();
+            }
+            finally
+            {
+                dbLock.Exit();
+            }
+            return output;
+        }
+
+        public Participant GetParticipantChip(int eventIdentifier, string chip)
+        {
+            Participant output = null;
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 171");
+            if (!dbLock.TryEnter(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 171");
+                return output;
+            }
+            try
+            {
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
+                connection.Open();
+                output = Participants.GetParticipantChip(eventIdentifier, chip, connection);
                 connection.Close();
             }
             finally

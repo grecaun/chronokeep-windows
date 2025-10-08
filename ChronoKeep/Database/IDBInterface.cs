@@ -89,6 +89,7 @@ namespace Chronokeep.Database
         Participant GetParticipant(int eventIdentifier, Participant unknown);
         Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId);
         Participant GetParticipantBib(int eventIdentifier, string bib);
+        Participant GetParticipantChip(int eventIdentifier, string chip);
         List<string> GetDivisions(int eventIdentifier);
 
         // Bib Chip Association Functions

@@ -16,7 +16,6 @@ namespace Chronokeep
     /// </summary>
     public partial class ChipReaderWindow : FluentWindow
     {
-        public static byte deviceNo = 0;
         private static Thread readingThread;
         private static NewReader reader;
         private static int ReadNo = 1;
@@ -31,6 +30,7 @@ namespace Chronokeep
             InitializeComponent();
             InstantiateSerialPortList();
             reader = new NewReader(this);
+            this.window = window;
             this.database = database;
             Event theEvent = database.GetCurrentEvent();
             if (theEvent == null)
@@ -138,17 +138,10 @@ namespace Chronokeep
                 chipNumbers.Items.Add(read);
                 if (personWindow != null)
                 {
-                    Participant person = new Participant();
-                    if (database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE).Value.Equals(Constants.Settings.CHIP_TYPE_DEC))
-                    {
-                        person.Chip = read.DecNumber.ToString();
-                    }
-                    else
-                    {
-                        person.Chip = read.HexNumber;
-                    }
-                    Participant thisPerson = database.GetParticipant(eventId, person);
-                    personWindow.UpdateInfo(thisPerson);
+                    Participant person = null;
+                    string chip = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE).Value.Equals(Constants.Settings.CHIP_TYPE_DEC) ? read.DecNumber.ToString() : read.HexNumber;
+                    person = database.GetParticipantChip(eventId, chip);
+                    personWindow.UpdateInfo(person, chip);
                 }
             }));
         }
@@ -157,10 +150,7 @@ namespace Chronokeep
         {
             try
             {
-                if (personWindow != null)
-                {
-                    personWindow.Close();
-                }
+                personWindow?.Close();
             }
             catch
             {
@@ -174,10 +164,10 @@ namespace Chronokeep
             {
                 Log.E("ChipReaderWindow", "Things are already closed.");
             }
-            if (window != null) window.WindowFinalize(this);
+            window?.WindowFinalize(this);
         }
 
-        private void beautyBtn_Click(object sender, RoutedEventArgs e)
+        private void BeautyBtn_Click(object sender, RoutedEventArgs e)
         {
             if (personWindow == null)
             {

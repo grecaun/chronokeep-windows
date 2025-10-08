@@ -11,8 +11,8 @@ namespace Chronokeep.Objects
         private int identifier = Constants.Timing.PARTICIPANT_DUMMYIDENTIFIER;
         private string firstName, lastName, street, city, state, zip, email, phone,
             mobile, parent, country, street2, gender, birthdate, emergencyName,
-            emergencyPhone, chip;
-        private EventSpecific eventSpecific;
+            emergencyPhone;
+        private readonly EventSpecific eventSpecific;
 
         public Participant()
         {
@@ -58,7 +58,7 @@ namespace Chronokeep.Objects
             int id, string first, string last, string street, string city, string state, string zip,
             string birthday, EventSpecific epi, string email, string phone,
             string mobile, string parent, string country, string street2, string gender,
-            string ecName, string ecPhone, string chip
+            string ecName, string ecPhone
             )
         {
             this.birthdate = birthday;
@@ -79,7 +79,6 @@ namespace Chronokeep.Objects
             this.gender = gender ?? "";
             emergencyName = ecName ?? "Emergency Services";
             emergencyPhone = ecPhone ?? "911";
-            this.chip = chip ?? "";
             Trim();
         }
 
@@ -120,7 +119,6 @@ namespace Chronokeep.Objects
             gender = (gender ?? "").Trim();
             emergencyName = (emergencyName ?? "").Trim();
             emergencyPhone = (emergencyPhone ?? "").Trim();
-            chip = (chip ?? "").Trim();
         }
 
         internal void FormatData()
@@ -578,7 +576,6 @@ namespace Chronokeep.Objects
         public string Country { get => country; }
         public string Street2 { get => street2; }
         public string Gender { get => gender; }
-        public string Chip { get => chip; set => chip = value ?? ""; }
         public bool Anonymous { get => eventSpecific.Anonymous; }
         public string Division { get => eventSpecific.Division; }
 
@@ -680,8 +677,7 @@ namespace Chronokeep.Objects
         public static int CompareByBib(Participant one, Participant two)
         {
             if (two == null || one == null) return 1;
-            int bibOne, bibTwo;
-            if (int.TryParse(one.Bib, out bibOne) && int.TryParse(two.Bib, out bibTwo))
+            if (int.TryParse(one.Bib, out int bibOne) && int.TryParse(two.Bib, out int bibTwo))
             {
                 return bibOne.CompareTo(bibTwo);
             }
@@ -752,7 +748,6 @@ namespace Chronokeep.Objects
             street2 = other.Street2;
             emergencyPhone = other.ECPhone;
             emergencyName = other.ECName;
-            chip = other.Chip;
             Trim();
             FormatData();
         }

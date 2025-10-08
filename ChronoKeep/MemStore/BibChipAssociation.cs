@@ -31,16 +31,15 @@ namespace Chronokeep.MemStore
                             foreach (BibChipAssociation bc in assoc)
                             {
                                 chipToBibAssociations[bc.Chip] = bc;
-                                bibToChipAssociations[bc.Bib] = bc;
+                                if (!bibToChipAssociations.TryGetValue(bc.Bib, out Dictionary<string, BibChipAssociation> chipDict))
+                                {
+                                    bibToChipAssociations[bc.Bib] = [];
+                                }
+                                bibToChipAssociations[bc.Bib][bc.Chip] = bc;
                             }
-                            Dictionary<string, Participant> bibPartDict = new();
+                            Dictionary<string, Participant> bibPartDict = [];
                             foreach (Participant part in participants.Values)
                             {
-                                part.Chip = "";
-                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
-                                {
-                                    part.Chip = bc.Chip;
-                                }
                                 bibPartDict[part.Bib] = part;
                             }
                             foreach (ChipRead cr in chipReads.Values)
@@ -163,11 +162,6 @@ namespace Chronokeep.MemStore
                             Dictionary<string, Participant> bibPartDict = new();
                             foreach (Participant part in participants.Values)
                             {
-                                part.Chip = "";
-                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
-                                {
-                                    part.Chip = bc.Chip;
-                                }
                                 bibPartDict[part.Bib] = part;
                             }
                             foreach (ChipRead cr in chipReads.Values)
@@ -224,11 +218,6 @@ namespace Chronokeep.MemStore
                         Dictionary<string, Participant> bibPartDict = new();
                         foreach (Participant part in participants.Values)
                         {
-                            part.Chip = "";
-                            if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
-                            {
-                                part.Chip = bc.Chip;
-                            }
                             bibPartDict[part.Bib] = part;
                         }
                         foreach (ChipRead cr in chipReads.Values)
@@ -283,11 +272,6 @@ namespace Chronokeep.MemStore
                         Dictionary<string, Participant> bibPartDict = new();
                         foreach (Participant part in participants.Values)
                         {
-                            part.Chip = "";
-                            if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
-                            {
-                                part.Chip = bc.Chip;
-                            }
                             bibPartDict[part.Bib] = part;
                         }
                         foreach (ChipRead cr in chipReads.Values)

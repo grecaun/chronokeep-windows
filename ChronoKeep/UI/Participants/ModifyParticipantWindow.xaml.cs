@@ -439,8 +439,7 @@ namespace Chronokeep.UI.Participants
                 Street2Box.Text,
                 gender,
                 ECNameBox.Text,
-                ECPhoneBox.Text,
-                "" // placeholder chip value
+                ECPhoneBox.Text
                 );
             age = output.GetAge(theEvent.Date);
             Dictionary<(int, int), AgeGroup> AgeGroups = [];

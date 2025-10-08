@@ -526,7 +526,7 @@ namespace Chronokeep.UI.MainPages
                 }
             ];
             database.AddBibChipAssociation(-1, bibChips);
-            Helpers.Globals.UpdateIgnoredChips(database);
+            Globals.UpdateIgnoredChips(database);
             BibsChanged = true;
             UpdateView();
             if (bib > -1)

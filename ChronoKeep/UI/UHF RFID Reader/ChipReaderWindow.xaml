@@ -78,7 +78,7 @@
                     <ComboBox Name="serialPortCB" Height="35" Margin="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="2" />
                     <Button Content="Refresh" Name="refreshBtn" Width="80" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" Grid.Column="3" Click="RefreshBtn_Click" />
                     <Button Content="Connect" Name="connectBtn" Width="92" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" Grid.Column="4" Click="ConnectBtn_Click" />
-                    <Button Content="Show Info Window" Name="beautyBtn" Width="144" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" Grid.Column="5" Click="beautyBtn_Click" Visibility="Hidden" />
+                    <Button Content="Show Info Window" Name="beautyBtn" Width="144" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" Grid.Column="5" Click="BeautyBtn_Click" Visibility="Hidden" />
                 </Grid>
             </StackPanel>
         </Grid>

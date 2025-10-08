@@ -1148,8 +1148,7 @@ namespace Chronokeep.Database.SQLite
                                 reader["participant_street2"].ToString(),
                                 reader["participant_gender"].ToString(),
                                 reader["emergencycontact_name"].ToString(),
-                                reader["emergencycontact_phone"].ToString(),
-                                ""
+                                reader["emergencycontact_phone"].ToString()
                                 ));
                         }
                         // Go through each participant and update their division/distance.
