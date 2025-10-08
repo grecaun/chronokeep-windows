@@ -6,15 +6,23 @@ namespace Chronokeep.Helpers
 {
     class Log
     {
+        private static readonly bool outputDebug = false;
+
         [Conditional("DEBUG")]
         public static void D(string ns, string msg)
         {
-            Debug.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "d", ns, msg));
+            if (outputDebug)
+            {
+                Debug.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "d", ns, msg));
+            }
         }
         [Conditional("DEBUG")]
         public static void F(string ns, string msg)
         {
-            Debug.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "f", ns, msg));
+            if (outputDebug)
+            {
+                Debug.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "f", ns, msg));
+            }
         }
         [Conditional("DEBUG")]
         public static void E(string ns, string msg)
