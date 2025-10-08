@@ -58,7 +58,10 @@ namespace Chronokeep.MemStore
                         }
                         else if (eventId == -1)
                         {
-                            ignoredChips.AddRange(assoc);
+                            foreach (BibChipAssociation soc in assoc)
+                            {
+                                ignoredChips[soc.Chip] = soc;
+                            }
                         }
                     }
                     finally
@@ -69,7 +72,7 @@ namespace Chronokeep.MemStore
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                Log.E("MemStore", "Exception acquiring memStoreLock. " + e.Message);
                 throw new ChronoLockException("memStoreLock");
             }
         }
@@ -77,7 +80,7 @@ namespace Chronokeep.MemStore
         public List<BibChipAssociation> GetBibChips()
         {
             Log.D("MemStore", "GetBibChips");
-            List<BibChipAssociation> output = new();
+            List<BibChipAssociation> output = [];
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
@@ -116,7 +119,7 @@ namespace Chronokeep.MemStore
                         }
                         else if (eventId == -1)
                         {
-                            output.AddRange(ignoredChips);
+                            output.AddRange(ignoredChips.Values);
                         }
                     }
                     finally
@@ -180,7 +183,7 @@ namespace Chronokeep.MemStore
                         }
                         else if (eventId == -1)
                         {
-                            ignoredChips.RemoveAll(x => x.Chip == chip);
+                            ignoredChips.Remove(chip);
                         }
                     }
                     finally
@@ -213,7 +216,7 @@ namespace Chronokeep.MemStore
                         }
                         else if (assoc.EventId == -1)
                         {
-                            ignoredChips.RemoveAll(x => x.Chip == assoc.Chip);
+                            ignoredChips.Remove(assoc.Chip);
                         }
                         Dictionary<string, Participant> bibPartDict = new();
                         foreach (Participant part in participants.Values)
@@ -266,7 +269,7 @@ namespace Chronokeep.MemStore
                             }
                             else if (assoc.EventId == -1)
                             {
-                                ignoredChips.RemoveAll(x => x.Chip == assoc.Chip);
+                                ignoredChips.Remove(assoc.Chip);
                             }
                         }
                         Dictionary<string, Participant> bibPartDict = new();

@@ -49,7 +49,7 @@ namespace Chronokeep.MemStore
         private static readonly Dictionary<string, BibChipAssociation> chipToBibAssociations = [];
         private static readonly Dictionary<string, Dictionary<string, BibChipAssociation>> bibToChipAssociations = [];
         // ignored chips
-        private static readonly List<BibChipAssociation> ignoredChips = [];
+        private static readonly Dictionary<string, BibChipAssociation> ignoredChips = [];
         // key == distanceId
         private static readonly Dictionary<int, List<AgeGroup>> ageGroups = [];
         private static readonly Dictionary<(int, int), AgeGroup> currentAgeGroups = [];
@@ -146,7 +146,10 @@ namespace Chronokeep.MemStore
                 }
                 chipDict.Add(assoc.Bib, assoc);
             }
-            ignoredChips.AddRange(database.GetBibChips(-1));
+            foreach (BibChipAssociation assoc in database.GetBibChips(-1))
+            {
+                ignoredChips[assoc.Chip] = assoc;
+            }
             // load age groups
             foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
             {
