@@ -8,6 +8,7 @@
   "fixes": [
     "Fixed an issue where the locations combobox for only showing results/reads from a location would revert to All Locations every page refresh.",
     "Fixed an issue where trying to set the time for all connected readers would cause the program to crash.",
-    "Minor UI tweaks to the TimingRawReadsPage to deal with adding a new button."
+    "Minor UI tweaks to the TimingRawReadsPage to deal with adding a new button.",
+    "Code no longer queries the SMS endpoint when no potential SMS messages exist."
   ]
 }
