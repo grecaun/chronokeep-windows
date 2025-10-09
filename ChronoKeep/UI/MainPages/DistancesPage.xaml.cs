@@ -315,17 +315,17 @@ namespace Chronokeep.UI.MainPages
                 this.theDistance = distance;
                 StackPanel thePanel = new()
                 {
-                    Margin = new Thickness(50, 0, 0, 0),
+                    Margin = new(50, 0, 0, 0),
                     MaxWidth = 600
                 };
                 this.Content = thePanel;
                 this.IsTabStop = false;
 
                 // Name Grid (Name NameBox) - Rank Order - Remove Button
-                Grid nameGrid = new Grid();
-                nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(5, GridUnitType.Star) });
-                nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-                nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+                Grid nameGrid = new();
+                nameGrid.ColumnDefinitions.Add(new() { Width = new(5, GridUnitType.Star) });
+                nameGrid.ColumnDefinitions.Add(new() { Width = new(3, GridUnitType.Star) });
+                nameGrid.ColumnDefinitions.Add(new() { Width = new(2, GridUnitType.Star) });
                 thePanel.Children.Add(nameGrid);
                 // Name information.
                 DockPanel namePanel = new();
@@ -334,17 +334,17 @@ namespace Chronokeep.UI.MainPages
                     Text = "Name",
                     Width = 55,
                     FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
+                    Margin = new(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 });
-                DistanceName = new TextBox()
+                DistanceName = new()
                 {
                     Text = theDistance.Name,
                     FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Margin = new(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                DistanceName.GotFocus += new RoutedEventHandler(this.SelectAll);
+                DistanceName.GotFocus += new(SelectAll);
                 namePanel.Children.Add(DistanceName);
                 nameGrid.Children.Add(namePanel);
                 Grid.SetColumn(namePanel, 0);
@@ -354,32 +354,32 @@ namespace Chronokeep.UI.MainPages
                     Text = "Rank Priority",
                     Width = 135,
                     FontSize = 16,
-                    Margin = new Thickness(10, 0, 0, 0),
+                    Margin = new(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 });
-                Ranking = new TextBox
+                Ranking = new()
                 {
                     Text = theDistance.Ranking.ToString(),
                     FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Margin = new(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                Ranking.GotFocus += new RoutedEventHandler(this.SelectAll);
-                Ranking.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                Ranking.GotFocus += new(SelectAll);
+                Ranking.PreviewTextInput += new(NumberValidation);
                 rankPanel.Children.Add(Ranking);
                 nameGrid.Children.Add(rankPanel);
                 Grid.SetColumn(rankPanel, 1);
-                Remove = new Button()
+                Remove = new()
                 {
                     Content = "Remove",
                     FontSize = 14,
                     Width = 100,
                     Height = 30,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Margin = new(0, 5, 0, 5),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                Remove.Click += new RoutedEventHandler(this.Remove_Click);
+                Remove.Click += new(Remove_Click);
                 nameGrid.Children.Add(Remove);
                 Grid.SetColumn(Remove, 2);
 
@@ -390,26 +390,26 @@ namespace Chronokeep.UI.MainPages
                     Text = "Wave",
                     Width = 55,
                     FontSize = 16,
-                    Margin = new Thickness(10, 0, 0, 0),
+                    Margin = new(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 });
-                Wave = new TextBox()
+                Wave = new()
                 {
                     Text = theDistance.Wave.ToString(),
                     FontSize = 16,
                     Width = 50,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Margin = new(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                Wave.GotFocus += new RoutedEventHandler(this.SelectAll);
-                Wave.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                Wave.GotFocus += new(SelectAll);
+                Wave.PreviewTextInput += new(NumberValidation);
                 wavePanel.Children.Add(Wave);
                 wavePanel.Children.Add(new TextBlock()
                 {
                     Text = "Start",
                     Width = 50,
                     FontSize = 16,
-                    Margin = new Thickness(10, 0, 0, 0),
+                    Margin = new(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 });
                 string waveText = "+";
@@ -422,44 +422,44 @@ namespace Chronokeep.UI.MainPages
                     theDistance.StartOffsetSeconds *= -1;
                     theDistance.StartOffsetMilliseconds *= -1;
                 }
-                WaveType = new TextBlock()
+                WaveType = new()
                 {
                     Width = 25,
-                    Margin = new Thickness(0, 0, 3, 0),
+                    Margin = new(0, 0, 3, 0),
                     Text = waveText,
                     FontSize = 30,
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     TextAlignment = TextAlignment.Center
                 };
-                WaveType.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
+                WaveType.MouseLeftButtonDown += new(SwapWaveType_Click);
                 wavePanel.Children.Add(WaveType);
                 string sOffset = string.Format(TimeFormat, theDistance.StartOffsetSeconds / 3600,
                     (theDistance.StartOffsetSeconds % 3600) / 60, theDistance.StartOffsetSeconds % 60,
                     theDistance.StartOffsetMilliseconds);
-                StartOffset = new MaskedTextBox()
+                StartOffset = new()
                 {
                     Text = sOffset,
                     Mask = "00:00:00.000",
                     FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Margin = new(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                 };
-                StartOffset.GotFocus += new RoutedEventHandler(this.SelectAll);
+                StartOffset.GotFocus += new(SelectAll);
                 wavePanel.Children.Add(StartOffset);
                 wavePanel.Children.Add(new TextBlock()
                 {
                     Text = "Type",
                     Width = 55,
                     FontSize = 16,
-                    Margin = new Thickness(10, 0, 0, 0),
+                    Margin = new(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 });
-                TypeBox = new ComboBox()
+                TypeBox = new()
                 {
                     FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Margin = new(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 TypeBox.Items.Add(
@@ -659,7 +659,7 @@ namespace Chronokeep.UI.MainPages
             private const string LimitFormat = "{0:D2}:{1:D2}:{2:D2}";
             readonly DistancesPage page;
             public Distance theDistance;
-            private Dictionary<int, Distance> distanceDictionary;
+            private readonly Dictionary<int, Distance> distanceDictionary;
             private int waveType = 1;
 
             [GeneratedRegex("[^0-9.]")]
@@ -684,8 +684,8 @@ namespace Chronokeep.UI.MainPages
 
                 // Name Grid (Name NameBox -- Copy From DistancesBox)
                 Grid nameGrid = new();
-                nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
-                nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+                nameGrid.ColumnDefinitions.Add(new() { Width = new(2, GridUnitType.Star) });
+                nameGrid.ColumnDefinitions.Add(new() { Width = new(2, GridUnitType.Star) });
                 // Name information.
                 DockPanel namePanel = new();
                 namePanel.Children.Add(new TextBlock()
@@ -693,17 +693,17 @@ namespace Chronokeep.UI.MainPages
                     Text = "Name",
                     Width = 55,
                     FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
+                    Margin = new(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 });
-                DistanceName = new TextBox()
+                DistanceName = new()
                 {
                     Text = theDistance.Name,
                     FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Margin = new(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                DistanceName.GotFocus += new RoutedEventHandler(this.SelectAll);
+                DistanceName.GotFocus += new(SelectAll);
                 namePanel.Children.Add(DistanceName);
                 nameGrid.Children.Add(namePanel);
                 Grid.SetColumn(namePanel, 0);
@@ -713,13 +713,13 @@ namespace Chronokeep.UI.MainPages
                     Text = "Copy From",
                     Width = 90,
                     FontSize = 16,
-                    Margin = new Thickness(10, 5, 0, 5),
+                    Margin = new(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center
                 });
-                CopyFromBox = new ComboBox()
+                CopyFromBox = new()
                 {
                     FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Margin = new(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 CopyFromBox.Items.Add(new ComboBoxItem()
@@ -736,7 +736,7 @@ namespace Chronokeep.UI.MainPages
                     });
                 }
                 CopyFromBox.SelectedIndex = 0;
-                CopyFromBox.SelectionChanged += new SelectionChangedEventHandler(this.CopyFromBox_SelectionChanged);
+                CopyFromBox.SelectionChanged += new(CopyFromBox_SelectionChanged);
                 copyPanel.Children.Add(CopyFromBox);
                 nameGrid.Children.Add(copyPanel);
                 Grid.SetColumn(copyPanel, 1);
@@ -745,36 +745,36 @@ namespace Chronokeep.UI.MainPages
 
                 // Distance - DistanceUnit - Occurrence
                 Grid settingsGrid = new();
-                settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                settingsGrid.ColumnDefinitions.Add(new() { Width = new(1, GridUnitType.Star) });
+                settingsGrid.ColumnDefinitions.Add(new() { Width = new(1, GridUnitType.Star) });
+                settingsGrid.ColumnDefinitions.Add(new() { Width = new(1, GridUnitType.Star) });
+                settingsGrid.ColumnDefinitions.Add(new() { Width = new(1, GridUnitType.Star) });
                 DockPanel distPanel = new();
                 distPanel.Children.Add(new TextBlock()
                 {
                     Text = "Distance",
                     Width = 75,
                     FontSize = 16,
-                    Margin = new Thickness(10, 0, 0, 0),
+                    Margin = new(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 });
-                Distance = new TextBox()
+                Distance = new()
                 {
                     Text = theDistance.DistanceValue.ToString(),
                     FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Margin = new(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                Distance.GotFocus += new RoutedEventHandler(this.SelectAll);
-                Distance.PreviewTextInput += new TextCompositionEventHandler(this.DotValidation);
+                Distance.GotFocus += new(SelectAll);
+                Distance.PreviewTextInput += new(DotValidation);
                 distPanel.Children.Add(Distance);
                 settingsGrid.Children.Add(distPanel);
                 Grid.SetColumn(distPanel, 1);
                 // Distance Unit
-                DistanceUnit = new ComboBox()
+                DistanceUnit = new()
                 {
                     FontSize = 16,
-                    Margin = new Thickness(10, 5, 0, 5),
+                    Margin = new(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center
                 };
                 DistanceUnit.Items.Add(new ComboBoxItem()
@@ -842,19 +842,19 @@ namespace Chronokeep.UI.MainPages
                         Text = "Occurrence",
                         Width = 75,
                         FontSize = 12,
-                        Margin = new Thickness(10, 0, 0, 0),
+                        Margin = new(10, 0, 0, 0),
                         VerticalAlignment = VerticalAlignment.Center
                     });
-                    FinishOccurrence = new ComboBox()
+                    FinishOccurrence = new()
                     {
                         FontSize = 16,
-                        Margin = new Thickness(0, 5, 0, 5),
+                        Margin = new(0, 5, 0, 5),
                         VerticalContentAlignment = VerticalAlignment.Center
                     };
                     ComboBoxItem selected = null, current;
                     for (int i = 1; i <= maxOccurrences; i++)
                     {
-                        current = new ComboBoxItem()
+                        current = new()
                         {
                             Content = i.ToString(),
                             Uid = i.ToString()
@@ -885,20 +885,20 @@ namespace Chronokeep.UI.MainPages
                         Text = "Max Time",
                         Width = 65,
                         FontSize = 12,
-                        Margin = new Thickness(10, 0, 0, 0),
+                        Margin = new(10, 0, 0, 0),
                         VerticalAlignment = VerticalAlignment.Center
                     });
                     string limit = string.Format(LimitFormat, theDistance.EndSeconds / 3600,
                         theDistance.EndSeconds % 3600 / 60, theDistance.EndSeconds % 60);
-                    TimeLimit = new MaskedTextBox()
+                    TimeLimit = new()
                     {
                         Text = limit,
                         Mask = "00:00:00",
                         FontSize = 16,
-                        Margin = new Thickness(0, 5, 0, 5),
+                        Margin = new(0, 5, 0, 5),
                         VerticalContentAlignment = VerticalAlignment.Center
                     };
-                    TimeLimit.GotFocus += new RoutedEventHandler(this.SelectAll);
+                    TimeLimit.GotFocus += new(this.SelectAll);
                     limitPanel.Children.Add(TimeLimit);
                     settingsGrid.Children.Add(limitPanel);
                     Grid.SetColumn(limitPanel, 3);
@@ -907,13 +907,13 @@ namespace Chronokeep.UI.MainPages
                 thePanel.Children.Add(settingsGrid);
 
                 // Wave #, Start Offset, Bib Group #, Remove Button (Upload Checkbox)
-                Grid numGrid = new Grid();
+                Grid numGrid = new();
                 if (theEvent.UploadSpecific == true)
                 {
-                    numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(150) });
+                    numGrid.ColumnDefinitions.Add(new() { Width = new(150) });
                 }
-                numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(4, GridUnitType.Star) });
-                numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
+                numGrid.ColumnDefinitions.Add(new() { Width = new(4, GridUnitType.Star) });
+                numGrid.ColumnDefinitions.Add(new() { Width = new(3, GridUnitType.Star) });
                 int columnOffset = theEvent.UploadSpecific ? 1 : 0;
                 DockPanel wavePanel = new()
                 {
@@ -927,26 +927,26 @@ namespace Chronokeep.UI.MainPages
                         Text = "Wave",
                         Width = 55,
                         FontSize = 16,
-                        Margin = new Thickness(10, 0, 0, 0),
+                        Margin = new(10, 0, 0, 0),
                         VerticalAlignment = VerticalAlignment.Center
                     });
-                    Wave = new TextBox()
+                    Wave = new()
                     {
                         Text = theDistance.Wave.ToString(),
                         FontSize = 16,
                         Width = 50,
-                        Margin = new Thickness(0, 5, 0, 5),
+                        Margin = new(0, 5, 0, 5),
                         VerticalContentAlignment = VerticalAlignment.Center
                     };
-                    Wave.GotFocus += new RoutedEventHandler(this.SelectAll);
-                    Wave.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                    Wave.GotFocus += new(this.SelectAll);
+                    Wave.PreviewTextInput += new(this.NumberValidation);
                     wavePanel.Children.Add(Wave);
                     wavePanel.Children.Add(new TextBlock()
                     {
                         Text = "Start",
                         Width = 50,
                         FontSize = 16,
-                        Margin = new Thickness(10, 0, 0, 0),
+                        Margin = new(10, 0, 0, 0),
                         VerticalAlignment = VerticalAlignment.Center
                     });
                     string waveText = "+";
@@ -959,17 +959,17 @@ namespace Chronokeep.UI.MainPages
                         theDistance.StartOffsetSeconds *= -1;
                         theDistance.StartOffsetMilliseconds *= -1;
                     }
-                    WaveType = new TextBlock()
+                    WaveType = new()
                     {
                         Width = 25,
-                        Margin = new Thickness(0, 0, 3, 0),
+                        Margin = new(0, 0, 3, 0),
                         Text = waveText,
                         FontSize = 30,
                         VerticalAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         TextAlignment = TextAlignment.Center
                     };
-                    WaveType.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
+                    WaveType.MouseLeftButtonDown += new(SwapWaveType_Click);
                     wavePanel.Children.Add(WaveType);
                 }
                 else
@@ -979,7 +979,7 @@ namespace Chronokeep.UI.MainPages
                         Text = "Interval",
                         Width = 75,
                         FontSize = 16,
-                        Margin = new Thickness(10, 0, 0, 0),
+                        Margin = new(10, 0, 0, 0),
                         VerticalAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Right
                     });
@@ -987,18 +987,18 @@ namespace Chronokeep.UI.MainPages
                 string sOffset = string.Format(TimeFormat, theDistance.StartOffsetSeconds / 3600,
                     theDistance.StartOffsetSeconds % 3600 / 60, theDistance.StartOffsetSeconds % 60,
                     theDistance.StartOffsetMilliseconds);
-                StartOffset = new MaskedTextBox()
+                StartOffset = new()
                 {
                     Text = sOffset,
                     Mask = "00:00:00.000",
                     FontSize = 16,
                     Height = 35,
                     Width = 125,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Margin = new(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Right
                 };
-                StartOffset.GotFocus += new RoutedEventHandler(this.SelectAll);
+                StartOffset.GotFocus += new(this.SelectAll);
                 wavePanel.Children.Add(StartOffset);
                 numGrid.Children.Add(wavePanel);
                 Grid.SetColumn(wavePanel, columnOffset);
@@ -1012,14 +1012,14 @@ namespace Chronokeep.UI.MainPages
                     Text = "Certification",
                     Width = 65,
                     FontSize = 12,
-                    Margin = new Thickness(6, 0, 4, 0),
+                    Margin = new(6, 0, 4, 0),
                     VerticalAlignment = VerticalAlignment.Center
                 });
-                Certification = new TextBox()
+                Certification = new()
                 {
                     Text = theDistance.Certification.ToString(),
                     FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Margin = new(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 certificationPanel.Children.Add(Certification);
@@ -1033,7 +1033,7 @@ namespace Chronokeep.UI.MainPages
                         Content = "Upload Results",
                         FontSize = 16,
                         IsChecked = theDistance.Upload == true,
-                        Margin = new Thickness(10, 5, 0, 5),
+                        Margin = new(10, 5, 0, 5),
                         VerticalAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Center,
                     };
@@ -1047,29 +1047,29 @@ namespace Chronokeep.UI.MainPages
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
-                AddSubDistance = new Button()
+                AddSubDistance = new()
                 {
                     Content = "Add Linked",
                     FontSize = 14,
                     Width = 100,
                     Height = 30,
-                    Margin = new Thickness(0, 5, 5, 5),
+                    Margin = new(0, 5, 5, 5),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                AddSubDistance.Click += new RoutedEventHandler(this.AddSub_Click);
+                AddSubDistance.Click += new(AddSub_Click);
                 secondGrid.Children.Add(AddSubDistance);
-                Remove = new Button()
+                Remove = new()
                 {
                     Content = "Remove",
                     FontSize = 14,
                     Width = 100,
                     Height = 30,
-                    Margin = new Thickness(5, 5, 0, 5),
+                    Margin = new(5, 5, 0, 5),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                Remove.Click += new RoutedEventHandler(this.Remove_Click);
+                Remove.Click += new(Remove_Click);
                 secondGrid.Children.Add(Remove);
                 thePanel.Children.Add(secondGrid);
                 if (theEvent.EventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
@@ -1083,13 +1083,13 @@ namespace Chronokeep.UI.MainPages
             private void AddSub_Click(object sender, RoutedEventArgs e)
             {
                 Log.D("UI.MainPages.DistancesPage", "Adding sub distance.");
-                this.page.AddSubDistance(theDistance);
+                page.AddSubDistance(theDistance);
             }
 
             private void Remove_Click(object sender, RoutedEventArgs e)
             {
                 Log.D("UI.MainPages.DistancesPage", "Removing distance.");
-                this.page.RemoveDistance(theDistance);
+                page.RemoveDistance(theDistance);
             }
 
             private void SwapWaveType_Click(object sender, RoutedEventArgs e)

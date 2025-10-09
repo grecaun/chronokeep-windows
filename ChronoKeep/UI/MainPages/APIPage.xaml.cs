@@ -145,16 +145,16 @@ namespace Chronokeep.UI.MainPages
                 {
                     MaxHeight = 100
                 };
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(150) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(45) });
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(150) });
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
+                thePanel.ColumnDefinitions.Add(new() { Width = new GridLength(45) });
                 this.Content = thePanel;
                 this.IsTabStop = false;
 
-                StackPanel nickPanel = new StackPanel();
+                StackPanel nickPanel = new();
                 nickPanel.Children.Add(new TextBlock
                 {
                     Text = "Nickname",
@@ -176,7 +176,7 @@ namespace Chronokeep.UI.MainPages
                 Grid.SetColumn(nickPanel, 0);
 
 
-                StackPanel typePanel = new StackPanel();
+                StackPanel typePanel = new();
                 typePanel.Children.Add(new TextBlock
                 {
                     Text = "API Type",
@@ -185,7 +185,7 @@ namespace Chronokeep.UI.MainPages
                     VerticalAlignment = VerticalAlignment.Center,
                     TextAlignment = TextAlignment.Center
                 });
-                APIType = new ComboBox()
+                APIType = new()
                 {
                     FontSize = 14,
                     Height = 45,
@@ -205,7 +205,7 @@ namespace Chronokeep.UI.MainPages
                 thePanel.Children.Add(typePanel);
                 Grid.SetColumn(typePanel, 1);
 
-                StackPanel urlPanel = new StackPanel();
+                StackPanel urlPanel = new();
                 urlPanel.Children.Add(new TextBlock
                 {
                     Text = "API URL",
@@ -214,7 +214,7 @@ namespace Chronokeep.UI.MainPages
                     VerticalAlignment = VerticalAlignment.Center,
                     TextAlignment = TextAlignment.Center
                 });
-                APIURL = new TextBox
+                APIURL = new()
                 {
                     FontSize = 15,
                     Height = 45,
@@ -230,7 +230,7 @@ namespace Chronokeep.UI.MainPages
                 APIURL.IsEnabled = Constants.APIConstants.API_SELF_HOSTED[theAPI.Type];
                 APIType.SelectionChanged += new SelectionChangedEventHandler(this.APIType_SelectionChanged);
 
-                StackPanel tokenPanel = new StackPanel();
+                StackPanel tokenPanel = new();
                 tokenPanel.Children.Add(new TextBlock
                 {
                     Text = "API Key",
@@ -239,7 +239,7 @@ namespace Chronokeep.UI.MainPages
                     VerticalAlignment = VerticalAlignment.Center,
                     TextAlignment = TextAlignment.Center
                 });
-                APIToken = new TextBox
+                APIToken = new()
                 {
                     FontSize = 15,
                     Height = 45,
@@ -251,7 +251,7 @@ namespace Chronokeep.UI.MainPages
                 thePanel.Children.Add(tokenPanel);
                 Grid.SetColumn(tokenPanel, 3);
 
-                StackPanel webURLPanel = new StackPanel();
+                StackPanel webURLPanel = new();
                 webURLPanel.Children.Add(new TextBlock
                 {
                     Text = "API Web URL",
@@ -260,7 +260,7 @@ namespace Chronokeep.UI.MainPages
                     VerticalAlignment = VerticalAlignment.Center,
                     TextAlignment = TextAlignment.Center
                 });
-                APIWebURL = new TextBox
+                APIWebURL = new()
                 {
                     FontSize = 15,
                     Height = 45,
@@ -272,7 +272,7 @@ namespace Chronokeep.UI.MainPages
                 thePanel.Children.Add(webURLPanel);
                 Grid.SetColumn(webURLPanel, 4);
 
-                Remove = new Wpf.Ui.Controls.Button()
+                Remove = new()
                 {
                     Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Delete24 },
                     Margin = new Thickness(0, 5, 0, 9),

@@ -427,40 +427,20 @@ namespace Chronokeep.Timing
                     }
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType) // && SMS set up && SMS enabled on event)
                     {
+                        // Build list of potential SMS Alerts to send out.
+                        // First check for any alerts already sent out.
                         List<(int, int)> alerts = database.GetSMSAlerts(theEvent.Identifier);
-                        DateTime now = DateTime.Now;
-                        DateTime fifteenPrior = now.AddMinutes(-15);
-                        if (lastSubscriptionFetch.AddSeconds(30).CompareTo(now) < 0)
-                        {
-                            APIObject api = database.GetAPI(theEvent.API_ID);
-                            string[] event_ids = theEvent.API_Event_ID.Split(',');
-                            if (event_ids.Length == 2)
-                            {
-                                try
-                                {
-                                    GetSmsSubscriptionsResponse subscriptionResponse = await APIHandlers.GetSmsSubscriptions(api, event_ids[0], event_ids[1]);
-                                    if (subscriptionResponse != null && subscriptionResponse.Subscriptions != null)
-                                    {
-                                        // delete old then upload all the new subscriptions
-                                        // this is just to make sure that we remove anyone who may have unsubscribed
-                                        database.DeleteSmsSubscriptions(theEvent.Identifier);
-                                        database.AddSmsSubscriptions(theEvent.Identifier, subscriptionResponse.Subscriptions);
-                                    }
-                                    lastSubscriptionFetch = now;
-                                }
-                                catch
-                                {
-                                    Log.E("Timing.TimingWorker", "Exception getting sms subscriptions.");
-                                }
-                            }
-                        }
+                        // If null, db lookup failed, so soft fail here.
                         if (alerts != null)
                         {
+                            DateTime now = DateTime.Now;
+                            DateTime fifteenPrior = now.AddMinutes(-15);
                             // Changing alerts hashset to locally based and pulled from the database each time we try to send alerts
                             HashSet<(int, int)> AlertsSent = [.. alerts];
                             Dictionary<TimeResult, HashSet<string>> toSendTo = [];
                             Dictionary<string, string> nameToBibDict = [];
                             HashSet<string> duplicateNames = [];
+                            // Build dictionary to translate names to bibs for alerts.
                             foreach (Participant p in database.GetParticipants(theEvent.Identifier))
                             {
                                 string name = p.FirstName.ToLower() + p.LastName.ToLower();
@@ -479,31 +459,8 @@ namespace Chronokeep.Timing
                             {
                                 nameToBibDict.Remove(dup);
                             }
-                            Dictionary<string, HashSet<string>> bibToPhonesDict = [];
-                            foreach (APISmsSubscription sub in database.GetSmsSubscriptions(theEvent.Identifier))
-                            {
-                                string bib = sub.Bib;
-                                string phone = GlobalVars.GetValidPhone(sub.Phone);
-                                if (bib.Length < 1 && sub.First.Length + sub.Last.Length > 0)
-                                {
-                                    string name = sub.First.ToLower() + sub.Last.ToLower();
-                                    name = AlphaOnly().Replace(name, string.Empty);
-                                    if (nameToBibDict.TryGetValue(name, out string bibFromName))
-                                    {
-                                        bib = bibFromName;
-                                    }
-                                }
-                                if (bib.Length > 0 && phone.Length > 0)
-                                {
-                                    if (!bibToPhonesDict.TryGetValue(bib, out HashSet<string> phoneSet))
-                                    {
-                                        phoneSet = [];
-                                        bibToPhonesDict[bib] = phoneSet;
-                                    }
-                                    phoneSet.Add(phone);
-                                }
-                            }
                             // Check the finish results for results we can send SMS messages for.
+                            List<TimeResult> SMSResults = [];
                             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
                             {
                                 // verify the distance is set to allow sms alerts and the runner hasn't been notified already
@@ -517,94 +474,152 @@ namespace Chronokeep.Timing
                                     //deal with sms subcriptions
                                     if (Constants.Timing.SEGMENT_START != result.SegmentId && Constants.Timing.SEGMENT_NONE != result.SegmentId)
                                     {
-                                        if (bibToPhonesDict.TryGetValue(result.Bib, out HashSet<string> phonesFromDict))
-                                        {
-                                            foreach (string phone in phonesFromDict)
-                                            {
-                                                if (!toSendTo.TryGetValue(result, out HashSet<string> phones))
-                                                {
-                                                    phones = [];
-                                                    toSendTo[result] = phones;
-                                                }
-                                                phones.Add(phone);
-                                            }
-                                        }
+                                        SMSResults.Add(result);
                                     }
                                 }
                             }
-                            string resultsURL = "";
-                            if (dictionary.apis.TryGetValue(theEvent.API_ID, out APIObject api) && api.WebURL.Length > 0)
+                            // Only process further if there are potential SMS results.
+                            if (SMSResults.Count > 0)
                             {
-                                string[] event_ids = theEvent.API_Event_ID.Split(',');
-                                if (event_ids.Length == 2)
+                                if (lastSubscriptionFetch.AddSeconds(30).CompareTo(now) < 0)
                                 {
-                                    resultsURL = string.Format(" More results @ {0}results/{1}/{2}.", api.WebURL, event_ids[0], event_ids[1]);
-                                }
-                                else
-                                {
-                                    resultsURL = string.Format(" More results @ {0}.", api.WebURL);
-                                }
-                            }
-                            // Only check banned phones or try to send texts if there is something to send.
-                            if (toSendTo.Count > 0)
-                            {
-                                // Update banned phones list.
-                                Constants.GlobalVars.UpdateBannedPhones();
-                                foreach (TimeResult result in toSendTo.Keys)
-                                {
-                                    // Only send alert if participant wants it sent
-                                    // Do not add to the AlertsSent database because they
-                                    // may change their mind later and
-                                    // we still want to be able to send a SMS to them
-                                    // Only add to the database/dictionary if successful.
-                                    string sms;
-                                    if (Constants.Timing.SEGMENT_FINISH == result.SegmentId)
+                                    APIObject lapi = database.GetAPI(theEvent.API_ID);
+                                    string[] event_ids = theEvent.API_Event_ID.Split(',');
+                                    if (event_ids.Length == 2)
                                     {
-                                        if (dictionary.mainDistances.Count > 1)
+                                        try
                                         {
-                                            sms = string.Format("{0} {1} has finished the {2} {3} {4} in {5}.{6} Reply STOP to opt-out.", result.First, result.Last, theEvent.Year, theEvent.Name, result.DistanceName, result.ChipTimeNoMilliseconds, resultsURL);
+                                            GetSmsSubscriptionsResponse subscriptionResponse = await APIHandlers.GetSmsSubscriptions(lapi, event_ids[0], event_ids[1]);
+                                            if (subscriptionResponse != null && subscriptionResponse.Subscriptions != null)
+                                            {
+                                                // delete old then upload all the new subscriptions
+                                                // this is just to make sure that we remove anyone who may have unsubscribed
+                                                database.DeleteSmsSubscriptions(theEvent.Identifier);
+                                                database.AddSmsSubscriptions(theEvent.Identifier, subscriptionResponse.Subscriptions);
+                                            }
+                                            lastSubscriptionFetch = now;
                                         }
-                                        else
+                                        catch
                                         {
-                                            sms = string.Format("{0} {1} has finished the {2} {3} in {4}.{5} Reply STOP to opt-out.", result.First, result.Last, theEvent.Year, theEvent.Name, result.ChipTimeNoMilliseconds, resultsURL);
+                                            Log.E("Timing.TimingWorker", "Exception getting sms subscriptions.");
                                         }
+                                    }
+                                }
+                                // Get phones to send sms messages to...
+                                Dictionary<string, HashSet<string>> bibToPhonesDict = [];
+                                foreach (APISmsSubscription sub in database.GetSmsSubscriptions(theEvent.Identifier))
+                                {
+                                    string bib = sub.Bib;
+                                    string phone = GlobalVars.GetValidPhone(sub.Phone);
+                                    if (bib.Length < 1 && sub.First.Length + sub.Last.Length > 0)
+                                    {
+                                        string name = sub.First.ToLower() + sub.Last.ToLower();
+                                        name = AlphaOnly().Replace(name, string.Empty);
+                                        if (nameToBibDict.TryGetValue(name, out string bibFromName))
+                                        {
+                                            bib = bibFromName;
+                                        }
+                                    }
+                                    if (bib.Length > 0 && phone.Length > 0)
+                                    {
+                                        if (!bibToPhonesDict.TryGetValue(bib, out HashSet<string> phoneSet))
+                                        {
+                                            phoneSet = [];
+                                            bibToPhonesDict[bib] = phoneSet;
+                                        }
+                                        phoneSet.Add(phone);
+                                    }
+                                }
+                                // Build list of phones to send result information to
+                                foreach (TimeResult result in SMSResults)
+                                {
+                                    if (bibToPhonesDict.TryGetValue(result.Bib, out HashSet<string> phonesFromDict))
+                                    {
+                                        foreach (string phone in phonesFromDict)
+                                        {
+                                            if (!toSendTo.TryGetValue(result, out HashSet<string> phones))
+                                            {
+                                                phones = [];
+                                                toSendTo[result] = phones;
+                                            }
+                                            phones.Add(phone);
+                                        }
+                                    }
+                                }
+                                string resultsURL = "";
+                                if (dictionary.apis.TryGetValue(theEvent.API_ID, out APIObject api) && api.WebURL.Length > 0)
+                                {
+                                    string[] event_ids = theEvent.API_Event_ID.Split(',');
+                                    if (event_ids.Length == 2)
+                                    {
+                                        resultsURL = string.Format(" More results @ {0}results/{1}/{2}.", api.WebURL, event_ids[0], event_ids[1]);
                                     }
                                     else
                                     {
-                                        sms = string.Format("{0} {1} has has reached {2} in {3}.{4} Reply STOP to opt-out.", result.First, result.Last, result.SegmentName.Trim(), result.ChipTimeNoMilliseconds, resultsURL);
+                                        resultsURL = string.Format(" More results @ {0}.", api.WebURL);
                                     }
-                                    if (result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN)
+                                }
+                                // Only check banned phones or try to send texts if there is something to send.
+                                if (toSendTo.Count > 0)
+                                {
+                                    // Update banned phones list.
+                                    Constants.GlobalVars.UpdateBannedPhones();
+                                    foreach (TimeResult result in toSendTo.Keys)
                                     {
-                                        bool sent = false;
-                                        bool networkError = false;
-                                        if (result.Anonymous == true)
+                                        // Only send alert if participant wants it sent
+                                        // Do not add to the AlertsSent database because they
+                                        // may change their mind later and
+                                        // we still want to be able to send a SMS to them
+                                        // Only add to the database/dictionary if successful.
+                                        string sms;
+                                        if (Constants.Timing.SEGMENT_FINISH == result.SegmentId)
                                         {
-                                            sent = true;
+                                            if (dictionary.mainDistances.Count > 1)
+                                            {
+                                                sms = string.Format("{0} {1} has finished the {2} {3} {4} in {5}.{6} Reply STOP to opt-out.", result.First, result.Last, theEvent.Year, theEvent.Name, result.DistanceName, result.ChipTimeNoMilliseconds, resultsURL);
+                                            }
+                                            else
+                                            {
+                                                sms = string.Format("{0} {1} has finished the {2} {3} in {4}.{5} Reply STOP to opt-out.", result.First, result.Last, theEvent.Year, theEvent.Name, result.ChipTimeNoMilliseconds, resultsURL);
+                                            }
                                         }
                                         else
                                         {
-                                            foreach (string phone in toSendTo[result])
+                                            sms = string.Format("{0} {1} has has reached {2} in {3}.{4} Reply STOP to opt-out.", result.First, result.Last, result.SegmentName.Trim(), result.ChipTimeNoMilliseconds, resultsURL);
+                                        }
+                                        if (result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN)
+                                        {
+                                            bool sent = false;
+                                            bool networkError = false;
+                                            if (result.Anonymous == true)
                                             {
-                                                var status = TimeResult.SendSMSAlert(phone, sms);
-                                                // add to banned phones list
-                                                if (status == SMSState.AddToBanned)
+                                                sent = true;
+                                            }
+                                            else
+                                            {
+                                                foreach (string phone in toSendTo[result])
                                                 {
-                                                    GlobalVars.AddBannedPhone(phone);
-                                                }
-                                                else if (status == SMSState.Success)
-                                                {
-                                                    sent = true;
-                                                }
-                                                else if (status == SMSState.NetworkError)
-                                                {
-                                                    networkError = true;
+                                                    var status = TimeResult.SendSMSAlert(phone, sms);
+                                                    // add to banned phones list
+                                                    if (status == SMSState.AddToBanned)
+                                                    {
+                                                        GlobalVars.AddBannedPhone(phone);
+                                                    }
+                                                    else if (status == SMSState.Success)
+                                                    {
+                                                        sent = true;
+                                                    }
+                                                    else if (status == SMSState.NetworkError)
+                                                    {
+                                                        networkError = true;
+                                                    }
                                                 }
                                             }
-                                        }
-                                        // update status if there's no network error or we send a message out
-                                        if (sent || !networkError)
-                                        {
-                                            database.AddSMSAlert(theEvent.Identifier, result.EventSpecificId, result.SegmentId);
+                                            // update status if there's no network error or we send a message out
+                                            if (sent || !networkError)
+                                            {
+                                                database.AddSMSAlert(theEvent.Identifier, result.EventSpecificId, result.SegmentId);
+                                            }
                                         }
                                     }
                                 }

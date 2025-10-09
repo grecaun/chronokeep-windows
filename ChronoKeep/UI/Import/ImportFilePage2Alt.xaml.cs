@@ -29,7 +29,7 @@ namespace Chronokeep.UI.Import
 
         public List<ImportDistance> GetDistances()
         {
-            List<ImportDistance> output = new();
+            List<ImportDistance> output = [];
             foreach (DistanceListBoxItemAlternate distanceItem in distanceListBox.Items)
             {
                 output.Add(new ImportDistance()

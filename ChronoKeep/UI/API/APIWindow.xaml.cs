@@ -13,7 +13,7 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class APIWindow : FluentWindow
     {
-        private readonly IMainWindow window = null;
+        private readonly IMainWindow window;
         private readonly IDBInterface database;
         private readonly Event theEvent;
 
@@ -45,7 +45,7 @@ namespace Chronokeep.UI.API
 
         public static APIWindow NewWindow(IMainWindow window, IDBInterface database)
         {
-            return new APIWindow(window, database);
+            return new(window, database);
         }
 
         public void GotoPage2(APIObject api)

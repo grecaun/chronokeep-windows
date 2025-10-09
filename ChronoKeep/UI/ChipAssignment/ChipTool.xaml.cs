@@ -206,22 +206,15 @@ namespace Chronokeep.UI.ChipAssignment
             correlationBox.Items.Add(new ATagRange(correlationBox));
         }
 
-        private void Reset()
-        {
-            correlationBox.Items.Clear();
-            correlationBox.Items.Add(new ATagRange(correlationBox));
-        }
-
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             List<Objects.Range> ranges = [];
             foreach (ATagRange tag in correlationBox.Items)
             {
-                int startBib = -1, endBib = -1, startChip = -1, endChip = -1;
-                int.TryParse(tag.StartBib.Text, out startBib);
-                int.TryParse(tag.EndBib.Text, out endBib);
-                int.TryParse(tag.StartChip.Text, out startChip);
-                int.TryParse(tag.EndChip.Text.ToString(), out endChip);
+                _ = int.TryParse(tag.StartBib.Text, out int startBib);
+                _ = int.TryParse(tag.EndBib.Text, out int endBib);
+                _ = int.TryParse(tag.StartChip.Text, out int startChip);
+                _ = int.TryParse(tag.EndChip.Text.ToString(), out int endChip);
                 Log.D("UI.ChipAssignment.ChipTool", "StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
                 Objects.Range curRange = new()
                 {

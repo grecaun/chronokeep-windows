@@ -99,7 +99,7 @@ namespace Chronokeep.UI
             window.WindowFinalize(this);
         }
 
-        private void eventList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void EventList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Log.D("UI.ChangeEventWindow", "Double Click detected.");
             Event one = (Event)eventList.SelectedItem;
@@ -118,7 +118,7 @@ namespace Chronokeep.UI
             this.Close();
         }
 
-        private void searchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void SearchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             UpdateEventBox();
         }

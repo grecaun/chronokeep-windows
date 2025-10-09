@@ -16,8 +16,8 @@ namespace Chronokeep
     /// </summary>
     public partial class NewEventWindow : FluentWindow
     {
-        private readonly IDBInterface database = null;
-        private readonly IWindowCallback window = null;
+        private readonly IDBInterface database;
+        private readonly IWindowCallback window;
 
         private readonly Dictionary<string, Event> eventDict = [];
 
@@ -182,7 +182,7 @@ namespace Chronokeep
                 }
                 else
                 {
-                    database.AddDistance(new Distance("Default Distance", newEvent.Identifier));
+                    database.AddDistance(new("Default Distance", newEvent.Identifier));
                 }
                 database.SetCurrentEvent(newEvent.Identifier);
                 window.WindowFinalize(this);

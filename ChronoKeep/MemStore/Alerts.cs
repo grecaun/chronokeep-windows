@@ -160,7 +160,7 @@ namespace Chronokeep.MemStore
         public List<(int, int)> GetSMSAlerts(int eventId)
         {
             Log.D("MemStore", "GetSMSAlerts");
-            List<(int, int)> output = new();
+            List<(int, int)> output = [];
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
@@ -189,7 +189,7 @@ namespace Chronokeep.MemStore
         public List<APISmsSubscription> GetSmsSubscriptions(int eventId)
         {
             Log.D("MemStore", "GetSmsSubscriptions");
-            List<APISmsSubscription> output = new();
+            List<APISmsSubscription> output = [];
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))

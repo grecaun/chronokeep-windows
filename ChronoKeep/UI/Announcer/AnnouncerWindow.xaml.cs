@@ -17,12 +17,12 @@ namespace Chronokeep.UI.Announcer
     /// </summary>
     public partial class AnnouncerWindow : FluentWindow
     {
-        private readonly IMainWindow window = null;
-        private readonly AnnouncerWorker announcerWorker = null;
-        private readonly Thread announcerThread = null;
-        private readonly IDBInterface database = null;
+        private readonly IMainWindow window;
+        private readonly AnnouncerWorker announcerWorker;
+        private readonly Thread announcerThread;
+        private readonly IDBInterface database;
 
-        private readonly Event theEvent = null;
+        private readonly Event theEvent;
 
         public AnnouncerWindow(IMainWindow window, IDBInterface database)
         {
@@ -32,7 +32,7 @@ namespace Chronokeep.UI.Announcer
             theEvent = database.GetCurrentEvent();
             AnnouncerParticipant.TheEvent = theEvent;
             announcerWorker = AnnouncerWorker.NewAnnouncer(window, database);
-            announcerThread = new Thread(new ThreadStart(announcerWorker.Run));
+            announcerThread = new(new ThreadStart(announcerWorker.Run));
             announcerThread.Start();
             UpdateView();
             UpdateTiming();

@@ -43,7 +43,7 @@
                     <ColumnDefinition Width="234" />
                 </Grid.ColumnDefinitions>
                 <ui:SymbolIcon Symbol="Search24" Grid.Column="0" Margin="20,0,10,10" VerticalAlignment="Center"/>
-                <ui:TextBox Height="40" Margin="5,0,15,15" Name="searchBox" TextChanged="searchBox_TextChanged" PlaceholderText="Search..." Grid.Column="1" VerticalContentAlignment="Center" />
+                <ui:TextBox Height="40" Margin="5,0,15,15" Name="searchBox" TextChanged="SearchBox_TextChanged" PlaceholderText="Search..." Grid.Column="1" VerticalContentAlignment="Center" />
             </Grid>
             <ListView
                 x:Name="eventList"
@@ -56,7 +56,7 @@
                 MaxHeight="114"
                 AlternationCount="2"
                 ItemContainerStyle="{StaticResource alternatingStyle}"
-                MouseDoubleClick="eventList_MouseDoubleClick"
+                MouseDoubleClick="EventList_MouseDoubleClick"
                 SelectionChanged="EventBox_SelectionChanged"
                 ScrollViewer.CanContentScroll="False"
                 >

@@ -305,8 +305,8 @@ namespace Chronokeep.UI.Export
         }
         private void SaveAbbotInternal(string distance, string fileName, string extension)
         {
-            string[] headers = new string[]
-            {
+            string[] headers =
+            [
                 "name_prefix",  // leave empty
                 "name_suffix",  // leave empty
                 "first_name",
@@ -319,7 +319,7 @@ namespace Chronokeep.UI.Export
                 "finish_time",  // Chip time
                 "place",        // overall
                 "place_no_sex"  // gender place
-            };
+            ];
             List<object[]> data = [];
             List<Participant> participants = database.GetParticipants(theEvent.Identifier);
             Dictionary<string, Participant> participantDictionary = [];
@@ -777,7 +777,7 @@ namespace Chronokeep.UI.Export
             }
             format.Remove(format.Length - 1, 1);
             Log.D("UI.Export.ExportDistanceResults", string.Format("The format is '{0}'", format.ToString()));
-            IDataExporter exporter = new CSVExporter(format.ToString());
+            CSVExporter exporter = new(format.ToString());
             exporter.SetData(headers, data);
             exporter.ExportData(fileName);
         }

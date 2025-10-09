@@ -42,7 +42,7 @@ namespace Chronokeep.UI.API
             {
                 Name = "New Event"
             });
-            List<APIEvent> ev = new(events.Events);
+            List<APIEvent> ev = [.. events.Events];
             eventList.ItemsSource = ev;
             APIEvent maybeEvent = ev.Find(x => x.Name.Equals(theEvent.Name, StringComparison.OrdinalIgnoreCase));
             if (maybeEvent != null)
@@ -84,15 +84,15 @@ namespace Chronokeep.UI.API
             }
         }
 
-        private void eventList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void EventList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Log.D("UI.ChangeEventWindow", "Double Click detected.");
             Next_Click(sender, null);
         }
 
-        private void searchBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            List<APIEvent> ev = new(events.Events);
+            List<APIEvent> ev = [.. events.Events];
             if (searchBox.Text.Trim().Length > 0)
             {
                 Log.D("UI.API.APIPage2", $"searchBox.Text {searchBox.Text}");

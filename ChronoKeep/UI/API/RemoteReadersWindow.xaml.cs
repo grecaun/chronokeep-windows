@@ -61,7 +61,7 @@ namespace Chronokeep.UI.API
         {
             try
             {
-                Dictionary<(int, string), RemoteReader> savedReaders = new();
+                Dictionary<(int, string), RemoteReader> savedReaders = [];
                 foreach (RemoteReader reader in database.GetRemoteReaders(theEvent.Identifier))
                 {
                     savedReaders[(reader.APIIDentifier, reader.Name)] = reader;
@@ -93,8 +93,8 @@ namespace Chronokeep.UI.API
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.API.RemoteReaders", "Close button clicked.");
-            List<RemoteReader> readersToSave = new();
-            List<RemoteReader> otherReaders = new();
+            List<RemoteReader> readersToSave = [];
+            List<RemoteReader> otherReaders = [];
             foreach (APIExpander item in apiListView.Items)
             {
                 var downDict = item.GetAutoDownloadDictionary();
@@ -110,8 +110,8 @@ namespace Chronokeep.UI.API
                     }
                 }
             }
-            List<RemoteReader> deleteReaders = new();
-            HashSet<(int, string)> readerNames = new();
+            List<RemoteReader> deleteReaders = [];
+            HashSet<(int, string)> readerNames = [];
             foreach (RemoteReader reader in database.GetRemoteReaders(theEvent.Identifier))
             {
                 readerNames.Add((reader.APIIDentifier, reader.Name));
@@ -394,10 +394,12 @@ namespace Chronokeep.UI.API
 
             public RemoteReader GetUpdatedReader()
             {
-                RemoteReader output = new();
-                output.Name = reader.Name;
-                output.EventID = reader.EventID;
-                output.APIIDentifier = api.Identifier;
+                RemoteReader output = new()
+                {
+                    Name = reader.Name,
+                    EventID = reader.EventID,
+                    APIIDentifier = api.Identifier
+                };
                 if (locationBox.SelectedItem != null && int.TryParse(((ComboBoxItem)locationBox.SelectedItem).Uid, out var locId))
                 {
                     output.LocationID = locId;

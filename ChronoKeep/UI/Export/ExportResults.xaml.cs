@@ -163,7 +163,7 @@ namespace Chronokeep.UI.Export
                     headers[headerIndex[header]] = header;
                 }
                 List<object[]> data = [];
-                Dictionary<int, List<Segment>> distanceSegmentDict = new();
+                Dictionary<int, List<Segment>> distanceSegmentDict = [];
                 foreach (Segment seg in database.GetSegments(theEvent.Identifier))
                 {
                     if (!distanceSegmentDict.TryGetValue(seg.DistanceId, out List<Segment> value))
@@ -173,7 +173,7 @@ namespace Chronokeep.UI.Export
                     }
                     value.Add(seg);
                 }
-                Dictionary<int, int> segmentNumberDict = new();
+                Dictionary<int, int> segmentNumberDict = [];
                 foreach (List<Segment> segments in distanceSegmentDict.Values)
                 {
                     segments.Sort((a, b) =>
@@ -570,7 +570,6 @@ namespace Chronokeep.UI.Export
             public AHeaderBox(string name)
             {
                 NameValue = name;
-#pragma warning disable CA1416 // Validate platform compatibility
                 Include = new()
                 {
                     Content = name,
@@ -579,7 +578,6 @@ namespace Chronokeep.UI.Export
                     Margin = new Thickness(20,10,0,10),
                     IsChecked = true
                 };
-#pragma warning restore CA1416 // Validate platform compatibility
                 this.Content = Include;
                 this.Selected += new RoutedEventHandler(this.This_Selected);
             }

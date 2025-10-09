@@ -22,7 +22,7 @@ namespace Chronokeep
     public partial class BibChipAssociationWindow : FluentWindow
     {
         private readonly IDataImporter importer;
-        private readonly IWindowCallback window = null;
+        private readonly IWindowCallback window;
         private readonly IDBInterface database;
         private readonly bool init = true;
         private int[] keys;

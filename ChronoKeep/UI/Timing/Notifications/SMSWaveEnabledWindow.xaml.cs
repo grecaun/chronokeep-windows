@@ -80,12 +80,12 @@ namespace Chronokeep.UI.Timing.Notifications
                     }
                 }
             }
-            this.Close();
+            Close();
         }
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void Enter_KeyDown(object sender, KeyEventArgs e)
@@ -94,7 +94,7 @@ namespace Chronokeep.UI.Timing.Notifications
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (window != null) window.WindowFinalize(this);
+            window?.WindowFinalize(this);
             if (updatedValues.Keys.Count > 0)
             {
                 window.NotifyTimingWorker();

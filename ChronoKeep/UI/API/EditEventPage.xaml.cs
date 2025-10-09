@@ -80,8 +80,6 @@ namespace Chronokeep.UI.API
             GetEvent();
         }
 
-
-
         private async void Done_Click(object sender, RoutedEventArgs e)
         {
             try
