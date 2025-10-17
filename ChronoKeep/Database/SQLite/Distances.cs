@@ -127,8 +127,8 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["distance_linked_id"]),
                     Convert.ToInt32(reader["distance_type"]),
                     Convert.ToInt32(reader["distance_ranking_order"]),
-                    Convert.ToInt32(reader["distance_sms_enabled"]) == 0 ? false : true,
-                    Convert.ToInt32(reader["distance_upload_results"]) == 0 ? false : true,
+                    Convert.ToInt32(reader["distance_sms_enabled"]) != 0,
+                    Convert.ToInt32(reader["distance_upload_results"]) != 0,
                     reader["distance_certification"].ToString()
                     ));
             }
@@ -164,8 +164,8 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["distance_linked_id"]),
                     Convert.ToInt32(reader["distance_type"]),
                     Convert.ToInt32(reader["distance_ranking_order"]),
-                    Convert.ToInt32(reader["distance_sms_enabled"]) == 0 ? false : true,
-                    Convert.ToInt32(reader["distance_upload_results"]) == 0 ? false : true,
+                    Convert.ToInt32(reader["distance_sms_enabled"]) != 0,
+                    Convert.ToInt32(reader["distance_upload_results"]) != 0,
                     reader["distance_certification"].ToString()
                     ));
             }
@@ -220,8 +220,8 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["distance_linked_id"]),
                     Convert.ToInt32(reader["distance_type"]),
                     Convert.ToInt32(reader["distance_ranking_order"]),
-                    Convert.ToInt32(reader["distance_sms_enabled"]) == 0 ? false : true,
-                    Convert.ToInt32(reader["distance_upload_results"]) == 0 ? false : true,
+                    Convert.ToInt32(reader["distance_sms_enabled"]) != 0,
+                    Convert.ToInt32(reader["distance_upload_results"]) != 0,
                     reader["distance_certification"].ToString()
                     );
             }

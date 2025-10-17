@@ -495,8 +495,13 @@ namespace Chronokeep.UI
 
         public void WindowFinalize(Window w)
         {
+            Log.D("MainWindow", "Window finalized...");
             page.UpdateView();
             UpdateStatus();
+            if (!openWindows.Remove(w))
+            {
+                Log.D("UI.MainWindow", "Window not found.");
+            }
         }
 
         public void UpdateParticipantsFromRegistration()

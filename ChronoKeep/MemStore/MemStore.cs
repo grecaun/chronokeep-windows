@@ -64,6 +64,8 @@ namespace Chronokeep.MemStore
         private static readonly Dictionary<(int, int, int, string), TimeResult> timingResults = [];
         // Chip Read data
         private static readonly Dictionary<int, ChipRead> chipReads = [];
+        // Clock data
+        private static readonly Dictionary<int, Chronoclock> clocks = [];
 
         // Local variables
         private readonly IDBInterface database;
@@ -99,6 +101,7 @@ namespace Chronokeep.MemStore
             smsSubscriptions.Clear();
             timingResults.Clear();
             chipReads.Clear();
+            clocks.Clear();
             if (theEvent == null || theEvent.Identifier < 0)
             {
                 return;
@@ -187,6 +190,11 @@ namespace Chronokeep.MemStore
             {
                 chipReads[read.ReadId] = read;
             }
+            // load clocks
+            foreach (Chronoclock clock in database.GetClocks())
+            {
+                clocks[clock.Identifier] = clock;
+            }
         }
 
         /**
@@ -231,6 +239,7 @@ namespace Chronokeep.MemStore
             timingResults.Clear();
             // chipread
             chipReads.Clear();
+            clocks.Clear();
             // event
             theEvent = null;
         }

@@ -81,16 +81,30 @@
                             LostFocus="StartTimeLostFocus"
                             />
                 </StackPanel>
-                <Button
+                <DockPanel
+                    HorizontalAlignment="Center"
+                    >
+                    <Button
                         Name="StartRace"
                         Content="Start Race"
-                        Width="250"
+                        Width="200"
+                        Height="35"
+                        HorizontalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Margin="0,5,5,0"
+                        Click="StartRaceClick"
+                        />
+                    <Button
+                        Name="OpenClock"
+                        Content="🕔"
+                        Width="45"
                         Height="35"
                         HorizontalAlignment="Center"
                         HorizontalContentAlignment="Center"
                         Margin="0,5,0,0"
-                        Click="StartRaceClick"
+                        Click="OpenClock_Click"
                         />
+                </DockPanel>
             </StackPanel>
             <ScrollViewer
                 Grid.Row="1"

@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Helpers;
 using Chronokeep.Objects;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -1615,10 +1616,22 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 70;
                     case 70:
-                        Log.D("Database.SQLite.Update", "Upgrading from versino 70.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 70.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD COLUMN event_start_max_occurrences INTEGER NOT NULL DEFAULT 1; " +
                             "UPDATE settings SET VALUE='71' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
+                        goto case 71;
+                    case 71:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 71.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "CREATE TABLE IF NOT EXISTS chronoclocks(" +
+                            "clock_id INTEGER PRIMARY KEY ON CONFLICT REPLACE, " +
+                            "name VARCHAR(100) NOT NULL DEFAULT '', " +
+                            "url VARCHAR(100) NOT NULL DEFAULT '', " +
+                            "enabled INTEGER NOT NULL DEFAULT 0, " +
+                            "UNIQUE(name) ON CONFLICT IGNORE, UNIQUE(url) ON CONFLICT IGNORE" +
+                            "); UPDATE settings SET VALUE='72' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         break;
                 }

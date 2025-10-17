@@ -2188,6 +2188,12 @@ namespace Chronokeep.UI.MainPages
             return readerSelectionBox.SelectedItem != null ? readerSelectionBox.SelectedItem.ToString() : "";
         }
 
+        private void OpenClock_Click(object sender, RoutedEventArgs e)
+        {
+            ClockControl clockWindow = ClockControl.CreateWindow(mWindow, database);
+            clockWindow.Show();
+        }
+
         public class TimeRelativeWave
         {
             public string Name { get; set; }

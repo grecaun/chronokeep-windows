@@ -193,6 +193,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ResultsPrintableAgeGroup.tt</DependentUpon>
     </Compile>
+    <Compile Update="UI\Timing\ClockControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Chronokeep.pfx" />

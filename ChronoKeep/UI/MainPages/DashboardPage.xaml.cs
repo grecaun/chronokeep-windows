@@ -19,7 +19,7 @@ namespace Chronokeep.UI.MainPages
     {
         private readonly IMainWindow mWindow;
         private readonly IDBInterface database;
-        private readonly Event theEvent = null;
+        private Event theEvent = null;
 
         public DashboardPage(IMainWindow mainWindow, IDBInterface db)
         {
@@ -33,6 +33,7 @@ namespace Chronokeep.UI.MainPages
         public void UpdateView()
         {
             int oldEventId = theEvent == null ? -1 : theEvent.Identifier;
+            theEvent = database.GetCurrentEvent();
             if (theEvent != null && oldEventId != -1 && oldEventId != theEvent.Identifier)
             {
                 mWindow.NotifyTimingWorker();

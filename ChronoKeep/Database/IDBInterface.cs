@@ -196,5 +196,11 @@ namespace Chronokeep.Database
         List<APISmsSubscription> GetSmsSubscriptions(int eventId);
         void AddSmsSubscriptions(int eventId, List<APISmsSubscription> subscriptions);
         void DeleteSmsSubscriptions(int eventId);
+
+        // Chronoclock functions
+        List<Chronoclock> GetClocks();
+        int AddClock(Chronoclock clock);
+        void UpdateClock(Chronoclock clock);
+        void RemoveClocks(List<Chronoclock> clocks);
     }
 }

@@ -12,7 +12,7 @@ namespace Chronokeep.Database.SQLite
     {
         internal static void Initialize(int version, string connectionInfo)
         {
-            ArrayList queries = new();
+            ArrayList queries = [];
             SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = new("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'", connection);
@@ -26,36 +26,32 @@ namespace Chronokeep.Database.SQLite
                     // As of version 43 we've changed how we store settings values to something more sensible.
                     command = new("SELECT value FROM settings WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';", connection);
                     // If we've got an upgraded version then command.ExecuteReader will throw an exception.
-                    using (SQLiteDataReader versionChecker = command.ExecuteReader())
+                    using SQLiteDataReader versionChecker = command.ExecuteReader();
+                    if (versionChecker.Read())
                     {
-                        if (versionChecker.Read())
-                        {
-                            oldVersion = Convert.ToInt32(versionChecker["value"]);
-                        }
-                        else
-                        {
-                            Log.D("SQLite.Setup", "Tables made, database version not found.");
-                        }
-                        versionChecker.Close();
+                        oldVersion = Convert.ToInt32(versionChecker["value"]);
                     }
+                    else
+                    {
+                        Log.D("SQLite.Setup", "Tables made, database version not found.");
+                    }
+                    versionChecker.Close();
                 }
                 catch
                 {
                     // Check for an older version
                     Log.D("SQLite.Setup", "We may have a database older than version 43.");
                     command = new("SELECT version FROM settings;", connection);
-                    using (SQLiteDataReader v2Checker = command.ExecuteReader())
+                    using SQLiteDataReader v2Checker = command.ExecuteReader();
+                    if (v2Checker.Read())
                     {
-                        if (v2Checker.Read())
-                        {
-                            oldVersion = Convert.ToInt32(v2Checker["version"]);
-                        }
-                        else
-                        {
-                            Log.D("SQLite.Setup", "Tables made, database version not found.");
-                        }
-                        v2Checker.Close();
+                        oldVersion = Convert.ToInt32(v2Checker["version"]);
                     }
+                    else
+                    {
+                        Log.D("SQLite.Setup", "Tables made, database version not found.");
+                    }
+                    v2Checker.Close();
                 }
                 Log.D("SQLite.Setup", "Old Version: " + oldVersion.ToString());
             }
@@ -296,6 +292,13 @@ namespace Chronokeep.Database.SQLite
                     "last VARCHAR(100) NOT NULL DEFAULT '', " +
                     "phone VARCHAR(100) NOT NULL DEFAULT '', " +
                     "UNIQUE(event_id, bib, first, last, phone)" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS chronoclocks(" +
+                    "clock_id INTEGER PRIMARY KEY ON CONFLICT REPLACE, " +
+                    "name VARCHAR(100) NOT NULL DEFAULT '', " +
+                    "url VARCHAR(100) NOT NULL DEFAULT '', " +
+                    "enabled INTEGER NOT NULL DEFAULT 0, " +
+                    "UNIQUE(name) ON CONFLICT IGNORE, UNIQUE(url) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
                 queries.Add("CREATE INDEX idx_event_id ON events(event_id);");

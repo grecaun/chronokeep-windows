@@ -14,10 +14,10 @@ namespace Chronokeep
     class SQLiteInterface(string info) : IDBInterface
     {
         /**
-         * HIGHEST LOCK ID = 171
-         * NEXT AVAILABLE   = 172
+         * HIGHEST LOCK ID = 175
+         * NEXT AVAILABLE   = 176
          */
-        private readonly int version = 71;
+        private readonly int version = 72;
         public const int minimum_compatible_version = 63;
         readonly string connectionInfo = info;
         readonly Lock dbLock = new();
@@ -3417,5 +3417,93 @@ namespace Chronokeep
         public void UpdateDivisionsEnabled() { }
 
         public void UpdateStart() { }
+
+        public List<Chronoclock> GetClocks()
+        {
+            List<Chronoclock> output = [];
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 172");
+            if (!dbLock.TryEnter(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 172");
+                return output;
+            }
+            try
+            {
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
+                connection.Open();
+                output = Clock.GetClocks(connection);
+                connection.Close();
+            }
+            finally
+            {
+                dbLock.Exit();
+            }
+            return output;
+        }
+
+        public int AddClock(Chronoclock clock)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 173");
+            int output = -1;
+            if (!dbLock.TryEnter(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 173");
+                return output;
+            }
+            try
+            {
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
+                connection.Open();
+                output = Clock.AddClock(clock, connection);
+                connection.Close();
+            }
+            finally
+            {
+                dbLock.Exit();
+            }
+            return output;
+        }
+
+        public void UpdateClock(Chronoclock clock)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 174");
+            if (!dbLock.TryEnter(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 174");
+                return;
+            }
+            try
+            {
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
+                connection.Open();
+                Clock.UpdateClock(clock, connection);
+                connection.Close();
+            }
+            finally
+            {
+                dbLock.Exit();
+            }
+        }
+
+        public void RemoveClocks(List<Chronoclock> clocks)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 175");
+            if (!dbLock.TryEnter(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 175");
+                return;
+            }
+            try
+            {
+                SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
+                connection.Open();
+                Clock.RemoveClocks(clocks, connection);
+                connection.Close();
+            }
+            finally
+            {
+                dbLock.Exit();
+            }
+        }
     }
 }
