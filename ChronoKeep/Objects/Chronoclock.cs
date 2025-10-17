@@ -264,7 +264,7 @@ namespace Chronokeep.Objects
             try
             {
                 Dictionary<string, string> postContent = [];
-                postContent["DateTime"] = date.ToString("yyyy-MM-dd HH:mm:ss");
+                postContent["DateTime"] = date.ToString("yyyy-MM-dd HH:mm:ss.fff");
                 using HttpClient client = GetHttpClient();
                 HttpRequestMessage request = new()
                 {

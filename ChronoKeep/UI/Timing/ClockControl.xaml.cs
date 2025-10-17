@@ -83,29 +83,33 @@ namespace Chronokeep.UI.Timing
             clockListView.Items.Clear();
             foreach (Chronoclock clock in ClockDict.Values)
             {
-                clockListView.Items.Add(new ClockListItem(clock, this));
+                clockListView.Items.Add(new ClockListItem(clock, this, database.GetCurrentEvent()));
             }
         }
 
         private void UpdateTime(string time)
         {
             TimeLabel.Text = string.Format("Clock time is {0}", time);
+            TimeLabel.Visibility = Visibility.Visible;
             CurrentTimeLabel.Text = string.Format("System time is {0}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            CurrentTimeLabel.Visibility = Visibility.Visible;
         }
 
         internal class ClockListItem : Wpf.Ui.Controls.ListViewItem
         {
             private Chronoclock clock;
+            private readonly Event theEvent;
 
             private readonly Wpf.Ui.Controls.TextBox nameBlock;
             private readonly Wpf.Ui.Controls.TextBox urlBlock;
             private readonly ToggleSwitch enabledSwitch;
+            private readonly Wpf.Ui.Controls.TextBlock lockedLabel;
             private readonly ToggleSwitch lockedSwitch;
             private readonly ComboBox brightnessBox;
             private readonly DatePicker countDatePicker;
             private readonly MaskedTextBox countTimeBox;
 
-            public ClockListItem(Chronoclock clock, ClockControl parent)
+            public ClockListItem(Chronoclock clock, ClockControl parent, Event theEvent)
             {
                 this.clock = clock;
                 string dateStr = DateTime.Now.ToString("MM/dd/yyyy");
@@ -126,7 +130,6 @@ namespace Chronokeep.UI.Timing
                 enabledSwitch = new()
                 {
                     Height = 35,
-                    Width = 55,
                     VerticalAlignment = VerticalAlignment.Center,
                     IsChecked = clock.Enabled,
                     Margin = new Thickness(5),
@@ -148,11 +151,15 @@ namespace Chronokeep.UI.Timing
                     Margin = new Thickness(5),
                 };
                 panelOne.Children.Add(urlBlock);
+                lockedLabel = new()
+                {
+                    Text = "🔒",
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                panelOne.Children.Add(lockedLabel);
                 lockedSwitch = new()
                 {
-                    Content = "Lock",
                     Height = 35,
-                    Width = 55,
                     VerticalAlignment = VerticalAlignment.Center,
                     IsChecked = false,
                     Margin = new Thickness(5),
@@ -161,6 +168,11 @@ namespace Chronokeep.UI.Timing
                 lockedSwitch.Checked += new RoutedEventHandler(this.LockedChanged);
                 lockedSwitch.Unchecked += new RoutedEventHandler(this.LockedChanged);
                 panelOne.Children.Add(lockedSwitch);
+                panelOne.Children.Add(new Wpf.Ui.Controls.TextBlock()
+                {
+                    Text = "💡",
+                    VerticalAlignment = VerticalAlignment.Center,
+                });
                 brightnessBox = new()
                 {
                     Height = 35,
@@ -168,12 +180,24 @@ namespace Chronokeep.UI.Timing
                     Margin = new Thickness(5),
                     IsEnabled = false
                 };
-                for (int i=1; i<=15; i++)
+                for (int i = 1; i <= 15; i++)
                 {
                     brightnessBox.Items.Add(i.ToString());
                 }
                 brightnessBox.SelectionChanged += new SelectionChangedEventHandler(this.BrightnessChanged);
                 panelOne.Children.Add(brightnessBox);
+                Button delete = new()
+                {
+                    Content = "🗑",
+                    Height = 35,
+                    Margin = new Thickness(5),
+                };
+                delete.Click += new RoutedEventHandler((sender, e) =>
+                {
+                    Log.D("UI.Timing.ClockControl.ClockListItem", "Delete clicked.");
+                    parent.RemoveClock(clock);
+                });
+                panelOne.Children.Add(delete);
                 StackPanel panelTwo = new()
                 {
                     Orientation = Orientation.Horizontal,
@@ -185,14 +209,14 @@ namespace Chronokeep.UI.Timing
                 {
                     Text = "",
                     Height = 35,
-                    Width = 200,
+                    Width = 230,
                     Margin = new Thickness(5),
                     IsEnabled = false
                 };
                 panelTwo.Children.Add(countDatePicker);
                 countTimeBox = new()
                 {
-                    Text = "00:00:00",
+                    Text = "",
                     Mask = "00:00:00",
                     Height = 35,
                     Width = 80,
@@ -205,9 +229,8 @@ namespace Chronokeep.UI.Timing
                 panelTwo.Children.Add(countTimeBox);
                 Button start = new()
                 {
-                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Play24 },
+                    Content = "▶",
                     Height = 35,
-                    Width = 35,
                     Margin = new Thickness(5),
                 };
                 start.Click += new RoutedEventHandler(async (sender, e) =>
@@ -250,9 +273,8 @@ namespace Chronokeep.UI.Timing
                 panelTwo.Children.Add(start);
                 Button stop = new()
                 {
-                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Stop24 },
+                    Content = "🔳",
                     Height = 35,
-                    Width = 35,
                     Margin = new Thickness(5),
                 };
                 stop.Click += new RoutedEventHandler(async (sender, e) =>
@@ -273,9 +295,8 @@ namespace Chronokeep.UI.Timing
                 panelTwo.Children.Add(stop);
                 Button getTime = new()
                 {
-                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Clock24 },
+                    Content = "🕒",
                     Height = 35,
-                    Width = 35,
                     Margin = new Thickness(5),
                 };
                 getTime.Click += new RoutedEventHandler(async (sender, e) =>
@@ -296,9 +317,8 @@ namespace Chronokeep.UI.Timing
                 panelTwo.Children.Add(getTime);
                 Button setTime = new()
                 {
-                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Timer24 },
+                    Content = "🔧",
                     Height = 35,
-                    Width = 35,
                     Margin = new Thickness(5),
                 };
                 setTime.Click += new RoutedEventHandler(async (sender, e) =>
@@ -319,9 +339,8 @@ namespace Chronokeep.UI.Timing
                 panelTwo.Children.Add(setTime);
                 Button refresh = new()
                 {
-                    Icon = new SymbolIcon() { Symbol = SymbolRegular.ArrowSync24 },
+                    Content = "🔃",
                     Height = 35,
-                    Width = 35,
                     Margin = new Thickness(5),
                 };
                 refresh.Click += new RoutedEventHandler(async (sender, e) =>
@@ -346,23 +365,11 @@ namespace Chronokeep.UI.Timing
                     }
                 });
                 panelTwo.Children.Add(refresh);
-                Button delete = new()
-                {
-                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Delete24 },
-                    Height = 35,
-                    Width = 35,
-                    Margin = new Thickness(5),
-                };
-                delete.Click += new RoutedEventHandler((sender, e) =>
-                {
-                    Log.D("UI.Timing.ClockControl.ClockListItem", "Delete clicked.");
-                    parent.RemoveClock(clock);
-                });
-                panelTwo.Children.Add(delete);
                 if (clock.URL != null && clock.URL.Length > 0)
                 {
                     GetConfig();
                 }
+                this.theEvent = theEvent;
             }
 
             public async void GetConfig()
@@ -392,18 +399,39 @@ namespace Chronokeep.UI.Timing
                     brightnessBox.SelectedIndex = (int)(info.Brightness - 1);
                 }
                 lockedSwitch.IsChecked = info.LockCountUpDown;
+                if (info.LockCountUpDown)
+                {
+                    lockedLabel.Text = "🔒";
+                }
+                else
+                {
+                    lockedLabel.Text = "🔓";
+                }
                 if (info.CountUpDownTimestamp > 0)
                 {
                     DateTime countupdown = Constants.Timing.UTCToLocalDate(info.CountUpDownTimestamp, 0);
                     countDatePicker.Text = countupdown.ToString("MM/dd/yyyy");
-                    countTimeBox.Text = countupdown.ToString("HH:mm:ss");
+                    ChangeCountTimeBox(countupdown.ToString("HH:mm:ss"));
+                }
+                else if (theEvent.StartSeconds > 0 || theEvent.StartMilliseconds > 0)
+                {
+                    countDatePicker.Text = theEvent.LongDate;
+                    ChangeCountTimeBox(Constants.Timing.SecondsToTime(theEvent.StartMilliseconds >= 500 ? theEvent.StartSeconds + 1 : theEvent.StartSeconds));
+                    Log.D("UI.Timing.ClockControl.ClockListItem", string.Format("Time should be set to: {0}", Constants.Timing.SecondsToTime(theEvent.StartSeconds)));
                 }
                 else
                 {
                     countDatePicker.Text = "";
-                    countTimeBox.Text = "00:00:00";
+                    ChangeCountTimeBox("");
                 }
                 EnableConfig();
+            }
+
+            public void ChangeCountTimeBox(string time)
+            {
+                countTimeBox.IsEnabled = true;
+                countTimeBox.Text = time;
+                countTimeBox.IsEnabled = false;
             }
 
             public async void LockedChanged(object sender, RoutedEventArgs args)

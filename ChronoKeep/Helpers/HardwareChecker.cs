@@ -33,16 +33,15 @@ namespace Chronokeep.Helpers
                 uint cpuCount = 0;
                 uint coreCount = 0;
                 uint processorCount = 0;
-                StringBuilder cpuComposite = new();
                 foreach (var cpu in hardwareInfo.CpuList)
                 {
                     cpuCount++;
                     coreCount += cpu.NumberOfCores;
                     processorCount += cpu.NumberOfLogicalProcessors;
-                    cpuComposite.AppendFormat("{0}+", cpu.Name);
+                    hardwareIDBuilder.AppendFormat("{0}+", cpu.Name.Trim());
                 }
-                cpuComposite.Remove(cpuComposite.Length - 1, 1);
-                hardwareIDBuilder.AppendFormat("{0}-{1}C-{2}P-", cpuComposite, coreCount, processorCount);
+                hardwareIDBuilder.Remove(hardwareIDBuilder.Length - 1, 1);
+                hardwareIDBuilder.AppendFormat("{0}C-{1}P-", coreCount, processorCount);
                 uint memoryCount = 0;
                 ulong totalCapacity = 0;
                 foreach (var memory in hardwareInfo.MemoryList)
@@ -56,38 +55,23 @@ namespace Chronokeep.Helpers
                     reductionNum++;
                     totalCapacity = totalCapacity / 1024;
                 }
-                string byteType;
-                switch (reductionNum)
+                string byteType = reductionNum switch
                 {
-                    case 0:
-                        byteType = "B";
-                        break;
-                    case 1:
-                        byteType = "KB";
-                        break;
-                    case 2:
-                        byteType = "MB";
-                        break;
-                    case 3:
-                        byteType = "GB";
-                        break;
-                    case 4:
-                        byteType = "TB";
-                        break;
-                    default:
-                        byteType = "??";
-                        break;
-                }
+                    0 => "B",
+                    1 => "KB",
+                    2 => "MB",
+                    3 => "GB",
+                    4 => "TB",
+                    _ => "??",
+                };
                 hardwareIDBuilder.AppendFormat("{0}@{1}{2}-", memoryCount, totalCapacity, byteType);
                 int videoCount = 0;
-                StringBuilder videoComposite = new();
                 foreach (var video in hardwareInfo.VideoControllerList)
                 {
                     videoCount++;
-                    videoComposite.AppendFormat("{0}+", video.Name);
+                    hardwareIDBuilder.AppendFormat("{0}+", video.Name);
                 }
-                videoComposite.Remove(videoComposite.Length - 1, 1);
-                hardwareIDBuilder.Append(videoComposite);
+                hardwareIDBuilder.Remove(hardwareIDBuilder.Length - 1, 1);
                 hardwareIDBuilder.Replace(' ', '_');
                 string hwID = hardwareIDBuilder.ToString();
                 Log.D("Helpers.HardwareChecker", $"Unique Identifier: '{hwID}'");

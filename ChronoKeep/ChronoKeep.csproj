@@ -203,12 +203,12 @@
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
-    <PackageReference Include="Hardware.Info" Version="101.0.1.1" />
+    <PackageReference Include="Hardware.Info" Version="101.1.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.14.0" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.9" />
-    <PackageReference Include="Sentry" Version="5.15.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.10" />
+    <PackageReference Include="Sentry" Version="5.16.1" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
-    <PackageReference Include="Twilio" Version="7.13.0" />
+    <PackageReference Include="Twilio" Version="7.13.4" />
     <PackageReference Include="WPF-UI" Version="4.0.3" />
   </ItemGroup>
   <ItemGroup>

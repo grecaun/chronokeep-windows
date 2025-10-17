@@ -592,13 +592,13 @@ namespace Chronokeep.UI.MainPages
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            TimeSpan ellapsed = DateTime.Now - startTime;
+            long unixElapsed = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - (startTime.Ticks / TimeSpan.TicksPerMillisecond);
             if (waveTimes.TryGetValue(selectedWave, out (long seconds, int milliseconds) value))
             {
-                ellapsed = ellapsed.Subtract(TimeSpan.FromSeconds(value.seconds));
-                ellapsed = ellapsed.Subtract(TimeSpan.FromMilliseconds(value.milliseconds));
+                unixElapsed -= value.seconds * 1000;
+                unixElapsed -= value.milliseconds;
             }
-            EllapsedTime.Text = string.Format("{0:D2}:{1:D2}:{2:D2}", Math.Abs(ellapsed.Days) * 24 + Math.Abs(ellapsed.Hours), Math.Abs(ellapsed.Minutes), Math.Abs(ellapsed.Seconds));
+            EllapsedTime.Text = Constants.Timing.SecondsToTime(Math.Abs(unixElapsed/1000));
         }
 
         private void StartRaceClick(object sender, RoutedEventArgs e)

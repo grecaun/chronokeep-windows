@@ -96,7 +96,7 @@
                         />
                     <Button
                         Name="OpenClock"
-                        Content="🕔"
+                        Content="🕒"
                         Width="45"
                         Height="35"
                         HorizontalAlignment="Center"

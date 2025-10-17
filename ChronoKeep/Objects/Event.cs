@@ -8,7 +8,7 @@ namespace Chronokeep.Objects
         private int common_age_groups = 1, common_start_finish = 1, distance_specific_segments = 0, rank_by_gun = 1;
         private int finish_max_occurrences = 1, finish_ignore_within = 0, start_window = -1, start_max_occurrences = 1;
         private int event_type = Constants.Timing.EVENT_TYPE_DISTANCE;
-        private string name, date, yearcode = "", long_date;
+        private string name, date, yearcode = "";
         private long start_seconds = -1;
         private int start_milliseconds;
         private int api_id = Constants.APIConstants.NULL_ID;
@@ -19,9 +19,8 @@ namespace Chronokeep.Objects
 
         public Event(string n, long d)
         {
-            DateTime time = new DateTime(d);
+            DateTime time = new(d);
             date = time.ToShortDateString();
-            long_date = time.ToString("MMMM d, yyyy");
             name = n;
             start_window = 600;
             finish_ignore_within = 600;
@@ -29,9 +28,8 @@ namespace Chronokeep.Objects
 
         public Event(string n, long d, string yearcode)
         {
-            DateTime time = new DateTime(d);
+            DateTime time = new(d);
             date = time.ToShortDateString();
-            long_date = time.ToString("MMMM d, yyyy");
             name = n;
             this.yearcode = yearcode;
             start_window = 600;
@@ -42,18 +40,16 @@ namespace Chronokeep.Objects
         {
             identifier = id;
             name = n;
-            DateTime time = new DateTime(d);
+            DateTime time = new(d);
             date = time.ToShortDateString();
-            long_date = time.ToString("MMMM d, yyyy");
             start_window = 600;
             finish_ignore_within = 600;
         }
 
         public Event(string n, long d, int age, int start, int seg, int gun)
         {
-            DateTime time = new DateTime(d);
+            DateTime time = new(d);
             date = time.ToShortDateString();
-            long_date = time.ToString("MMMM d, yyyy");
             name = n;
             common_age_groups = age;
             common_start_finish = start;
@@ -67,9 +63,8 @@ namespace Chronokeep.Objects
         {
             identifier = id;
             name = n;
-            DateTime time = new DateTime(d);
+            DateTime time = new(d);
             date = time.ToShortDateString();
-            long_date = time.ToString("MMMM d, yyyy");
             common_age_groups = age;
             common_start_finish = start;
             distance_specific_segments = seg;
@@ -88,7 +83,6 @@ namespace Chronokeep.Objects
             name = n;
             DateTime time = DateTime.Parse(d);
             date = time.ToShortDateString();
-            long_date = time.ToString("MMMM d, yyyy");
             common_age_groups = age;
             common_start_finish = start;
             distance_specific_segments = seg;
@@ -112,7 +106,7 @@ namespace Chronokeep.Objects
         public int Identifier { get => identifier; set => identifier = value; }
         public string Name { get => name; set => name = value; }
         public string Date { get => date; set => date = value; }
-        public string LongDate { get => long_date; set => long_date = value; }
+        public string LongDate { get => DateTime.Parse(date).ToString("MMMM d, yyyy"); }
         public bool CommonAgeGroups { get => common_age_groups != 0; set => common_age_groups = value ? 1 : 0; }
         public bool CommonStartFinish { get => common_start_finish != 0; set => common_start_finish = value ? 1 : 0; }
         public bool DistanceSpecificSegments { get => distance_specific_segments != 0; set => distance_specific_segments = value ? 1 : 0; }
