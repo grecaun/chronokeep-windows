@@ -615,6 +615,19 @@ namespace Chronokeep.UI.MainPages
             {
                 EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
             }
+            foreach (Chronoclock clock in database.GetClocks())
+            {
+                if (clock.Enabled == true)
+                {
+                    try
+                    {
+                        clock.StartCountUp();
+                    }
+                    catch {} // Exception may get thrown due to not waiting on the async method
+                    // The clocks need to start as fast as possible and it does not matter if the
+                    // call fails (the clock is probably not connected to the same network)
+                }
+            }
             StartTimeChanged();
         }
 
