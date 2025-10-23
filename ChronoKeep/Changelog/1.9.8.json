@@ -4,7 +4,8 @@
     "Added ignored chip list that ensures the program doesn't save chip reads for any chip on the list.",
     "Added button to TimingRawReadsPage to allow the user to add a chip to the global ignore list easily.",
     "Performance & compilation modifications.",
-    "Added the ability to control Chronoclocks."
+    "Added the ability to control Chronoclocks.",
+    "Added the ability to filter reads/results by specific timing systems."
   ],
   "fixes": [
     "Fixed an issue where the locations combobox for only showing results/reads from a location would revert to All Locations every page refresh.",
