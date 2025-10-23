@@ -61,7 +61,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLocks");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
 
@@ -96,7 +96,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLock");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
 
@@ -132,7 +132,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLock");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
 
@@ -168,7 +168,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLock");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
 
@@ -197,7 +197,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLock");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
 
@@ -229,7 +229,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLock");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
 
@@ -261,7 +261,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLock");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
 
@@ -290,7 +290,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLock");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
 
@@ -328,7 +328,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLock");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
     }

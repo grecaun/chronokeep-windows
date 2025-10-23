@@ -147,7 +147,7 @@ namespace Chronokeep.MemStore
                     chipDict = [];
                     bibToChipAssociations[assoc.Bib] = chipDict;
                 }
-                chipDict.Add(assoc.Bib, assoc);
+                chipDict[assoc.Chip] = assoc;
             }
             foreach (BibChipAssociation assoc in database.GetBibChips(-1))
             {
@@ -265,7 +265,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLock");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
 
@@ -351,7 +351,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLock");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
 
@@ -376,7 +376,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new ChronoLockException("memStoreLock");
+                throw new ChronoLockException($"memStoreLock {e.Message}");
             }
         }
     }

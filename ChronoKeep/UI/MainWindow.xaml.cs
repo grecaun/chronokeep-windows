@@ -90,6 +90,7 @@ namespace Chronokeep.UI
             {
                 DialogBox.Show("Chronokeep is already running.");
                 this.Close();
+                return;
             }
             OneWindow.ReleaseMutex();
 
