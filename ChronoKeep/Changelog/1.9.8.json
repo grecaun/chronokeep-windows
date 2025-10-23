@@ -3,12 +3,14 @@
   "changes": [
     "Added ignored chip list that ensures the program doesn't save chip reads for any chip on the list.",
     "Added button to TimingRawReadsPage to allow the user to add a chip to the global ignore list easily.",
-    "Performance & compilation modifications."
+    "Performance & compilation modifications.",
+    "Added the ability to control Chronoclocks."
   ],
   "fixes": [
     "Fixed an issue where the locations combobox for only showing results/reads from a location would revert to All Locations every page refresh.",
     "Fixed an issue where trying to set the time for all connected readers would cause the program to crash.",
     "Minor UI tweaks to the TimingRawReadsPage to deal with adding a new button.",
-    "Code no longer queries the SMS endpoint when no potential SMS messages exist."
+    "Code no longer queries the SMS endpoint when no potential SMS messages exist.",
+    "Fixed an issue where the dashboard page would not reload when the event changed."
   ]
 }
