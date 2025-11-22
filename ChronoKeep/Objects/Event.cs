@@ -172,5 +172,29 @@ namespace Chronokeep.Objects
             DaysAllowed = other.DaysAllowed;
             RankByGun = other.RankByGun;
         }
+
+        public void CopyAll(Event other)
+        {
+            Name = other.Name;
+            Date = other.Date;
+            CommonAgeGroups = other.CommonAgeGroups;
+            CommonStartFinish = other.CommonStartFinish;
+            DistanceSpecificSegments = other.DistanceSpecificSegments;
+            RankByGun = other.RankByGun;
+            YearCode = other.YearCode;
+            StartWindow = other.StartWindow;
+            FinishMaxOccurrences = other.FinishMaxOccurrences;
+            FinishIgnoreWithin = other.FinishIgnoreWithin;
+            StartSeconds = other.StartSeconds;
+            StartMaxOccurrences = other.StartMaxOccurrences;
+            StartMilliseconds = other.StartMilliseconds;
+            EventType = other.EventType;
+            API_ID = other.API_ID;
+            API_Event_ID = other.API_Event_ID;
+            DisplayPlacements = other.DisplayPlacements;
+            DivisionsEnabled = other.DivisionsEnabled;
+            DaysAllowed = other.DaysAllowed;
+            UploadSpecific = other.UploadSpecific;
+        }
     }
 }

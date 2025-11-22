@@ -159,7 +159,8 @@ namespace Chronokeep.Database.SQLite
                 "WHERE c.event_id=@event;";
             command.Parameters.Add(new("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);
+            Event Event = new() { Identifier = eventId, FinishMaxOccurrences = 1, FinishIgnoreWithin = 0 };
+            List<ChipRead> output = GetChipReadsWorker(reader, Event, connection);
             return output;
         }
 
@@ -239,7 +240,7 @@ namespace Chronokeep.Database.SQLite
         internal static List<ChipRead> GetChipReadsWorker(SQLiteDataReader reader, Event theEvent, SQLiteConnection connection)
         {
             DateTime start = DateTime.Now;
-            if (theEvent != null)
+            if (theEvent != null && theEvent.Date != null)
             {
                 start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
             }

@@ -106,7 +106,7 @@ namespace Chronokeep.MemStore
         public List<BibChipAssociation> GetBibChips(int eventId)
         {
             Log.D("MemStore", "GetBibChips");
-            List<BibChipAssociation> output = new();
+            List<BibChipAssociation> output = [];
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))

@@ -340,34 +340,35 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
-        private int SaveEvent(Event ev, IDBInterface loadFrom, IDBInterface saveTo)
+        private static int SaveEvent(Event oldEvent, IDBInterface loadFrom, IDBInterface saveTo)
         {
             // Make some modifications, note that we cannot guarantee API compatibility between events.
-            ev.API_Event_ID = Constants.APIConstants.NULL_EVENT_ID;
-            ev.API_ID = Constants.APIConstants.NULL_ID;
-            int oldEventId = ev.Identifier, newEventId = -1;
-            ev.Identifier = -1;
-            saveTo.AddEvent(ev);
-            newEventId = saveTo.GetEventID(ev);
+            Event newEvent = new();
+            newEvent.CopyAll(oldEvent);
+            newEvent.API_Event_ID = Constants.APIConstants.NULL_EVENT_ID;
+            newEvent.API_ID = Constants.APIConstants.NULL_ID;
+            newEvent.Identifier = -1;
+            saveTo.AddEvent(newEvent);
+            newEvent.Identifier = saveTo.GetEventID(newEvent);
             // Only proceed if we managed to add the event or we can find it.
-            if (newEventId > 0)
+            if (newEvent.Identifier > 0)
             {
                 // Get all of the parts that don't depend on other parts, then parts that do.
                 // Order of operation matters here.
                 // Bib chip associations do not have any linked ID's.
                 Log.D("UI.DashboardPage", "Adding bib chip associations.");
-                List<BibChipAssociation> bibChipAssociations = loadFrom.GetBibChips(oldEventId);
-                saveTo.AddBibChipAssociation(newEventId, bibChipAssociations);
+                List<BibChipAssociation> bibChipAssociations = loadFrom.GetBibChips(oldEvent.Identifier);
+                saveTo.AddBibChipAssociation(newEvent.Identifier, bibChipAssociations);
                 // Distances can link to themselves. DistanceID is also used by EVENTSPECIFIC, SEGMENTS, and AGE_GROUPS
                 Log.D("UI.DashboardPage", "Adding distances.");
                 Dictionary<int, int> distanceIDTranslation = [];
                 Dictionary<string, int> oldDistanceIDDictionary = [];
                 List<Distance> normalDistances = [];
                 List<Distance> linkedDistances = [];
-                foreach (Distance item in loadFrom.GetDistances(oldEventId))
+                foreach (Distance item in loadFrom.GetDistances(oldEvent.Identifier))
                 {
                     // Set event identifier to new event id.
-                    item.EventIdentifier = newEventId;
+                    item.EventIdentifier = newEvent.Identifier;
                     // Check if its a linked distance and place it in the correct list.
                     if (item.LinkedDistance == Constants.Timing.DISTANCE_NO_LINKED_ID)
                     {
@@ -383,7 +384,7 @@ namespace Chronokeep.UI.MainPages
                 // Insert the old distances
                 saveTo.AddDistances(normalDistances);
                 // Loop through all of the distances we just added and update our dictionary with their new ids.
-                foreach (Distance item in saveTo.GetDistances(newEventId))
+                foreach (Distance item in saveTo.GetDistances(newEvent.Identifier))
                 {
                     if (oldDistanceIDDictionary.TryGetValue(item.Name, out int oldDistId))
                     {
@@ -410,9 +411,9 @@ namespace Chronokeep.UI.MainPages
                 Dictionary<int, int> ageGroupIDTranslation = [];
                 // Key is START AGE
                 Dictionary<int, int> oldAgeGroupDictionary = [];
-                foreach (AgeGroup item in loadFrom.GetAgeGroups(oldEventId))
+                foreach (AgeGroup item in loadFrom.GetAgeGroups(oldEvent.Identifier))
                 {
-                    item.EventId = newEventId;
+                    item.EventId = newEvent.Identifier;
                     oldAgeGroupDictionary[item.StartAge] = item.GroupId;
                     // Add the item to our list to save IFF it has a corred DistanceID set to it.
                     if (item.DistanceId != Constants.Timing.COMMON_AGEGROUPS_DISTANCEID)
@@ -429,7 +430,7 @@ namespace Chronokeep.UI.MainPages
                     }
                 }
                 saveTo.AddAgeGroups(ageGroups);
-                foreach (AgeGroup item in saveTo.GetAgeGroups(newEventId))
+                foreach (AgeGroup item in saveTo.GetAgeGroups(newEvent.Identifier))
                 {
                     if (oldAgeGroupDictionary.TryGetValue(item.StartAge, out int oAGId))
                     {
@@ -438,17 +439,17 @@ namespace Chronokeep.UI.MainPages
                 }
                 // Locations are relied upon by SEGMENTS, CHIPREADS, and TIMERESULTS
                 Log.D("UI.DashboardPage", "Adding locations.");
-                List<TimingLocation> locations = loadFrom.GetTimingLocations(oldEventId);
+                List<TimingLocation> locations = loadFrom.GetTimingLocations(oldEvent.Identifier);
                 Dictionary<int, int> locationIDTranslation = [];
                 Dictionary<string, int> oldLocationDictionary = [];
                 foreach (TimingLocation item in locations)
                 {
-                    item.EventIdentifier = newEventId;
+                    item.EventIdentifier = newEvent.Identifier;
                     oldLocationDictionary[item.Name] = item.Identifier;
                 }
                 saveTo.AddTimingLocations(locations);
                 // Update the location translation dictionary with oldID key and newid value.
-                foreach (TimingLocation item in saveTo.GetTimingLocations(newEventId))
+                foreach (TimingLocation item in saveTo.GetTimingLocations(newEvent.Identifier))
                 {
                     if (oldLocationDictionary.TryGetValue(item.Name, out int oLocId))
                     {
@@ -466,9 +467,9 @@ namespace Chronokeep.UI.MainPages
                 Dictionary<int, int> segmentIDTranslator = [];
                 // key here is DISTANCE_ID, LOCATION_ID, OCCURRENCE (new values)
                 Dictionary<(int, int, int), int> oldSegmentDictionary = [];
-                foreach (Segment item in loadFrom.GetSegments(oldEventId))
+                foreach (Segment item in loadFrom.GetSegments(oldEvent.Identifier))
                 {
-                    item.EventId = newEventId;
+                    item.EventId = newEvent.Identifier;
                     // only insert segments when there were no issues with the distance and location translations
                     // Make sure to check if we're using common segments.
                     if (item.DistanceId == Constants.Timing.COMMON_SEGMENTS_DISTANCEID)
@@ -493,7 +494,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 saveTo.AddSegments(segments);
                 // Update our segmentIDTranslator
-                foreach (Segment item in saveTo.GetSegments(newEventId))
+                foreach (Segment item in saveTo.GetSegments(newEvent.Identifier))
                 {
                     if (oldSegmentDictionary.TryGetValue((item.DistanceId, item.LocationId, item.Occurrence), out int oSegId))
                     {
@@ -510,9 +511,9 @@ namespace Chronokeep.UI.MainPages
                 Dictionary<int, int> eventspecificIDTranslation = [];
                 // Bib is the key here
                 Dictionary<string, int> oldEventSpecificDictionary = [];
-                foreach (Participant item in loadFrom.GetParticipants(oldEventId))
+                foreach (Participant item in loadFrom.GetParticipants(oldEvent.Identifier))
                 {
-                    item.EventSpecific.EventIdentifier = newEventId;
+                    item.EventSpecific.EventIdentifier = newEvent.Identifier;
                     oldEventSpecificDictionary[item.EventSpecific.Bib] = item.EventSpecific.Identifier;
                     // Only add the participant if we can translate their distance identifier.
                     if (distanceIDTranslation.TryGetValue(item.EventSpecific.DistanceIdentifier, out int oDistId))
@@ -524,7 +525,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 saveTo.AddParticipants(participants);
                 // Translate old ID's to new ID's
-                foreach (Participant item in saveTo.GetParticipants(newEventId))
+                foreach (Participant item in saveTo.GetParticipants(newEvent.Identifier))
                 {
                     if (oldEventSpecificDictionary.TryGetValue(item.Bib, out int oESId))
                     {
@@ -537,9 +538,9 @@ namespace Chronokeep.UI.MainPages
                 Dictionary<int, int> readIDTranslation = [];
                 // (CHIPNUMBER, BIB, SECONDS, MILLISECONDS) for the key
                 Dictionary<(string, string, long, int), int> oldReadDictionary = [];
-                foreach (ChipRead item in loadFrom.GetChipReads(oldEventId))
+                foreach (ChipRead item in loadFrom.GetChipReads(oldEvent.Identifier))
                 {
-                    item.EventId = newEventId;
+                    item.EventId = newEvent.Identifier;
                     oldReadDictionary[(item.ChipNumber, item.Bib, item.Seconds, item.Milliseconds)] = item.ReadId;
                     // If the location is not a pre-set location, i.e. a custom location
                     if (item.LocationID != Constants.Timing.LOCATION_START && item.LocationID != Constants.Timing.LOCATION_FINISH && item.LocationID != Constants.Timing.LOCATION_ANNOUNCER)
@@ -557,7 +558,7 @@ namespace Chronokeep.UI.MainPages
                     }
                 }
                 saveTo.AddChipReads(chipReads);
-                foreach (ChipRead item in saveTo.GetChipReads(newEventId))
+                foreach (ChipRead item in saveTo.GetChipReads(newEvent.Identifier))
                 {
                     if (oldReadDictionary.TryGetValue((item.ChipNumber, item.Bib, item.Seconds, item.Milliseconds), out int oReadId))
                     {
@@ -567,9 +568,9 @@ namespace Chronokeep.UI.MainPages
                 // Results rely upon read_id, location_id, and segment_id.
                 Log.D("UI.DashboardPage", "Adding results.");
                 List<TimeResult> results = [];
-                foreach (TimeResult item in loadFrom.GetTimingResults(oldEventId))
+                foreach (TimeResult item in loadFrom.GetTimingResults(oldEvent.Identifier))
                 {
-                    item.EventIdentifier = newEventId;
+                    item.EventIdentifier = newEvent.Identifier;
                     if (readIDTranslation.TryGetValue(item.ReadId, out int tReadId) && locationIDTranslation.TryGetValue(item.LocationId, out int tLocId)
                         && segmentIDTranslator.TryGetValue(item.SegmentId, out int tSegId) && eventspecificIDTranslation.TryGetValue(item.EventSpecificId, out int tESId))
                     {
@@ -582,7 +583,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 saveTo.AddTimingResults(results);
             }
-            return newEventId;
+            return newEvent.Identifier;
         }
 
         private void ChangeEvent_Click(object sender, RoutedEventArgs e)
