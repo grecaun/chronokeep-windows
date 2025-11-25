@@ -1,0 +1,85 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApp.BibChipAssociationWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="Height"
+        Title="Load Chips">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Name="EventHolder" Grid.Row="0" HorizontalAlignment="Center">
+            <TextBlock Text="Please choose a sheet:"
+                       FontSize="18"
+                       Margin="10,10,20,0"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Center"/>
+            <ComboBox x:Name="events" Margin="0,5,0,5" Width="350" Height="25" />
+        </StackPanel>
+        <ListBox Grid.Row="1"
+                 x:Name="headerListBox"
+                 Margin="0,0,0,0"
+                 KeyboardNavigation.TabNavigation="Continue">
+        </ListBox>
+        <StackPanel Grid.Row="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <ToggleSwitch
+                    Name="Headers"
+                    IsChecked="True"
+                    FontSize="15"
+                    OnContent=""
+                    OffContent=""
+                    Margin="0,-7,-7,-7"
+                    HorizontalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    />
+                <Label Content="First Row Contains Headers"/>
+            </StackPanel>
+            <StackPanel x:Name="SheetsContainer"
+                        Orientation="Horizontal"
+                        Margin="0,5"
+                        IsVisible="False"
+                        HorizontalAlignment="Center">
+                <TextBlock x:Name="SheetsLabel"
+                           FontSize="16"
+                           Text="Sheet"
+                           Margin="5,0,0,0"
+                           TextAlignment="Right"
+                           VerticalAlignment="Center"/>
+                <ComboBox x:Name="SheetsBox"
+                          SelectionChanged="SheetsBox_SelectionChanged"
+                          Width="150"
+                          TabIndex="1"
+                          Margin="5,0,0,0"
+                          HorizontalAlignment="Stretch"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                        Margin="0,5,0,10"
+                        HorizontalAlignment="Center">
+                <Button x:Name="Done"
+                        Click="Done_Click"
+                        Height="37"
+                        Width="125"
+                        Content="Done"
+                        Margin="25,0,5,0"
+                        HorizontalAlignment="Left"/>
+                <Button x:Name="Cancel"
+                        Click="Cancel_Click"
+                        Height="37"
+                        Width="125"
+                        Content="Cancel"
+                        Margin="5,0,25,0"
+                        HorizontalAlignment="Right"
+                        />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

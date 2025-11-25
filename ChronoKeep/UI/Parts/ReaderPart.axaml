@@ -1,0 +1,108 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.ReaderPart">
+    <Grid VerticalAlignment="Center"
+		  HorizontalAlignment="Center">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="140"/> <!-- Type -->
+			<ColumnDefinition Width="140"/> <!-- IP -->
+			<ColumnDefinition Width="80"/>  <!-- Port -->
+			<ColumnDefinition Width="140"/> <!-- Location -->
+			<ColumnDefinition Width="60"/>  <!-- Clock -->
+			<ColumnDefinition Width="60"/>  <!-- Rewinnd -->
+			<ColumnDefinition Width="60"/>  <!-- Settings -->
+			<ColumnDefinition Width="60"/>  <!-- Connect -->
+			<ColumnDefinition Width="60"/>  <!-- Disconnect? -->
+        </Grid.ColumnDefinitions>
+		<ComboBox Grid.Column="0"
+			Name="ReaderType"
+			SelectionChanged="ReaderType_SelectionChanged"
+			Margin="5"
+			Height="40"
+			HorizontalAlignment="Stretch"
+			VerticalContentAlignment="Center"/>
+		<TextBox Grid.Column="1"
+		    Name="ReaderIP"
+		    GotFocus="SelectAll"
+			TextInput="IPValidation"
+			Text=""
+			Margin="5"
+			Height="40"
+			FontSize="14"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Stretch"
+			VerticalContentAlignment="Center"/>
+		<TextBox Grid.Column="2"
+			Name="ReaderPort"
+			GotFocus="SelectAll"
+			TextInput="NumberValidation"
+			Text=""
+			Margin="5"
+			Height="40"
+			FontSize="14"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Stretch"
+			VerticalContentAlignment="Center"/>
+		<ComboBox Grid.Column="3"
+			Name="ReaderLocation"
+			Margin="5"
+			Height="40"
+			HorizontalAlignment="Stretch"
+			VerticalContentAlignment="Center"/>
+		<Button Grid.Column="4"
+			Name="ClockButton"
+			Click="Clock"
+			Margin="5"
+			Height="40"
+			Opacity="0.2"
+			IsEnabled="False"
+			HorizontalAlignment="Stretch"
+			VerticalContentAlignment="Center">
+			<PathIcon Data="{StaticResource clock_regular}"/>
+		</Button>
+		<Button Grid.Column="5"
+			Name="RewindButton"
+			Click="Rewind"
+			Margin="5"
+			Height="40"
+			Opacity="0.2"
+			IsEnabled="False"
+			HorizontalAlignment="Stretch"
+			VerticalContentAlignment="Center">
+			<PathIcon Data="{StaticResource rewind_regular}"/>
+		</Button>
+		<Button Grid.Column="6"
+		    Name="SettingsButton"
+			Click="Settings"
+			Margin="5"
+			Height="40"
+			Opacity="0.2"
+			IsEnabled="False"
+			HorizontalAlignment="Stretch"
+			VerticalContentAlignment="Center">
+			<PathIcon Data="{StaticResource settings_regular}"/>
+		</Button>
+		<Button Grid.Column="7"
+			Name="ConnectButton"
+			Click="Connect"
+			Margin="5"
+			Height="40"
+			HorizontalAlignment="Stretch"
+			VerticalContentAlignment="Center">
+			<PathIcon Data="{StaticResource play_regular}"/>
+		</Button>
+		<Button Grid.Column="8"
+			Name="RemoveButton"
+			Click="Remove"
+			Margin="5"
+			Height="40"
+			IsVisible="False"
+			HorizontalAlignment="Stretch"
+			VerticalContentAlignment="Center">
+			<PathIcon Data="{StaticResource delete_regular}"/>
+		</Button>
+    </Grid>
+</UserControl>

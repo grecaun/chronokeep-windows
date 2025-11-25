@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApp.ChipPersonWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="ChipPersonWindow"
+        WindowState="Maximized"
+        KeyUp="Window_KeyUp"
+        Closing="Window_Closing">
+    <Grid Grid.Row="1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Button Grid.Row="0"
+                Content="Exit"
+                Name="Exit"
+                Click="Exit_Click"
+                Width="50"
+                Height="35"
+                Margin="5,5,5,5"
+                VerticalAlignment="Top" 
+                HorizontalAlignment="Right"/>
+        <TextBlock Grid.Row="1"
+                   Name="Unknown"
+                   FontSize="60"
+                   IsVisible="False"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"/>
+        <StackPanel Grid.Row="1"
+                    Name="InfoHolder"
+                    VerticalAlignment="Center">
+            <TextBlock Name="Bib"
+                       FontSize="20"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Name="Chip"
+                       FontSize="20"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Name="PersonName"
+                       FontSize="60"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Name="AgeGender"
+                       FontSize="60"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Name="Distance"
+                       FontSize="60"
+                       Margin="0,0,0,40"
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</Window>

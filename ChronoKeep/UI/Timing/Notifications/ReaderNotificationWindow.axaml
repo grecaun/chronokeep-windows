@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApp.ReaderNotificationWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="Change Event"
+        Height="400"
+        Width="700"
+        MinWidth="700"
+        Topmost="True"
+        Closing="Window_Closing">
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+        <ListBox x:Name="notificationsList"
+                 Margin="10,0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 Background="Transparent"/>
+        <Button Name="cancelButton"
+                Content="Done"
+                Click="CancelButton_Click"
+                Height="35"
+                Width="150"
+                FontSize="16"
+                Margin="10,-5,10,0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"/>
+    </StackPanel>
+</Window>

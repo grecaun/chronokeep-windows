@@ -1,0 +1,185 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
+             x:Class="AvaloniaApp.AboutPage"
+             Padding="16"
+             Background="{DynamicResource PrimaryBackground}"
+             CornerRadius="8,0,0,0"
+             >
+    <UserControl.Styles>
+        <Style Selector="Button.up">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.link:focus /template/ ContentPresenter">
+			<Setter Property="Background" Value="{x:Null}"/>
+        </Style>
+        <Style Selector="Button.link:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="{x:Null}"/>
+        </Style>
+        <Style Selector="Button.link PathIcon">
+            <Setter Property="Margin" Value="0,0,5,0"/>
+			<Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel Margin="10,10,10,10">
+        <TextBlock
+            Margin="0,0,0,14"
+            FontSize="24"
+            FontWeight="Medium"
+            Text="About"
+            />
+        <TextBlock
+            Margin="0,0,0,5"
+            Text="Chronokeep"
+            />
+        <TextBlock
+            Margin="0,0,0,5"
+            x:Name="VersionLabel"
+            />
+        <TextBlock
+            Margin="0,0,0,20"
+            Text="Created by James Sentinella"
+            />
+        <Button
+            Name="Update"
+            Content="Check for Updates"
+            Padding="20,10"
+            VerticalAlignment="Top"
+            Margin="0,5,0,5"
+            Width="160"
+            Click="Update_Click"
+            Classes="up"
+            />
+        <Button
+            Name="Changelog"
+            Content="View Changelog"
+            Padding="20,10"
+            VerticalAlignment="Top"
+            Margin="0,5,0,5"
+            Width="160"
+            Click="Changelog_Click"
+            Classes="up"
+            />
+        <TextBlock
+            Margin="0,20,0,8"
+            FontSize="16"
+            FontWeight="Medium"
+            Text="Links"
+            />
+        <!-- NavigateUri="https://github.com/grecaun/chronokeep-windows" -->
+        <Button Name="ProjectGithubBtn" Click="UrlBtn_Click" Classes="link">
+            <StackPanel Orientation="Horizontal">
+                <PathIcon Data="{StaticResource link_regular}" />
+                <Label>Project website on Github</Label>
+            </StackPanel>
+        </Button>
+        <!-- NavigateUri="https://github.com/grecaun/chronokeep-windows/releases/latest" -->
+        <Button Name="LatestReleaseBtn" Click="UrlBtn_Click" Classes="link">
+            <StackPanel Orientation="Horizontal">
+                <PathIcon Data="{StaticResource link_regular}" />
+                <Label>Latest release on Github</Label>
+            </StackPanel>
+        </Button>
+        <TextBlock
+            Margin="0,24,0,8"
+            FontSize="16"
+            FontWeight="Medium"
+            Text="3rd Party Libraries"
+            />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="0,0,32,0">
+                <!-- NavigateUri="https://system.data.sqlite.org/" -->
+                <Button Name="SQLiteBtn" Click="UrlBtn_Click" Classes="link">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="{StaticResource link_regular}" />
+                        <Label>SQLite</Label>
+                    </StackPanel>
+                </Button>
+                <!-- NavigateUri="https://wkhtmltopdf.org/" -->
+                <Button Name="WkHtmltoPdfBtn" Click="UrlBtn_Click" Classes="link">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="{StaticResource link_regular}" />
+                        <Label>wkhtmltopdf</Label>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Margin="0,0,32,0">
+                <!-- NavigateUri="https://github.com/lepoco/wpfui" -->
+                <Button Name="AvaloniaBtn" Click="UrlBtn_Click" Classes="link">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="{StaticResource link_regular}" />
+                        <Label>WPF UI</Label>
+                    </StackPanel>
+                </Button>
+                <!-- NavigateUri="https://www.ghostscript.com/" -->
+                <Button Name="GhostscriptBtn" Click="UrlBtn_Click" Classes="link">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="{StaticResource link_regular}" />
+                        <Label>Ghostscript</Label>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+                <!-- NavigateUri="https://github.com/xceedsoftware/wpftoolkit" -->
+                <Button Name="WpfToolkitBtn" Click="UrlBtn_Click" Classes="link">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="{StaticResource link_regular}" />
+                        <Label>Extended WPF Toolkit</Label>
+                    </StackPanel>
+                </Button>
+                <!-- NavigateUri="https://closedxml.github.io/ClosedXML/" -->
+                <Button Name="ClosedXmlBtn" Click="UrlBtn_Click" Classes="link">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="{StaticResource link_regular}" />
+                        <Label>ClosedXML</Label>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <StackPanel Grid.Column="3">
+                <!-- NavigateUri="https://github.com/Jinjinov/Hardware.Info" -->
+                <Button Name="HWInfoBtn" Click="UrlBtn_Click" Classes="link">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="{StaticResource link_regular}" />
+                        <Label>Hardware.Info</Label>
+                    </StackPanel>
+                </Button>
+                <!-- NavigateUri="https://sentry.io" -->
+                <Button Name="SentryBtn" Click="UrlBtn_Click" Classes="link">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="{StaticResource link_regular}" />
+                        <Label>Sentry</Label>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <TextBlock
+            Margin="0,24,0,8"
+            FontSize="16"
+            FontWeight="Medium"
+            Text="Application Folders"
+            />
+        <StackPanel Orientation="Horizontal">
+            <Button Click="OpenDataFolder_Click" Classes="link">
+                <StackPanel Orientation="Horizontal">
+                    <PathIcon Data="{StaticResource folder_regular}" />
+                    <Label>Data</Label>
+                </StackPanel>
+            </Button>
+            <Button Name="HelpDocsButton" Classes="link">
+                <StackPanel Orientation="Horizontal">
+                    <PathIcon Data="{StaticResource link_regular}" />
+                    <Label>Help Docs</Label>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

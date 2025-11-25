@@ -1,0 +1,77 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="400"
+        x:Class="AvaloniaApp.NewEventWindow"
+        Closing="Window_Closing"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="Height"
+        Width="400"
+        Topmost="True"
+        Title="New Event">
+    <StackPanel Margin="5">
+        <DockPanel Margin="10,0,10,0">
+            <TextBlock Text="Name"
+                       Margin="10,10,5,10"
+                       FontSize="16"
+                       Width="80"
+                       TextAlignment="Right"
+                       VerticalAlignment="Center"/>
+            <TextBox x:Name="nameBox"
+                     FontSize="16"
+                     Width="310"
+                     Margin="5,10,10,10"
+                     TextWrapping="Wrap"
+                     KeyUp="Keyboard_Up"/>
+        </DockPanel>
+        <DockPanel Margin="10,0,10,0">
+            <TextBlock Text="Year Code"
+                       Margin="10,10,5,10"
+                       FontSize="16"
+                       Width="80"
+                       TextAlignment="Right"
+                       VerticalAlignment="Center"/>
+            <TextBox x:Name="yearCodeBox"
+                     FontSize="16"
+                     Width="310"
+                     Margin="5,10,10,10"
+                     KeyUp="Keyboard_Up"/>
+        </DockPanel>
+        <DockPanel Margin="10,0,10,0">
+            <TextBlock Text="Date"
+                       Margin="10,10,5,10"
+                       FontSize="16"
+                       Width="80"
+                       TextAlignment="Right"
+                       VerticalAlignment="Center"/>
+            <DatePicker x:Name="datePicker"
+                        KeyUp="Keyboard_Up"
+                        Width="310"
+                        Margin="5,10,10,10"
+                        FontSize="16"/>
+        </DockPanel>
+        <AutoCompleteBox Name="oldEvent"
+                         FontSize="16"
+                         Width="325"
+                         Margin="20,10,20,10"
+                         Watermark="Copy from old event?"/>
+        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Content="Submit"
+                    Click="Submit_Click"
+                    Margin="20,10,10,15"
+                    Width="120"
+                    FontSize="16"
+                    Height="35"/>
+            <Button Content="Cancel"
+                    Click="Cancel_Click"
+                    Margin="10,10,20,15"
+                    Width="120"
+                    FontSize="16"
+                    Height="35"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

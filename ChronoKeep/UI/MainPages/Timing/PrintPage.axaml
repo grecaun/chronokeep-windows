@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.PrintPage">
+    <UserControl.Styles>
+        <Style Selector="Button">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Margin" Value="5,10,5,10"/>
+        </Style>
+        <Style Selector="TextBlock">
+		    <Setter Property="Margin" Value="5,5,5,0"/>
+		    <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <Style Selector="ToggleSwitch">
+		    <Setter Property="OffContent" Value=""/>
+		    <Setter Property="OnContent" Value=""/>
+		    <Setter Property="FontSize" Value="12"/>
+		    <Setter Property="VerticalAlignment" Value="Center"/>
+		    <Setter Property="Margin" Value="0,-7,-15,-7"/>
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <StackPanel HorizontalAlignment="Center">
+            <Grid Margin="5,5,5,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Distances" FontSize="16" Grid.Column="0" TextAlignment="Center"/>
+                <TextBlock Text="Type" FontSize="16" Grid.Column="1" TextAlignment="Center"/>
+            </Grid>
+            <Grid Margin="5,5,5,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="130" />
+                </Grid.ColumnDefinitions>
+                <ListBox Grid.Column="0" Name="DistancesBox" Height="140" FontSize="12" SelectionMode="Multiple" Margin="0,0,3,0">
+                    <ListBoxItem Content="All" IsSelected="True"/>
+                </ListBox>
+                <ListBox Grid.Column="1" Name="PlacementType" Height="140" FontSize="12" SelectionMode="Single">
+                    <ListBoxItem Content="Overall" IsSelected="True"/>
+                    <ListBoxItem Content="Gender"/>
+                    <ListBoxItem Content="Age Group"/>
+                </ListBox>
+            </Grid>
+            <DockPanel LastChildFill="False" HorizontalAlignment="Center">
+                <Button Name="Print"
+                        Content="Print"
+                        Click="Print_Click"
+                        />
+                <Button Name="Save"
+                        Content="Save"
+                        Click="Save_Click"
+                        />
+                <Button Name="Done"
+                        Content="Done"
+                        Click="Done_Click"
+                        />
+            </DockPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,53 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApp.ParticipantConflicts"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="Participant Conflicts"
+        Height="450"
+        Width="800"
+        Closing="Window_Closing">
+    <Window.Styles>
+        <Style Selector="DataGrid">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="SelectionMode" Value="Extended"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="CanUserSortColumns" Value="False"/>
+        </Style>
+    </Window.Styles>
+    <DataGrid Name="ParticipantsList">
+        <DataGrid.Columns>
+            <!--
+            <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="45"/>
+            <DataGridTextColumn Header="Distance" Binding="{Binding Distance}" MinWidth="125"/>
+            <DataGridTextColumn Header="First" Binding="{Binding FirstName}" MinWidth="100"/>
+            <DataGridTextColumn Header="Last" Binding="{Binding LastName}" MinWidth="175"/>
+            <DataGridTextColumn Header="Gender" Binding="{Binding Gender}" MinWidth="75"/>
+            <DataGridTextColumn Header="Birthday" Binding="{Binding Birthdate}" MinWidth="100"/>
+            <DataGridTextColumn Header="Goodies" Binding="{Binding Apparel}" MinWidth="150"/>
+            <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" MinWidth="120"/>
+            <DataGridTextColumn Header="Mobile" Binding="{Binding Mobile}" MinWidth="120"/>
+            <DataGridTextColumn Header="EC Name" Binding="{Binding ECName}" MinWidth="150"/>
+            <DataGridTextColumn Header="EC Phone" Binding="{Binding ECPhone}" MinWidth="150"/>
+            <DataGridTextColumn Header="Anon" Binding="{Binding PrettyAnonymous}" MinWidth="35"/>
+            <DataGridTextColumn Header="Comments" Binding="{Binding Comments}" MinWidth="200"/>
+            <DataGridTextColumn Header="Other" Binding="{Binding Other}" MinWidth="150"/>
+            <DataGridTextColumn Header="Email" Binding="{Binding Email}" MinWidth="200"/>
+            <DataGridTextColumn Header="Street" Binding="{Binding Street}" MinWidth="175"/>
+            <DataGridTextColumn Header="Apt" Binding="{Binding Street2}" MinWidth="50"/>
+            <DataGridTextColumn Header="City" Binding="{Binding City}" MinWidth="120"/>
+            <DataGridTextColumn Header="State" Binding="{Binding State}" MinWidth="50"/>
+            <DataGridTextColumn Header="Zip" Binding="{Binding Zip}" MinWidth="70"/>
+            <DataGridTextColumn Header="Country" Binding="{Binding Country}" MinWidth="60"/>
+            -->
+        </DataGrid.Columns>
+    </DataGrid>
+</Window>

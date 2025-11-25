@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
+             x:Class="AvaloniaApp.MinTimingPage"
+             Padding="16"
+             Background="{DynamicResource PrimaryBackground}"
+             CornerRadius="8,0,0,0"
+             >
+    <UserControl.Styles>
+        <Style Selector="Button.up">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid Grid.Column="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Expander 
+            Grid.Row="0"
+            x:Name="readerExpander"
+            Margin="5,0,5,5"
+            MaxHeight="235"
+            HorizontalAlignment="Stretch"
+            IsExpanded="True"
+            ExpandDirection="Down">
+            <Expander.Header>
+                <DockPanel
+                    LastChildFill="False"
+                    VerticalAlignment="Center">
+                    <TextBlock
+                        Text="Readers"
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"/>
+                </DockPanel>
+            </Expander.Header>
+            <ListBox 
+                Name="ReadersBox" 
+                HorizontalAlignment="Stretch"
+                KeyboardNavigation.TabNavigation="Continue"
+                Height="170">
+            </ListBox>
+        </Expander>
+        <UserControl
+            Grid.Row="1"
+            Name="TimingFrame"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"/>
+    </Grid>
+</UserControl>

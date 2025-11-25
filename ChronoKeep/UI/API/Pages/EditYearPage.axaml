@@ -1,0 +1,114 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.EditYearPage">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Name="holdingLabel"
+                   Text="Retrieving Year, Please Hold."
+                   FontSize="18"
+                   VerticalAlignment="Center"
+                   MaxWidth="250"
+                   HorizontalAlignment="Center"
+                   TextWrapping="Wrap"
+                   Margin="0,10,0,0"/>
+        <StackPanel Name="yearPanel"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsVisible="False">
+            <DockPanel Margin="0,0,0,5">
+                <TextBlock Text="Year"
+                           FontSize="15"
+                           Width="60"
+                           VerticalAlignment="Center"
+                           TextAlignment="Right"
+                           Padding="0,0,5,0"/>
+                <TextBox x:Name="yearBox"
+                         FontSize="15"
+                         Width="300"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"
+                         IsEnabled="False"/>
+            </DockPanel>
+            <DockPanel Margin="0,0,0,5">
+                <TextBlock Text="Date"
+                           FontSize="15"
+                           Width="60"
+                           VerticalAlignment="Center"
+                           TextAlignment="Right"
+                           Padding="0,0,5,0"/>
+                <DatePicker Name="dateBox"
+                            FontSize="15"
+                            Width="300"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch"/>
+            </DockPanel>
+            <DockPanel Margin="0,0,0,5">
+                <TextBlock Text="Rank by"
+                           FontSize="15"
+                           Width="60"
+                           VerticalAlignment="Center"
+                           TextAlignment="Right"
+                           Padding="0,0,5,0"/>
+                <ComboBox Name="rankBox"
+                          FontSize="15"
+                          Width="300"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Stretch"/>
+            </DockPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,10">
+                <ToggleSwitch x:Name="LiveBox"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Center"
+                              Margin="0,-7,-7,-7"
+                              OffContent=""
+                              OnContent=""
+                              IsChecked="False"/>
+                <Label Content="Live?"/>
+            </StackPanel>
+            <TextBlock HorizontalAlignment="Center"
+                       Margin="0,0,0,0"
+                       Text="Days Allowed"/>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="0,0,0,0">
+                <Slider Name="DaysAllowedSlider"
+                        ValueChanged="DaysAllowed_ValueChanged"
+                        TickFrequency="1"
+                        Minimum="0"
+                        Maximum="9"
+                        Width="150"
+                        Margin="0,0,0,0"
+                        IsSnapToTickEnabled="True"/>
+                <TextBlock Name="DaysAllowedText"
+                           Text="0"
+                           Width="20"
+                           Margin="0,0,0,0"
+                           VerticalAlignment="Center"
+                           TextAlignment="Right"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="0,10,0,0">
+            <Button Name="SaveButton"
+                    Content="Save"
+                    Click="Done_Click"
+                    Height="35"
+                    Width="100"
+                    IsEnabled="False"
+                    Margin="0,0,10,10"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Center"/>
+            <Button Content="Cancel"
+                    Click="Cancel_Click"
+                    Height="35"
+                    Width="100"
+                    Margin="10,0,0,10"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Center"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

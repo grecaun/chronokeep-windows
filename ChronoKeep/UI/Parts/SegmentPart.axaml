@@ -1,0 +1,114 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="450"
+             x:Class="AvaloniaApp.SegmentPart">
+    <UserControl.Styles>
+		<Style Selector="TextBlock">
+            <Setter Property="Margin" Value="2,5,2,2"/>
+			<Setter Property="FontSize" Value="14"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Styles>
+    <StackPanel>
+        <DockPanel Name="HeaderPanel"
+                   MaxWidth="1150"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center">
+		    <TextBlock Text="Where"
+                       Width="140"/>
+            <TextBlock Text="Name"
+                       Width="190"/>
+            <TextBlock Name="OccTextBlock"
+                       Text="Occ"
+                       Width="70"/>
+            <TextBlock Text="Dist"
+                       Width="70"/>
+            <TextBlock Text="Unit"
+                       Width="90"/>
+            <TextBlock Text="GPS"
+                       Width="190"/>
+            <TextBlock Text="Map Link"
+                       Width="190"/>
+            <TextBlock Text=""
+                       Width="50"/>
+        </DockPanel>
+        <DockPanel Name="SegmentPanel"
+                   MaxWidth="1150"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center">
+            <ComboBox Name="Location"
+                      SelectionChanged="Location_Changed"
+                      Width="140"
+                      Height="35"
+                      FontSize="16"
+                      Margin="2,2,2,0"
+                      VerticalAlignment="Center"/>
+            <TextBox Name="SegName"
+                     GotFocus="SelectAll"
+                     Width="190"
+                     Height="35"
+                     FontSize="14"
+                     Margin="2,2,2,0"
+                     VerticalAlignment="Center"
+                     VerticalContentAlignment="Center"/>
+            <ComboBox Name="Occurrence"
+                      Width="70"
+                      Height="35"
+                      FontSize="14"
+                      Margin="2,2,2,0"
+                      VerticalAlignment="Center"
+                      VerticalContentAlignment="Center"/>
+            <TextBox Name="CumDistance"
+                     GotFocus="SelectAll"
+                     TextInput="DoubleValidation"
+                     Width="70"
+                     Height="35"
+                     FontSize="14"
+                     Margin="2,2,2,0"
+                     VerticalAlignment="Center"
+                     VerticalContentAlignment="Center"/>
+            <ComboBox Name="DistanceUnit"
+                      Width="90"
+                      Height="35"
+                      FontSize="14"
+                      Margin="2,2,2,0"
+                      SelectedIndex="0"
+                      VerticalContentAlignment="Center">
+				<ComboBoxItem Content="Miles"/>
+				<ComboBoxItem Content="Kilometers"/>
+				<ComboBoxItem Content="Meters"/>
+				<ComboBoxItem Content="Yards"/>
+				<ComboBoxItem Content="Feet"/>
+            </ComboBox>
+            <TextBox Name="GPS"
+                     GotFocus="SelectAll"
+                     Width="190"
+                     Height="35"
+                     FontSize="14"
+                     Margin="2,2,2,0"
+                     VerticalAlignment="Center"
+                     VerticalContentAlignment="Center"/>
+            <TextBox Name="MapLink"
+                     GotFocus="SelectAll"
+                     Width="190"
+                     Height="35"
+                     FontSize="14"
+                     Margin="2,2,2,0"
+                     VerticalAlignment="Center"
+                     VerticalContentAlignment="Center"/>
+            <Button Click="Remove_Click"
+                    Width="50"
+                    Height="35"
+                    Margin="2,2,2,0"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center">
+                <PathIcon Data="{StaticResource delete_regular}"/>
+            </Button>
+        </DockPanel>
+    </StackPanel>
+</UserControl>

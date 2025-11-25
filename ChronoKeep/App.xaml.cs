@@ -1,13 +1,13 @@
-﻿using Chronokeep.Helpers;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
+using Chronokeep.Helpers;
 using Chronokeep.UI;
+using Microsoft.Extensions.Hosting.Internal;
 using Sentry;
 using System;
 using System.IO;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace Chronokeep
 {
@@ -16,18 +16,18 @@ namespace Chronokeep
     /// </summary>
     public partial class App : Application
     {
-        public App()
+        public override void Initialize()
         {
-            DispatcherUnhandledException += App_DispatcherUnhandledException;
-            SentrySdk.Init(o =>
+            SentrySdk.Init(options =>
             {
-                o.Dsn = "https://69f609b68d42089ccea1545e8942c9e6@o4510042186514432.ingest.us.sentry.io/4510042244317184";
-                o.IsGlobalModeEnabled = true;
-                o.StackTraceMode = StackTraceMode.Enhanced;
+                options.Dsn = "https://69f609b68d42089ccea1545e8942c9e6@o4510042186514432.ingest.us.sentry.io/4510042244317184";
+                options.IsGlobalModeEnabled = true;
+                options.StackTraceMode = StackTraceMode.Enhanced;
+                options.SendDefaultPii = false;
 #if DEBUG
-                o.Environment = "debug";
+                options.Environment = "debug";
 #else
-                o.Environment = "release";
+                options.Environment = "release";
 #endif
                 string gitVersion = "";
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
@@ -35,7 +35,7 @@ namespace Chronokeep
                     using StreamReader reader = new(stream);
                     gitVersion = reader.ReadToEnd();
                 }
-                o.Release = string.Format("chronokeep-windows@{0}", gitVersion);
+                options.Release = string.Format("chronokeep-windows@{0}", gitVersion);
             });
             Log.D("UI.MainWindow", "Looking for log directory.");
             string logDirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR, "logs");
@@ -45,9 +45,36 @@ namespace Chronokeep
                 Directory.CreateDirectory(logDirPath);
             }
             Globals.ErrorLogPath = Path.Combine(logDirPath, string.Format("{0}_error_log.txt", DateTime.Now.ToString("yyyyMMdd")));
+            AvaloniaXamlLoader.Load(this);
         }
 
-        void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        public override void OnFrameworkInitializationCompleted()
+        {
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                bool safeMode = false;
+                foreach (string arg in desktop.Args)
+                {
+                    Log.D("AppStartup", "Startup arg: " + arg);
+                    if (arg.Contains("safe", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        safeMode = true;
+                    }
+                }
+                if (safeMode)
+                {
+                    desktop.MainWindow = new MinWindow();
+                }
+                else
+                {
+                    desktop.MainWindow = new MinWindow();
+                }
+            }
+
+            base.OnFrameworkInitializationCompleted();
+        }
+
+        static void CaptureException(Exception ex)
         {
             string logDirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR, "logs");
             if (!Directory.Exists(logDirPath))
@@ -63,47 +90,8 @@ namespace Chronokeep
                 ix++;
                 logPath = Path.Combine(logDirPath, string.Format("{0}_crash_{1}.txt", date, ix));
             }
-            File.WriteAllText(logPath, e.Exception.StackTrace);
-
-            // Let the app crash.
-            e.Handled = false;
-        }
-
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-            bool safeMode = false;
-            foreach (string arg in e.Args)
-            {
-                Log.D("AppStartup", "Startup arg: " + arg);
-                if (arg.Contains("safe", System.StringComparison.OrdinalIgnoreCase))
-                {
-                    safeMode = true;
-                }
-            }
-            if (safeMode)
-            {
-                MinWindow minWindow = new();
-                minWindow.Show();
-            }
-            else
-            {
-                MainWindow mainWindow = new();
-                mainWindow.Show();
-            }
-        }
-
-        public void HandlePreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (!e.Handled && sender != null)
-            {
-                e.Handled = true;
-                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
-                eventArg.RoutedEvent = UIElement.MouseWheelEvent;
-                eventArg.Source = sender;
-                var parent = ((Control)sender).Parent as UIElement;
-                parent.RaiseEvent(eventArg);
-            }
+            File.WriteAllText(logPath, ex.StackTrace);
+            SentrySdk.CaptureException(ex);
         }
     }
 }

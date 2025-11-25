@@ -1,38 +1,34 @@
-﻿using Chronokeep.Database;
+using Avalonia.Controls;
+using Avalonia.Threading;
+using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.MemStore;
 using Chronokeep.Network;
+using Chronokeep.Network.Registration;
 using Chronokeep.Objects;
+using Chronokeep.Objects.ChronokeepPortal;
+using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing;
+using Chronokeep.Timing.Announcer;
+using Chronokeep.Timing.API;
+using Chronokeep.Timing.Remote;
 using Chronokeep.UI.MainPages;
-using Chronokeep.UI.Announcer;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using Chronokeep.Timing.Announcer;
-using System.Windows.Threading;
-using Chronokeep.UI.UIObjects;
-using Chronokeep.Helpers;
 using System.Media;
-using Chronokeep.Timing.API;
-using Chronokeep.Timing.Remote;
-using Chronokeep.Objects.ChronokeepRemote;
-using Chronokeep.Objects.ChronokeepPortal;
-using Chronokeep.Network.Registration;
-using static Chronokeep.Helpers.Globals;
 using System.Reflection;
-using Chronokeep.Interfaces.UI;
-using Chronokeep.MemStore;
+using System.Threading;
+using static Chronokeep.Helpers.Globals;
 
 namespace Chronokeep.UI
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : IMainWindow
+    public partial class MainWindow : Window, IMainWindow
     {
+        internal UserControl CurrentPage;
+
         private readonly MemStore.MemStore database;
         private IMainPage page;
         private readonly string dbName = "Chronokeep.sqlite";
@@ -89,7 +85,7 @@ namespace Chronokeep.UI
             if (!OneWindow.WaitOne(TimeSpan.Zero, true))
             {
                 DialogBox.Show("Chronokeep is already running.");
-                this.Close();
+                Close();
                 return;
             }
             OneWindow.ReleaseMutex();
@@ -118,7 +114,7 @@ namespace Chronokeep.UI
             catch (InvalidDatabaseVersion db)
             {
                 DialogBox.Show(string.Format("Database version greater than the max known by this client. Please update the client. Database version {0}. Max version for this client {1}", db.FoundVersion, db.MaxVersion));
-                this.Close();
+                Close();
                 return;
             }
             Constants.Settings.SetupSettings(database);
@@ -129,8 +125,9 @@ namespace Chronokeep.UI
             // Setup AgeGroup static variables
             Event theEvent = database.GetCurrentEvent();
 
-            page = new DashboardPage(this, database);
-            TheFrame.Content = page;
+            CurrentPage = new DashboardPage();
+            ParentSplitView.Content = CurrentPage;
+
             UpdateStatus();
 
             // Check for updates.
@@ -168,120 +165,19 @@ namespace Chronokeep.UI
             Constants.GlobalVars.SetTwilioCredentials(database);
         }
 
-        public void UpdateTheme(Wpf.Ui.Appearance.ApplicationTheme theme, bool system)
+        public void UpdateTheme(string theme, bool system)
         {
-            Wpf.Ui.Appearance.ApplicationThemeManager.Apply(theme);
             if (system)
             {
-                Wpf.Ui.Appearance.SystemThemeWatcher.Watch(this);
+
             }
             else
             {
-                Wpf.Ui.Appearance.SystemThemeWatcher.UnWatch(this);
+
             }
         }
 
-        private void DashboardButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "Dashboard button clicked.");
-            if (page is DashboardPage)
-            {
-                Log.D("UI.MainWindow", "Dashboard page already displayed.");
-                return;
-            }
-            SwitchPage(new DashboardPage(this, database));
-        }
-
-        private void ParticipantsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "Participants button clicked.");
-            if (page is ParticipantsPage)
-            {
-                Log.D("UI.MainWindow", "Participants page already displayed.");
-                return;
-            }
-            SwitchPage(new ParticipantsPage(this, database));
-        }
-
-        private void ChipsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "Chips button clicked.");
-            if (page is ChipAssigmentPage)
-            {
-                Log.D("UI.MainWindow", "Chips page already displayed.");
-                return;
-            }
-            SwitchPage(new ChipAssigmentPage(this, database));
-        }
-
-        private void DistancesButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "Distances button clicked.");
-            if (page is DistancesPage)
-            {
-                Log.D("UI.MainWindow", "Distances page already displayed.");
-                return;
-            }
-            SwitchPage(new DistancesPage(this, database));
-        }
-
-        private void LocationsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "Locations button clicked.");
-            if (page is LocationsPage)
-            {
-                Log.D("UI.MainWindow", "Locations page already displayed.");
-                return;
-            }
-            SwitchPage(new LocationsPage(this, database));
-        }
-
-        private void SegmentsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "Segments button clicked.");
-            if (page is SegmentsPage)
-            {
-                Log.D("UI.MainWindow", "Segments page already displayed.");
-                return;
-            }
-            SwitchPage(new SegmentsPage(this, database));
-        }
-
-        private void AgegroupsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "Age Groups button clicked.");
-            if (page is AgeGroupsPage)
-            {
-                Log.D("UI.MainWindow", "Age groups page already displayed.");
-                return;
-            }
-            SwitchPage(new AgeGroupsPage(this, database));
-        }
-
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "Settings button clicked.");
-            if (page is SettingsPage)
-            {
-                Log.D("UI.MainWindow", "Settings page already displayed.");
-                return;
-            }
-            SwitchPage(new SettingsPage(this, database));
-        }
-
-        private void TimingButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "Timing button clicked.");
-            if (page is TimingPage)
-            {
-                Log.D("UI.MainWindow", "Timing page already displayed.");
-                ((TimingPage)page).LoadMainDisplay();
-                return;
-            }
-            SwitchPage(new TimingPage(this, database));
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object? sender, WindowClosingEventArgs e)
         {
             if (database == null)
             {
@@ -349,6 +245,249 @@ namespace Chronokeep.UI
             }
             if (page != null) page.Closing();
             TimingUpdater.Stop();
+        }
+
+        private void Window_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            TimingController = new TimingController(this, database);
+            TimingWorker = TimingWorker.NewWorker(this, database);
+            TimingWorkerThread = new Thread(new ThreadStart(TimingWorker.Run));
+            TimingWorkerThread.Start();
+            TimingWorker.Notify();
+            // Check for current theme color and apply it.
+            AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
+            if (OperatingSystem.IsWindowsVersionAtLeast(7))
+            {
+                Wpf.Ui.Appearance.ApplicationTheme theme = Wpf.Ui.Appearance.ApplicationTheme.Light;
+                bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
+                if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
+                {
+                    theme = Wpf.Ui.Appearance.ApplicationTheme.Dark;
+                }
+                UpdateTheme(theme, system);
+            }
+            // Check for hardware changes.
+            Log.D("UI.MainWindow", "Starting hardware checker.");
+            HardwareChecker hwCheck = new(database);
+            Thread hardwareThread = new(new ThreadStart(hwCheck.Run));
+            hardwareThread.Start();
+            UpdateTimingBadge();
+            // Check last known program version
+            Log.D("UI.MainWindow", "Starting changelog version checker.");
+            string gitVersion = "";
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
+            {
+                using StreamReader reader = new(stream);
+                gitVersion = reader.ReadToEnd();
+            }
+            if (gitVersion.Contains('-'))
+            {
+                gitVersion = gitVersion.Split('-')[0];
+            }
+            Log.D("UI.MainWindow", "Version.txt read.");
+            AppSetting programVers = database.GetAppSetting(Constants.Settings.PROGRAM_VERSION);
+            AppSetting showChangelog = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG);
+            if (programVers == null && showChangelog != null && showChangelog.Value == Constants.Settings.SETTING_TRUE)
+            {
+                Log.D("UI.MainWindow", "AppSetting not set.");
+                // Program version was not set, thus this is an upgraded program.
+                ChangelogWindow clw = ChangelogWindow.NewWindow(this, database);
+                clw.Show();
+            }
+            else
+            {
+                Log.D("UI.MainWindow", "Splitting defined values, parsing them, then checking if newer version.");
+                string[] gitSplit = gitVersion.Replace("v", "").Split('.');
+                string[] dbSplit = programVers.Value.Replace("v", "").Split('.');
+                if (dbSplit.Length != 3 || gitSplit.Length != 3)
+                {
+                    DialogBox.Show($"Expected 3 values when checking the program version. DB ${programVers.Value} - P ${gitVersion}");
+                }
+                else if (int.TryParse(gitSplit[0], out int newMajor) &&
+                        int.TryParse(gitSplit[1], out int newMinor) &&
+                        int.TryParse(gitSplit[2], out int newPatch) &&
+                        int.TryParse(dbSplit[0], out int oldMajor) &&
+                        int.TryParse(dbSplit[1], out int oldMinor) &&
+                        int.TryParse(dbSplit[2], out int oldPatch))
+                {
+                    if (newMajor > oldMajor ||                              // The new Major version is greater than the old Major version (1.9.0 -> 2.0.0)
+                        (newMajor == oldMajor && (newMinor > oldMinor       // The Major versions match but the new Minor version is greater than the old Minor version (1.9.0 -> 1.10.0)
+                        || (newMinor == oldMinor && newPatch > oldPatch)))) // The Major and Minor versions match but the new Patch version is greater than the old Patch version (1.10.0 -> 1.10.1)
+                    {
+                        if (showChangelog != null && showChangelog.Value == Constants.Settings.SETTING_TRUE)
+                        {
+                            ChangelogWindow clw = ChangelogWindow.NewWindow(this, database);
+                            clw.Show();
+                        }
+                    }
+                }
+                else
+                {
+                    DialogBox.Show($"Invalid version values found. DB${dbSplit.Length} - P${gitSplit.Length}");
+                }
+            }
+            database.SetAppSetting(Constants.Settings.PROGRAM_VERSION, gitVersion);
+        }
+
+        public void SwitchPage(IMainPage iPage)
+        {
+            page.Closing();
+            CurrentPage = iPage;
+            ParentSplitView.Content = CurrentPage;
+        }
+
+        private void DashboardButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            Log.D("UI.MainWindow", "Dashboard button clicked.");
+            if (CurrentPage is DashboardPage)
+            {
+                Log.D("UI.MainWindow", "Dashboard page already displayed.");
+                return;
+            }
+            UncheckAll();
+            DashboardButton.IsChecked = true;
+            SwitchPage(new DashboardPage(this, database));
+        }
+
+        private void TimingButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            Log.D("UI.MainWindow", "Timing button clicked.");
+            if (page is TimingPage)
+            {
+                Log.D("UI.MainWindow", "Timing page already displayed.");
+                ((TimingPage)page).LoadMainDisplay();
+                return;
+            }
+            UncheckAll();
+            TimingButton.IsChecked = true;
+            SwitchPage(new TimingPage(this, database));
+        }
+
+        private void Announcer_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+        }
+
+        private void ParticipantsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            Log.D("UI.MainWindow", "Participants button clicked.");
+            if (page is ParticipantsPage)
+            {
+                Log.D("UI.MainWindow", "Participants page already displayed.");
+                return;
+            }
+            UncheckAll();
+            ParticipantsButton.IsChecked = true;
+            SwitchPage(new ParticipantsPage(this, database));
+        }
+
+        private void ChipsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            Log.D("UI.MainWindow", "Chips button clicked.");
+            if (page is ChipAssigmentPage)
+            {
+                Log.D("UI.MainWindow", "Chips page already displayed.");
+                return;
+            }
+            UncheckAll();
+            ChipsButton.IsChecked = true;
+            SwitchPage(new ChipAssigmentPage(this, database));
+        }
+
+        private void LocationsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            Log.D("UI.MainWindow", "Locations button clicked.");
+            if (page is LocationsPage)
+            {
+                Log.D("UI.MainWindow", "Locations page already displayed.");
+                return;
+            }
+            UncheckAll();
+            LocationsButton.IsChecked = true;
+            SwitchPage(new LocationsPage(this, database));
+        }
+        private void DistancesButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            Log.D("UI.MainWindow", "Distances button clicked.");
+            if (page is DistancesPage)
+            {
+                Log.D("UI.MainWindow", "Distances page already displayed.");
+                return;
+            }
+            UncheckAll();
+            DistancesButton.IsChecked = true;
+            SwitchPage(new DistancesPage(this, database));
+        }
+
+        private void SegmentsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            Log.D("UI.MainWindow", "Segments button clicked.");
+            if (page is SegmentsPage)
+            {
+                Log.D("UI.MainWindow", "Segments page already displayed.");
+                return;
+            }
+            UncheckAll();
+            SegmentsButton.IsChecked = true;
+            SwitchPage(new SegmentsPage(this, database));
+        }
+
+        private void AgeGroupsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            Log.D("UI.MainWindow", "Age Groups button clicked.");
+            if (page is AgeGroupsPage)
+            {
+                Log.D("UI.MainWindow", "Age groups page already displayed.");
+                return;
+            }
+            UncheckAll();
+            AgeGroupsButton.IsChecked = true;
+            SwitchPage(new AgeGroupsPage(this, database));
+        }
+
+        private void SettingsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            Log.D("UI.MainWindow", "Settings button clicked.");
+            if (page is SettingsPage)
+            {
+                Log.D("UI.MainWindow", "Settings page already displayed.");
+                return;
+            }
+            UncheckAll();
+            SettingsButton.IsChecked = true;
+            SwitchPage(new SettingsPage(this, database));
+        }
+
+        private void AboutButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            Log.D("UI.MainWindow", "About button clicked.");
+            if (page is AboutPage)
+            {
+                Log.D("UI.MainWindow", "About page already displayed.");
+                return;
+            }
+            UncheckAll();
+            AboutButton.IsChecked = true;
+            SwitchPage(new AboutPage(this, database));
+        }
+
+
+        private void NavigationButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            ParentSplitView.IsPaneOpen = !ParentSplitView.IsPaneOpen;
+        }
+
+        private void UncheckAll()
+        {
+            DashboardButton.IsChecked = false;
+            TimingButton.IsChecked = false;
+            ParticipantsButton.IsChecked = false;
+            DistancesButton.IsChecked = false;
+            LocationsButton.IsChecked = false;
+            ChipsButton.IsChecked = false;
+            AgeGroupsButton.IsChecked = false;
+            SegmentsButton.IsChecked = false;
+            SettingsButton.IsChecked = false;
+            AboutButton.IsChecked = false;
         }
 
         public bool IsRegistrationRunning()
@@ -492,17 +631,6 @@ namespace Chronokeep.UI
         public int APIErrors()
         {
             return APIController != null ? APIController.Errors : 0;
-        }
-
-        public void WindowFinalize(Window w)
-        {
-            Log.D("MainWindow", "Window finalized...");
-            page.UpdateView();
-            UpdateStatus();
-            if (!openWindows.Remove(w))
-            {
-                Log.D("UI.MainWindow", "Window not found.");
-            }
         }
 
         public void UpdateParticipantsFromRegistration()
@@ -798,97 +926,6 @@ namespace Chronokeep.UI
             AnnouncerWorker.Notify();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            TimingController = new TimingController(this, database);
-            TimingWorker = TimingWorker.NewWorker(this, database);
-            TimingWorkerThread = new Thread(new ThreadStart(TimingWorker.Run));
-            TimingWorkerThread.Start();
-            TimingWorker.Notify();
-            // Check for current theme color and apply it.
-            AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
-            if (OperatingSystem.IsWindowsVersionAtLeast(7))
-            {
-                Wpf.Ui.Appearance.ApplicationTheme theme = Wpf.Ui.Appearance.ApplicationTheme.Light;
-                bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
-                if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
-                {
-                    theme = Wpf.Ui.Appearance.ApplicationTheme.Dark;
-                }
-                UpdateTheme(theme, system);
-            }
-            // Check for hardware changes.
-            Log.D("UI.MainWindow", "Starting hardware checker.");
-            HardwareChecker hwCheck = new(database);
-            Thread hardwareThread = new(new ThreadStart(hwCheck.Run));
-            hardwareThread.Start();
-            UpdateTimingBadge();
-            // Check last known program version
-            Log.D("UI.MainWindow", "Starting changelog version checker.");
-            string gitVersion = "";
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
-            {
-                using StreamReader reader = new(stream);
-                gitVersion = reader.ReadToEnd();
-            }
-            if (gitVersion.Contains('-'))
-            {
-                gitVersion = gitVersion.Split('-')[0];
-            }
-            Log.D("UI.MainWindow", "Version.txt read.");
-            AppSetting programVers = database.GetAppSetting(Constants.Settings.PROGRAM_VERSION);
-            AppSetting showChangelog = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG);
-            if (programVers == null && showChangelog != null && showChangelog.Value == Constants.Settings.SETTING_TRUE)
-            {
-                Log.D("UI.MainWindow", "AppSetting not set.");
-                // Program version was not set, thus this is an upgraded program.
-                ChangelogWindow clw = ChangelogWindow.NewWindow(this, database);
-                clw.Show();
-            }
-            else
-            {
-                Log.D("UI.MainWindow", "Splitting defined values, parsing them, then checking if newer version.");
-                string[] gitSplit = gitVersion.Replace("v", "").Split('.');
-                string[] dbSplit = programVers.Value.Replace("v", "").Split('.');
-                if (dbSplit.Length != 3 || gitSplit.Length != 3)
-                {
-                    DialogBox.Show($"Expected 3 values when checking the program version. DB ${programVers.Value} - P ${gitVersion}");
-                }
-                else if (int.TryParse(gitSplit[0], out int newMajor) &&
-                        int.TryParse(gitSplit[1], out int newMinor) &&
-                        int.TryParse(gitSplit[2], out int newPatch) &&
-                        int.TryParse(dbSplit[0], out int oldMajor) &&
-                        int.TryParse(dbSplit[1], out int oldMinor) &&
-                        int.TryParse(dbSplit[2], out int oldPatch))
-                {
-                    if (newMajor > oldMajor ||                              // The new Major version is greater than the old Major version (1.9.0 -> 2.0.0)
-                        (newMajor == oldMajor && (newMinor > oldMinor       // The Major versions match but the new Minor version is greater than the old Minor version (1.9.0 -> 1.10.0)
-                        || (newMinor == oldMinor && newPatch > oldPatch)))) // The Major and Minor versions match but the new Patch version is greater than the old Patch version (1.10.0 -> 1.10.1)
-                    {
-                        if (showChangelog != null && showChangelog.Value == Constants.Settings.SETTING_TRUE)
-                        {
-                            ChangelogWindow clw = ChangelogWindow.NewWindow(this, database);
-                            clw.Show();
-                        }
-                    }
-                }
-                else
-                {
-                    DialogBox.Show($"Invalid version values found. DB${dbSplit.Length} - P${gitSplit.Length}");
-                }
-            }
-            database.SetAppSetting(Constants.Settings.PROGRAM_VERSION, gitVersion);
-        }
-
-        public void SwitchPage(IMainPage iPage)
-        {
-            page.Closing();
-            page = iPage;
-            TheFrame.NavigationService.RemoveBackEntry();
-            TheFrame.Content = iPage;
-            UpdateStatus();
-        }
-
         private void Announcer_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Announer window button clicked.");
@@ -917,17 +954,6 @@ namespace Chronokeep.UI
             {
                 httpServer.UpdateInformation();
             }
-        }
-
-        private void AboutButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "About button clicked.");
-            if (page is AboutPage)
-            {
-                Log.D("UI.MainWindow", "About page already displayed.");
-                return;
-            }
-            SwitchPage(new AboutPage(this, database));
         }
 
         public void StartHttpServer()
@@ -988,11 +1014,6 @@ namespace Chronokeep.UI
         public void StopAnnouncer()
         {
             announcerWindow?.Close();
-        }
-
-        public void Exit()
-        {
-            Close();
         }
 
         public bool InDidNotStartMode()
@@ -1207,5 +1228,10 @@ namespace Chronokeep.UI
             AddReaderMessage(msg);
             UpdateTimingNonBlocking();
         }
-    }
+
+        public static void Exit()
+        {
+            Close();
+        }
+    }// END
 }

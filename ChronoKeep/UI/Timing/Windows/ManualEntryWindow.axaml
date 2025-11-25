@@ -1,0 +1,111 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="345"
+        x:Class="AvaloniaApp.ManualEntryWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="Manual Entry"
+        Width="300"
+        Height="345"
+        SizeToContent="Height"
+        Closing="Window_Closing">
+    <StackPanel VerticalAlignment="Center">
+        <DockPanel>
+            <TextBlock Text="Bib"
+                       Width="80"
+                       FontSize="16"
+                       Margin="10,15,0,5"
+                       TextAlignment="Right"
+                       VerticalAlignment="Center"/>
+            <TextBox Name="BibBox"
+                     KeyUp="Enter_KeyDown"
+                     FontSize="16"
+                     Margin="5,15,10,5"
+                     TextWrapping="Wrap"
+                     VerticalContentAlignment="Center"
+                     HorizontalContentAlignment="Center"/>
+        </DockPanel>
+        <DockPanel>
+            <TextBlock Text="Time"
+                       Width="80"
+                       FontSize="16"
+                       Margin="10,5,0,5"
+                       TextAlignment="Right"
+                       VerticalAlignment="Center"/>
+            <MaskedTextBox Name="TimeBox"
+                           KeyUp="Enter_KeyDown"
+                           Height="35"
+                           FontSize="16"
+                           Mask="00:00:00.000"
+                           Margin="5,5,10,5"
+                           VerticalContentAlignment="Center"
+                           HorizontalContentAlignment="Center"/>
+        </DockPanel>
+        <DockPanel Name="DatePanel" IsVisible="False">
+            <TextBlock Text="Date"
+                       Width="80"
+                       FontSize="16"
+                       Margin="10,5,0,5"
+                       TextAlignment="Right"
+                       VerticalAlignment="Center"/>
+            <DatePicker Name="DateBox"
+                        FontSize="16"
+                        Margin="5,5,10,5"/>
+        </DockPanel>
+        <DockPanel x:Name="LocationPanel">
+            <TextBlock Text="Location"
+                       Width="80"
+                       FontSize="16"
+                       Margin="10,5,0,5"
+                       TextAlignment="Right"
+                       VerticalAlignment="Center"/>
+            <ComboBox Name="LocationBox"
+                      FontSize="16"
+                      Margin="5,5,10,5"
+                      HorizontalAlignment="Stretch"/>
+        </DockPanel>
+        <RadioButton Name="NetTimeButton"
+                     Content="Net Time"
+                     GroupName="TimeGroup"
+                     FontSize="14"
+                     Margin="95,0,0,0"
+                     VerticalContentAlignment="Center"/>
+        <RadioButton Name="ClockTimeButton"
+                     Content="Clock Time"
+                     GroupName="TimeGroup"
+                     FontSize="14"
+                     IsChecked="True"
+                     Margin="95,0,0,0"
+                     VerticalContentAlignment="Center"/>
+        <RadioButton Name="TimeofDayButton"
+                     Content="Time of Day"
+                     GroupName="TimeGroup"
+                     FontSize="14"
+                     Margin="95,0,0,0"
+                     VerticalContentAlignment="Center"/>
+        <StackPanel Margin="10,10,10,15"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Button Name="Add"
+                    Content="Add"
+                    Click="Add_Click"
+                    Width="100"
+                    Height="35"
+                    FontSize="14"
+                    Margin="10,0,10,0"
+                    HorizontalAlignment="Center"/>
+            <Button Name="Done"
+                    Content="Done"
+                    Click="Done_Click"
+                    Width="100"
+                    Height="35"
+                    FontSize="14"
+                    Margin="10,0,10,0"
+                    HorizontalAlignment="Center"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

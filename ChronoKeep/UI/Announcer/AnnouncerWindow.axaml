@@ -1,0 +1,48 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApp.AnnouncerWindow"
+        Title="AnnouncerWindow">
+    <Window.Styles>
+        <Style Selector="DataGrid">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="SelectionMode" Value="Extended"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="CanUserSortColumns" Value="False"/>
+        </Style>
+    </Window.Styles>
+
+    <StackPanel>
+        <DataGrid x:Name="AnnouncerBox" IsVisible="False">
+            <DataGrid.Columns>
+                <!--
+                <DataGridTextColumn Header="When" Binding="{Binding AnnouncerWhen}" MinWidth="180"/>
+                <DataGridTextColumn Header="Distance" Binding="{Binding Distance}" MinWidth="180"/>
+                <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="80"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding ParticipantName}" MinWidth="200"/>
+                <DataGridTextColumn Header="City, State" Binding="{Binding CityState}" MinWidth="140"/>
+                <DataGridTextColumn Header="Age G" Binding="{Binding AgeGender}" MinWidth="100"/>
+                <DataGridTextColumn Header="Comments" Binding="{Binding Comments}" MinWidth="100"/>
+                -->
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid x:Name="ResultsBox">
+            <DataGrid.Columns>
+                <!--
+                <DataGridTextColumn Header="Distance" Binding="{Binding DistanceName}" MinWidth="180"/>
+                <DataGridTextColumn Header="Pl" Binding="{Binding PlaceStr}" MinWidth="80"/>
+                <DataGridTextColumn Header="Time" Binding="{Binding ChipTime}" MinWidth="150"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding ParticipantName}" MinWidth="200"/>
+                <DataGridTextColumn Header="City, State" Binding="{Binding CityStateString}" MinWidth="140"/>
+                <DataGridTextColumn Header="Age G" Binding="{Binding AgeGenderString}" MinWidth="100"/>
+                <DataGridTextColumn Header="Comments" Binding="{Binding Comments}" MinWidth="100"/>
+                -->
+            </DataGrid.Columns>
+        </DataGrid>
+    </StackPanel>
+</Window>

@@ -1,0 +1,201 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
+             x:Class="AvaloniaApp.ParticipantsPage"
+             Padding="16"
+             Background="{DynamicResource PrimaryBackground}"
+             CornerRadius="8,0,0,0"
+             >
+    <UserControl.Styles>
+        <Style Selector="Button.part">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Margin" Value="10,10,10,5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="DataGrid">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="CanUserResizeColumns" Value="False"/>
+            <Setter Property="CanUserSortColumns" Value="False"/>
+        </Style>
+    </UserControl.Styles>
+
+     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+        <ScrollViewer
+            Grid.Column="1"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto"
+            >
+            <StackPanel>
+                <Button
+                    Name="ImportExcel"
+                    Content="Import"
+                    Click="Import_Click"
+                    Classes="part"
+                    />
+                <Button
+                    Name="Export"
+                    Content="Export"
+                    Click="Export_Click"
+                    Classes="part"
+                    />
+                <StackPanel
+                    x:Name="apiPanel"
+                    IsVisible="False"
+                    >
+                    <TextBlock 
+                        Text="API Commands"
+                        FontSize="16" 
+                        VerticalAlignment="Center"
+                        TextAlignment="Center"
+                        Margin="5,5,5,5"
+                        Padding="0,0,0,0"
+                        />
+                    <Button 
+                        Name="Upload" 
+                        Content="Upload"
+                        Click="Upload_Click" 
+                        Classes="part"
+                        Margin="10,5,10,5"
+                        />
+                    <Button 
+                        Name="Download"
+                        Content="Download"
+                        Click="Download_Click"
+                        Classes="part"
+                        Margin="10,0,10,5"
+                        />
+                    <Button 
+                        Name="Delete"
+                        Content="Delete Uploaded"
+                        Click="Delete_Click"
+                        Classes="part"
+                        Margin="10,0,10,5"
+                        />
+                </StackPanel>
+                <Button
+                    Name="ConflictsBtn"
+                    Content="Conflicts"
+                    Click="ConflictsBtn_Click"
+                    Classes="part"
+                    Margin="10,0,10,5"
+                    IsVisible="False"
+                    />
+                <StackPanel x:Name="ViewPanel">
+                    <TextBlock
+                        Text="View"
+                        FontSize="16"
+                        Margin="10,5"
+                        TextAlignment="Center"
+                        />
+                    <ComboBox 
+                        Name="DistanceBox"
+                        FontSize="16"
+                        Margin="10,0,10,0"
+                        SelectionChanged="DistanceBox_SelectionChanged"
+                        />
+                </StackPanel>
+                <TextBlock 
+                    Text="Sort By"
+                    FontSize="16"
+                    Margin="10,5" 
+                    TextAlignment="Center"
+                    />
+                <ComboBox 
+                    Name="SortBox" 
+                    FontSize="16"
+                    Margin="10,0,10,5"
+                    SelectionChanged="SortBox_SelectionChanged"
+                    SelectedIndex="0"
+                    >
+                    <ComboBoxItem Content="Distance" />
+                    <ComboBoxItem Content="Name" />
+                    <ComboBoxItem Content="Bib" />
+                </ComboBox>
+                <TextBox 
+                    Name="SearchBox"
+                    Margin="10,0,10,0"
+                    TextChanged="SearchBox_TextChanged"
+                    FontSize="16" 
+                    Height="45"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Watermark="Search"
+                    />
+                <Button
+                    Name="Add"
+                    Content="Add"
+                    Click="Add_Click"
+                    Classes="part"
+                    />
+                <Button 
+                    Name="Modify"
+                    Content="Modify" 
+                    Click="Modify_Click"
+                    Classes="part"
+                    />
+                <Button 
+                    Name="Remove" 
+                    Content="Remove" 
+                    Click="Remove_Click"
+                    Classes="part"
+                    />
+                <Expander
+                    Name="statsExpander"
+                    Header="Bibs"
+                    Margin="5,5,5,0"
+                    IsExpanded="True"
+                    IsVisible="False"
+                    >
+                    <DataGrid Grid.Row="0"
+                                Name="bibChipList"
+                                Margin="3,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Distance" Width="75"/>
+                            <DataGridTextColumn Header="w/" Width="35"/>
+                            <DataGridTextColumn Header="w/o" Width="35"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
+        <DataGrid Grid.Column="0"
+                  Name="ParticipantsList"
+                  SelectionMode="Extended"
+                  Margin="3,0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Bib" Width="45"/>
+                <DataGridTextColumn Header="Distance" Width="125"/>
+                <DataGridTextColumn Header="First" Width="100"/>
+                <DataGridTextColumn Header="Last" Width="175"/>
+                <DataGridTextColumn Header="Gender" Width="75"/>
+                <DataGridTextColumn Header="Birthday" Width="100"/>
+                <DataGridTextColumn Header="Goodies" Width="150"/>
+                <DataGridTextColumn Header="Division" Width="150"/>
+                <DataGridTextColumn Header="Phone" Width="120"/>
+                <DataGridTextColumn Header="Mobile" Width="120"/>
+                <DataGridTextColumn Header="EC Name" Width="150"/>
+                <DataGridTextColumn Header="EC Phone" Width="150"/>
+                <DataGridTextColumn Header="Anon" Width="35"/>
+                <DataGridTextColumn Header="Commends" Width="200"/>
+                <DataGridTextColumn Header="Other" Width="150"/>
+                <DataGridTextColumn Header="Email" Width="200"/>
+                <DataGridTextColumn Header="Street" Width="175"/>
+                <DataGridTextColumn Header="Apt" Width="50"/>
+                <DataGridTextColumn Header="City" Width="120"/>
+                <DataGridTextColumn Header="State" Width="50"/>
+                <DataGridTextColumn Header="Zip" Width="70"/>
+                <DataGridTextColumn Header="Country" Width="60"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

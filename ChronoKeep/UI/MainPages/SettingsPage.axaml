@@ -1,0 +1,297 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="750"
+             x:Class="AvaloniaApp.SettingsPage"
+             Padding="16"
+             Background="{DynamicResource PrimaryBackground}"
+             CornerRadius="8,0,0,0"
+             >
+    <UserControl.Styles>
+        <Style Selector="Button.setting">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="175"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.setting_two">
+            <Setter Property="Margin" Value="0,10,10,10"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="TextBlock">
+			<Setter Property="Width" Value="170"/>
+			<Setter Property="Margin" Value="10"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="TextBox">
+			<Setter Property="Margin" Value="0,10,10,10"/>
+			<Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalContentAlignment" Value="Top"/>
+        </Style>
+        <Style Selector="Slider">
+			<Setter Property="Margin" Value="0,0,10,0"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="IsSnapToTickEnabled" Value="True"/>
+			<Setter Property="TickFrequency" Value="5"/>
+			<Setter Property="Minimum" Value="5"/>
+			<Setter Property="Maximum" Value="60"/>
+        </Style>
+        <Style Selector="StackPanel.toggle">
+			<Setter Property="Margin" Value="10"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="StackPanel.toggle Label">
+			<Setter Property="Margin" Value="10,0,0,0"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="ToggleSwitch">
+			<Setter Property="OffContent" Value=""/>
+			<Setter Property="OnContent" Value=""/>
+			<Setter Property="Margin" Value="0,-7"/>
+            <Setter Property="Width" Value="40"/>
+        </Style>
+        <Style Selector="ComboBox">
+			<Setter Property="Margin" Value="0,10,10,10"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Height" Value="50"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="ComboBox ComboBoxItem">
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+    </UserControl.Styles>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="0"
+                Name="ResetDB"
+                Content="Reset Database"
+                Click="ResetDB_Click"
+                Classes="setting"
+                />
+            <Button
+                Grid.Column="1"
+                Name="RebuildDB"
+                Content="Rebuild Database"
+                Click="RebuildDB_Click"
+                Classes="setting"
+                />
+            <Button
+                Grid.Column="2"
+                Name="Save"
+                Content="Save"
+                Click="Save_Click"
+                Classes="setting"
+                />
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer VerticalScrollBarVisibility="Visible" Padding="5,0,5,5">
+                <StackPanel Grid.Column="0">
+                    <DockPanel>
+                        <TextBlock Text="Company Name" />
+                        <TextBox Name="CompanyNameBox" />
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Contact Email" />
+                        <TextBox Name="ContactEmailBox" />
+                    </DockPanel>
+                    <DockPanel Grid.Column="0">
+                        <TextBlock Text="Default Timing System" />
+                        <ComboBox Name="DefaultTimingBox" />
+                    </DockPanel>
+                    <DockPanel Grid.Column="0">
+                        <TextBlock Text="Theme Color" />
+                        <ComboBox Name="ThemeColorBox" SelectionChanged="ThemeColorBox_SelectionChanged" />
+                    </DockPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="190"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Export Directory" Grid.Column="0" />
+                        <TextBox Name="DefaultExportDirBox" Grid.Column="1" />
+                        <Button Grid.Column="2"
+                                Name="ChangeExport"
+                                Content="Change"
+                                Classes="setting_two"
+                                Click="ChangeExport_Click" />
+                    </Grid>
+                    <Grid Height="55">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="190" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Upload Interval" Grid.Column="0"/>
+                        <Slider Grid.Column="1"
+                                x:Name="uploadSlider"
+                                ValueChanged="uploadSlider_ValueChanged" />
+                        <TextBlock Grid.Column="2"
+                                   x:Name="uploadBlock"
+                                   Width="30"
+                                   Margin="0,10,10,10"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center" />
+                    </Grid>
+                    <Grid Height="55">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="190" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Download Interval" />
+                        <Slider Grid.Column="1"
+                                x:Name="downloadSlider"
+                                ValueChanged="downloadSlider_ValueChanged" />
+                        <TextBlock Grid.Column="2"
+                                   x:Name="downloadBlock"
+                                   Width="30"
+                                   Margin="0,10,10,10"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"/>
+                    </Grid>
+                    <Grid Height="55">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="190" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Announcer Window" />
+                        <Slider Grid.Column="1"
+                                x:Name="announcerSlider"
+                                ValueChanged="announcerSlider_ValueChanged"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Stretch"
+                                TickFrequency="1"
+                                Minimum="1"
+                                Maximum="120"/>
+                        <TextBlock Grid.Column="2"
+                                   x:Name="announcerBlock"
+                                   Width="30"
+                                   Margin="0,10,10,10"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"/>
+                    </Grid>
+                    <DockPanel>
+                        <TextBlock Text="Alarm Sound" />
+                        <Button Name="PlayBtn"
+                                Content="Play"
+                                Click="PlayBtn_Click"
+                                Classes="setting_two"
+                                Height="50"
+                                Width="70"/>
+                        <ComboBox Name="AlarmSoundBox">
+                            <ComboBoxItem Content="Alert 1" IsSelected="True"/>
+                            <ComboBoxItem Content="Alert 2" />
+                            <ComboBoxItem Content="Alert 3" />
+                            <ComboBoxItem Content="Alert 4" />
+                            <ComboBoxItem Content="Alert 5" />
+                            <ComboBoxItem Content="Emily 1" />
+                            <ComboBoxItem Content="Emily 2" />
+                            <ComboBoxItem Content="Emily 3" />
+                            <ComboBoxItem Content="Michael 1" />
+                            <ComboBoxItem Content="Michael 2" />
+                            <ComboBoxItem Content="Michael 3" />
+                        </ComboBox>
+                    </DockPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="190"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="105"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Program Identifier" />
+                        <TextBox Grid.Column="1"
+                                 Name="UniqueProgramID"
+                                 HorizontalContentAlignment="Stretch"
+                                 IsEnabled="False"/>
+                        <Button Grid.Column="2"
+                                x:Name="RegenerateUniqueProgramIDButton"
+                                Content="Regenerate"
+                                Classes="setting_two"
+                                Margin="0,10,10,10"
+                                Click="RegenerateUniqueProgramIDButton_Click" />
+                    </Grid>
+                    <DockPanel>
+                        <TextBlock Text="Registration Server Name" />
+                        <TextBox Name="RegistrationServerNameBox" />
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Twilio Account SID" />
+                        <TextBox Name="TwilioAccountSIDBox" />
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Twilio Auth Token" />
+                        <TextBox Name="TwilioAuthTokenBox" />
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Twilio Phone Number" />
+                        <TextBox Name="TwilioPhoneNumberBox" />
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Mailgun From Name" />
+                        <TextBox Name="MailgunFromNameBox" />
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Mailgun From Email" />
+                        <TextBox Name="MailgunFromEmailBox" />
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Mailgun API Key" />
+                        <TextBox Name="MailgunAPIKeyBox" />
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Mailgun Domain" />
+                        <TextBox Name="MailgunAPIURLBox" />
+                    </DockPanel>
+                </StackPanel>
+            </ScrollViewer>
+            <StackPanel Grid.Column="1">
+                <StackPanel Orientation="Horizontal" Classes="toggle">
+                    <ToggleSwitch Name="UpdatePage"/>
+                    <Label VerticalAlignment="Center">Auto-save changes</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Classes="toggle">
+                    <ToggleSwitch Name="ExitNoPrompt"/>
+                    <Label VerticalAlignment="Center">Do not prompt before exit</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Classes="toggle">
+                    <ToggleSwitch Name="CheckUpdates"/>
+                    <Label VerticalAlignment="Center">Check for updates</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Classes="toggle">
+                    <ToggleSwitch Name="AutoChangelog"/>
+                    <Label VerticalAlignment="Center">Show changelog after update</Label>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

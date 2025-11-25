@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.ImportLogPage1">
+    <StackPanel VerticalAlignment="Center">
+        <DockPanel LastChildFill="False"
+                   HorizontalAlignment="Center"
+                   Margin="10,10,10,5">
+            <TextBlock Text="Log Type"
+                       Width="70"
+                       VerticalAlignment="Center"
+                       TextAlignment="Right"
+                       Margin="0,0,10,0"/>
+            <ComboBox Name="TypeHolder"
+                      SelectionChanged="TypeHolder_SelectionChanged"
+                      Width="200"
+                      FontSize="16"
+                      VerticalAlignment="Center"
+                      VerticalContentAlignment="Center"/>
+        </DockPanel>
+        <DockPanel Margin="10,5,10,10"
+                   LastChildFill="False"
+                   HorizontalAlignment="Center">
+            <TextBlock Text="Location"
+                       Width="70"
+                       Margin="0,0,10,0"
+                       TextAlignment="Right"
+                       VerticalAlignment="Center"/>
+            <ComboBox Name="LocationHolder"
+                      Width="200"
+                      FontSize="16"
+                      VerticalAlignment="Center"
+                      VerticalContentAlignment="Center"/>
+        </DockPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Grid.Column="0"
+                    Name="NextButton"
+                    Content="Next"
+                    Click="NextButton_Click"
+                    Width="120"
+                    Height="35"
+                    FontSize="14"
+                    Margin="10,0,5,5"
+                    HorizontalAlignment="Right"
+                    VerticalContentAlignment="Center"/>
+            <Button Grid.Column="1"
+                    Name="CancelButton"
+                    Content="Cancel"
+                    Click="CancelButton_Click"
+                    Width="120"
+                    Height="35"
+                    FontSize="14"
+                    Margin="5,0,10,5"
+                    VerticalContentAlignment="Center"
+                    HorizontalAlignment="Left"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

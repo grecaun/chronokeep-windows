@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.APIErrorPage">
+
+    <StackPanel
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        >
+        <TextBlock
+            Name="errorLabel"
+            Text="Error, unable to continue."
+            TextWrapping="Wrap"
+            MaxWidth="250"
+            FontSize="18"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            />
+        <Button
+            Content="Close"
+            Height="35"
+            Width="100"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Margin="10,10,0,10"
+            Click="Cancel_Click"
+            />
+    </StackPanel>
+</UserControl>

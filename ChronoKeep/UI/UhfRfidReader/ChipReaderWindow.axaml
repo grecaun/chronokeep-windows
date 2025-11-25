@@ -1,0 +1,98 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApp.ChipReaderWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="Chip Reader"
+        Width="770"
+        Height="450"
+        MinWidth="770"
+        Closing="Window_Closing">
+    <Window.Styles>
+        <Style Selector="DataGrid">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="SelectionMode" Value="Extended"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="CanUserSortColumns" Value="True"/>
+        </Style>
+    </Window.Styles>
+    <StackPanel>
+        <DataGrid x:Name="chipNumbers">
+            <DataGrid.Columns>
+                <!--
+                <DataGridTextColumn Header="Dec Number" Binding="{Binding DecNumber}"/>
+                <DataGridTextColumn Header="Hex Number" Binding="{Binding HexNumber}"/>
+                <DataGridTextColumn Header="Ant Number" Binding="{Binding AntennaNumber}"/>
+                <DataGridTextColumn Header="Dev Number" Binding="{Binding DeviceNumber}"/>
+                <DataGridTextColumn Header="Data" Binding="{Binding DataRep}"/>
+                <DataGridTextColumn Header="Read Number" Binding="{Binding ReadNumber}"/>
+                -->
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid HorizontalAlignment="Center" Height="55">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="85" />
+                <ColumnDefinition Width="84" />
+                <ColumnDefinition Width="96" />
+                <ColumnDefinition Width="148" />
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.Column="0"
+                       Name="EventNameHolder"
+                       Margin="5,0,15,0"
+                       IsVisible="False">
+                <TextBlock Name="eventName"
+                           Text="TEST"
+                           VerticalAlignment="Center"/>
+            </DockPanel>
+            <TextBlock Grid.Column="1"
+                       Text="Serial Port"
+                       Margin="2"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"/>
+            <ComboBox Grid.Column="2"
+                      Name="serialPortCB"
+                      Margin="2"
+                      Height="35"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Stretch"/>
+            <Button Grid.Column="3" 
+                    Name="refreshBtn"
+                    Content="Refresh"
+                    Click="RefreshBtn_Click"
+                    Margin="2"
+                    Width="80"
+                    Height="35"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"/>
+            <Button Grid.Column="4"
+                    Name="connectBtn"
+                    Content="Connect"
+                    Click="ConnectBtn_Click"
+                    Margin="2"
+                    Width="92"
+                    Height="35"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"/>
+            <Button Grid.Column="5"
+                    Name="beautyBtn"
+                    Content="Show Info Window"
+                    Click="BeautyBtn_Click"
+                    Margin="2"
+                    Width="144"
+                    Height="35"
+                    IsVisible="False"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"/>
+        </Grid>
+    </StackPanel>
+</Window>

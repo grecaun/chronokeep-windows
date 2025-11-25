@@ -1,0 +1,292 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="520" d:DesignHeight="850"
+        x:Class="AvaloniaApp.ModifyParticipantWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Width="520"
+        CanResize="False"
+        Title="Participant"
+        SizeToContent="Height"
+        Closing="Window_Closing">
+    <StackPanel VerticalAlignment="Center" Margin="0,30,0,0">
+            <DockPanel>
+                <TextBlock Text="Bib"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           Width="90"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="BibBox"
+                         KeyDown="Box_KeyDown"
+                         Width="100"
+                         FontSize="16"
+                         Margin="0,5,15,5"
+                         VerticalContentAlignment="Center"/>
+                <ComboBox Name="DistanceBox"
+                          FontSize="16"
+                          Margin="0,5,15,5"
+                          HorizontalAlignment="Stretch"
+                          />
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Division"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           Width="90"
+                           VerticalAlignment="Center"/>
+                <AutoCompleteBox Name="DivisionBox"
+                                 Text=""
+                                 FontSize="16"
+                                 Margin="0,5,15,5"
+                                 KeyDown="Box_KeyDown"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="First"
+                           Width="90"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="FirstBox"
+                         KeyDown="Box_KeyDown"
+                         Width="140"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+                <TextBlock Text="Last"
+                           FontSize="16"
+                           Margin="0,0,15,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="LastBox"
+                         KeyDown="Box_KeyDown"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Birthday"
+                           Width="90"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           VerticalAlignment="Center"/>
+                <DatePicker Name="BirthdayBox"
+                            KeyDown="Box_KeyDown"
+                            Width="300"
+                            FontSize="16"
+                            Margin="0,5,5,5"/>
+                <TextBlock Text="Age"
+                           Width="30"
+                           FontSize="16"
+                           Margin="0,0,-5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="AgeBox"
+                         KeyDown="Box_KeyDown"
+                         MinWidth="20"
+                         Width="55"
+                         FontSize="16"
+                         Margin="0,5,5,5"
+                         VerticalContentAlignment="Center"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Gender"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           Width="90"
+                           VerticalAlignment="Center"/>
+                <ComboBox Name="GenderBox"
+                          SelectionChanged="GenderBox_SelectionChanged"
+                          Width="200"
+                          FontSize="16"
+                          Margin="0,5,15,5">
+                    <ComboBoxItem Content="Not Specified" IsSelected="True"/>
+                    <ComboBoxItem Content="Man"/>
+                    <ComboBoxItem Content="Woman"/>
+                    <ComboBoxItem Content="Non-Binary"/>
+                    <ComboBoxItem Content="Other"/>
+                </ComboBox>
+                <TextBox Name="otherGenderBox"
+                         KeyDown="Box_KeyDown"
+                         FontSize="16"
+                         Margin="0,5,15,5"
+                         HorizontalAlignment="Stretch"
+                         IsVisible="False"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Street"
+                           Width="90"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="StreetBox"
+                         KeyDown="Box_KeyDown"
+                         Width="180"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+                <TextBlock Text="Appartment"
+                           Width="100"
+                           FontSize="16"
+                           Margin="0,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="Street2Box"
+                         KeyDown="Box_KeyDown"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="City"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           Width="90"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="CityBox"
+                         KeyDown="Box_KeyDown"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="State"
+                           Width="90"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="StateBox"
+                         KeyDown="Box_KeyDown"
+                         Width="180"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+                <TextBlock Text="Zip"
+                           Width="70"
+                           FontSize="16"
+                           Margin="0,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="ZipBox"
+                         KeyDown="Box_KeyDown"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Country"
+                           Width="90"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="CountryBox"
+                         KeyDown="Box_KeyDown"
+                         Width="180"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+                <TextBlock Text="Private"
+                           Width="70"
+                           FontSize="16"
+                           Margin="0,0,5,0"
+                           VerticalAlignment="Center"/>
+                <ToggleSwitch Name="AnonymousBox"
+                              OnContent=""
+                              OffContent=""
+                              Margin="0,-7,15,-7"
+                              VerticalContentAlignment="Center"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Email"
+                           Width="90"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="EmailBox"
+                         KeyDown="Box_KeyDown"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Phone"
+                           Width="90"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="PhoneBox"
+                         KeyDown="Box_KeyDown"
+                         Width="140"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+                <TextBlock Text="Mobile"
+                           Width="80"
+                           FontSize="16"
+                           Margin="0,0,0,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="MobileBox"
+                         KeyDown="Box_KeyDown"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Parent"
+                           Width="90"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="ParentBox"
+                         KeyDown="Box_KeyDown"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="EC Name"
+                           Width="90"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="ECNameBox"
+                         KeyDown="Box_KeyDown"
+                         Width="140"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+                <TextBlock Text="EC Phone"
+                           Width="80"
+                           FontSize="16"
+                           Margin="0,0,0,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="ECPhoneBox"
+                         KeyDown="Box_KeyDown"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Comments"
+                           Width="90"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="CommentsBox"
+                         KeyDown="Box_KeyDown"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Apparel"
+                           Width="90"
+                           FontSize="16"
+                           Margin="15,0,5,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Name="ApparelBox"
+                         KeyDown="Box_KeyDown"
+                         FontSize="16"
+                         Margin="0,5,15,5"/>
+            </DockPanel>
+            <DockPanel HorizontalAlignment="Center">
+                <Button Name="Add"
+                        Content="Add"
+                        Height="35"
+                        Width="150"
+                        FontSize="16"
+                        Margin="10,5,10,10"/>
+                <Button Name="Done"
+                        Content="Done"
+                        Click="Done_Click"
+                        Height="35"
+                        Width="150"
+                        FontSize="16"
+                        Margin="10,5,10,10"/>
+            </DockPanel>
+        </StackPanel>
+</Window>

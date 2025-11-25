@@ -1,0 +1,87 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+        x:Class="AvaloniaApp.UI.Timing.Windows.WaveWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="Set Wave Times"
+        Width="300"
+        Height="300"
+        CanResize="False"
+        SizeToContent="Height"
+        Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="0"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="mainPanel">
+                <DockPanel>
+                    <TextBlock Text="Wave"
+                               Width="60"
+                               FontSize="14"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center"/>
+                    <Separator/>
+                    <TextBlock Text="Time"
+                               Width="150"
+                               FontSize="14"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </DockPanel>
+                <Separator/>
+                <ListBox Name="WaveList"
+                    BorderThickness="0"
+                    KeyboardNavigation.TabNavigation="Continue">
+                </ListBox>
+            </StackPanel>
+        </ScrollViewer>
+        <DockPanel Grid.Row="1"
+                   HorizontalAlignment="Center"
+                   Margin="5">
+            <RadioButton Name="NetTimeButton"
+                         Content="Net Time"
+                         GroupName="TimeGroup"
+                         IsCheckedChanged="NetTimeButton_Checked"
+                         Width="100"
+                         FontSize="14"
+                         Margin="0,0,0,0"
+                         IsChecked="True"
+                         VerticalContentAlignment="Center"/>
+            <RadioButton Name="TimeofDayButton"
+                         Content="Time of Day"
+                         GroupName="TimeGroup"
+                         IsCheckedChanged="TimeofDayButton_Checked"
+                         Width="120"
+                         FontSize="14"
+                         Margin="0,0,0,0"
+                         VerticalContentAlignment="Center"/>
+        </DockPanel>
+        <DockPanel Grid.Row="2"
+                   LastChildFill="False"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center">
+            <Button Name="SetButton"
+                    Content="Set"
+                    Click="SetButton_Click"
+                    Width="100"
+                    Height="35"
+                    FontSize="14"
+                    Margin="0,10,10,10"/>
+            <Button Name="DoneButton"
+                    Content="Cancel"
+                    Click="DoneButton_Click"
+                    Width="100"
+                    Height="35"
+                    FontSize="14"
+                    Margin="10,10,0,10"/>
+        </DockPanel>
+    </Grid>
+</Window>

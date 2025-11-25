@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.TimingResultsPage">
+    <UserControl.Styles>
+        <Style Selector="DataGrid">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="SelectionMode" Value="Extended"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="CanUserSortColumns" Value="False"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <DataGrid x:Name="updateListView">
+        <DataGrid.Columns>
+            <!--
+            <DataGridTextColumn Header="Loc" Binding="{Binding LocationName}" MinWidth="90"/>
+            <DataGridTextColumn Header="Occ" Binding="{Binding Occurrence}" MinWidth="32"/>
+            <DataGridTextColumn Header="System Time" Binding="{Binding SysTime}" MinWidth="140"/>
+            <DataGridTextColumn Header="Time" Binding="{Binding Time}" MinWidth="90"/>
+            <DataGridTextColumn Header="Chip Time" Binding="{Binding ChipLapTime}" MinWidth="90"/>
+            <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="50"/>
+            <DataGridTextColumn Header="Name" Binding="{Binding ParticipantName}" MinWidth="130"/>
+            <DataGridTextColumn Header="Pl" Binding="{Binding PlaceStr}" MinWidth="40"/>
+            <DataGridTextColumn Header="G" Binding="{Binding PrettyGender}" MinWidth="25"/>
+            <DataGridTextColumn Header="GP" Binding="{Binding GenderPlaceStr}" MinWidth="40"/>
+            <DataGridTextColumn Header="Age Grp" Binding="{Binding AgeGroupName}" MinWidth="60"/>
+            <DataGridTextColumn Header="AP" Binding="{Binding AgePlaceStr}" MinWidth="40"/>
+            <DataGridTextColumn Header="Division" Binding="{Binding Division}" MinWidth="25"/> // div
+            <DataGridTextColumn Header="DP" Binding="{Binding DivisionPlaceStr}" MinWidth="25"/> // div pl
+            <DataGridTextColumn Header="Distance" Binding="{Binding DistanceName}" MinWidth="110"/>
+            <DataGridTextColumn Header="T" Binding="{Binding PrettyType}" MinWidth="20"/>
+            <DataGridTextColumn Header="Segment" Binding="{Binding SegmentName}" MinWidth="120"/>
+            -->
+        </DataGrid.Columns>
+    </DataGrid>
+</UserControl>

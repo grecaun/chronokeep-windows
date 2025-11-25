@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.AlarmsPage">
+    <UserControl.Styles>
+        <Style Selector="Button">
+            <Setter Property="Margin" Value="10,0"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Width" Value="150"/>
+        </Style>
+        <Style Selector="TextBlock">
+			<Setter Property="Margin" Value="5,5,5,0"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="55"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="175" />
+                <ColumnDefinition Width="55" />
+                <ColumnDefinition Width="45" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Bib"/>
+            <TextBlock Grid.Column="1" Text="Chip"/>
+            <TextBlock Grid.Column="2" Text="Sound"/>
+            <TextBlock Grid.Column="3" Text="Active"/>
+        </Grid>
+        <ListBox
+            Grid.Row="1"
+            Name="AlarmsBox"
+            KeyboardNavigation.TabNavigation="Continue"
+            Margin="0"
+            CornerRadius="8">
+            <!--<ListBox.ItemTemplate>
+				
+            </ListBox.ItemTemplate>-->
+        </ListBox>
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+            <Button Name="addButton"
+                    Content="Add Alarm"
+                    Click="AddButton_Click"/>
+            <Button Name="saveButton"
+                    Content="Save"
+                    Click="SaveButton_Click"/>
+            <Button Name="doneButton"
+                    Content="Done"
+                    Click="DoneButton_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

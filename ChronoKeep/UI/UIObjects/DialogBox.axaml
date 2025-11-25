@@ -1,0 +1,52 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+        x:Class="AvaloniaApp.DialogBox"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title=""
+        Width="400"
+        CanResize="False"
+        SizeToContent="Height">
+    <StackPanel>
+        <StackPanel VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+            <TextBlock x:Name="MessageBox"
+                       Text="This is some random text for testing purposes."
+                       Margin="15,15,15,0"
+                       FontSize="16"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <TextBox x:Name="CopyBox"
+                     Text=""
+                     TextChanged="CopyBox_TextChanged"
+                     FontSize="16"
+                     Margin="15,0,15,5"
+                     IsVisible="False"
+                     HorizontalAlignment="Stretch"/>
+        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    x:Name="LeftButton"
+                    Content="Yes"
+                    Height="35"
+                    Margin="15,15,5,15"
+                    HorizontalAlignment="Stretch"/>
+            <Button Grid.Column="1"
+                    x:Name="RightButton"
+                    Content="No"
+                    Height="35"
+                    Margin="5,15,15,15"
+                    HorizontalAlignment="Stretch"/>
+        </Grid>
+    </StackPanel>
+</Window>

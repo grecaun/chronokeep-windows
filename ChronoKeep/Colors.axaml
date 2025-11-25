@@ -1,0 +1,25 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key='Light'>
+            <SolidColorBrush x:Key='BackgroundBrush'>LightGray</SolidColorBrush>
+            <SolidColorBrush x:Key='ForegroundBrush'>Black</SolidColorBrush>
+            <SolidColorBrush x:Key='PrimaryBackground'>White</SolidColorBrush>
+            <SolidColorBrush x:Key='SecondaryBackground'>#efefef</SolidColorBrush>
+            <SolidColorBrush x:Key='ButtonBackground'>#ffffff</SolidColorBrush>
+            <SolidColorBrush x:Key='ButtonHoverBackground'>#f8f8f8</SolidColorBrush>
+            <SolidColorBrush x:Key='ButtonHoverForeground'>Black</SolidColorBrush>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key='Dark'>
+            <SolidColorBrush x:Key='BackgroundBrush'>#2e2e2e</SolidColorBrush>
+            <SolidColorBrush x:Key='ForegroundBrush'>White</SolidColorBrush>
+            <SolidColorBrush x:Key='PrimaryBackground'>#1c1c1c</SolidColorBrush>
+            <SolidColorBrush x:Key='SecondaryBackground'>#181818</SolidColorBrush>
+            <SolidColorBrush x:Key='ButtonBackground'>#101010</SolidColorBrush>
+            <SolidColorBrush x:Key='ButtonHoverBackground'>#262626</SolidColorBrush>
+            <SolidColorBrush x:Key='ButtonHoverForeground'>White</SolidColorBrush>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+    <SolidColorBrush x:Key='PrimaryColor'>#0f6cbd</SolidColorBrush>
+    <SolidColorBrush x:Key='LightPrimaryColor'>#479ef5</SolidColorBrush>
+</ResourceDictionary>

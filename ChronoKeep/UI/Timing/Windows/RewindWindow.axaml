@@ -1,0 +1,135 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApp.RewindWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="Rewind"
+        Width="400"
+        CanResize="False"
+        Closing="Window_Closing">
+    <StackPanel VerticalAlignment="Top" Margin="10,10,10,10" Grid.Row="1">
+        <ProgressBar Name="busyIndicator" IsIndeterminate="True"/>
+        <TextBlock Text="Rewind"
+                    FontSize="18"
+                    TextAlignment="Center"
+                    VerticalAlignment="Center"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0"
+                        Grid.Row="0"
+                        Text="From"
+                        FontSize="14"
+                        Margin="10,5,5,5"
+                        VerticalAlignment="Center"
+                        TextAlignment="Center"/>
+            <TextBlock Grid.Column="1"
+                        Grid.Row="0"
+                        Text="To"
+                        FontSize="14"
+                        Margin="5,5,10,5"
+                        VerticalAlignment="Center"
+                        TextAlignment="Center"/>
+            <DatePicker Grid.Column="0"
+                        Grid.Row="1"
+                        Name="FromDate"
+                        FontSize="14"
+                        Margin="10,5,5,5"/>
+            <DatePicker Grid.Column="1"
+                        Grid.Row="1"
+                        Name="ToDate"
+                        FontSize="14"
+                        Margin="5,5,10,5"/>
+            <MaskedTextBox Grid.Column="0"
+                            Grid.Row="2"
+                            Name="FromTime"
+                            FontSize="14"
+                            Mask="00:00:00"
+                            Margin="10,5,5,5"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"/>
+            <MaskedTextBox Grid.Column="1"
+                            Grid.Row="2"
+                            Name="ToTime"
+                            FontSize="14"
+                            Mask="00:00:00"
+                            Margin="5,5,10,5"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"/>
+            <RadioButton Grid.Column="0"
+                            Grid.Row="3"
+                            x:Name="Reader1"
+                            Content="Reader 1"
+                            GroupName="Readers"
+                            IsChecked="True"
+                            Margin="10,5,5,5"
+                            IsVisible="False"
+                            HorizontalAlignment="Center"
+                            VerticalContentAlignment="Center"/>
+            <RadioButton Grid.Column="1"
+                            Grid.Row="3"
+                            x:Name="Reader2"
+                            Content="Reader 2"
+                            GroupName="Readers"
+                            Margin="5,5,10,5"
+                            IsVisible="False"
+                            HorizontalAlignment="Center"
+                            VerticalContentAlignment="Center"/>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Name="SetYesterday"
+                    Content="Yesterday"
+                    Click="SetYesterday_Click"
+                    Height="35"
+                    Margin="10,10,3,10"
+                    HorizontalAlignment="Stretch"/>
+            <Button Grid.Column="1"
+                    Name="SetToday"
+                    Content="Today"
+                    Click="SetToday_Click"
+                    Height="35"
+                    Margin="7,10,7,10"
+                    HorizontalAlignment="Stretch"/>
+            <Button Grid.Column="2"
+                    Name="SetTomorrow"
+                    Content="Tomorrow"
+                    Click="SetTomorrow_Click"
+                    Height="35"
+                    Margin="3,10,10,10"
+                    HorizontalAlignment="Stretch"/>
+        </Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Name="Rewind"
+                    Content="Rewind"
+                    Click="Rewind_Click"
+                    Width="100"
+                    Height="35"
+                    Margin="5,5,5,5"/>
+            <Button Name="Done"
+                    Content="Done"
+                    Click="Done_Click"
+                    Width="100"
+                    Height="35"
+                    Margin="5,5,5,5"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

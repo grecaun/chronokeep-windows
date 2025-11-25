@@ -1,0 +1,68 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.LocationPart">
+  <StackPanel MaxWidth="450">
+	  <DockPanel>
+		  <TextBlock Text="Name"
+                     Width="140"
+                     FontSize="16"
+                     Margin="10,0,0,0"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center"/>
+          <TextBox Name="LocationName"
+                   GotFocus="SelectAll"
+                   FontSize="16"
+                   Margin="0,10,0,5"
+                   VerticalContentAlignment="Center"/>
+      </DockPanel>
+      <Grid>
+		  <Grid.ColumnDefinitions>
+			  <ColumnDefinition Width="*"/>
+			  <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <DockPanel Grid.Column="0" Name="OccPanel" IsVisible="True">
+			  <TextBlock Text="Max Occurrences"
+                         Width="140"
+                         FontSize="16"
+                         Margin="10,0,0,0"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center"/>
+              <TextBox Name="MaxOccurrences"
+                       GotFocus="SelectAll"
+                       TextInput="NumberValidation"
+                       FontSize="16"
+                       Margin="0,5"
+                       VerticalContentAlignment="Center"/>
+          </DockPanel>
+          <DockPanel Grid.Column="1" Name="IgnorePanel">
+			  <TextBlock Name="IgnoreWithinLabel"
+                         Text="Start Window"
+                         Width="140"
+                         FontSize="16"
+                         Margin="10,0,0,0"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center"/>
+              <MaskedTextBox Name="IgnoreWithin"
+                             GotFocus="SelectAll"
+                             Mask="00:00:00"
+                             Height="35"
+                             Margin="0,5"
+                             FontSize="16"
+                             TextAlignment="Center"
+                             HorizontalAlignment="Stretch"
+                             VerticalContentAlignment="Center"/>
+          </DockPanel>
+      </Grid>
+      <Button Content="Remove"
+              Click="Remove_Click"
+              Width="100"
+              Height="35"
+              Margin="10,5"
+              FontSize="16"
+              VerticalAlignment="Center"
+              HorizontalAlignment="Center"/>
+  </StackPanel>
+</UserControl>

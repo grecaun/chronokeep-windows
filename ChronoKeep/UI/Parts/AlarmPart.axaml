@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.AlarmPart"
+             IsTabStop="False">
+    <Grid HorizontalAlignment="Center"
+          VerticalAlignment="Center">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="100"/>
+			<ColumnDefinition Width="120"/>
+			<ColumnDefinition Width="175"/>
+			<ColumnDefinition Width="55"/>
+			<ColumnDefinition Width="45"/>
+        </Grid.ColumnDefinitions>
+        <TextBox Grid.Column="0"
+                 Name="BibBox"
+                 Margin="2"
+                 Height="35"
+                 FontSize="16"
+                 VerticalAlignment="Center"
+                 VerticalContentAlignment="Center"/>
+        <TextBox Grid.Column="1"
+                 Name="ChipBox"
+                 Margin="2"
+                 Height="35"
+                 FontSize="16"
+                 VerticalAlignment="Center"
+                 VerticalContentAlignment="Center"/>
+        <ComboBox Grid.Column="2"
+                  Name="AlarmSoundBox"
+                  Margin="2"
+                  Height="35"
+                  FontSize="16"
+                  SelectedIndex="0"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Stretch"
+                  VerticalContentAlignment="Center">
+            <ComboBoxItem Content="Default"/>
+            <ComboBoxItem Content="Sound 1"/>
+            <ComboBoxItem Content="Sound 2"/>
+            <ComboBoxItem Content="Sound 3"/>
+            <ComboBoxItem Content="Sound 4"/>
+            <ComboBoxItem Content="Sound 5"/>
+            <ComboBoxItem Content="Emily 1"/>
+            <ComboBoxItem Content="Emily 2"/>
+            <ComboBoxItem Content="Emily 3"/>
+            <ComboBoxItem Content="Michael 1"/>
+            <ComboBoxItem Content="Michael 2"/>
+            <ComboBoxItem Content="Michael 3"/>
+        </ComboBox>
+        <ToggleSwitch Grid.Column="3"
+                      Name="EnabledBox"
+                      Margin="2,-7,-9,-7"
+                      OnContent=""
+                      OffContent=""
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      VerticalContentAlignment="Center"/>
+        <Button Grid.Column="4"
+                Name="RemoveButton"
+                Click="Remove_Click"
+                Width="35"
+                Margin="2"
+                VerticalAlignment="Center">
+            <PathIcon Data="{StaticResource delete_regular}"/>
+        </Button>
+    </Grid>
+</UserControl>

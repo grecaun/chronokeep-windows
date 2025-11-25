@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.EditAPIPage1">
+    <UserControl.Styles>
+		<Style Selector="Button">
+			<Setter Property="Height" Value="35"/>
+			<Setter Property="Width" Value="120"/>
+			<Setter Property="Margin" Value="10,0,10,10"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel Grid.ColumnSpan="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+        <Button Content="Unlink"
+                Click="Unlink_Click"/>
+        <Button Content="Edit Event"
+                Click="Edit_Event_Click"/>
+        <Button Content="Edit Year"
+                Click="Edit_Year_Click"/>
+        <Button Content="Cancel"
+                Click="Cancel_Click"/>
+    </StackPanel>
+</UserControl>
