@@ -1,21 +1,62 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.Objects;
+using Chronokeep.Objects.Changelog;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 
-namespace AvaloniaApp;
+namespace Chronokeep.UI;
 
 public partial class ChangeLogWindow : Window
 {
-    public ChangeLogWindow()
+    private readonly IWindowCallback window;
+    private readonly IDBInterface database;
+
+    private ChangeLogWindow(IWindowCallback window, IDBInterface database)
     {
         InitializeComponent();
+        this.window = window;
+
+        string changelogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "changelog");
+        string[] changelogFiles = Directory.GetFiles(changelogPath);
+        if (changelogFiles.Length < 1)
+        {
+            Close();
+            return;
+        }
+        List<Entry> changelogEntries = [];
+        foreach (string file in changelogFiles)
+        {
+            string jsonData = File.ReadAllText(file);
+            Entry entry = JsonSerializer.Deserialize<Entry>(jsonData);
+            changelogEntries.Add(entry);
+        }
+        changelogEntries.Sort();
+        changelogEntries[0].IsExpanded = true;
+        logList.ItemsSource = changelogEntries;
+        this.database = database;
+        AppSetting autoChangelog = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG);
+        autoChangelogToggleSwitch.IsChecked = autoChangelog != null && autoChangelog.Value == Constants.Settings.SETTING_TRUE;
     }
 
-    private void Window_Closing(object? sender, WindowClosingEventArgs e)
+    public static ChangeLogWindow NewWindow(IWindowCallback window, IDBInterface database)
     {
+        return new(window, database);
     }
 
-    private void CancelButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Window_Closing(object sender, WindowClosingEventArgs e)
     {
+        database.SetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG, autoChangelogToggleSwitch.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
+        window.WindowFinalize(this);
+    }
+
+    private void CancelButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        Log.D("UI.Timing.Notifications.ChangelogWindow", "Done button clicked.");
+        Close();
     }
 }

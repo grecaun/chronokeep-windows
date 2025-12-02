@@ -1,25 +1,85 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Chronokeep.Objects;
 
-namespace AvaloniaApp;
+namespace Chronokeep.UI.RfidReader;
 
 public partial class ChipPersonWindow : Window
 {
-    public ChipPersonWindow()
+    private readonly ChipReaderWindow readerWindow;
+    private readonly string eventDate;
+    private readonly object _locker = new();
+
+    public ChipPersonWindow(ChipReaderWindow reader, string eventDate)
     {
+        this.readerWindow = reader;
+        this.eventDate = eventDate;
         InitializeComponent();
     }
 
-    private void Window_KeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
+    public async void UpdateInfo(Participant person, string chip)
     {
+        await Task.Run(() =>
+        {
+            lock (_locker)
+            {
+                Monitor.Pulse(_locker);
+            }
+            Thread.Sleep(100);
+        });
+        if (person != null)
+        {
+            Bib.Text = "Bib: " + person.EventSpecific.Bib;
+            Chip.Text = "Chip: " + chip;
+            PersonName.Text = string.Format("{0} {1}", person.FirstName, person.LastName);
+            AgeGender.Text = string.Format("{0} {1}", person.Age(eventDate), person.Gender);
+            Distance.Text = "" + person.EventSpecific.DistanceName;
+            Unknown.Text = "";
+            Unknown.Visibility = Visibility.Collapsed;
+            InfoHolder.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            Bib.Text = "";
+            Chip.Text = "";
+            PersonName.Text = "";
+            AgeGender.Text = "";
+            Distance.Text = "";
+            Unknown.Text = "Information not found.";
+            Unknown.Visibility = Visibility.Visible;
+            InfoHolder.Visibility = Visibility.Collapsed;
+        }
+        await Task.Run(() =>
+        {
+            lock (_locker)
+            {
+                Monitor.Wait(_locker, 5000);
+            }
+        });
+        Bib.Text = "";
+        PersonName.Text = "";
+        AgeGender.Text = "";
+        Distance.Text = "";
+        Unknown.Text = "";
+        Unknown.Visibility = Visibility.Collapsed;
+        InfoHolder.Visibility = Visibility.Collapsed;
     }
 
-    private void Window_Closing(object? sender, WindowClosingEventArgs e)
+
+    private void Window_KeyUp(object sender, Avalonia.Input.KeyEventArgs e)
     {
+        if (e.Key == Key.Escape)
+        {
+            this.Close();
+        }
     }
 
-    private void Exit_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Window_Closing(object sender, WindowClosingEventArgs e)
     {
+        readerWindow.PersonWindowClosing();
+    }
+
+    private void Exit_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        this.Close();
     }
 }

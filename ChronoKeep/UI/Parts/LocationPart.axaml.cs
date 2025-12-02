@@ -1,8 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
-namespace AvaloniaApp;
+namespace Chronokeep.UI.Parts;
 
 public partial class LocationPart : UserControl
 {

@@ -2,9 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="using:AvaloniaApp"
+             xmlns:local="using:Chronokeep.UI.Parts"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="AvaloniaApp.DistancePart"
+             x:Class="Chronokeep.UI.Parts.DistancePart"
              x:DataType="local:DistancePart">
     <UserControl.Styles>
 		<Style Selector="Button.invis">

@@ -19,82 +19,6 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class ClockControl : FluentWindow
     {
-        private static ClockControl theOne = null;
-
-        private readonly IMainWindow window;
-        private readonly IDBInterface database;
-
-        private readonly Dictionary<int, Chronoclock> ClockDict = [];
-
-        public static ClockControl CreateWindow(IMainWindow window, IDBInterface database)
-        {
-            theOne ??= new(window, database);
-            return theOne;
-        }
-
-        private ClockControl(IMainWindow window, IDBInterface database)
-        {
-            InitializeComponent();
-            this.window = window;
-            this.database = database;
-            this.MinWidth = 10;
-            this.MinHeight = 10;
-            List<Chronoclock> clocks = database.GetClocks();
-            foreach (Chronoclock clock in clocks)
-            {
-                ClockDict[clock.Identifier] = clock;
-            }
-            UpdateView();
-        }
-
-        private void RemoveClock(Chronoclock clock)
-        {
-            database.RemoveClocks([clock]);
-            ClockDict.Remove(clock.Identifier);
-            UpdateView();
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            Log.D("UI.Timing.ClockControl", "Window is closed.");
-            theOne = null;
-            foreach (ClockListItem clItem in clockListView.Items)
-            {
-                Chronoclock clock = clItem.GetUpdatedClock();
-                database.UpdateClock(clock);
-            }
-            window.WindowFinalize(this);
-        }
-
-        private void Close_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.Timing.ClockControl", "Close button clicked.");
-            Close();
-        }
-
-        private void UpdateView()
-        {
-            Log.D("UI.Timing.ClockControl", "UpdateView");
-            foreach (ClockListItem clItem in clockListView.Items)
-            {
-                Chronoclock clock = clItem.GetUpdatedClock();
-                ClockDict[clock.Identifier] = clock;
-            }
-            clockListView.Items.Clear();
-            foreach (Chronoclock clock in ClockDict.Values)
-            {
-                clockListView.Items.Add(new ClockListItem(clock, this, database.GetCurrentEvent()));
-            }
-        }
-
-        private void UpdateTime(string time)
-        {
-            TimeLabel.Text = string.Format("Clock time is {0}", time);
-            TimeLabel.Visibility = Visibility.Visible;
-            CurrentTimeLabel.Text = string.Format("System time is {0}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            CurrentTimeLabel.Visibility = Visibility.Visible;
-        }
-
         internal class ClockListItem : Wpf.Ui.Controls.ListViewItem
         {
             private Chronoclock clock;
@@ -113,91 +37,7 @@ namespace Chronokeep.UI.Timing
             {
                 this.clock = clock;
                 string dateStr = DateTime.Now.ToString("MM/dd/yyyy");
-                StackPanel mainPanel = new()
-                {
-                    Orientation = Orientation.Vertical,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                this.Content = mainPanel;
-                StackPanel panelOne = new()
-                {
-                    Orientation = Orientation.Horizontal,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                mainPanel.Children.Add(panelOne);
-                enabledSwitch = new()
-                {
-                    Height = 35,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    IsChecked = clock.Enabled,
-                    Margin = new Thickness(5),
-                };
-                panelOne.Children.Add(enabledSwitch);
-                nameBlock = new()
-                {
-                    Text = clock.Name,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Width = 120,
-                    Margin = new Thickness(5),
-                };
-                panelOne.Children.Add(nameBlock);
-                urlBlock = new()
-                {
-                    Text = clock.URL,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Width = 200,
-                    Margin = new Thickness(5),
-                };
-                panelOne.Children.Add(urlBlock);
-                lockedLabel = new()
-                {
-                    Text = "🔒",
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                panelOne.Children.Add(lockedLabel);
-                lockedSwitch = new()
-                {
-                    Height = 35,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    IsChecked = false,
-                    Margin = new Thickness(5),
-                    IsEnabled = false
-                };
-                lockedSwitch.Checked += new RoutedEventHandler(this.LockedChanged);
-                lockedSwitch.Unchecked += new RoutedEventHandler(this.LockedChanged);
-                panelOne.Children.Add(lockedSwitch);
-                panelOne.Children.Add(new Wpf.Ui.Controls.TextBlock()
-                {
-                    Text = "💡",
-                    VerticalAlignment = VerticalAlignment.Center,
-                });
-                brightnessBox = new()
-                {
-                    Height = 35,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(5),
-                    IsEnabled = false
-                };
-                for (int i = 1; i <= 15; i++)
-                {
-                    brightnessBox.Items.Add(i.ToString());
-                }
-                brightnessBox.SelectionChanged += new SelectionChangedEventHandler(this.BrightnessChanged);
-                panelOne.Children.Add(brightnessBox);
-                Button delete = new()
-                {
-                    Content = "🗑",
-                    Height = 35,
-                    Margin = new Thickness(5),
-                };
-                delete.Click += new RoutedEventHandler((sender, e) =>
-                {
-                    Log.D("UI.Timing.ClockControl.ClockListItem", "Delete clicked.");
-                    parent.RemoveClock(clock);
-                });
-                panelOne.Children.Add(delete);
+
                 StackPanel panelTwo = new()
                 {
                     Orientation = Orientation.Horizontal,
@@ -502,22 +342,6 @@ namespace Chronokeep.UI.Timing
                 };
                 return output;
             }
-        }
-
-        private void AddButton_Click(object sender, RoutedEventArgs e)
-        {
-            Chronoclock newClock = new()
-            {
-                Name = "New Clock",
-                URL = "chronoclock.local",
-                Enabled = false,
-            };
-            newClock.Identifier = database.AddClock(newClock);
-            if (newClock.Identifier >= 0)
-            {
-                ClockDict[newClock.Identifier] = newClock;
-            }
-            UpdateView();
         }
     }
 }

@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="450"
+             x:Class="Chronokeep.UI.Parts.WavePart">
+    <UserControl.Styles>
+		<Style Selector="TextBlock">
+			<Setter Property="FontSize" Value="14"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Styles>
+    <DockPanel VerticalAlignment="Center">
+        <TextBlock Name="WaveType" Width="60" Text="{Binding Wave}"/>
+        <Button Name="WavePlus"
+                Classes="invis"
+                Click="SwapWaveType_Click"
+                Width="35"
+                Margin="0,0,3,0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center">
+            <Grid>
+                <PathIcon Data="{StaticResource add_regular}" IsVisible="{Binding PlusWave}"/>
+                <PathIcon Data="{StaticResource subtract_regular}" IsVisible="{Binding MinusWave}"/>
+            </Grid>
+        </Button>
+        <MaskedTextBox Name="StartOffset"
+                       GotFocus="SelectAll"
+                       Mask="00:00:00.000"
+                       FontSize="14"
+                       VerticalContentAlignment="Center"
+                       HorizontalContentAlignment="Center"/>
+    </DockPanel>
+</UserControl>

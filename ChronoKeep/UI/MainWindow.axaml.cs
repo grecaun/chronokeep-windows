@@ -14,6 +14,7 @@ using Chronokeep.Timing.Announcer;
 using Chronokeep.Timing.API;
 using Chronokeep.Timing.Remote;
 using Chronokeep.UI.MainPages;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -177,7 +178,7 @@ namespace Chronokeep.UI
             }
         }
 
-        private void Window_Closing(object? sender, WindowClosingEventArgs e)
+        private void Window_Closing(object sender, WindowClosingEventArgs e)
         {
             if (database == null)
             {
@@ -247,7 +248,7 @@ namespace Chronokeep.UI
             TimingUpdater.Stop();
         }
 
-        private void Window_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void Window_Loaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             TimingController = new TimingController(this, database);
             TimingWorker = TimingWorker.NewWorker(this, database);
@@ -258,11 +259,11 @@ namespace Chronokeep.UI
             AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
             if (OperatingSystem.IsWindowsVersionAtLeast(7))
             {
-                Wpf.Ui.Appearance.ApplicationTheme theme = Wpf.Ui.Appearance.ApplicationTheme.Light;
+                string theme = "light";
                 bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
                 if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
                 {
-                    theme = Wpf.Ui.Appearance.ApplicationTheme.Dark;
+                    theme = "dark";
                 }
                 UpdateTheme(theme, system);
             }
@@ -291,7 +292,7 @@ namespace Chronokeep.UI
             {
                 Log.D("UI.MainWindow", "AppSetting not set.");
                 // Program version was not set, thus this is an upgraded program.
-                ChangelogWindow clw = ChangelogWindow.NewWindow(this, database);
+                ChangeLogWindow clw = ChangeLogWindow.NewWindow(this, database);
                 clw.Show();
             }
             else
@@ -316,7 +317,7 @@ namespace Chronokeep.UI
                     {
                         if (showChangelog != null && showChangelog.Value == Constants.Settings.SETTING_TRUE)
                         {
-                            ChangelogWindow clw = ChangelogWindow.NewWindow(this, database);
+                            ChangeLogWindow clw = ChangeLogWindow.NewWindow(this, database);
                             clw.Show();
                         }
                     }
@@ -336,7 +337,7 @@ namespace Chronokeep.UI
             ParentSplitView.Content = CurrentPage;
         }
 
-        private void DashboardButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void DashboardButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Dashboard button clicked.");
             if (CurrentPage is DashboardPage)
@@ -349,7 +350,7 @@ namespace Chronokeep.UI
             SwitchPage(new DashboardPage(this, database));
         }
 
-        private void TimingButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void TimingButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Timing button clicked.");
             if (page is TimingPage)
@@ -363,11 +364,11 @@ namespace Chronokeep.UI
             SwitchPage(new TimingPage(this, database));
         }
 
-        private void Announcer_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void Announcer_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
         }
 
-        private void ParticipantsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void ParticipantsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Participants button clicked.");
             if (page is ParticipantsPage)
@@ -380,7 +381,7 @@ namespace Chronokeep.UI
             SwitchPage(new ParticipantsPage(this, database));
         }
 
-        private void ChipsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void ChipsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Chips button clicked.");
             if (page is ChipAssigmentPage)
@@ -393,7 +394,7 @@ namespace Chronokeep.UI
             SwitchPage(new ChipAssigmentPage(this, database));
         }
 
-        private void LocationsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void LocationsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Locations button clicked.");
             if (page is LocationsPage)
@@ -405,7 +406,7 @@ namespace Chronokeep.UI
             LocationsButton.IsChecked = true;
             SwitchPage(new LocationsPage(this, database));
         }
-        private void DistancesButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void DistancesButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Distances button clicked.");
             if (page is DistancesPage)
@@ -418,7 +419,7 @@ namespace Chronokeep.UI
             SwitchPage(new DistancesPage(this, database));
         }
 
-        private void SegmentsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void SegmentsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Segments button clicked.");
             if (page is SegmentsPage)
@@ -431,7 +432,7 @@ namespace Chronokeep.UI
             SwitchPage(new SegmentsPage(this, database));
         }
 
-        private void AgeGroupsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void AgeGroupsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Age Groups button clicked.");
             if (page is AgeGroupsPage)
@@ -444,7 +445,7 @@ namespace Chronokeep.UI
             SwitchPage(new AgeGroupsPage(this, database));
         }
 
-        private void SettingsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void SettingsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Settings button clicked.");
             if (page is SettingsPage)
@@ -457,7 +458,7 @@ namespace Chronokeep.UI
             SwitchPage(new SettingsPage(this, database));
         }
 
-        private void AboutButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void AboutButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "About button clicked.");
             if (page is AboutPage)
@@ -471,7 +472,7 @@ namespace Chronokeep.UI
         }
 
 
-        private void NavigationButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void NavigationButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             ParentSplitView.IsPaneOpen = !ParentSplitView.IsPaneOpen;
         }

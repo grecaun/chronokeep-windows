@@ -193,6 +193,27 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ResultsPrintableAgeGroup.tt</DependentUpon>
     </Compile>
+    <Compile Update="UI\Parts\MultipleEntryPart.axaml.cs">
+      <DependentUpon>MultipleEntryPart.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Parts\DistanceAlternatePart.axaml.cs">
+      <DependentUpon>DistanceAlternatePart.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Parts\BibChipHeaderPart.axaml.cs">
+      <DependentUpon>BibChipHeaderPart.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Parts\LogPart.axaml.cs">
+      <DependentUpon>LogPart.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Parts\HeaderPart.axaml.cs">
+      <DependentUpon>HeaderPart.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Parts\ClockPart.axaml.cs">
+      <DependentUpon>ClockPart.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Parts\WavePart.axaml.cs">
+      <DependentUpon>WavePart.axaml</DependentUpon>
+    </Compile>
     <Compile Update="UI\Timing\ClockControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
