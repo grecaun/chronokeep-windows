@@ -7,12 +7,14 @@ namespace Chronokeep.Database.SQLite
 {
     class DistanceStats
     {
-        internal static List<DistanceStat> GetDistanceStats(int eventId, SQLiteConnection connection)
+        internal static List<DistanceStat> GetDistanceStats(int eventId, bool condense, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText =
-                "SELECT d.distance_id AS id, d.distance_name AS name, e.eventspecific_status AS status, COUNT(e.eventspecific_status) AS count " +
-                "FROM distances d JOIN eventspecific e ON d.distance_id=e.distance_id " +
+                "SELECT d.distance_id AS id, d.distance_name AS name, e.eventspecific_status AS status, " +
+                "d.distance_linked_id AS linked_id, l.distance_name AS linked_name, " +
+                "COUNT(e.eventspecific_status) AS count FROM distances d JOIN distances l ON " +
+                "d.distance_linked_id=l.distance_id JOIN eventspecific e ON d.distance_id=e.distance_id " +
                 "WHERE e.event_id=@event " +
                 "GROUP BY d.distance_name, e.eventspecific_status;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
@@ -30,9 +32,15 @@ namespace Chronokeep.Database.SQLite
             while (reader.Read())
             {
                 int distanceId = Convert.ToInt32(reader["id"].ToString());
+                string distanceName = reader["name"].ToString();
+                if (condense && int.TryParse(reader["linked_id"].ToString(), out int linked))
+                {
+                    distanceId = linked;
+                    distanceName = reader["linked_name"].ToString();
+                }
                 statsDictionary.TryAdd(distanceId, new()
                 {
-                    DistanceName = reader["name"].ToString(),
+                    DistanceName = distanceName,
                     DistanceID = distanceId
                 });
                 if (int.TryParse(reader["status"].ToString(), out int status))

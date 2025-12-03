@@ -12,7 +12,7 @@ namespace Chronokeep.MemStore
          * DistanceStat Functions
          */
 
-        public List<DistanceStat> GetDistanceStats(int eventId)
+        public List<DistanceStat> GetDistanceStats(int eventId, bool condense = false)
         {
             Log.D("MemStore", "GetTimingSystems");
             List<DistanceStat> output = [];
@@ -36,19 +36,25 @@ namespace Chronokeep.MemStore
                             };
                             foreach (Participant p in participants.Values)
                             {
-                                string distName = distances.TryGetValue(p.EventSpecific.DistanceIdentifier, out Distance dist) ? dist.Name : "";
-                                if (!distStatDict.TryGetValue(p.EventSpecific.DistanceIdentifier, out DistanceStat distStats))
+                                int distIdent = p.EventSpecific.DistanceIdentifier;
+                                string distName = distances.TryGetValue(distIdent, out Distance dist) ? dist.Name : "";
+                                if (condense && dist != null && dist.LinkedDistance != Constants.Timing.DISTANCE_DUMMYIDENTIFIER && distances.TryGetValue(dist.LinkedDistance, out Distance linkDist))
+                                {
+                                    distName = linkDist.Name;
+                                    distIdent = linkDist.Identifier;
+                                }
+                                if (!distStatDict.TryGetValue(distIdent, out DistanceStat distStats))
                                 {
                                     distStats = new()
                                     {
                                         DistanceName = distName,
-                                        DistanceID = p.EventSpecific.DistanceIdentifier,
+                                        DistanceID = distIdent,
                                         Active = 0,
                                         DNF = 0,
                                         DNS = 0,
                                         Finished = 0
                                     };
-                                    distStatDict[p.EventSpecific.DistanceIdentifier] = distStats;
+                                    distStatDict[distIdent] = distStats;
                                 }
                                 if (Constants.Timing.EVENTSPECIFIC_DNF == p.Status)
                                 {
