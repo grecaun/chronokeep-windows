@@ -202,9 +202,21 @@ namespace Chronokeep.Timing
                 }
                 dictionary.distanceNameDictionary[d.Name] = d;
                 Log.D("Timing.TimingWorker", "Distance " + d.Name + " offsets are " + d.StartOffsetSeconds + " " + d.StartOffsetMilliseconds);
-                dictionary.distanceStartDict[d.Identifier] = (dictionary.distanceStartDict[0].Seconds + d.StartOffsetSeconds, dictionary.distanceStartDict[0].Milliseconds + d.StartOffsetMilliseconds);
-                dictionary.distanceEndDict[d.Identifier] = (dictionary.distanceStartDict[d.Identifier].Seconds + d.EndSeconds, dictionary.distanceStartDict[d.Identifier].Milliseconds);
-                dictionary.distanceEndDict[0] = (dictionary.distanceEndDict[d.Identifier].Seconds, dictionary.distanceEndDict[d.Identifier].Milliseconds);
+                long startSecs = dictionary.distanceStartDict[0].Seconds + d.StartOffsetSeconds;
+                int startMillisecs = dictionary.distanceStartDict[0].Milliseconds + d.StartOffsetMilliseconds;
+                if (startMillisecs < 0)
+                {
+                    startSecs -= 1;
+                    startMillisecs += 1000;
+                }
+                else if (startMillisecs >= 1000)
+                {
+                    startSecs += 1;
+                    startMillisecs -= 1000;
+                }
+                dictionary.distanceStartDict[d.Identifier] = (startSecs, startMillisecs);
+                dictionary.distanceEndDict[d.Identifier] = (startSecs + d.EndSeconds, startMillisecs);
+                dictionary.distanceEndDict[0] = (startSecs + d.EndSeconds, startMillisecs);
             }
             // Set up bibToChipDictionary so we can link bibs to chips
             List<BibChipAssociation> bibChips = database.GetBibChips(theEvent.Identifier);

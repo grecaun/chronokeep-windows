@@ -231,10 +231,15 @@ namespace Chronokeep.Timing.Routines
                             // Create a result for the start time.
                             long secondsDiff = read.TimeSeconds - startSeconds;
                             int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                            if (millisecDiff < 0)
+                            while (millisecDiff < 0)
                             {
                                 secondsDiff--;
                                 millisecDiff += 1000;
+                            }
+                            while (millisecDiff >= 1000)
+                            {
+                                secondsDiff++;
+                                millisecDiff -= 1000;
                             }
                             startResult = new(theEvent.Identifier,
                                 read.ReadId,
@@ -323,18 +328,28 @@ namespace Chronokeep.Timing.Routines
                                 // Create a result for the start value
                                 long secondsDiff = read.TimeSeconds - startSeconds;
                                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                                if (millisecDiff < 0)
+                                while (millisecDiff < 0)
                                 {
                                     secondsDiff--;
                                     millisecDiff += 1000;
                                 }
+                                while (millisecDiff >= 1000)
+                                {
+                                    secondsDiff++;
+                                    millisecDiff -= 1000;
+                                }
                                 bool startExists = startTimes.TryGetValue(identifier, out TimeResult startRes);
                                 long chipSecDiff = read.TimeSeconds - (startExists ? Constants.Timing.RFIDDateToEpoch(startRes.SystemTime) : startSeconds);
                                 int chipMillisecDiff = read.TimeMilliseconds - (startExists ? startRes.SystemTime.Millisecond : startMilliseconds);
-                                if (chipMillisecDiff < 0)
+                                while (chipMillisecDiff < 0)
                                 {
                                     chipSecDiff--;
                                     chipMillisecDiff += 1000;
+                                }
+                                while (chipMillisecDiff >= 1000)
+                                {
+                                    chipSecDiff++;
+                                    chipMillisecDiff -= 1000;
                                 }
                                 newResults.Add(new(theEvent.Identifier,
                                     read.ReadId,
@@ -407,10 +422,15 @@ namespace Chronokeep.Timing.Routines
                             // Create a result for the start time.
                             long secondsDiff = read.TimeSeconds - startSeconds;
                             int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                            if (millisecDiff < 0)
+                            while (millisecDiff < 0)
                             {
                                 secondsDiff--;
                                 millisecDiff += 1000;
+                            }
+                            while (millisecDiff >= 1000)
+                            {
+                                secondsDiff++;
+                                millisecDiff -= 1000;
                             }
                             startResult = new(theEvent.Identifier,
                                 read.ReadId,
@@ -491,18 +511,28 @@ namespace Chronokeep.Timing.Routines
                                 // Create a result for the start value
                                 long secondsDiff = read.TimeSeconds - startSeconds;
                                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                                if (millisecDiff < 0)
+                                while (millisecDiff < 0)
                                 {
                                     secondsDiff--;
                                     millisecDiff += 1000;
                                 }
+                                while (millisecDiff >= 1000)
+                                {
+                                    secondsDiff++;
+                                    millisecDiff -= 1000;
+                                }
                                 bool startExists = startTimes.TryGetValue(identifier, out TimeResult startRes);
                                 long chipSecDiff = read.TimeSeconds - (startExists ? Constants.Timing.RFIDDateToEpoch(startRes.SystemTime) : startSeconds);
                                 int chipMillisecDiff = read.TimeMilliseconds - (startExists ? startRes.SystemTime.Millisecond : startMilliseconds);
-                                if (chipMillisecDiff < 0)
+                                while (chipMillisecDiff < 0)
                                 {
                                     chipSecDiff--;
                                     chipMillisecDiff += 1000;
+                                }
+                                while (chipMillisecDiff >= 1000)
+                                {
+                                    chipSecDiff++;
+                                    chipMillisecDiff -= 1000;
                                 }
                                 newResults.Add(new(theEvent.Identifier,
                                     read.ReadId,
@@ -654,10 +684,15 @@ namespace Chronokeep.Timing.Routines
                 }
                 sec = currentLap.ChipSeconds - sec;
                 mill = currentLap.ChipMilliseconds - mill;
-                if (mill < 0)
+                while (mill < 0)
                 {
                     sec--;
                     mill += 1000;
+                }
+                while (mill >= 1000)
+                {
+                    sec++;
+                    mill -= 1000;
                 }
                 currentLap.LapTime = Constants.Timing.ToTime((int)sec, mill);
             }

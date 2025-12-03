@@ -217,7 +217,7 @@ namespace Chronokeep.Timing.Routines
                     startMilliseconds = dictionary.distanceStartDict[0].Milliseconds;
                 }
                 else
-                {
+                { // HERE WE WORK
                     startSeconds = timeValue.Seconds;
                     startMilliseconds = timeValue.Milliseconds;
                 }
@@ -259,15 +259,20 @@ namespace Chronokeep.Timing.Routines
                                 if (d != null
                                     && d.Type == Constants.Timing.DISTANCE_TYPE_LATE
                                     && d.LinkedDistance != Constants.Timing.DISTANCE_DUMMYIDENTIFIER
-                                    && dictionary.distanceStartDict.TryGetValue(d.LinkedDistance, out (long, int) tmp))
+                                    && dictionary.distanceStartDict.TryGetValue(d.LinkedDistance, out (long sec, int mill) linkedStart))
                                 {
-                                    secondsDiff = read.TimeSeconds - tmp.Item1;
-                                    millisecDiff = read.TimeMilliseconds - tmp.Item2;
+                                    secondsDiff = read.TimeSeconds - linkedStart.sec;
+                                    millisecDiff = read.TimeMilliseconds - linkedStart.mill;
                                 }
-                                if (millisecDiff < 0)
+                                while (millisecDiff < 0)
                                 {
                                     secondsDiff--;
-                                    millisecDiff = 1000 + millisecDiff;
+                                    millisecDiff += 1000;
+                                }
+                                while (millisecDiff >= 1000)
+                                {
+                                    secondsDiff++;
+                                    millisecDiff -= 1000;
                                 }
                                 startResult = new(theEvent.Identifier,
                                     read.ReadId,
@@ -460,23 +465,33 @@ namespace Chronokeep.Timing.Routines
                                     if (d != null
                                         && d.Type == Constants.Timing.DISTANCE_TYPE_LATE
                                         && d.LinkedDistance != Constants.Timing.DISTANCE_DUMMYIDENTIFIER
-                                        && dictionary.distanceStartDict.TryGetValue(d.LinkedDistance, out (long, int) tmp))
+                                        && dictionary.distanceStartDict.TryGetValue(d.LinkedDistance, out (long sec, int mill) linkedStart))
                                     {
-                                        secondsDiff = read.TimeSeconds - tmp.Item1;
-                                        millisecDiff = read.TimeMilliseconds - tmp.Item2;
+                                        secondsDiff = read.TimeSeconds - linkedStart.sec;
+                                        millisecDiff = read.TimeMilliseconds - linkedStart.mill;
                                     }
-                                    if (millisecDiff < 0)
+                                    while (millisecDiff < 0)
                                     {
                                         secondsDiff--;
                                         millisecDiff += 1000;
                                     }
+                                    while (millisecDiff >= 1000)
+                                    {
+                                        secondsDiff++;
+                                        millisecDiff -= 1000;
+                                    }
                                     bool startResExists = startTimes.TryGetValue(identifier, out TimeResult startRes);
                                     long chipSecDiff = read.TimeSeconds - (startResExists ? Constants.Timing.RFIDDateToEpoch(startRes.SystemTime) : startSeconds);
                                     int chipMillisecDiff = read.TimeMilliseconds - (startResExists ? startRes.SystemTime.Millisecond : startMilliseconds);
-                                    if (chipMillisecDiff < 0)
+                                    while (chipMillisecDiff < 0)
                                     {
                                         chipSecDiff--;
                                         chipMillisecDiff += 1000;
+                                    }
+                                    while (chipMillisecDiff >= 1000)
+                                    {
+                                        chipSecDiff++;
+                                        chipMillisecDiff -= 1000;
                                     }
                                     // Check that we're not adding a finish time for a DNF person, we can use any other times
                                     // for information for that person.
@@ -573,10 +588,15 @@ namespace Chronokeep.Timing.Routines
                                 // Create a result for the start value.
                                 long secondsDiff = read.TimeSeconds - startSeconds;
                                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                                if (millisecDiff < 0)
+                                while (millisecDiff < 0)
                                 {
                                     secondsDiff--;
                                     millisecDiff += 1000;
+                                }
+                                while (millisecDiff >= 1000)
+                                {
+                                    secondsDiff++;
+                                    millisecDiff -= 1000;
                                 }
                                 startResult = new(theEvent.Identifier,
                                     read.ReadId,
@@ -697,18 +717,28 @@ namespace Chronokeep.Timing.Routines
                                     // Create a result for the start value.
                                     long secondsDiff = read.TimeSeconds - startSeconds;
                                     int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                                    if (millisecDiff < 0)
+                                    while (millisecDiff < 0)
                                     {
                                         secondsDiff--;
                                         millisecDiff += 1000;
                                     }
+                                    while (millisecDiff >= 1000)
+                                    {
+                                        secondsDiff++;
+                                        millisecDiff -= 1000;
+                                    }
                                     bool startResExists = startTimes.TryGetValue(identifier, out TimeResult oStartRes);
                                     long chipSecDiff = read.TimeSeconds - (startResExists ? Constants.Timing.RFIDDateToEpoch(oStartRes.SystemTime) : startSeconds);
                                     int chipMillisecDiff = read.TimeMilliseconds - (startResExists ? oStartRes.SystemTime.Millisecond : startMilliseconds);
-                                    if (chipMillisecDiff < 0)
+                                    while (chipMillisecDiff < 0)
                                     {
                                         chipSecDiff--;
                                         chipMillisecDiff += 1000;
+                                    }
+                                    while (chipMillisecDiff >= 1000)
+                                    {
+                                        chipSecDiff++;
+                                        chipMillisecDiff -= 1000;
                                     }
                                     // Check that we're not adding a finish time for a DNF person, we can use any other times
                                     // for information for that person.
