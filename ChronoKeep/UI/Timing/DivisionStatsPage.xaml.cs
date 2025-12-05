@@ -23,6 +23,7 @@ namespace Chronokeep.UI.Timing
         private readonly TimingPage parent;
         private readonly Event theEvent;
         private readonly int distanceId;
+        private readonly bool condensed;
 
         private readonly ObservableCollection<StatsParticipant> activeParticipants = [];
         private readonly ObservableCollection<Participant> dnsParticipants = [];
@@ -30,13 +31,14 @@ namespace Chronokeep.UI.Timing
         private readonly ObservableCollection<Participant> dnfParticipants = [];
         private readonly ObservableCollection<Participant> finishedParticipants = [];
 
-        public DistanceStatsPage(TimingPage parent, IMainWindow window, IDBInterface database, int distanceId, string DistanceName)
+        public DistanceStatsPage(TimingPage parent, IMainWindow window, IDBInterface database, int distanceId, string DistanceName, bool condensed = false)
         {
             InitializeComponent();
             this.parent = parent;
             this.window = window;
             this.database = database;
             this.distanceId = distanceId;
+            this.condensed = condensed;
             theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
@@ -80,6 +82,26 @@ namespace Chronokeep.UI.Timing
             dnfParticipants.Clear();
             finishedParticipants.Clear();
             Dictionary<int, List<Participant>> partDict = database.GetDistanceParticipantsStatus(theEvent.Identifier, distanceId);
+            if (condensed)
+            {
+                foreach (Distance d in database.GetDistances(theEvent.Identifier))
+                {
+                    if (d.LinkedDistance == distanceId)
+                    {
+                        Dictionary<int, List<Participant>> partDictLinked = database.GetDistanceParticipantsStatus(theEvent.Identifier, d.Identifier);
+                        foreach (int status in partDictLinked.Keys)
+                        {
+                            if (!partDict.TryGetValue(status, out List<Participant> pList))
+                            {
+                                pList = [];
+                            }
+                            pList.AddRange(partDictLinked[status]);
+                            pList.Sort(Participant.CompareByName);
+                            partDict[status] = pList;
+                        }
+                    }
+                }
+            }
             // Bib dictionary to add LastSeen string to active participants for display.
             Dictionary<string, TimeResult> lastSeenDictionary = [];
             foreach (TimeResult timeResult in database.GetLastSeenResults(theEvent.Identifier))
@@ -160,7 +182,7 @@ namespace Chronokeep.UI.Timing
             parent.LoadMainDisplay();
         }
 
-        private void activeListView_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private void ActiveListView_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             ScrollViewer scv = mainScroll;
             if (e.Delta < 0)

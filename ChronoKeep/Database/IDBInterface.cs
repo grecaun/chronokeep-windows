@@ -115,7 +115,7 @@ namespace Chronokeep.Database
         List<TimeResult> GetNonUploadedResults(int eventId);
 
         // Timing analytics... sort of
-        List<DistanceStat> GetDistanceStats(int eventId);
+        List<DistanceStat> GetDistanceStats(int eventId, bool condense = false);
         Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int distanceId);
 
         // Reset functions for ChipReads/TimeResults

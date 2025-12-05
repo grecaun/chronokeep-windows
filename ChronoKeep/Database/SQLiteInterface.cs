@@ -2621,7 +2621,7 @@ namespace Chronokeep
             return output;
         }
 
-        public List<DistanceStat> GetDistanceStats(int eventId)
+        public List<DistanceStat> GetDistanceStats(int eventId, bool condense = false)
         {
             List<DistanceStat> output = [];
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 121");
@@ -2634,7 +2634,7 @@ namespace Chronokeep
             {
                 SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
                 connection.Open();
-                output = DistanceStats.GetDistanceStats(eventId, connection);
+                output = DistanceStats.GetDistanceStats(eventId, condense, connection);
                 connection.Close();
             }
             finally

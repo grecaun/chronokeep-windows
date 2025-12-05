@@ -1,0 +1,12 @@
+{
+  "version": "v1.9.9",
+  "changes": [
+    "DistanceStats now defaults to only showing information about main (not linked) distances. The user can choose to show stats for all distances.",
+    "Along with only showing information for the main distances, the participant information page that shows up when the user double clicks on a distance stat has been updated to reflect the above change.",
+    "The conflict check when downloading participants no longer takes note of distance changes."
+  ],
+  "fixes": [
+    "Fixed an issue where saving an event was not working.",
+    "Fixed an issue where milliseconds were somehow managing to become negative."
+  ]
+}
