@@ -1,0 +1,59 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
+        x:Class="AvaloniaApp.ImportFileWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Topmost="True"
+        Title="Import File"
+        Height="600"
+        Width="500"
+        MinWidth="450"
+        Closing="Window_Closing">
+    <Window.Styles>
+		<Style Selector="Button">
+			<Setter Property="Height" Value="35"/>
+			<Setter Property="Width" Value="100"/>
+			<Setter Property="Margin" Value="0,10,10,5"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+    </Window.Styles>
+    <Grid Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" VerticalAlignment="Center">
+            <ComboBox DockPanel.Dock="Left"
+                      x:Name="SheetsBox"
+                      SelectionChanged="SheetsBox_SelectionChanged"
+                      Height="35"
+                      Width="250"
+                      TabIndex="1"
+                      Margin="10,10,5,5"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Stretch"/>
+            <Button DockPanel.Dock="Right"
+                    x:Name="Cancel"
+                    Content="Cancel"
+                    Click="Cancel_Click"
+                    TabIndex="501"/>
+            <Button DockPanel.Dock="Right"
+                    x:Name="Done"
+                    Content="Next"
+                    Click="Done_Click"
+                    TabIndex="500"/>
+        </DockPanel>
+        <UserControl Grid.Row="1"
+                     x:Name="Frame"
+                     IsTabStop="False"
+                     Background="Black"
+                     CornerRadius="8"
+                     Margin="5"/>
+    </Grid>
+</Window>

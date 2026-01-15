@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.TimingRawReadsPage">
+    <UserControl.Styles>
+        <Style Selector="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Margin" Value="4,5"/>
+        </Style>
+        <Style Selector="ToggleSwitch">
+		    <Setter Property="OffContent" Value=""/>
+		    <Setter Property="OnContent" Value=""/>
+		    <Setter Property="FontSize" Value="12"/>
+		    <Setter Property="VerticalAlignment" Value="Center"/>
+		    <Setter Property="Margin" Value="5,-7,-10,-7"/>
+        </Style>
+        <Style Selector="Label">
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+		    <Setter Property="Margin" Value="0,0,0,1"/>
+        </Style>
+        <Style Selector="DataGrid">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="SelectionMode" Value="Extended"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="CanUserSortColumns" Value="False"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <DataGrid Grid.Row="0" x:Name="updateListView">
+            <DataGrid.Columns>
+                <!--
+                <DataGridTextColumn Header="Box" Binding="{Binding Box}" MinWidth="80"/>
+                <DataGridTextColumn Header="Location" Binding="{Binding LocationName}" MinWidth="80"/>
+                <DataGridTextColumn Header="Chip" Binding="{Binding ChipNumber}" MinWidth="120"/>
+                <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="70"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" MinWidth="140"/>
+                <DataGridTextColumn Header="Clock" Binding="{Binding TimeString}" MinWidth="170"/>
+                <DataGridTextColumn Header="Net Time" Binding="{Binding NetTime}" MinWidth="100"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding StatusName}" MinWidth="100"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding TypeName}" MinWidth="100"/>
+                -->
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <ToggleSwitch x:Name="onlyIgnoreBox" IsCheckedChanged="OnlyIgnoreBox_Unchecked"/>
+            <Label Content="Ignored"/>
+            <ToggleSwitch x:Name="onlyManualBox" IsCheckedChanged="OnlyManualBox_Unchecked" />
+            <Label Content="Manual"/>
+            <Button Name="DeleteButton"
+                    Content="Delete"
+                    Click="DeleteButton_Click"/>
+            <Button Name="IgnoreButton"
+                    Content="Set Ignored"
+                    Click="IgnoreButton_Click"/>
+            <Button Name="ChangeDNS"
+                    Content="Set DNS"
+                    Click="ChangeDNS_Click"/>
+            <Button Name="ChangeDNF"
+                    Content="Set DNF"
+                    Click="ChangeDNF_Click"/>
+            <Button Name="Shift"
+                    Content="Edit"
+                    Click="Shift_Click"/>
+            <Button Name="GlobalIgnore"
+                    Content="Disable Chip"
+                    Click="GlobalIgnore_Click"/>
+            <Button Name="DoneButton"
+                    Content="Done"
+                    Click="DoneButton_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

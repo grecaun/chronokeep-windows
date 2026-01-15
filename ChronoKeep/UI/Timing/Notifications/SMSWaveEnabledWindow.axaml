@@ -1,0 +1,68 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="230"
+        x:Class="AvaloniaApp.SMSWaveEnabledWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="SMS Waves"
+        Height="300"
+        Width="230"
+        SizeToContent="Height"
+        Closing="Window_Closing">
+    <Grid Grid.Row="1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="mainPanel">
+                <ListBox Name="WaveList"
+                         Margin="15,0"
+                         BorderThickness="0"
+                         KeyboardNavigation.TabNavigation="Continue">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <!--
+                                <TextBlock Text="{Binding WaveName}" Margin="4,4"/>
+                                <ToggleSwitch x:Name="smsEnabledSwitch"
+                                              DockPanel.Dock="Right"
+                                              IsChecked="{Binding SMSEnabled}"
+                                              Margin="4,4"
+                                              OnContent=""
+                                              OffContent=""
+                                              VerticalAlignment="Center"/>
+                                -->
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </ScrollViewer>
+        <StackPanel Grid.Row="1"
+                    Margin="10,10,10,15"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Button Name="Set"
+                    Content="Set"
+                    Click="Set_Click"
+                    Width="100"
+                    Height="35"
+                    FontSize="14"
+                    Margin="10,0,10,0"
+                    HorizontalAlignment="Center"/>
+            <Button Name="Done"
+                    Content="Done"
+                    Click="Done_Click"
+                    Width="100"
+                    Height="35"
+                    FontSize="14"
+                    Margin="10,0,10,0"
+                    HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,120 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.AwardPage">
+    <UserControl.Styles>
+        <Style Selector="Button">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Margin" Value="2,0"/>
+        </Style>
+        <Style Selector="TextBlock">
+		    <Setter Property="Margin" Value="5,5,5,0"/>
+		    <Setter Property="HorizontalAlignment" Value="Center"/>
+		    <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <Style Selector="ToggleSwitch">
+		    <Setter Property="OffContent" Value=""/>
+		    <Setter Property="OnContent" Value=""/>
+		    <Setter Property="FontSize" Value="12"/>
+		    <Setter Property="VerticalAlignment" Value="Center"/>
+		    <Setter Property="Margin" Value="0,-7,-15,-7"/>
+        </Style>
+        <Style Selector="Label">
+		    <Setter Property="VerticalContentAlignment" Value="Center"/>
+		    <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="TextBox">
+			<Setter Property="Height" Value="35"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="MinWidth" Value="30"/>
+        </Style>
+        <Style Selector="ListBox">
+			<Setter Property="SelectionMode" Value="Multiple"/>
+			<Setter Property="FontSize" Value="12"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="55" />
+        </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="0">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="Distances" FontSize="16"/>
+                <ListBox Name="DistancesBox">
+                    <ListBoxItem Content="All" IsSelected="True"/>
+                </ListBox>
+                <TextBlock Text="Overall" Margin="0,10"/>
+                <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
+                    <ToggleSwitch Name="overallYes" IsChecked="True"/>
+                    <Label Content="Print" Margin="0,0,58,0"/>
+                    <TextBox Text="3"
+                             Name="overallNumberParticipants"
+                             TextInput="IsNumber"
+                             Width="40"/>
+                </DockPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <ToggleSwitch Name="overallExcludeAG" IsChecked="False"/>
+                    <Label Content="Exclude winners from Age Group awards." />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <ToggleSwitch Name="overallExcludeCustom" IsChecked="False"/>
+                    <Label Content="Exclude winners from Custom awards." />
+                </StackPanel>
+                <TextBlock Text="Age Groups" Margin="0,5,0,10"/>
+                <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
+                    <ToggleSwitch Name="agYes" IsChecked="True"/>
+                    <Label Content="Print" Margin="0,0,58,0"/>
+                    <TextBox Name="agNumberParticipants"
+                             TextInput="IsNumber"
+                             Text="3"
+                             Width="40"/>
+                </DockPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+					<ToggleSwitch Name="agExcludeCustom" IsChecked="False"/>
+                    <Label Content="Exclude winners from Custom awards."/>
+                </StackPanel>
+                <TextBlock Text="Custom" Margin="0,5,0,10"/>
+                <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
+                    <ToggleSwitch Name="customYes" IsChecked="True"/>
+                    <Label Content="Print" Margin="0,0,58,0"/>
+                    <TextBox Name="customNumberParticipants"
+                             TextInput="IsNumber"
+                             DockPanel.Dock="Top"
+                             Text="3"
+                             Width="40"/>
+                </DockPanel>
+                    <!--ItemsSource="{Binding GlobalChips}">-->
+                <DataGrid Name="customGroupsListView" SelectionMode="Extended" Margin="0,0,0,5" FontSize="12">
+                    <DataGrid.Columns>
+                        <!--<DataGridTextColumn Header="Start Age" Binding="{Binding StartAge}" MinWidth="100"/>
+                        <DataGridTextColumn Header="End Age" Binding="{Binding EndAge}" MinWidth="100"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding CustomName}" MinWidth="100"/>-->
+                    </DataGrid.Columns>
+                </DataGrid>
+                <DockPanel HorizontalAlignment="Center" Margin="0,0,0,5">
+                    <TextBox Width="100" x:Name="startCustom" TextInput="IsNumber" Margin="0,0,2,0" HorizontalContentAlignment="Center" />
+                    <TextBox Width="100" x:Name="endCustom" TextInput="IsNumber" Margin="2,0" HorizontalContentAlignment="Center" />
+                    <TextBox Width="100" x:Name="customNameBox" Margin="2,0,0,0" HorizontalContentAlignment="Center" />
+                </DockPanel>
+                <DockPanel HorizontalAlignment="Center" Margin="0,5,0,0">
+                    <Button Name="addCustom" Content="Add" Click="AddCustom_Click"/>
+                    <Button Name="deleteCustom" Content="Delete" Click="DeleteCustom_Click"/>
+                </DockPanel>
+            </StackPanel>
+        </ScrollViewer>
+        <DockPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">
+            <Button Name="printButton" Content="Print" Click="PrintButton_Click"/>
+            <Button Name="saveButton" Content="Save" Click="SaveButton_Click"/>
+            <Button Name="doneButton" Content="Done" Click="DoneButton_Click"/>
+        </DockPanel>
+    </Grid>
+</UserControl>

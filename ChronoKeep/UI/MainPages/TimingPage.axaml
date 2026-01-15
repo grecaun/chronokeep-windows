@@ -1,0 +1,584 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
+             x:Class="AvaloniaApp.TimingPage"
+             Padding="16"
+             CornerRadius="8,0,0,0"
+             >
+    <UserControl.Styles>
+        <Style Selector="Button.tim">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Margin" Value="0,5,5,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="Expander">
+			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="310" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
+                <TextBlock
+                        Name="EllapsedTime"
+                        Text="00:00:00"
+                        TextAlignment="Center"
+                        Margin="0,0,10,0"
+                        FontWeight="Bold"
+                        FontSize="40"
+                        />
+                <ComboBox
+                        Name="EllapsedRelativeToBox"
+                        Margin="0,0,0,5"
+                        Width="250"
+                        Height="35"
+                        HorizontalAlignment="Stretch"
+                        SelectionChanged="EllapsedRelativeToBox_SelectionChanged"
+                        IsVisible="False"
+                        IsEnabled="False"
+                    >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock  TextAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <StackPanel
+                        Orientation="Horizontal"
+                        Width="200"
+                        HorizontalAlignment="Center"
+                        >
+                    <TextBlock
+                            Name="StartTimeLabel"
+                            Text="Start Time"
+                            FontSize="14"
+                            Width="65"
+                            VerticalAlignment="Center"
+                            TextAlignment="Right"
+                            Margin="0,0,10,0"
+                            />
+                    <MaskedTextBox
+                            Name="StartTime"
+                            Mask="00:00:00.000"
+                            Width="125"
+                            Height="30"
+                            VerticalAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            FontWeight="Bold"
+                            FontSize="16"
+                            KeyDown="StartTimeKeyDown"
+                            LostFocus="StartTimeLostFocus"
+                            />
+                </StackPanel>
+                <DockPanel
+                    HorizontalAlignment="Center"
+                    >
+                    <Button
+                        Name="StartRace"
+                        Content="Start Race"
+                        Click="StartRaceClick"
+                        Classes="tim"
+                        Width="200"
+                        />
+                    <Button
+                        Name="OpenClock"
+                        Click="OpenClock_Click"
+                        Classes="tim"
+                        Width="45">
+                        <PathIcon Data="{StaticResource clock_regular}"/>
+                    </Button>
+                </DockPanel>
+            </StackPanel>
+            <ScrollViewer
+                Grid.Row="1"
+                VerticalScrollBarVisibility="Auto"
+                x:Name="controlScroll"
+                >
+                <StackPanel>
+                    <Grid Width="250">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Grid.Column="0"
+                            Name="WaveButton"
+                            Content="Set Wave Times"
+                            Click="ChangeWaves"
+                            Classes="tim"
+                            Margin="0,5,1,0"
+                            />
+                        <Button
+                            Grid.Column="1"
+                            Name="AlarmButton"
+                            Content="Alarms"
+                            Click="AlarmButton_Click"
+                            Classes="tim"
+                            Margin="1,5,0,0"
+                            />
+                    </Grid>
+                    <Grid Width="250">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Grid.Column="0"
+                            Content="Manual Entry"
+                            Click="ManualEntry"
+                            IsEnabled="True"
+                            Classes="tim"
+                            Margin="0,5,1,0"
+                            />
+                        <Button
+                            Grid.Column="1"
+                            x:Name="DNFButton"
+                            Content="Add DNF"
+                            Click="AddDNF_Click"
+                            Classes="tim"
+                            Margin="1,5,0,0"
+                            />
+                    </Grid>
+                    <Grid Width="250">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Grid.Column="0"
+                            Content="Load Log"
+                            Click="LoadLog"
+                            Classes="tim"
+                            Margin="0,5,1,0"
+                            IsEnabled="True"
+                            />
+                        <Button
+                            Grid.Column="1"
+                            x:Name="SaveLogButton"
+                            Content="Save Log"
+                            Click="SaveLog"
+                            Classes="tim"
+                            Margin="1,5,0,0"
+                            IsEnabled="True"
+                            />
+                    </Grid>
+                    <TextBox
+                        Name="searchBox"
+                        TextChanged="SearchBox_TextChanged"
+                        Width="250" 
+                        Height="35"
+                        Margin="0,5,0,0"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Watermark="Search"
+                        />
+                    <ComboBox
+                        Name="viewOnlyBox"
+                        Width="250"
+                        Height="35"
+                        Margin="0,5,0,0"
+                        SelectedIndex="0"
+                        HorizontalAlignment="Stretch"
+                        SelectionChanged="ViewOnlyBox_SelectionChanged"
+                        >
+                        <ComboBoxItem Content="Hide Unknown" IsSelected="True"/>
+                        <ComboBoxItem Content="Show All" />
+                        <ComboBoxItem Content="Show Only Starts" />
+                        <ComboBoxItem Content="Show Only Finishes" />
+                        <ComboBoxItem Content="Show Only Unknown" />
+                        <ComboBoxItem Content="Show Only Unknown Starts" />
+                        <ComboBoxItem Content="Show Only Unknown Finishes" />
+                    </ComboBox>
+                    <ComboBox
+                        Name="locationBox"
+                        Width="250"
+                        Height="35"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,5,0,0"
+                        SelectionChanged="LocationBox_SelectionChanged"
+                        IsVisible="False"
+                        />
+                    <ComboBox
+                        Name="readerSelectionBox"
+                        Width="250"
+                        Height="35"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,5,0,0"
+                        SelectionChanged="ReaderSelectionBox_SelectionChanged"
+                        IsVisible="False"
+                        />
+                    <ComboBox
+                        Name="SortBy"
+                        Width="250"
+                        Height="35"
+                        Margin="0,5,0,0"
+                        SelectedIndex="0"
+                        HorizontalAlignment="Stretch"
+                        SelectionChanged="SortBy_SelectionChanged"
+                        >
+                        <ComboBoxItem Content="System Time"/>
+                        <ComboBoxItem Content="Clock Time" />
+                        <ComboBoxItem Content="Bib"/>
+                        <ComboBoxItem Content="Distance"/>
+                        <ComboBoxItem Content="Place"/>
+                        <ComboBoxItem Content="Age Group"/>
+                        <ComboBoxItem Content="Gender"/>
+                    </ComboBox>
+                    <Expander
+                        Name="statsExpander"
+                        Header="Stats"
+                        Margin="5,5,5,0"
+                        IsExpanded="True"
+                        Padding="4"
+                        >
+                            <DataGrid x:Name="statsListView"
+                                      SelectionMode="Single"
+                                      FontSize="10"
+                                      CornerRadius="8"
+                                      CanUserResizeColumns="False"
+                                      DoubleTapped="StatsListView_MouseDoubleClick">
+								<DataGrid.Columns>
+                                    <DataGridTextColumn Width="80">
+                                        <DataGridTextColumn.Header>
+											<Label Content="Distance" Margin="0,0,-20,0"/>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Width="42">
+                                        <DataGridTextColumn.Header>
+											<Label Content="DNS" Margin="-8,0,-25,0"/>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Width="42">
+                                        <DataGridTextColumn.Header>
+											<Label Content="DNF" Margin="-8,0,-25,0"/>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Width="42">
+                                        <DataGridTextColumn.Header>
+											<Label Content="Fin" Margin="-8,0,-25,0"/>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Width="42">
+                                        <DataGridTextColumn.Header>
+											<Label Content="Act" Margin="-8,0,-25,0"/>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Width="42">
+                                        <DataGridTextColumn.Header>
+											<Label Content="Tot" Margin="-8,0,-25,0"/>
+                                        </DataGridTextColumn.Header>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                    </Expander>
+                    <Expander
+                        Name="extraExpander"
+                        Header="More"
+                        Margin="5,5,5,0"
+                        IsExpanded="True"
+                        >
+                        <StackPanel>
+                            <Button
+                                Name="recalculateButton" 
+                                Content="Recalculate"
+                                Click="Recalculate_Click"
+                                Classes="tim"
+                                Margin="0,0,0,0" 
+                                />
+                            <Grid x:Name="apiPanel">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <Button
+                                    Grid.Column="0"
+                                    x:Name="AutoAPIButton"
+                                    Content="Auto Upload"
+                                    Click="AutoAPI_Click" 
+                                    Classes="tim"
+                                    Margin="0,5,5,0"
+                                    />
+                                <Button 
+                                    Grid.Column="1"
+                                    x:Name="ManualAPIButton"
+                                    Content="Manual Upload"
+                                    Click="ManualAPI_Click"
+                                    Classes="tim"
+                                    Margin="5,5,0,0" 
+                                    />
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <Button
+                                        Name="sendEmailsButton" 
+                                        Content="Send Emails"
+                                        Click="SendEmailsButton_Click"
+                                        Classes="tim"
+                                        Margin="0,5,5,0" 
+                                        />
+                                    <Button
+                                        Name="modifySMSButton" 
+                                        Content="Modify SMS"
+                                        Click="ModifySMSButton_Click"
+                                        Classes="tim"
+                                        Margin="0,5,5,0" 
+                                        />
+                                    <Button
+                                        Name="dnsMode"
+                                        Content="Start DNS Mode"
+                                        Click="DnsMode_Click"
+                                        Classes="tim"
+                                        Margin="0,5,5,0"
+                                        />
+                                    <Button
+                                        x:Name="HttpServerButton"
+                                        Content="Start Web"
+                                        Click="HTMLServerButton_Click"
+                                        Classes="tim"
+                                        Margin="0,5,5,0" 
+                                        />
+                                </StackPanel>
+                                <StackPanel 
+                                    Grid.Column="1"
+                                    >
+                                    <Button
+                                        Name="RawButton"
+                                        Content="Raw Data"
+                                        Click="RawReads_Click"
+                                        Classes="tim"
+                                        Margin="5,5,0,0"
+                                        />
+                                    <Button 
+                                        Name="printButton"
+                                        Content="Print"
+                                        Click="Print_Click"
+                                        Classes="tim"
+                                        Margin="5,5,0,0"
+                                        />
+                                    <Button 
+                                        Content="Awards"
+                                        Click="Award_Click"
+                                        Classes="tim"
+                                        Margin="5,5,0,0"
+                                        />
+                                    <Button
+                                        Content="Create HTML"
+                                        Click="CreateHTML_Click"
+                                        Classes="tim"
+                                        Margin="5,5,0,0"
+                                        />
+                                </StackPanel>
+                            </Grid>
+                            <DockPanel 
+                                Name="IPContainer"
+                                IsVisible="False"
+                                HorizontalAlignment="Center"
+                                Margin="0,10,0,0"
+                                >
+                                <TextBlock
+                                    Text="IP:"
+                                    Width="75"
+                                    VerticalAlignment="Center"
+                                    TextAlignment="Right" 
+                                    Margin="5,0"
+                                    FontSize="16"
+                                    />
+                                <TextBlock 
+                                    Name="IPAdd"
+                                    Width="150" 
+                                    Text="IP" 
+                                    VerticalAlignment="Center"
+                                    TextAlignment="Left" 
+                                    Margin="5,0"
+                                    FontSize="16"
+                                    />
+                            </DockPanel>
+                            <DockPanel
+                                Name="PortContainer"
+                                IsVisible="False"
+                                HorizontalAlignment="Center"
+                                >
+                                <TextBlock
+                                    Text="Port:"
+                                    Width="75"
+                                    VerticalAlignment="Center"
+                                    TextAlignment="Right"
+                                    Margin="5,0"
+                                    FontSize="16"
+                                    />
+                                <TextBlock
+                                    Name="Port"
+                                    Width="150"
+                                    Text="Port"
+                                    VerticalAlignment="Center" 
+                                    TextAlignment="Left" 
+                                    Margin="5,0"
+                                    FontSize="16"
+                                    />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+                    <Expander
+                        Name="exportExpander"
+                        Header="Export"
+                        Margin="5,5,5,0"
+                        IsExpanded="False"
+                        >
+                        <StackPanel>
+                            <Button
+                                Content="Results" 
+                                Click="Export_Click"
+                                Classes="tim"
+                                Margin="0,0,0,0"
+                                />
+                            <Grid x:Name="exportPanel">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel
+                                    Grid.Column="0"
+                                    >
+                                    <Button
+                                        Content="Boston" 
+                                        Click="Export_BAA_Click"
+                                        Classes="tim"
+                                        Margin="0,5,5,0"
+                                        />
+                                    <Button
+                                        Content="Abbott" 
+                                        Click="Export_Abbott_Click"
+                                        Classes="tim"
+                                        Margin="0,5,5,0"
+                                        />
+                                </StackPanel>
+                                <StackPanel
+                                    Grid.Column="1"
+                                    >
+                                    <Button
+                                        Content="UltraSignup"
+                                        Click="Export_US_Click"
+                                        Classes="tim"
+                                        Margin="0,5,5,0"
+                                        />
+                                    <Button
+                                        Content="Runsignup"
+                                        Click="Export_Runsignup_Click"
+                                        Classes="tim"
+                                        Margin="0,5,5,0"
+                                        />
+                                </StackPanel>
+                            </Grid>
+                            
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Expander 
+                MaxHeight="235"
+                Margin="5,0,5,5"
+                HorizontalAlignment="Stretch"
+                IsExpanded="False"
+                ExpandDirection="Down"
+                Grid.Row="0"
+                Expanded="Expander_Expanded"
+                Collapsed="Expander_Expanded"
+                x:Name="readerExpander"
+                >
+                <Expander.Header>
+                    <DockPanel
+                        LastChildFill="False"
+                        VerticalAlignment="Center"
+                        >
+                        <TextBlock
+                            Text="Readers"
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            />
+                        <Button
+                            DockPanel.Dock="Right"
+                            x:Name="ReaderMessageButton"
+                            Click="ReaderMessageButton_Click"
+                            IsVisible="False"
+                            Margin="0,0,-10,0"
+                            Background="Orange"
+                            CornerRadius="30"
+                            >
+                            <TextBlock
+                                x:Name="ReaderMessageNumberBox"
+                                Text="0"
+                                />
+                        </Button>
+                        <ToggleSwitch 
+                            DockPanel.Dock="Right"
+                            x:Name="remoteControllerSwitch" 
+                            IsCheckedChanged="RemoteControllerSwitch_Checked"
+                            Margin="-2,-7,-5,-7" 
+                            VerticalAlignment="Center"
+                            IsVisible="False"
+                            OffContent=""
+                            OnContent=""
+                            />
+                        <TextBlock 
+                            x:Name="remoteErrorsBlock"
+                            Margin="0,0,5,0"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            Text=""
+                            />
+                        <Button
+                            DockPanel.Dock="Right" 
+                            x:Name="remoteReadersButton" 
+                            Content="Remote Readers" 
+                            Click="remoteReadersButton_Click"
+                            Classes="tim"
+                            Margin="0,0,10,0"
+                            IsVisible="False"
+                            />
+                    </DockPanel>
+                </Expander.Header>
+                <ListBox 
+                    Name="ReadersBox" 
+                    HorizontalAlignment="Stretch"
+                    KeyboardNavigation.TabNavigation="Continue"
+                    Height="170"
+                    ScrollViewer.VerticalScrollBarVisibility="Visible"
+                    >
+                </ListBox>
+            </Expander>
+            <UserControl
+                Grid.Row="1"
+                Name="TimingFrame"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                />
+        </Grid>
+    </Grid>
+</UserControl>

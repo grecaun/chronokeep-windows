@@ -611,8 +611,8 @@ namespace Chronokeep.UI.MainPages
                                     old.ECName,
                                     old.ECPhone
                                     );
-                                // Check if we've updated the Bib or distance.
-                                if ((old.Bib.Length > 0 && !old.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase)) || !old.Distance.Equals(person.Distance, StringComparison.OrdinalIgnoreCase))
+                                // Check if we've updated the Bib
+                                if (old.Bib.Length > 0 && !old.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase))
                                 {
                                     conflicts.Add(old);
                                     conflicts.Add(newPart);
@@ -665,8 +665,8 @@ namespace Chronokeep.UI.MainPages
                                     oldTwo.ECName,
                                     oldTwo.ECPhone
                                     );
-                                // Check if we've updated the Bib or distance.
-                                if ((old.Bib.Length > 0 && !oldTwo.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase)) || !oldTwo.Distance.Equals(person.Distance, StringComparison.OrdinalIgnoreCase))
+                                // Check if we've updated the Bib.
+                                if (old.Bib.Length > 0 && !oldTwo.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase))
                                 {
                                     conflicts.Add(oldTwo);
                                     conflicts.Add(newPart);

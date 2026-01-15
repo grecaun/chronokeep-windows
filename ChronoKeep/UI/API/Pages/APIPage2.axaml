@@ -1,0 +1,177 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AvaloniaApp.APIPage2">
+    <StackPanel VerticalAlignment="Center">
+        <TextBlock Name="holdingLabel"
+                   Text="Retrieving Events, Please Hold."
+                   FontSize="18"
+                   MaxWidth="300"
+                   TextAlignment="Center"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   TextWrapping="Wrap"
+                   Margin="0,10,0,0"/>
+        <StackPanel Name="eventPanel"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsVisible="False"
+                    Margin="5,0">
+            <TextBlock Text="Select Event to link to:"
+                       FontSize="16"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10"/>
+            <Grid Grid.Row="0" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="46" />
+                    <ColumnDefinition Width="234" />
+                </Grid.ColumnDefinitions>
+                <PathIcon Grid.Column="0"
+                          Data="{StaticResource search_regular}"
+                          Margin="20,0,10,10"
+                          VerticalAlignment="Center"/>
+                <TextBox Grid.Column="1"
+                         Name="searchBox"
+                         Watermark="Search..."
+                         TextChanged="SearchBox_TextChanged"
+                         Height="40"
+                         Margin="5,0,15,15"
+                         VerticalContentAlignment="Center"/>
+            </Grid>
+            <ListBox Grid.Row="2"
+                     x:Name="eventList"
+                     DoubleTapped="EventList_MouseDoubleClick"
+                     SelectionChanged="EventBox_SelectionChanged"
+                     MaxWidth="253"
+                     MaxHeight="114"
+                     Margin="4,0,4,5"
+                     VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <!--
+                            <TextBlock Margin="8,4" Text="{Binding Name}" />
+                            -->
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel x:Name="newPanel"
+                        IsVisible="False">
+                <TextBlock Text="New Event:"
+                           FontSize="20"
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"
+                           Margin="0,10,0,10"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Text="Name"
+                               FontSize="15"
+                               Width="100"
+                               VerticalAlignment="Center"
+                               TextAlignment="Right"
+                               Padding="0,0,5,0"/>
+                    <TextBox x:Name="nameBox"
+                             FontSize="15"
+                             Width="180"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Stretch"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Text="Cert Name"
+                               FontSize="15"
+                               Width="100"
+                               VerticalAlignment="Center"
+                               TextAlignment="Right"
+                               Padding="0,0,5,0"/>
+                    <TextBox x:Name="certNameBox"
+                             FontSize="15"
+                             Width="180"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Stretch"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Text="Slug" 
+                               FontSize="15"
+                               Width="100"
+                               VerticalAlignment="Center"
+                               TextAlignment="Right"
+                               Padding="0,0,5,0"/>
+                    <TextBox Name="slugBox"
+                             FontSize="15"
+                             Width="180"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Stretch"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Text="Contact Email"
+                               FontSize="15"
+                               Width="100"
+                               VerticalAlignment="Center" 
+                               TextAlignment="Right"
+                               Padding="0,0,5,0"/>
+                    <TextBox Name="contactBox"
+                             FontSize="15" 
+                             Width="180"
+                             VerticalAlignment="Center" 
+                             HorizontalAlignment="Stretch"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5" IsVisible="False">
+                    <TextBlock Text="Website URL"
+                               FontSize="15"
+                               Width="100"
+                               VerticalAlignment="Center" 
+                               TextAlignment="Right"
+                               Padding="0,0,5,0"/>
+                    <TextBox Name="websiteBox"
+                             FontSize="15" 
+                             Width="180"
+                             VerticalAlignment="Center" 
+                             HorizontalAlignment="Stretch"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5" IsVisible="False">
+                    <TextBlock Text="Image URL"
+                               FontSize="15"
+                               Width="100"
+                               VerticalAlignment="Center" 
+                               TextAlignment="Right"
+                               Padding="0,0,5,0"/>
+                    <TextBox Name="imageBox"
+                             FontSize="15" 
+                             Width="180"
+                             VerticalAlignment="Center" 
+                             HorizontalAlignment="Stretch"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <ToggleSwitch x:Name="restrictBox"
+                                  VerticalContentAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  OffContent=""
+                                  OnContent=""
+                                  Margin="0,-7,0,-7"/>
+                    <Label Content="Restrict Access" FontSize="15"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Center"
+                    Margin="0,10,0,0">
+            <Button Content="Next"
+                    Height="35"
+                    Width="120"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,10,10"
+                    Click="Next_Click"/>
+            <Button Content="Cancel"
+                    Height="35"
+                    Width="120"
+                    VerticalAlignment="Bottom" 
+                    Margin="10,0,0,10"
+                    Click="Cancel_Click"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

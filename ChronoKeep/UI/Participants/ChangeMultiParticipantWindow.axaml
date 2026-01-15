@@ -1,0 +1,42 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200"
+        x:Class="AvaloniaApp.ChangeMultiParticipantWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="Modify Participants"
+        Width="300"
+        Height="200"
+        CanResize="False"
+        Closing="Window_Closing">
+    <StackPanel VerticalAlignment="Center" Grid.Row="1">
+        <TextBlock Text="Switch Participants to"
+                   FontSize="14"
+                   Width="210"
+                   VerticalAlignment="Center"
+                   TextAlignment="Center"/>
+        <ComboBox Name="DistanceBox"
+                  Width="210"
+                  FontSize="16"
+                  Margin="10,5,10,5"
+                  HorizontalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Name="Change"
+                    Content="Change"
+                    Click="Change_Click"
+                    Width="100"
+                    Height="35"
+                    Margin="5,5,5,5"/>
+            <Button Name="Cancel"
+                    Content="Cancel"
+                    Click="Cancel_Click"
+                    Width="100"
+                    Height="35"
+                    Margin="5,5,5,5"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

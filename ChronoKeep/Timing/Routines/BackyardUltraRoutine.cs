@@ -161,10 +161,15 @@ namespace Chronokeep.Timing.Routines
                 int startMilliseconds = dictionary.distanceStartDict[0].Milliseconds;
                 long secondsDiff = read.TimeSeconds - startSeconds;
                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                if (millisecDiff < 0)
+                while (millisecDiff < 0)
                 {
                     secondsDiff--;
                     millisecDiff += 1000;
+                }
+                while (millisecDiff >= 1000)
+                {
+                    secondsDiff++;
+                    millisecDiff -= 1000;
                 }
                 int hour = (int)(secondsDiff / interval);
                 // Check to set off an alarm.
@@ -325,10 +330,15 @@ namespace Chronokeep.Timing.Routines
                     int startMilliseconds = dictionary.distanceStartDict[0].Milliseconds;
                     long secondsDiff = read.TimeSeconds - startSeconds;
                     int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                    if (millisecDiff < 0)
+                    while (millisecDiff < 0)
                     {
                         secondsDiff--;
                         millisecDiff += 1000;
+                    }
+                    while (millisecDiff >= 1000)
+                    {
+                        secondsDiff++;
+                        millisecDiff -= 1000;
                     }
                     int hour = (int)(secondsDiff / interval);
                     // Check that we haven't processed the read yet
@@ -665,10 +675,15 @@ namespace Chronokeep.Timing.Routines
                     int startMilliseconds = dictionary.distanceStartDict[0].Milliseconds;
                     long secondsDiff = read.TimeSeconds - startSeconds;
                     int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                    if (millisecDiff < 0)
+                    while (millisecDiff < 0)
                     {
                         secondsDiff--;
                         millisecDiff += 1000;
+                    }
+                    while (millisecDiff >= 1000)
+                    {
+                        secondsDiff++;
+                        millisecDiff -= 1000;
                     }
                     int hour = (int)(secondsDiff / interval);
                     // Check that we haven't processed the read yet
@@ -949,9 +964,15 @@ namespace Chronokeep.Timing.Routines
                 int startMilliseconds = dictionary.distanceStartDict[0].Milliseconds;
                 long secondsDiff = read.TimeSeconds - startSeconds;
                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                if (millisecDiff < 0)
+                while (millisecDiff < 0)
                 {
                     secondsDiff--;
+                    millisecDiff += 1000;
+                }
+                while (millisecDiff >= 1000)
+                {
+                    secondsDiff++;
+                    millisecDiff -= 1000;
                 }
                 // Calculate the hour
                 int hour = (int)(secondsDiff / interval);
@@ -999,9 +1020,15 @@ namespace Chronokeep.Timing.Routines
                 int startMilliseconds = dictionary.distanceStartDict[0].Milliseconds;
                 long secondsDiff = read.TimeSeconds - startSeconds;
                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                if (millisecDiff < 0)
+                while (millisecDiff < 0)
                 {
                     secondsDiff--;
+                    millisecDiff += 1000;
+                }
+                while (millisecDiff >= 1000)
+                {
+                    secondsDiff++;
+                    millisecDiff -= 1000;
                 }
                 // Calculate the hour
                 int hour = (int)(secondsDiff / interval);

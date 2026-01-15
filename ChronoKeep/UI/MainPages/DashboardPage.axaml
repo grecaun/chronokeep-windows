@@ -1,0 +1,236 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
+             x:Class="AvaloniaApp.DashboardPage"
+             Padding="16"
+             Background="{DynamicResource PrimaryBackground}"
+             CornerRadius="8,0,0,0"
+             >
+    <UserControl.Styles>
+        <Style Selector="Button.dash">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="15,10,15,10"/>
+            <Setter Property="Height" Value="40"/>
+        </Style>
+        <Style Selector="TextBlock">
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="Margin" Value="10,0,5,0"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Width" Value="100"/>
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+        <Style Selector="TextBox">
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="Margin" Value="5,0,10,0"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="DatePicker">
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="Margin" Value="5,0,10,0"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="StackPanel.toggle">
+			<Setter Property="Margin" Value="10,3"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="StackPanel.toggle Label">
+			<Setter Property="Margin" Value="0,0,0,0"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="ToggleSwitch">
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="OffContent" Value=""/>
+			<Setter Property="OnContent" Value=""/>
+			<Setter Property="Margin" Value="10,-7,10,-7"/>
+            <Setter Property="Width" Value="40"/>
+        </Style>
+    </UserControl.Styles>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="550" MinWidth="550"/>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="65" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.ColumnSpan="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="0"
+                Name="newEvent"
+                Content="New Event"
+                Click="NewEvent_Click"
+                Classes="dash"
+                />
+            <Button
+                Grid.Column="1"
+                Name="importEvent"
+                Content="Import Event"
+                Click="ImportEvent_Click"
+                Classes="dash"
+                />
+            <Button
+                Grid.Column="2"
+                Name="saveEvent"
+                Content="Save Event"
+                Click="SaveEvent_Click"
+                Classes="dash"
+                />
+            <Button
+                Grid.Column="3"
+                Name="changeEvent"
+                Content="Change Event"
+                Click="ChangeEvent_Click"
+                Classes="dash"
+                />
+            <Button
+                Grid.Column="4"
+                Name="deleteEvent"
+                Content="Delete Event"
+                Click="DeleteEvent_Click"
+                Classes="dash"
+                />
+        </Grid>
+        <ScrollViewer Grid.Column="1"
+                      Grid.Row="1"
+                      Name="LeftPanel"
+                      Margin="10,15,10,0"
+                      HorizontalScrollBarVisibility="Auto"
+                      >
+            <StackPanel>
+                <DockPanel LastChildFill="True" Margin="0,0,0,5">
+                    <TextBlock Text="Event Name" />
+                    <TextBox Name="eventNameTextBox" IsEnabled="False" />
+                </DockPanel>
+                <DockPanel LastChildFill="True" Margin="0,0,0,5">
+                    <TextBlock Text="Year Code" />
+                    <TextBox Name="eventYearCodeTextBox" IsEnabled="False" />
+                </DockPanel>
+                <DockPanel LastChildFill="True">
+                    <TextBlock Text="Date" />
+                    <DatePicker Name="eventDatePicker" IsEnabled="False" />
+                </DockPanel>
+                <Separator Margin="5,5,5,5" />
+                <StackPanel Orientation="Horizontal" Classes="toggle">
+                    <ToggleSwitch Name="rankByGunCheckBox" IsEnabled="False"/>
+                    <Label>Rank by Clock Time</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Classes="toggle">
+                    <ToggleSwitch Name="commonAgeCheckBox" IsEnabled="False"/>
+                    <Label>Common Age Groups for Distances</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Classes="toggle">
+                    <ToggleSwitch Name="commonStartCheckBox" IsEnabled="False"/>
+                    <Label>Common Start/Finish Location</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Classes="toggle">
+                    <ToggleSwitch Name="segmentCheckBox" IsEnabled="False"/>
+                    <Label>Distance Specific Segments</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Classes="toggle">
+                    <ToggleSwitch Name="placementsCheckBox" IsEnabled="False"/>
+                    <Label>Display Participant Placements</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Classes="toggle">
+                    <ToggleSwitch Name="divisionsEnabledCheckbox" IsEnabled="False"/>
+                    <Label>Enable Divisions?</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Classes="toggle">
+                    <ToggleSwitch Name="uploadSpecificDistanceResults" IsEnabled="False"/>
+                    <Label>Upload Results for Select Distances?</Label>
+                </StackPanel>
+                <DockPanel Margin="10,5,10,5">
+                    <TextBlock Text="Event Type" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <ComboBox Name="TypeBox"
+                              SelectionChanged="TypeBox_SelectionChanged"
+                              IsEnabled="False"
+                              Margin="10,0,0,0"
+                              VerticalContentAlignment="Center"
+                              HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="Distance Based" Tag="0" IsSelected="True"/>
+                        <ComboBoxItem Content="Time Based" Tag="1" />
+                        <ComboBoxItem Content="Backyard Ultra" Tag="2" />
+                    </ComboBox>
+                </DockPanel>
+                <Separator Margin="5,5,5,5" />
+                <StackPanel
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    >
+                    <Button
+                        Name="editButton"
+                        Content="Edit"
+                        Click="EditButton_Click"
+                        Classes="dash"
+                        Margin="10,5,10,5"
+                        Width="150"
+                        />
+                    <Button
+                        Name="cancelButton"
+                        Content="Cancel"
+                        Click="CancelButton_Click"
+                        Classes="dash"
+                        Margin="10,5,10,5"
+                        IsVisible="False"
+                        Width="150"
+                    />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+        <StackPanel
+            Grid.Column="2"
+            Grid.Row="1"
+            Name="RightPanel"
+            Margin="10,15,15,0"
+            >
+            <Button
+                Name="apiPageButton"
+                Content="Manage API"
+                Click="ApiPageButton_Click"
+                Classes="dash"
+                Margin="0,0,0,5"
+                HorizontalAlignment="Stretch"
+                />
+            <Button
+                Name="apiLinkButton"
+                Content="Link to API Event"
+                Click="ApiLinkButton_Click"
+                Classes="dash"
+                Margin="0,5,0,5"
+                HorizontalAlignment="Stretch"
+                />
+            <Button
+                Name="tagTesterButton"
+                Content="Chip Tester"
+                Click="TagTesterButton_Click"
+                Classes="dash"
+                Margin="0,5,0,5"
+                HorizontalAlignment="Stretch"
+                />
+            <Button
+                Name="registrationButton"
+                Content="Start Registration"
+                Click="RegistrationButton_Click"
+                Classes="dash"
+                Margin="0,5,0,5"
+                HorizontalAlignment="Stretch"
+                />
+        </StackPanel>
+    </Grid>
+</UserControl>

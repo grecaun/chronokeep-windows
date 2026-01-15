@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1090" d:DesignHeight="250"
+        x:Class="AvaloniaApp.UI.API.Windows.RemoteReadersWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight"
+        Title="Remote Readers">
+    
+    <StackPanel Width="1090">
+        <StackPanel x:Name="loadingPanel"
+                    Width="300"
+                    Height="300"
+                    Margin="20,20,10,20"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+            <TextBlock Text="Loading..."
+                       FontSize="36"
+                       Margin="5,5,5,5"
+                       TextAlignment="Center"/>
+            <ProgressBar IsIndeterminate="True" Margin="5,5,5,5"/>
+        </StackPanel>
+        <ListBox
+            x:Name="apiListView"
+            IsVisible="False"
+            Margin="10,0,10,10">
+            <!-- <ListBox.ItemTemplate> -->
+            <!-- </ListBox.ItemTemplate> -->
+        </ListBox>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="CloseButton"
+                    Content="Close"
+                    Click="Close_Click"
+                    Height="35"
+                    Width="150"
+                    HorizontalAlignment="Center"
+                    Margin="20,0,10,20"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

@@ -248,10 +248,29 @@
                     </ComboBox>
                     <Expander
                         Name="statsExpander"
-                        Header="Stats"
                         Margin="5,5,5,0"
                         IsExpanded="True"
                         >
+                        <Expander.Header>
+                            <DockPanel
+                                LastChildFill="False"
+                                VerticalAlignment="Center"
+                                >
+                                <TextBlock
+                                    Text="Stats"
+                                    Margin="0,0,0,0"
+                                    VerticalAlignment="Center"
+                                    />
+                                <ui:ToggleSwitch 
+                                    x:Name="condenseSwitch" 
+                                    Margin="0,0,10,0" 
+                                    VerticalAlignment="Center"
+                                    DockPanel.Dock="Right"
+                                    Checked="CondenseSwitch_Checked"
+                                    Unchecked="CondenseSwitch_Checked"
+                                    />
+                            </DockPanel>
+                        </Expander.Header>
                         <StackPanel>
                             <Grid Margin="3,0,3,0">
                                 <Grid.ColumnDefinitions>

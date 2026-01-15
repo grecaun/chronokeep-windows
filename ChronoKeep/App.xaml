@@ -1,154 +1,38 @@
-﻿<Application x:Class="Chronokeep.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Chronokeep"
-             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             >
+             xmlns:local="using:Chronokeep"
+             x:Class="Chronokeep.App"
+             RequestedThemeVariant="Light">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+        <Style Selector="Button">
+            <Setter Property="Background" Value="{DynamicResource ButtonBackground}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BackgroundBrush}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ButtonHoverBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ButtonHoverForeground}"/>
+        </Style>
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="{x:Null}"/>
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="MinWidth" Value="10"/>
+        </Style>
+    </Application.Styles>
+
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemesDictionary Theme="Dark"/>
-                <ui:ControlsDictionary />
+                <ResourceInclude Source="avares://Chronokeep/Icons.axaml" />
+                <ResourceInclude Source="avares://Chronokeep/Colors.axaml" />
             </ResourceDictionary.MergedDictionaries>
-            <Style TargetType="ListViewItem" x:Key="NoFocusNotification">
-                <Setter Property="Focusable" Value="False" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <Border Margin="1" BorderBrush="#88A6A6A6" BorderThickness="1,1,1,1">
-                                <Grid Background="{Binding Background}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="150" />
-                                        <ColumnDefinition Width="100" />
-                                        <ColumnDefinition Width="80" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Margin="8,4" Text="{Binding When}" VerticalAlignment="Center" TextAlignment="Center" />
-                                    <TextBlock Grid.Column="1" Margin="8,4" Text="{Binding Who}" TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Margin="8,4" Text="{Binding Where}" TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center"/>
-                                    <TextBlock Grid.Column="3" Margin="8,4" Text="{Binding Information}" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                                </Grid>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style TargetType="ListViewItem" x:Key="NoFocusLogEntry">
-                <Setter Property="Focusable" Value="False" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <Border Margin="1" BorderBrush="#88A6A6A6" BorderThickness="1,1,1,1">
-                                <ui:CardExpander
-                                    IsExpanded="{Binding IsExpanded}"
-                                    ExpandDirection="Down"
-                                    >
-                                    <ui:CardExpander.Header>
-                                        <TextBlock Text="{Binding Version}" FontSize="18" HorizontalAlignment="Left" Margin="20,-10,0,-10" FontWeight="DemiBold"/>
-                                    </ui:CardExpander.Header>
-                                    <StackPanel HorizontalAlignment="Stretch">
-                                        <StackPanel Visibility="{Binding ChangesVisibility}" HorizontalAlignment="Stretch">
-                                            <TextBlock Text="Changes" HorizontalAlignment="Center" Margin="0,-8,0,2" FontWeight="DemiBold"/>
-                                            <ListView 
-                                                Margin="-14,0,-15,0"
-                                                ItemsSource="{Binding ChangesList}"
-                                                ItemContainerStyle="{DynamicResource NoFocusLogLine}"
-                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                PreviewMouseWheel="HandlePreviewMouseWheel"
-                                                />
-                                        </StackPanel>
-                                        <StackPanel Visibility="{Binding FixesVisibility}" HorizontalAlignment="Stretch">
-                                            <TextBlock Text="Fixes" HorizontalAlignment="Center" Margin="0,5,0,2" FontWeight="DemiBold"/>
-                                            <ListView
-                                                Margin="-14,0,-15,0"
-                                                ItemsSource="{Binding FixesList}"
-                                                ItemContainerStyle="{DynamicResource NoFocusLogLine}"
-                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                PreviewMouseWheel="HandlePreviewMouseWheel"
-                                                />
-                                        </StackPanel>
-                                    </StackPanel>
-                                </ui:CardExpander>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style TargetType="ListViewItem" x:Key="NoFocusLogLine">
-                <Setter Property="Focusable" Value="False" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <Border BorderBrush="#88A6A6A6" BorderThickness="0,1,0,0" Padding="0,2,0,0">
-                                <Grid Margin="25,0,25,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="•" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Right" Margin="0,0,5,0"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding}" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                                </Grid>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style TargetType="ListViewItem" x:Key="NoFocusListViewItem">
-                <Setter Property="Focusable" Value="False" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <ContentPresenter Content="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" />
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style TargetType="ListViewItem" x:Key="alternatingStyle">
-                <Style.Triggers>
-                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                        <Setter Property="Background" Value="#18A6A6A6" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-            <Style TargetType="ListViewItem" x:Key="announcerStyle">
-                <Setter Property="Focusable" Value="False" />
-                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                <Style.Triggers>
-                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                        <Setter Property="Background" Value="#18A6A6A6" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-            <Style TargetType="ListBoxItem" x:Key="NoFocusListBoxItem">
-                <Setter Property="Focusable" Value="False" />
-                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <ContentPresenter Content="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" />
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style TargetType="ListView">
-                <Setter Property="Background" Value="{DynamicResource ApplicationBackgroundBrush}" />
-                <Setter Property="BorderThickness" Value="0" />
-            </Style>
-            <Style TargetType="TextBlock">
-                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-            </Style>
-            <Style TargetType="xctk:MaskedTextBox">
-                <Setter Property="BorderThickness" Value="0,0,0,1" />
-                <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
-                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                <Setter Property="CaretBrush" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                <Style.Triggers>
-                    <Trigger Property="IsFocused" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource ApplicationBackgroundBrush}" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

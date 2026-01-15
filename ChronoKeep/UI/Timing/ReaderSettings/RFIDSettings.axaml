@@ -1,0 +1,219 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApp.RFIDSettings"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="RFID Settings"
+        Width="300"
+        Height="500"
+        CanResize="False"
+        SizeToContent="WidthAndHeight"
+        Closed="Window_Closed">
+    <StackPanel Margin="20,10,20,20">
+        <StackPanel x:Name="settingsPanel" IsVisible="True" Margin="0,10,0,0">
+            <StackPanel Orientation="Horizontal" Height="45">
+                <TextBlock Text="Ultra ID"
+                            Width="100"
+                            Margin="5,5,5,5"
+                            TextAlignment="Right"
+                            VerticalAlignment="Center"/>
+                <Slider x:Name="idSlider"
+                        ValueChanged="idSlider_ValueChanged"
+                        Width="200"
+                        Minimum="1"
+                        Maximum="255"
+                        Margin="10,0,5,0"
+                        TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        VerticalAlignment="Center"/>
+                <TextBlock x:Name="idDisplay"
+                            Text="255"
+                            Width="35"
+                            Margin="5,5,5,5"
+                            TextAlignment="Left"
+                            VerticalAlignment="Center"/>
+                <Button Name="saveID"
+                        Click="saveID_Click"
+                        Margin="5,5,5,5">
+                    <PathIcon Data="{StaticResource save_regular}"/>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="45">
+                <TextBlock Text="Chip Type"
+                            Width="100"
+                            Margin="5,5,5,5"
+                            TextAlignment="Right"
+                            VerticalAlignment="Center"/>
+                <ComboBox x:Name="chipBox"
+                            Width="250"
+                            Margin="5,5,5,5"
+                            VerticalAlignment="Center">
+                    <ComboBoxItem Content="Decimal" IsSelected="True" />
+                    <ComboBoxItem Content="Hexadecimal" />
+                </ComboBox>
+                <Button Name="saveChip"
+                        Click="saveChip_Click"
+                        Margin="5,5,5,5">
+                    <PathIcon Data="{StaticResource save_regular}"/>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="45">
+                <TextBlock Text="Gating Mode"
+                            Width="100"
+                            Margin="5,5,5,5"
+                            TextAlignment="Right"
+                            VerticalAlignment="Center"/>
+                <ComboBox x:Name="gatingModeBox"
+                            Width="250"
+                            Margin="5,5,5,5"
+                            VerticalAlignment="Center">
+                    <ComboBoxItem Content ="Per Reader" IsSelected="True"/>
+                    <ComboBoxItem Content ="Per Box" />
+                    <ComboBoxItem Content ="First Time Seen"/>
+                </ComboBox>
+                <Button Name="saveGatingMode"
+                        Click="saveGatingMode_Click"
+                        Margin="5,5,5,5">
+                    <PathIcon Data="{StaticResource save_regular}"/>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="45">
+                <TextBlock Text="Gating Interval"
+                            Width="100"
+                            Margin="5,5,5,5"
+                            TextAlignment="Right"
+                            VerticalAlignment="Center"/>
+                <Slider x:Name="gatingSlider"
+                        ValueChanged="gatingSlider_ValueChanged"
+                        Width="200"
+                        Minimum="0"
+                        Maximum="20"
+                        Margin="10,0,5,0"
+                        TickFrequency="1"
+                        VerticalAlignment="Center"
+                        IsSnapToTickEnabled="True"/>
+                <TextBlock
+                    x:Name="gatingDisplay"
+                    Text="20"
+                    TextAlignment="Left"
+                    VerticalAlignment="Center"
+                    Width="35"
+                    Margin="5,5,5,5"
+                    />
+                <Button Name="saveGatingInterval"
+                        Click="saveGatingInterval_Click"
+                        Margin="5,5,5,5">
+                    <PathIcon Data="{StaticResource save_regular}"/>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="45">
+                <TextBlock Text="When to Beep"
+                            Width="100"
+                            Margin="5,5,5,5"
+                            TextAlignment="Right"
+                            VerticalAlignment="Center"/>
+                <ComboBox x:Name="whenBeepBox"
+                            Width="250"
+                            Margin="5,5,5,5"
+                            VerticalAlignment="Center">
+                    <ComboBoxItem Content="Always" IsSelected="True" />
+                    <ComboBoxItem Content="Only First Seen" />
+                </ComboBox>
+                <Button Name="saveWhenBeep"
+                        Click="saveWhenBeep_Click"
+                        Margin="5,5,5,5">
+                    <PathIcon Data="{StaticResource save_regular}"/>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="45">
+                <TextBlock Text="Beeper Volume"
+                            Width="100"
+                            Margin="5,5,5,5"
+                            TextAlignment="Right"
+                            VerticalAlignment="Center"/>
+                <ComboBox x:Name="volumeBox"
+                            Width="250"
+                            Margin="5,5,5,5"
+                            VerticalAlignment="Center">
+                    <ComboBoxItem Content="Off" IsSelected="True" />
+                    <ComboBoxItem Content="Soft" />
+                    <ComboBoxItem Content="Loud" />
+                </ComboBox>
+                <Button Name="saveVolume"
+                        Click="saveVolume_Click"
+                        Margin="5,5,5,5">
+                    <PathIcon Data="{StaticResource save_regular}"/>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Height="45">
+                <TextBlock Text="Time Zone"
+                            Width="100"
+                            Margin="5,5,5,5"
+                            TextAlignment="Right"
+                            VerticalAlignment="Center"/>
+                <Slider x:Name="timeZoneSlider"
+                        ValueChanged="timeZoneSlider_ValueChanged"
+                        Width="200"
+                        Minimum="-23"
+                        Maximum="23"
+                        Margin="10,0,5,0"
+                        TickFrequency="1"
+                        VerticalAlignment="Center"
+                        IsSnapToTickEnabled="True"/>
+                <TextBlock x:Name="timeZoneDisplay"
+                            Text="10"
+                            Width="35"
+                            Margin="5,5,5,5"
+                            TextAlignment="Left"
+                            VerticalAlignment="Center"/>
+                <Button Name="saveTimezone"
+                        Click="saveTimezone_Click"
+                        Margin="5,5,5,5">
+                    <PathIcon Data="{StaticResource save_regular}"/>
+                </Button>
+            </StackPanel>
+            <StackPanel Height="35"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                <ToggleSwitch
+                    x:Name="setGPSSwitch"
+                    Click="setGPSSwitch_Click"
+                    OnContent=""
+                    OffContent=""
+                    Margin="5,-7,-7,-7"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"/>
+                <Label Content="Set Time From GPS?" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Height="35"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                <ToggleSwitch x:Name="readingSwitch"
+                                Click="readingSwitch_Click"
+                                OnContent=""
+                                OffContent=""
+                                Margin="5,-7,-7,-7"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"/>
+                <Label Content="Reading?" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Height="45"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <Button x:Name="closeButton"
+                        Content="Close"
+                        Click="closeButton_Click"
+                        Width="165"
+                        Height="35"
+                        Margin="5,5,5,5"/>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</Window>

@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
+             x:Class="AvaloniaApp.APIPage"
+             Padding="16"
+             Background="{DynamicResource PrimaryBackground}"
+             CornerRadius="8,0,0,0"
+             >
+    <UserControl.Styles>
+        <Style Selector="Button.api">
+            <Setter Property="Margin" Value="10,5"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Width" Value="150"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="55"/>
+        </Grid.RowDefinitions>
+        <ListBox
+            Name="APIBox"
+            KeyboardNavigation.TabNavigation="Continue"
+            Grid.Row="0"
+            >
+        </ListBox>
+        <DockPanel Grid.Row="1" HorizontalAlignment="Center">
+            <Button Name="Add"
+                    Content="Add API"
+                    Click="Add_Click"
+                    Classes="api"/>
+            <Button Name="UpdateBtn"
+                    Content="Update"
+                    Click="Update_Click"
+                    Classes="api"/>
+            <Button Name="ResetBtn"
+                    Content="Reset"
+                    Click="Revert_Click"
+                    Classes="api"/>
+            <Button Name="DoneBtn"
+                    Content="Done"
+                    Click="DoneBtn_Click"
+                    Classes="api"/>
+        </DockPanel>
+    </Grid>
+</UserControl>

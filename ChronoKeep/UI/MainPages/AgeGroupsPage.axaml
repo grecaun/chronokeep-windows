@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
+             x:Class="AvaloniaApp.AgeGroupsPage"
+             Padding="16"
+             Background="{DynamicResource PrimaryBackground}"
+             CornerRadius="8,0,0,0"
+             >
+    <UserControl.Styles>
+        <Style Selector="Button.age">
+            <Setter Property="Margin" Value="5,10,5,0"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Height" Value="35"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="55"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="150"/>
+        </Grid.ColumnDefinitions>
+        <ComboBox Grid.Row="0"
+                  Grid.Column="0"
+                  Name="Distances"
+                  FontSize="16"
+                  Margin="0,0,0,15"
+                  Height="35"
+                  Width="250"
+                  SelectionChanged="Distances_SelectionChanged"
+                  HorizontalAlignment="Center"
+                  VerticalContentAlignment="Center"
+                  IsVisible="False"/>
+        <ListBox
+            Name="AgeGroupsBox"
+            CornerRadius="8"
+            KeyboardNavigation.TabNavigation="Continue"
+            Grid.Row="1"
+            >
+        </ListBox>
+        <DockPanel LastChildFill="False" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+            <Button Name="Add"
+                    Content="Add Group"
+                    Click="Add_Click"
+                    Classes="age"
+                    Width="150"/>
+            <Button Name="Save"
+                    Content="Save"
+                    Click="Update_Click"
+                    Classes="age"
+                    Width="150"/>
+            <Button Name="ResetBtn"
+                    Content="Reset"
+                    Click="Revert_Click"
+                    Classes="age"
+                    Width="150"/>
+        </DockPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <ComboBox Name="DefaultGroupsBox"
+                      Height="35"
+                      FontSize="16"
+                      SelectedIndex="0"
+                      Margin="10,100,0,10"
+                      HorizontalAlignment="Stretch"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center">
+                <ComboBoxItem Content="10 Years" Tag="1"/>
+                <ComboBoxItem Content="5 Years" Tag="2"/>
+                <ComboBoxItem Content="Under 40, Masters, Grand Masters" Tag="3"/>
+                <ComboBoxItem Content="Abbott WMM" Tag="4"/>
+            </ComboBox>
+            <Button Content="Change"
+                    Name="AddDefault"
+                    Click="AddDefault_Click"
+                    Classes="age"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Stretch"
+                    />
+        </StackPanel>
+    </Grid>
+</UserControl>

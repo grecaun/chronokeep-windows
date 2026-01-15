@@ -1,0 +1,57 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="AvaloniaApp.ExportResults"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="Export Results"
+        Height="450"
+        Width="300"
+        MaxWidth="300"
+        MinWidth="300"
+        Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="55"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0"
+                   Text="Content to Export"
+                   FontSize="16"
+                   VerticalAlignment="Center"
+                   TextAlignment="Center"
+                   Margin="0,-15,0,0"/>
+        <ListBox Grid.Row="1"
+                 Name="headersList"
+                 Margin="5,0,5,5"
+                 BorderThickness="0">
+        </ListBox>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    x:Name="Done"
+                    Content="Submit"
+                    Click="Done_Click"
+                    FontSize="16"
+                    Height="35"
+                    Margin="10,5,5,10"
+                    HorizontalAlignment="Stretch"/>
+            <Button Grid.Column="1"
+                    x:Name="Cancel"
+                    Content="Cancel"
+                    Click="Cancel_Click"
+                    FontSize="16"
+                    Height="35"
+                    Margin="5,5,10,10"
+                    HorizontalAlignment="Stretch"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -244,7 +244,7 @@ namespace Chronokeep.UI.MainPages
             total = ReadersBox.Items.Count;
             subPage = new TimingResultsPage(this, database);
             TimingFrame.Content = subPage;
-            List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
+            List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier, true);
             statsListView.ItemsSource = stats;
             stats.Clear();
             foreach (DistanceStat s in inStats)
@@ -447,8 +447,7 @@ namespace Chronokeep.UI.MainPages
                         system),
                         locations));
             }
-
-            List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
+            List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier, condenseSwitch.IsChecked == false);
             stats.Clear();
             foreach (DistanceStat s in inStats)
             {
@@ -1187,7 +1186,7 @@ namespace Chronokeep.UI.MainPages
             }
             Log.D("UI.MainPages.TimingPage", "Stats double cliked. Distance is " + selected.DistanceName);
             SetRawReadsFinished();
-            subPage = new DistanceStatsPage(this, mWindow, database, selected.DistanceID, selected.DistanceName);
+            subPage = new DistanceStatsPage(this, mWindow, database, selected.DistanceID, selected.DistanceName, condenseSwitch.IsChecked == false);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
 
@@ -2205,6 +2204,16 @@ namespace Chronokeep.UI.MainPages
         {
             ClockControl clockWindow = ClockControl.CreateWindow(mWindow, database);
             clockWindow.Show();
+        }
+
+        private void CondenseSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+            List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier, condenseSwitch.IsChecked == false);
+            stats.Clear();
+            foreach (DistanceStat s in inStats)
+            {
+                stats.Add(s);
+            }
         }
 
         public class TimeRelativeWave

@@ -329,7 +329,6 @@ namespace Chronokeep.UI.MainPages
             public TextBox StartAge { get; private set; }
             public TextBox EndAge { get; private set; }
             public Button Remove { get; private set; }
-            public Button Update { get; private set; }
 
             private readonly AgeGroupsPage page;
             public AgeGroup MyGroup { get; private set; }

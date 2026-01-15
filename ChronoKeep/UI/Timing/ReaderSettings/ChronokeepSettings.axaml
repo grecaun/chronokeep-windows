@@ -1,0 +1,300 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApp.ChronokeepSettings"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        WindowStartupLocation="CenterScreen"
+        Title="Chronokeep Settings"
+        Height="500"
+        Width="300"
+        CanResize="False"
+        SizeToContent="WidthAndHeight"
+        Closed="Window_Closed">
+    <StackPanel Grid.Row="1"
+                Margin="20,10,20,20"
+                VerticalAlignment="Center">
+        <StackPanel Margin="0,0,0,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Name"
+                           TextAlignment="Right"
+                           VerticalAlignment="Center"
+                           Width="120"
+                           Margin="5,5,5,5"/>
+                <TextBox x:Name="nameBox"
+                         Width="250"
+                         Margin="5,5,5,5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Read Window"
+                           TextAlignment="Right"
+                           VerticalAlignment="Center"
+                           Width="120"
+                           Margin="5,5,5,5"/>
+                <TextBox x:Name="readWindowBox"
+                         Width="250"
+                         Margin="5,5,5,5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Chip Type"
+                           TextAlignment="Right"
+                           VerticalAlignment="Center"
+                           Width="120"
+                           Margin="5,5,5,5"/>
+                <ComboBox x:Name="chipTypeBox"
+                          Width="250"
+                          Margin="5,5,5,5"
+                          SelectedIndex="0">
+                    <ComboBoxItem Content="Base 10 (Dec)" Tag="DEC"/>
+                    <ComboBoxItem Content="Base 16 (Hex)" Tag="HEX"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <ToggleSwitch x:Name="soundBox"
+                              OnContent=""
+                              OffContent=""
+                              Margin="5,-7,-7,-7"
+                              VerticalContentAlignment="Center"/>
+                <Label Content="Play Sound on Read?"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Volume"
+                           TextAlignment="Right"
+                           VerticalAlignment="Center"
+                           Width="120"
+                           Margin="5,5,5,5"/>
+                <Slider x:Name="volumeSlider"
+                        ValueChanged="volumeSlider_ValueChanged"
+                        Width="210"
+                        Minimum="0"
+                        Maximum="10"
+                        TickFrequency="1"
+                        Margin="10,5,5,5"
+                        IsSnapToTickEnabled="True"/>
+                <TextBlock x:Name="volumeBlock"
+                           FontSize="14"
+                           Text="0"
+                           Width="30"
+                           Margin="0,5,5,5"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Voice"
+                           Width="120"
+                           Margin="5,5,5,5"
+                           TextAlignment="Right"
+                           VerticalAlignment="Center"/>
+                <ComboBox x:Name="voiceBox"
+                          Width="250"
+                          Margin="5,5,5,5"
+                          SelectedIndex="0">
+                    <ComboBoxItem Content="Emily" Tag="emily"/>
+                    <ComboBoxItem Content="Michael" Tag="michael"/>
+                    <ComboBoxItem Content="Custom" Tag="custom"/>
+                </ComboBox>
+            </StackPanel>
+            <Expander x:Name="readerExpander"
+                      Expanded="ReaderExpander_Changed"
+                      Collapsed="ReaderExpander_Changed"
+                      Margin="5,5,5,5"
+                      IsExpanded="False"
+                      ExpandDirection="Down"
+                      HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Center">
+                        <TextBlock Text="Readers"
+                                   Margin="5,0,0,0"
+                                   VerticalAlignment="Center" />
+                        <Button DockPanel.Dock="Right"
+                                x:Name="addReaderButton"
+                                Click="AddReaderButton_Click"
+                                Margin="0,0,10,0"
+                                IsVisible="False"
+                                VerticalAlignment="Center">
+                            <PathIcon Data="{StaticResource add_regular}"/>
+                        </Button>
+                    </DockPanel>
+                </Expander.Header>
+                <ListBox x:Name="readerListView"
+                         Height="160"
+                         Margin="0,-10,0,0"
+                         HorizontalAlignment="Center"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            </Expander>
+            <Expander x:Name="apiExpander"
+                      Expanded="APIExpander_Changed"
+                      Collapsed="APIExpander_Changed"
+                      MaxHeight="205"
+                      Margin="5,5,5,5"
+                      IsExpanded="False"
+                      ExpandDirection="Down"
+                      HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Center">
+                        <TextBlock Text="API Keys"
+                                   Margin="5,0,0,0"
+                                   VerticalAlignment="Center"/>
+                        <Button DockPanel.Dock="Right"
+                                x:Name="addAPIButton"
+                                Click="AddAPIButton_Click"
+                                Margin="0,0,10,0"
+                                IsVisible="False"
+                                VerticalAlignment="Center">
+                            <PathIcon Data="{StaticResource add_regular}" />
+                        </Button>
+                    </DockPanel>
+                </Expander.Header>
+                <ListBox x:Name="apiListView"
+                         Height="145"
+                         Margin="0,-10,0,0"
+                         HorizontalAlignment="Center"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            </Expander>
+            <Expander Header="ntfy"
+                      Margin="5,5,5,5"
+                      HorizontalAlignment="Stretch">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="URL"
+                                   Width="80"
+                                   Margin="5,5,5,5"
+                                   TextAlignment="Right"
+                                   VerticalAlignment="Center"/>
+                        <TextBox x:Name="ntfyUrlBox"
+                                 Width="250"
+                                 Margin="5,5,5,5"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="Topic"
+                                   Width="80"
+                                   Margin="5,5,5,5"
+                                   TextAlignment="Right"
+                                   VerticalAlignment="Center"/>
+                        <TextBox x:Name="ntfyTopicBox"
+                                 Width="250"
+                                 Margin="5,5,5,5"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="User"
+                                   Width="80"
+                                   Margin="5,5,5,5"
+                                   TextAlignment="Right"
+                                   VerticalAlignment="Center"/>
+                        <TextBox x:Name="ntfyUserBox"
+                                 Width="250"
+                                 Margin="5,5,5,5"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="Password"
+                                   Width="80"
+                                   Margin="5,5,5,5"
+                                   TextAlignment="Right"
+                                   VerticalAlignment="Center"/>
+                        <TextBox x:Name="ntfyPassBox"
+                                 Width="250"
+                                 Margin="5,5,5,5"/>
+                    </StackPanel>
+                </StackPanel>
+            </Expander>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Upload Interval"
+                           Width="120"
+                           Margin="5,5,5,5"
+                           TextAlignment="Right"
+                           VerticalAlignment="Center"/>
+                <Slider x:Name="uploadSlider"
+                        ValueChanged="uploadSlider_ValueChanged"
+                        Width="210"
+                        Minimum="10"
+                        Maximum="120"
+                        Margin="10,5,5,5"
+                        TickFrequency="5"
+                        IsSnapToTickEnabled="True"/>
+                <TextBlock x:Name="uploadBlock"
+                           FontSize="14"
+                           Text="10"
+                           Width="30"
+                           Margin="0,5,5,5"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ToggleSwitch x:Name="autoResultsSwitch"
+                              Click="AutoResultsSwitch_Checked"
+                              Height="35"
+                              OnContent=""
+                              OffContent=""
+                              Margin="5,-7,-7,-7"/>
+                <Label Content="Auto Upload Results" VerticalAlignment="Center"/>
+                <ToggleSwitch x:Name="enableNTFYSwitch"
+                              Height="35"
+                              OnContent=""
+                              OffContent=""
+                              Margin="10,-7,-7,-7"/>
+                <Label Content="Enable NTFY" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="manualResultsButton"
+                        Content="Manual Results Upload"
+                        Click="ManualResultsButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"/>
+                <Button x:Name="deleteReadsButton"
+                        Content="Clear Reads"
+                        Click="deleteReadsButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="updateServerButton"
+                        Content="Update Server"
+                        Click="updateServerButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"/>
+                <Button x:Name="restartServerButton"
+                        Content="Restart Server"
+                        Click="restartServerButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="stopServerButton"
+                        Content="Stop Server"
+                        Click="StopServerButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"/>
+                <Button x:Name="shutdownServerButton"
+                        Content="Shutdown Server"
+                        Click="ShutdownServerButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="saveButton"
+                        Content="Save Settings"
+                        Click="SaveButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"/>
+                <Button x:Name="closeButton"
+                        Content="Close"
+                        Click="CloseButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"/>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</Window>
