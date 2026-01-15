@@ -154,6 +154,30 @@
                             />
                     </ComboBox>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" Name="screenPanel" Visibility="Collapsed">
+                    <TextBlock
+                        Text="Screen Type"
+                        TextAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="120"
+                        Margin="5,5,5,5"
+                        />
+                    <ComboBox
+                        x:Name="screenBox"
+                        Width="250"
+                        Margin="5,5,5,5"
+                        SelectedIndex="0"
+                        >
+                        <ComboBoxItem
+                            Content="Adafruit"
+                            Uid="ADAFRUIT"
+                            />
+                        <ComboBoxItem
+                            Content="PCF8574T"
+                            Uid="PCF8574T"
+                            />
+                    </ComboBox>
+                </StackPanel>
                 <Expander
                     x:Name="readerExpander"
                     Margin="5,5,5,5"

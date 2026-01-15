@@ -93,6 +93,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     NtfyUser = ntfyUserBox.Text.Trim(),
                     NtfyPass = ntfyPassBox.Text.Trim(),
                     EnableNTFY = enableNTFYSwitch.IsChecked == true,
+                    ScreenType = screenBox.SelectedItem != null ? ((ComboBoxItem)screenBox.SelectedItem).Uid : ""
                 };
                 reader.SendSetSettings(sett);
             }
@@ -163,6 +164,19 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     ntfyUserBox.Text = allSettings.NtfyUser;
                     ntfyPassBox.Text = allSettings.NtfyPass;
                     enableNTFYSwitch.IsChecked = allSettings.EnableNTFY;
+                    if (allSettings.ScreenType == Constants.Readers.CHRONOKEEP_SCREEN_ADAFRUIT)
+                    {
+                        screenPanel.Visibility = Visibility.Visible;
+                        screenBox.SelectedIndex = 0;
+                    } else if (allSettings.ScreenType == Constants.Readers.CHRONOKEEP_SCREEN_PCF8574T)
+                    {
+                        screenPanel.Visibility = Visibility.Visible;
+                        screenBox.SelectedIndex = 1;
+                    } else
+                    {
+                        screenPanel.Visibility = Visibility.Collapsed;
+                        screenBox.SelectedIndex = -1;
+                    }
                 }
                 // add readers and apis to views
                 if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.READERS))

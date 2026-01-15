@@ -49,5 +49,6 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public string NtfyUser { get; set; }
         public string NtfyPass { get; set; }
         public bool EnableNTFY { get; set; }
+        public string ScreenType { get; set; }
     }
 }

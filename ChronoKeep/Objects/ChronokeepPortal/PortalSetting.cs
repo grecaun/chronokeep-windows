@@ -16,6 +16,7 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public const string SETTING_NTFY_PASS = "SETTING_NTFY_PASS";
         public const string SETTING_NTFY_TOPIC = "SETTING_NTFY_TOPIC";
         public const string SETTING_ENABLE_NTFY = "SETTING_ENABLE_NTFY";
+        public const string SETTING_SCREEN_TYPE = "SETTING_SCREEN_TYPE";
 
         public const string TYPE_CHIP_DEC = "DEC";
         public const string TYPE_CHIP_HEX = "HEX";

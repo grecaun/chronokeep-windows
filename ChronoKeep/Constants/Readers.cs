@@ -19,6 +19,9 @@ namespace Chronokeep.Constants
         public const byte CHRONOKEEP_ANTENNA_STATUS_DISCONNECTED = 1;
         public const byte CHRONOKEEP_ANTENNA_STATUS_CONNECTED = 2;
 
+        public const string CHRONOKEEP_SCREEN_ADAFRUIT = "ADAFRUIT";
+        public const string CHRONOKEEP_SCREEN_PCF8574T = "PCF8574T";
+
         public const int TIMEOUT = 3000;
 
         public static readonly Dictionary<string, string> SYSTEM_NAMES = new()

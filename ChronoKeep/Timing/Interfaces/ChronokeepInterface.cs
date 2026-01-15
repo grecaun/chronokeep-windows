@@ -305,6 +305,12 @@ namespace Chronokeep.Timing.Interfaces
                                             case PortalSetting.SETTING_NTFY_PASS:
                                                 updSettings.NtfyPass = set.Value;
                                                 break;
+                                            case PortalSetting.SETTING_ENABLE_NTFY:
+                                                updSettings.EnableNTFY = set.Value.Equals("true", StringComparison.OrdinalIgnoreCase);
+                                                break;
+                                            case PortalSetting.SETTING_SCREEN_TYPE:
+                                                updSettings.ScreenType = set.Value;
+                                                break;
                                         }
                                         updSettings.Changes.Add(PortalSettingsHolder.ChangeType.SETTINGS);
                                     }
@@ -430,6 +436,9 @@ namespace Chronokeep.Timing.Interfaces
                                                 break;
                                             case PortalSetting.SETTING_ENABLE_NTFY:
                                                 updSettings.EnableNTFY = set.Value.Equals("true", StringComparison.OrdinalIgnoreCase);
+                                                break;
+                                            case PortalSetting.SETTING_SCREEN_TYPE:
+                                                updSettings.ScreenType = set.Value;
                                                 break;
                                         }
                                     }
@@ -836,6 +845,11 @@ namespace Chronokeep.Timing.Interfaces
             {
                 Name = PortalSetting.SETTING_ENABLE_NTFY,
                 Value = settings.EnableNTFY == true ? "true" : "false",
+            });
+            settingsReq.Settings.Add(new()
+            {
+                Name = PortalSetting.SETTING_SCREEN_TYPE,
+                Value = settings.ScreenType,
             });
             SendMessage(JsonSerializer.Serialize(settingsReq));
         }
