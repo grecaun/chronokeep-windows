@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="AvaloniaApp.ChronokeepSettings"
+        x:Class="Chronokeep.UI.Timing.ReaderSettings.ChronokeepSettings"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
         ExtendClientAreaChromeHints="PreferSystemChrome"
@@ -67,7 +67,7 @@
                            Width="120"
                            Margin="5,5,5,5"/>
                 <Slider x:Name="volumeSlider"
-                        ValueChanged="volumeSlider_ValueChanged"
+                        ValueChanged="VolumeSlider_ValueChanged"
                         Width="210"
                         Minimum="0"
                         Maximum="10"
@@ -96,6 +96,20 @@
                     <ComboBoxItem Content="Emily" Tag="emily"/>
                     <ComboBoxItem Content="Michael" Tag="michael"/>
                     <ComboBoxItem Content="Custom" Tag="custom"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel x:Name="screenPanel" Orientation="Horizontal" IsVisible="False">
+                <TextBlock Text="Voice"
+                           Width="120"
+                           Margin="5,5,5,5"
+                           TextAlignment="Right"
+                           VerticalAlignment="Center"/>
+                <ComboBox x:Name="screenBox"
+                          Width="250"
+                          Margin="5,5,5,5"
+                          SelectedIndex="0">
+                    <ComboBoxItem Content="Adafruit" Tag="ADAFRUIT"/>
+                    <ComboBoxItem Content="PCF8574T" Tag="PCF8574T"/>
                 </ComboBox>
             </StackPanel>
             <Expander x:Name="readerExpander"
@@ -208,7 +222,7 @@
                            TextAlignment="Right"
                            VerticalAlignment="Center"/>
                 <Slider x:Name="uploadSlider"
-                        ValueChanged="uploadSlider_ValueChanged"
+                        ValueChanged="UploadSlider_ValueChanged"
                         Width="210"
                         Minimum="10"
                         Maximum="120"
@@ -248,7 +262,7 @@
                         Margin="5,5,5,5"/>
                 <Button x:Name="deleteReadsButton"
                         Content="Clear Reads"
-                        Click="deleteReadsButton_Click"
+                        Click="DeleteReadsButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"/>
@@ -256,13 +270,13 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button x:Name="updateServerButton"
                         Content="Update Server"
-                        Click="updateServerButton_Click"
+                        Click="UpdateServerButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"/>
                 <Button x:Name="restartServerButton"
                         Content="Restart Server"
-                        Click="restartServerButton_Click"
+                        Click="RestartServerButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"/>

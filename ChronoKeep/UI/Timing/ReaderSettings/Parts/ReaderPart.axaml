@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Chronokeep.UI.Timing.ReaderSettings.Parts.ReaderPart">
+    <StackPanel Orientation="Vertical"
+                HorizontalAlignment="Center">
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+			<TextBox x:Name="nameBox"
+                     Width="190"
+                     Margin="5" />
+            <ComboBox x:Name="kindBox"
+                      Width="120" Margin="5"
+                      SelectedIndex="0"
+                      ValueChanged="KindBox_ValueChanged" >
+			    <ComboBoxItem Content="Zebra" />	
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+			<TextBox x:Name="ipBox"
+                     Width="120"
+                     Margin="5"
+                     TextInput="IPValidation" />
+            <TextBox x:Name="portBox"
+                     Width="60"
+                     Margin="5"
+                     TextInput="NumberValidation" />
+            <ToggleSwitch x:Name="autoConnectSwitch"
+                            Width="40"
+                            OnContent=""
+                            OffContent=""
+                            Margin="5,-7,-7,-7"
+                            VerticalContentAlignment="Center" />
+            <Label Content="Auto Connect"
+                   Width="80" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <ToggleSwitch x:Name="connectedSwitch"
+                            Width="40"
+                            OnContent=""
+                            OffContent=""
+                            Margin="5,-7,-7,-7"
+                            VerticalContentAlignment="Center" /> <!-- add ConnectReader -->
+            <Label Content="Connected"
+                   Width="75" />
+            <Button x:Name="saveReaderButton"
+                    Width="40"
+                    Margin="5"
+                    Click="SaveReader">
+			    <PathIcon Data="{StaticResource save_regular}"/>
+            </Button>
+            <Button x:Name="removeReaderButton"
+                    Width="40"
+                    Margin="5"
+                    Click="DeleteReader">
+			    <PathIcon Data="{StaticResource delete_regular}"/>
+            </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    x:Name="antennaPanel" />
+    </StackPanel>
+</UserControl>

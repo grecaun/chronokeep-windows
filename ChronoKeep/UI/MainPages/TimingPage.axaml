@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
-             x:Class="AvaloniaApp.TimingPage"
+             x:Class="Chronokeep.UI.MainPages.TimingPage"
              Padding="16"
              CornerRadius="8,0,0,0"
              >
@@ -243,11 +243,32 @@
                     </ComboBox>
                     <Expander
                         Name="statsExpander"
-                        Header="Stats"
                         Margin="5,5,5,0"
                         IsExpanded="True"
                         Padding="4"
                         >
+                            <Expander.Header>
+                                <DockPanel
+                                    LastChildFill="False"
+                                    VerticalAlignment="Center"
+                                    >
+                                    <TextBlock
+                                        Text="Stats"
+                                        Margin="0,0,0,0"
+                                        VerticalAlignment="Center"
+                                        />
+                                    <ToggleSwitch 
+                                        x:Name="condenseSwitch" 
+                                        Margin="0,-7,3,-7" 
+                                        VerticalAlignment="Center"
+                                        DockPanel.Dock="Right"
+                                        OnContent=""
+                                        OffContent=""
+                                        Checked="CondenseSwitch_Checked"
+                                        Unchecked="CondenseSwitch_Checked"
+                                        />
+                                </DockPanel>
+                            </Expander.Header>
                             <DataGrid x:Name="statsListView"
                                       SelectionMode="Single"
                                       FontSize="10"
@@ -557,7 +578,7 @@
                             DockPanel.Dock="Right" 
                             x:Name="remoteReadersButton" 
                             Content="Remote Readers" 
-                            Click="remoteReadersButton_Click"
+                            Click="RemoteReadersButton_Click"
                             Classes="tim"
                             Margin="0,0,10,0"
                             IsVisible="False"

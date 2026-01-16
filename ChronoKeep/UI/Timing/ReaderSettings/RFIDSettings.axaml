@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="AvaloniaApp.RFIDSettings"
+        x:Class="Chronokeep.UI.Timing.ReaderSettings.RFIDSettings"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
         ExtendClientAreaChromeHints="PreferSystemChrome"
@@ -23,7 +23,7 @@
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
                 <Slider x:Name="idSlider"
-                        ValueChanged="idSlider_ValueChanged"
+                        ValueChanged="IdSlider_ValueChanged"
                         Width="200"
                         Minimum="1"
                         Maximum="255"
@@ -38,7 +38,7 @@
                             TextAlignment="Left"
                             VerticalAlignment="Center"/>
                 <Button Name="saveID"
-                        Click="saveID_Click"
+                        Click="SaveID_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
                 </Button>
@@ -57,7 +57,7 @@
                     <ComboBoxItem Content="Hexadecimal" />
                 </ComboBox>
                 <Button Name="saveChip"
-                        Click="saveChip_Click"
+                        Click="SaveChip_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
                 </Button>
@@ -77,7 +77,7 @@
                     <ComboBoxItem Content ="First Time Seen"/>
                 </ComboBox>
                 <Button Name="saveGatingMode"
-                        Click="saveGatingMode_Click"
+                        Click="SaveGatingMode_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
                 </Button>
@@ -89,7 +89,7 @@
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
                 <Slider x:Name="gatingSlider"
-                        ValueChanged="gatingSlider_ValueChanged"
+                        ValueChanged="GatingSlider_ValueChanged"
                         Width="200"
                         Minimum="0"
                         Maximum="20"
@@ -106,7 +106,7 @@
                     Margin="5,5,5,5"
                     />
                 <Button Name="saveGatingInterval"
-                        Click="saveGatingInterval_Click"
+                        Click="SaveGatingInterval_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
                 </Button>
@@ -125,7 +125,7 @@
                     <ComboBoxItem Content="Only First Seen" />
                 </ComboBox>
                 <Button Name="saveWhenBeep"
-                        Click="saveWhenBeep_Click"
+                        Click="SaveWhenBeep_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
                 </Button>
@@ -145,7 +145,7 @@
                     <ComboBoxItem Content="Loud" />
                 </ComboBox>
                 <Button Name="saveVolume"
-                        Click="saveVolume_Click"
+                        Click="SaveVolume_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
                 </Button>
@@ -157,7 +157,7 @@
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
                 <Slider x:Name="timeZoneSlider"
-                        ValueChanged="timeZoneSlider_ValueChanged"
+                        ValueChanged="TimeZoneSlider_ValueChanged"
                         Width="200"
                         Minimum="-23"
                         Maximum="23"
@@ -172,7 +172,7 @@
                             TextAlignment="Left"
                             VerticalAlignment="Center"/>
                 <Button Name="saveTimezone"
-                        Click="saveTimezone_Click"
+                        Click="SaveTimezone_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
                 </Button>
@@ -183,7 +183,7 @@
                         HorizontalAlignment="Center">
                 <ToggleSwitch
                     x:Name="setGPSSwitch"
-                    Click="setGPSSwitch_Click"
+                    Click="SetGPSSwitch_Click"
                     OnContent=""
                     OffContent=""
                     Margin="5,-7,-7,-7"
@@ -196,7 +196,7 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
                 <ToggleSwitch x:Name="readingSwitch"
-                                Click="readingSwitch_Click"
+                                Click="ReadingSwitch_Click"
                                 OnContent=""
                                 OffContent=""
                                 Margin="5,-7,-7,-7"
@@ -209,7 +209,7 @@
                         HorizontalAlignment="Center">
                 <Button x:Name="closeButton"
                         Content="Close"
-                        Click="closeButton_Click"
+                        Click="CloseButton_Click"
                         Width="165"
                         Height="35"
                         Margin="5,5,5,5"/>

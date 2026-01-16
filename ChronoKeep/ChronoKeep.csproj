@@ -217,6 +217,9 @@
     <Compile Update="UI\Timing\ClockControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UI\Timing\ReaderSettings\Parts\APIPart.axaml.cs">
+      <DependentUpon>APIPart.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Chronokeep.pfx" />

@@ -1,25 +1,59 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.Objects;
 
-namespace AvaloniaApp;
+namespace Chronokeep.UI.Participants;
 
 public partial class ChangeMultiParticipantWindow : Window
 {
-    public ChangeMultiParticipantWindow()
+    private readonly IMainWindow window;
+    private readonly IDBInterface database;
+    private readonly List<Participant> toChange;
+    private readonly Event theEvent;
+
+    public ChangeMultiParticipantWindow(IMainWindow window, IDBInterface database, List<Participant> toChange)
     {
         InitializeComponent();
+        this.window = window;
+        this.database = database;
+        this.toChange = toChange;
+        theEvent = database.GetCurrentEvent();
+        if (theEvent == null) return;
+        foreach (Distance div in database.GetDistances(theEvent.Identifier))
+        {
+            DistanceBox.Items.Add(new ComboBoxItem()
+            {
+                Content = div.Name,
+                Uid = div.Identifier.ToString()
+            });
+        }
+        DistanceBox.SelectedIndex = 0;
+        DistanceBox.Focus();
     }
 
     private void Window_Closing(object? sender, WindowClosingEventArgs e)
     {
+        window?.WindowFinalize(this);
     }
 
     private void Change_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        Log.D("UI.Participants.ChangeMultiParticipantWindow", "Change clicked.");
+        int distanceId = Convert.ToInt32(((ComboBoxItem)DistanceBox.SelectedItem).Uid);
+        foreach (Participant part in toChange)
+        {
+            part.EventSpecific.DistanceIdentifier = distanceId;
+        }
+        database.UpdateParticipants(toChange);
+        database.ResetTimingResultsEvent(theEvent.Identifier);
+        window.NotifyTimingWorker();
+        this.Close();
     }
 
     private void Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        Log.D("UI.Participants.ChangeMultiParticipantWindow", "Cancel clicked.");
+        this.Close();
     }
 }

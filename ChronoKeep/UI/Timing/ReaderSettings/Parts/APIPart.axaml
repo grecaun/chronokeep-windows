@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Chronokeep.UI.Timing.ReaderSettings.Parts.APIPart">
+    <StackPanel Orientation="Vertical"
+                HorizontalAlignment="Center">
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <TextBox x:Name="nameBox"
+                     Width="170"
+                     Margin="5"/>
+            <ComboBox x:Name="kindBox"
+                      Widht="140"
+                      Margin="5"
+                      ValueChanged="KindBox_ValueChanged">
+                <ComboBoxItem Content="Remote" Tag="CHRONOKEEP_REMOTE"/>
+                <ComboBoxItem Content="Remote Self" Tag="CHRONOKEEP_REMOTE_SELF"/>
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <TextBox x:Name="tokenBox"
+                     Width="320"
+                     Margin="5"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <TextBox x:Name="uriBox"
+                     Width="220"
+                     Margin="5"/>
+            <Button Width="40"
+                    Height="35"
+                    Margin="5"
+                    Click="SaveAPI">
+			    <PathIcon Data="{StaticResource save_regular}"/>
+            </Button>
+            <Button Width="40"
+                    Height="35"
+                    Margin="5"
+                    Click="DeleteAPI">
+			    <PathIcon Data="{StaticResource delete_regular}"/>
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
