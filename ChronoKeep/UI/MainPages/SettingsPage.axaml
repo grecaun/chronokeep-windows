@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="750"
-             x:Class="AvaloniaApp.SettingsPage"
+             x:Class="Chronokeep.UI.MainPages.SettingsPage"
              Padding="16"
              Background="{DynamicResource PrimaryBackground}"
              CornerRadius="8,0,0,0"
@@ -153,7 +153,7 @@
                         <TextBlock Text="Upload Interval" Grid.Column="0"/>
                         <Slider Grid.Column="1"
                                 x:Name="uploadSlider"
-                                ValueChanged="uploadSlider_ValueChanged" />
+                                ValueChanged="UploadSlider_ValueChanged" />
                         <TextBlock Grid.Column="2"
                                    x:Name="uploadBlock"
                                    Width="30"
@@ -170,7 +170,7 @@
                         <TextBlock Text="Download Interval" />
                         <Slider Grid.Column="1"
                                 x:Name="downloadSlider"
-                                ValueChanged="downloadSlider_ValueChanged" />
+                                ValueChanged="DownloadSlider_ValueChanged" />
                         <TextBlock Grid.Column="2"
                                    x:Name="downloadBlock"
                                    Width="30"
@@ -187,7 +187,7 @@
                         <TextBlock Text="Announcer Window" />
                         <Slider Grid.Column="1"
                                 x:Name="announcerSlider"
-                                ValueChanged="announcerSlider_ValueChanged"
+                                ValueChanged="AnnouncerSlider_ValueChanged"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Stretch"
                                 TickFrequency="1"

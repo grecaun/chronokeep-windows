@@ -193,6 +193,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ResultsPrintableAgeGroup.tt</DependentUpon>
     </Compile>
+    <Compile Update="UI\Parts\APIPart.axaml.cs">
+      <DependentUpon>APIPart.axaml</DependentUpon>
+    </Compile>
     <Compile Update="UI\Parts\MultipleEntryPart.axaml.cs">
       <DependentUpon>MultipleEntryPart.axaml</DependentUpon>
     </Compile>
@@ -210,6 +213,12 @@
     </Compile>
     <Compile Update="UI\Parts\ClockPart.axaml.cs">
       <DependentUpon>ClockPart.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Parts\DistanceSegmentHolderPart.axaml.cs">
+      <DependentUpon>DistanceSegmentHolderPart.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Parts\SegmentHeaderPart.axaml.cs">
+      <DependentUpon>SegmentHeaderPart.axaml</DependentUpon>
     </Compile>
     <Compile Update="UI\Parts\WavePart.axaml.cs">
       <DependentUpon>WavePart.axaml</DependentUpon>

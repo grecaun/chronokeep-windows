@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Chronokeep.UI.Parts.APIPart">
+    <Grid MaxWidth="100">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="150"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="45"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+		    <TextBlock Text="Nickname"
+                       FontSize="15"
+                       Margin="10,5,0,5"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <TextBox x:Name="APINickname"
+                     FontSize="15"
+                     Height="45"
+                     Margin="10,5,0,5"
+                     VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+		    <TextBlock Text="API Type"
+                       FontSize="15"
+                       Margin="10,5,0,5"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <ComboBox x:Name="APIType"
+                      FontSize="14"
+                      Height="45"
+                      Margin="10,5,0,5"
+                      VerticalAlignment="Center"
+                      SelectionChanged="APIType_SelectionChanged"/>
+        </StackPanel>
+        <StackPanel Grid.Column="2">
+		    <TextBlock Text="API URL"
+                       FontSize="15"
+                       Margin="10,5,0,5"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <TextBox x:Name="APIURL"
+                      FontSize="15"
+                      Height="45"
+                      Margin="10,5,0,5"
+                      VerticalAlignment="Center"
+                      IsEnabled="False" />
+        </StackPanel>
+        <StackPanel Grid.Column="3">
+		    <TextBlock Text="API Key"
+                       FontSize="15"
+                       Margin="10,5,0,5"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <TextBox x:Name="APIToken"
+                      FontSize="15"
+                      Height="45"
+                      Margin="10,5,0,5"
+                      VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Column="4">
+		    <TextBlock Text="API Web URL"
+                       FontSize="15"
+                       Margin="10,5,0,5"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <TextBox x:Name="APIWebURL"
+                      FontSize="15"
+                      Height="45"
+                      Margin="10,5,0,5"
+                      VerticalAlignment="Center"/>
+        </StackPanel>
+        <Button Grid.Column="5"
+                Click="Remove_Click"
+                Height="38"
+                Margin="0,5,0,9"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Center">
+            <PathIcon Data="{StaticResource delete_regular}"/>
+        </Button>
+    </Grid>
+</UserControl>

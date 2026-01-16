@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="using:AvaloniaApp"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
-             x:Class="AvaloniaApp.ChipAssignmentPage"
+             x:Class="Chronokeep.UI.MainPages.ChipAssignmentPage"
              Padding="16"
              Background="{DynamicResource PrimaryBackground}"
              CornerRadius="8,0,0,0"
@@ -34,7 +34,6 @@
             <Setter Property="CanUserSortColumns" Value="True"/>
         </Style>
     </UserControl.Styles>
-
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -122,7 +121,8 @@
                     FontSize="16"
                     />
                 <ComboBox
-                    Name="ChipTypeBox" 
+                    Name="ChipTypeBox"
+                    SelectionChanged="ChipTypeBox_SelectionChanged"
                     Width="100" 
                     Margin="10"
                     VerticalContentAlignment="Center" 

@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="450"
+             x:Class="Chronokeep.UI.Parts.SegmentHeaderPart">
+    <UserControl.Styles>
+		<Style Selector="TextBlock">
+            <Setter Property="Margin" Value="2,5,2,2"/>
+			<Setter Property="FontSize" Value="14"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Styles>
+    <DockPanel Name="HeaderPanel"
+               MaxWidth="1150"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               IsTabStop="False">
+		<TextBlock Text="Where"
+                   Width="140"/>
+        <TextBlock Text="Name"
+                   Width="190"/>
+        <TextBlock Name="OccTextBlock"
+                   Text="Occ"
+                   Width="70"/>
+        <TextBlock Text="Dist"
+                   Width="70"/>
+        <TextBlock Text="Unit"
+                   Width="90"/>
+        <TextBlock Text="GPS"
+                   Width="190"/>
+        <TextBlock Text="Map Link"
+                   Width="190"/>
+        <TextBlock Text=""
+                   Width="50"/>
+    </DockPanel>
+</UserControl>
