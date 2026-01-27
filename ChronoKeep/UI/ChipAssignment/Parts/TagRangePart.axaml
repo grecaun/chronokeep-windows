@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Chronokeep.UI.ChipAssignment.Parts.TagRangePart"
+             IsTabStop="False">
+    <Grid>
+        <Grid.ColumnDefinitions>
+		    <ColumnDefinition Width="*"/>
+		    <ColumnDefinition Width="*"/>
+		    <ColumnDefinition Width="*"/>
+		    <ColumnDefinition Width="*"/>
+		    <ColumnDefinition Width="*"/>	
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="StartBib"
+                 Grid.Column="0"
+                 Margin="2"
+                 VerticalContentAlignment="Center"
+                 GotFocus="SelectAll"
+                 KeyPressed="KeyPressHandler"
+                 TextChanged="StartBib_TextChanged"/>
+        <TextBox x:Name="EndBib"
+                 Grid.Column="1"
+                 Margin="2"
+                 VerticalContentAlignment="Center"
+                 GotFocus="SelectAll"
+                 KeyPressed="KeyPressHandler"
+                 TextChanged="EndBib_TextChanged"/>
+        <TextBox x:Name="StartChip"
+                 Grid.Column="2"
+                 Margin="2"
+                 VerticalContentAlignment="Center"
+                 GotFocus="SelectAll"
+                 KeyPressed="KeyPressHandler"
+                 TextChanged="StartChip_TextChanged"/>
+        <TextBlock x:Name="EndChip"
+                   Grid.Column="3"
+                   Margin="7,2,2,2"
+                   VerticalContentAlignment="Center"/>
+        <Button x:Name="Remove"
+                Grid.Column="4"
+                Click="Remove_Click"
+                Width="75"
+                />
+    </Grid>
+</UserControl>
