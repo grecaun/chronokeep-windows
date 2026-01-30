@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Chronokeep.UI.API.Parts.ReaderListItem"
+             IsTabStop="False">
+    <StackPanel Orientation="Horizontal"
+              VerticalAlignment="Center"
+              HorizontalAlignment="Center">
+        <ToggleSwitch x:Name="autoFetch"
+                      OnContent=""
+                      OffContent=""
+                      Height="35"
+                      Width="55"
+                      VerticalAlignment="Center"
+                      Margin="5,-7,-7,-7"/>
+        <TextBlock x:Name="nameBlock"
+                   Width="80"
+                   Margin="5"
+                   VerticalAlignment="Center"/>
+        <ComboBox x:name="locationBox"
+                  Margin="5"
+                  Width="150"
+                  Height="35"/>
+        <DatePicker x:Name="startDatePicker"
+                    Height="35"
+                    Width="200"
+                    Margin="5"/>
+        <DatePicker x:Name="endDatePicker"
+                    Height="35"
+                    Width="200"
+                    Margin="5"/>
+        <MaskedTextBox x:Name="startTimeBox"
+                       Text="00:00:00"
+                       Mask="00:00:00"
+                       Width="80"
+                       Height="35"
+                       VerticalAlignment="Center"
+                       VerticalContentAlignment="Center"
+                       TextAlignment="Center"
+                       Margin="5"/>
+        <MaskedTextBox x:Name="endTimeBox"
+                       Text="23:59:59"
+                       Mask="00:00:00"
+                       Width="80"
+                       Height="35"
+                       VerticalAlignment="Center"
+                       VerticalContentAlignment="Center"
+                       TextAlignment="Center"
+                       Margin="5"/>
+        <Button Height="35"
+                Width="35"
+                Margin="5"
+                Click="Rewind_Click">
+            <PathIcon Data="{StaticResource rewind_regular}"/>
+        </Button>
+        <Button Height="35"
+                Width="35"
+                Margin="5"
+                Click="Delete_Click">
+            <PathIcon Data="{StaticResource delete_regular}"/>
+        </Button>
+    </StackPanel>
+</UserControl>

@@ -1,6 +1,8 @@
+using Avalonia.Controls;
 using Chronokeep.Helpers;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
+using System.Text.RegularExpressions;
 
 namespace Chronokeep.UI.Parts;
 
@@ -33,13 +35,16 @@ public partial class AgeGroupPart : UserControl
 
     private void SelectAll(object? sender, Avalonia.Input.GotFocusEventArgs e)
     {
-        TextBox src = (TextBox)e.OriginalSource;
-        src.SelectAll();
+        TextBox? src = (TextBox?)e.Source;
+        src?.SelectAll();
     }
 
     private void NumberValidation(object? sender, Avalonia.Input.TextInputEventArgs e)
     {
-        e.Handled = AllowedChars().IsMatch(e.Text);
+        if (e.Text != null)
+        {
+            e.Handled = AllowedChars().IsMatch(e.Text);
+        }
     }
 
     private void Remove_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

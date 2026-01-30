@@ -19,7 +19,7 @@
         <TextBlock Grid.Column="1" Name="Existing" VerticalAlignment="Center"/>
         <TextBlock Grid.Column="2" Name="Bib" VerticalAlignment="Center"/>
         <TextBlock Grid.Column="3" Name="Distance" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="4" Name="PartName VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="4" Name="PartName" VerticalAlignment="Center"/>
         <TextBlock Grid.Column="5" Name="Sex" VerticalAlignment="Center"/>
         <TextBlock Grid.Column="6" Name="Age" VerticalAlignment="Center"/>
     </Grid>

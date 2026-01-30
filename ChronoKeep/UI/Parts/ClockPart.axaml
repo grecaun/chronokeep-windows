@@ -80,7 +80,7 @@
                        Height="35"
                        Width="80"
                        VerticalAlignment="Center"
-                       TextAlignment="Center
+                       TextAlignment="Center"/>
     </StackPanel>
 </StackPanel>
 </UserControl>

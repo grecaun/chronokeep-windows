@@ -388,7 +388,6 @@ public partial class SegmentsPage : UserControl
             DeleteButton.Content = "Delete Uploaded";
         }
     }
-    }
 
     private void Update_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {

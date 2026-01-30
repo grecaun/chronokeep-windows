@@ -1,29 +1,55 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Chronokeep.Database;
+using Chronokeep.Objects;
+using Chronokeep.UI.API.Windows;
+using Chronokeep.UI.Parts;
 
-namespace AvaloniaApp;
+namespace Chronokeep.UI.API;
 
 public partial class EditAPIPage1 : UserControl
 {
-    public EditAPIPage1()
+    private readonly EditAPIWindow window;
+    private readonly IDBInterface database;
+
+    public EditAPIPage1(EditAPIWindow window, IDBInterface database)
     {
         InitializeComponent();
+        this.window = window;
+        this.database = database;
     }
 
     private void Unlink_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        Event theEvent = database.GetCurrentEvent();
+        // Check if we've actually got a linked event, then unlink it.
+        if (theEvent != null && theEvent.API_ID != Constants.APIConstants.NULL_ID && theEvent.API_Event_ID != Constants.APIConstants.NULL_EVENT_ID)
+        {
+            theEvent.API_ID = Constants.APIConstants.NULL_ID;
+            theEvent.API_Event_ID = Constants.APIConstants.NULL_EVENT_ID;
+            database.UpdateEvent(theEvent);
+            window.NetworkUpdateResults();
+        }
+        else
+        {
+            DialogBox.Show("Unable to Link Event");
+        }
+        window.Close();
     }
 
     private void Edit_Event_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        window.GotoEditEvent();
     }
 
     private void Edit_Year_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        window.GotoEditYear();
     }
 
     private void Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        window.Close();
     }
 }

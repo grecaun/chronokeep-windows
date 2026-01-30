@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -73,7 +74,7 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         }
     }
 
-    private void RemoveAgeGroup(AAgeGroup group)
+    internal void RemoveAgeGroup(AAgeGroup group)
     {
         Log.D("UI.MainPages.AgeGroupsPage", "Removing Age Group from view.");
         AgeGroupsBox.Items.Remove(group);

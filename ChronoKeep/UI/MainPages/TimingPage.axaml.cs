@@ -1605,7 +1605,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     private void Export_Runsignup_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        "UI.MainPages.TimingPage", "Export Runsignup Clicked.");
+        Log.D("UI.MainPages.TimingPage", "Export Runsignup Clicked.");
         if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
         {
             DialogBox.Show("Exporting time based events not supported.");

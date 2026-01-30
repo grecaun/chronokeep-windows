@@ -1,17 +1,26 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Chronokeep.UI.API.Windows;
 
-namespace AvaloniaApp;
+namespace Chronokeep.UI.API;
 
 public partial class APIErrorPage : UserControl
 {
-    public APIErrorPage()
+    private readonly APIWindow window;
+
+    public APIErrorPage(APIWindow window, bool noAPI)
     {
         InitializeComponent();
+        this.window = window;
+        if (noAPI)
+        {
+            errorLabel.Text = "An API must be set up before you can use this tool.";
+        }
     }
 
     private void Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        window.Close();
     }
 }
