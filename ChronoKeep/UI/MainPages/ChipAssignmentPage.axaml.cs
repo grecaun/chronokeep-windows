@@ -1,16 +1,24 @@
+using Avalonia.Controls;
+using Avalonia.Input;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.IO;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
+using Chronokeep.UI.Parts;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Chronokeep.UI.MainPages;
 
-public partial class ChipAssignmentPage : UserControl
+public partial class ChipAssignmentPage : IMainPage
 {
-    private List<ChipAssoc> EventChips { get; } = [];
-    private List<ChipAssoc> GlobalChips { get; } = [];
+    private List<BibChipAssociation> EventChips { get; } = [];
+    private List<BibChipAssociation> GlobalChips { get; } = [];
 
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
@@ -24,7 +32,7 @@ public partial class ChipAssignmentPage : UserControl
     [GeneratedRegex("[^0-9a-fA-F]")]
     private static partial Regex AllowedHexChars();
 
-    public ChipAssigmentPage(IMainWindow mWindow, IDBInterface database)
+    public ChipAssignmentPage(IMainWindow mWindow, IDBInterface database)
     {
         InitializeComponent();
         this.mWindow = mWindow;
@@ -207,7 +215,7 @@ public partial class ChipAssignmentPage : UserControl
             );
     }
 
-    private void KeyPressHandlerSingle(object? sender, Avalonia.Input.KeyEventArgs e)
+    private void KeyPressHandlerSingle(object? sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
@@ -215,25 +223,25 @@ public partial class ChipAssignmentPage : UserControl
         }
     }
 
-    private void SelectAll(object? sender, Avalonia.Input.GotFocusEventArgs e)
+    private void SelectAll(object? sender,GotFocusEventArgs e)
     {
-        TextBox src = (TextBox)e.OriginalSource;
-        src.SelectAll();
+        TextBox? src = e.Source as TextBox;
+        src?.SelectAll();
     }
 
-    private void ChipValidation(object? sender, Avalonia.Input.TextInputEventArgs e)
+    private void ChipValidation(object? sender, TextInputEventArgs e)
     {
         if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
         {
-            e.Handled = AllowedChars().IsMatch(e.Text);
+            e.Handled = e.Text != null && AllowedChars().IsMatch(e.Text);
         }
         else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
         {
-            e.Handled = AllowedHexChars().IsMatch(e.Text);
+            e.Handled = e.Text != null && AllowedHexChars().IsMatch(e.Text);
         }
     }
 
-    private void SaveSingleButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SaveSingleButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Save Single clicked.");
         long chip = -1, bib = -1;
@@ -280,8 +288,10 @@ public partial class ChipAssignmentPage : UserControl
     private void FileImport_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Import from file clicked.");
-        OpenFileDialog bib_dialog = new() { Filter = "Excel files (*.xlsx,*.xls,*.csv,*.txt)|*.xlsx;*.xls;*.csv;*.txt|All files|*" };
-        if (bib_dialog.ShowDialog() == true)
+        OpenFileDialog bib_dialog = new();
+        bib_dialog.Filters.Add(new FileDialogFilter() { Name = "Excel files (*.xlsx,*.xls,*.csv,*.txt)", Extensions = new List<string> { ".xlsx", "xls", "csv", "txt" } });
+        bib_dialog.Filters.Add(new FileDialogFilter() { Name = "All files" });
+        if (bib_dialog.ShowAsync() == true)
         {
             string ext = Path.GetExtension(bib_dialog.FileName);
             try
@@ -550,10 +560,4 @@ public partial class ChipAssignmentPage : UserControl
         }
         chipType = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE);
     }
-}
-
-class ChipAssoc
-{
-    string Bib { get; set; } = "";
-    string Chip { get; set; } = "";
 }

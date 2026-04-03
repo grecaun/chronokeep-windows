@@ -3,7 +3,6 @@ using Avalonia.Threading;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
-using Chronokeep.MemStore;
 using Chronokeep.Network;
 using Chronokeep.Network.Registration;
 using Chronokeep.Objects;
@@ -13,8 +12,9 @@ using Chronokeep.Timing;
 using Chronokeep.Timing.Announcer;
 using Chronokeep.Timing.API;
 using Chronokeep.Timing.Remote;
+using Chronokeep.UI.Announcer;
 using Chronokeep.UI.MainPages;
-using Chronokeep.UI.UIObjects;
+using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -28,7 +28,7 @@ namespace Chronokeep.UI
 {
     public partial class MainWindow : Window, IMainWindow
     {
-        internal UserControl CurrentPage;
+        internal IMainPage CurrentPage;
 
         private readonly MemStore.MemStore database;
         private IMainPage page;
@@ -126,7 +126,7 @@ namespace Chronokeep.UI
             // Setup AgeGroup static variables
             Event theEvent = database.GetCurrentEvent();
 
-            CurrentPage = new DashboardPage();
+            CurrentPage = new DashboardPage(this, database);
             ParentSplitView.Content = CurrentPage;
 
             UpdateStatus();
@@ -384,14 +384,14 @@ namespace Chronokeep.UI
         private void ChipsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Chips button clicked.");
-            if (page is ChipAssigmentPage)
+            if (page is ChipAssignmentPage)
             {
                 Log.D("UI.MainWindow", "Chips page already displayed.");
                 return;
             }
             UncheckAll();
             ChipsButton.IsChecked = true;
-            SwitchPage(new ChipAssigmentPage(this, database));
+            SwitchPage(new ChipAssignmentPage(this, database));
         }
 
         private void LocationsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -1230,9 +1230,14 @@ namespace Chronokeep.UI
             UpdateTimingNonBlocking();
         }
 
-        public static void Exit()
+        public void Exit()
         {
             Close();
+        }
+
+        public void WindowFinalize(Window w)
+        {
+            throw new NotImplementedException();
         }
     }// END
 }

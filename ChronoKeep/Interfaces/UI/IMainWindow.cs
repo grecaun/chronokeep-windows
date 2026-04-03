@@ -1,7 +1,7 @@
-﻿using Chronokeep.Objects;
+﻿using Avalonia.Controls;
+using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using System.Collections.Generic;
-using System.Windows;
 
 namespace Chronokeep.Interfaces.UI
 {
@@ -61,7 +61,7 @@ namespace Chronokeep.Interfaces.UI
         void ShowNotificationDialog(string ReaderName, string Address, RemoteNotification notification);
 
         // Theme related calls
-        void UpdateTheme(Wpf.Ui.Appearance.ApplicationTheme theme, bool system);
+        void UpdateTheme(string theme, bool system);
 
         // Registration related calls
         bool StartRegistration();
