@@ -2,8 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:objects="using:Chronokeep.Objects"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="AvaloniaApp.AwardPage">
+             x:Class="Chronokeep.UI.MainPages.Timing.AwardPage">
     <UserControl.Styles>
         <Style Selector="Button">
             <Setter Property="FontSize" Value="16"/>
@@ -92,12 +93,11 @@
                              Text="3"
                              Width="40"/>
                 </DockPanel>
-                    <!--ItemsSource="{Binding GlobalChips}">-->
                 <DataGrid Name="customGroupsListView" SelectionMode="Extended" Margin="0,0,0,5" FontSize="12">
                     <DataGrid.Columns>
-                        <!--<DataGridTextColumn Header="Start Age" Binding="{Binding StartAge}" MinWidth="100"/>
-                        <DataGridTextColumn Header="End Age" Binding="{Binding EndAge}" MinWidth="100"/>
-                        <DataGridTextColumn Header="Name" Binding="{Binding CustomName}" MinWidth="100"/>-->
+                        <DataGridTextColumn Header="Start Age" Binding="{Binding StartAge}" MinWidth="100" x:DataType="objects:AgeGroup"/>
+                        <DataGridTextColumn Header="End Age" Binding="{Binding EndAge}" MinWidth="100" x:DataType="objects:AgeGroup"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding CustomName}" MinWidth="100" x:DataType="objects:AgeGroup"/>
                     </DataGrid.Columns>
                 </DataGrid>
                 <DockPanel HorizontalAlignment="Center" Margin="0,0,0,5">

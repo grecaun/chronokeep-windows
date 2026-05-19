@@ -2,8 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:objects="using:Chronokeep.Objects"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="AvaloniaApp.TimingRawReadsPage">
+             x:Class="Chronokeep.UI.MainPages.Timing.TimingRawReadsPage">
     <UserControl.Styles>
         <Style Selector="Button">
             <Setter Property="FontSize" Value="14"/>
@@ -38,19 +39,17 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <DataGrid Grid.Row="0" x:Name="updateListView">
+        <DataGrid Grid.Row="0" Name="updateListView">
             <DataGrid.Columns>
-                <!--
-                <DataGridTextColumn Header="Box" Binding="{Binding Box}" MinWidth="80"/>
-                <DataGridTextColumn Header="Location" Binding="{Binding LocationName}" MinWidth="80"/>
-                <DataGridTextColumn Header="Chip" Binding="{Binding ChipNumber}" MinWidth="120"/>
-                <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="70"/>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" MinWidth="140"/>
-                <DataGridTextColumn Header="Clock" Binding="{Binding TimeString}" MinWidth="170"/>
-                <DataGridTextColumn Header="Net Time" Binding="{Binding NetTime}" MinWidth="100"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding StatusName}" MinWidth="100"/>
-                <DataGridTextColumn Header="Type" Binding="{Binding TypeName}" MinWidth="100"/>
-                -->
+                <DataGridTextColumn Header="Box" Binding="{Binding Box}" MinWidth="80" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Location" Binding="{Binding LocationName}" MinWidth="80" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Chip" Binding="{Binding ChipNumber}" MinWidth="120" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="70" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" MinWidth="140" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Clock" Binding="{Binding TimeString}" MinWidth="170" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Net Time" Binding="{Binding NetTime}" MinWidth="100" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding StatusName}" MinWidth="100" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding TypeName}" MinWidth="100" x:DataType="objects:ChipRead"/>
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">

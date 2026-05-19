@@ -2,8 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:objects="using:Chronokeep.Objects"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="AvaloniaApp.TimingResultsPage">
+             x:Class="Chronokeep.UI.MainPages.Timing.TimingResultsPage">
     <UserControl.Styles>
         <Style Selector="DataGrid">
             <Setter Property="IsReadOnly" Value="True"/>
@@ -17,27 +18,25 @@
         </Style>
     </UserControl.Styles>
     
-    <DataGrid x:Name="updateListView">
+    <DataGrid Name="updateListView" CanUserSortColumns="False" IsReadOnly="True">
         <DataGrid.Columns>
-            <!--
-            <DataGridTextColumn Header="Loc" Binding="{Binding LocationName}" MinWidth="90"/>
-            <DataGridTextColumn Header="Occ" Binding="{Binding Occurrence}" MinWidth="32"/>
-            <DataGridTextColumn Header="System Time" Binding="{Binding SysTime}" MinWidth="140"/>
-            <DataGridTextColumn Header="Time" Binding="{Binding Time}" MinWidth="90"/>
-            <DataGridTextColumn Header="Chip Time" Binding="{Binding ChipLapTime}" MinWidth="90"/>
-            <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="50"/>
-            <DataGridTextColumn Header="Name" Binding="{Binding ParticipantName}" MinWidth="130"/>
-            <DataGridTextColumn Header="Pl" Binding="{Binding PlaceStr}" MinWidth="40"/>
-            <DataGridTextColumn Header="G" Binding="{Binding PrettyGender}" MinWidth="25"/>
-            <DataGridTextColumn Header="GP" Binding="{Binding GenderPlaceStr}" MinWidth="40"/>
-            <DataGridTextColumn Header="Age Grp" Binding="{Binding AgeGroupName}" MinWidth="60"/>
-            <DataGridTextColumn Header="AP" Binding="{Binding AgePlaceStr}" MinWidth="40"/>
-            <DataGridTextColumn Header="Division" Binding="{Binding Division}" MinWidth="25"/> // div
-            <DataGridTextColumn Header="DP" Binding="{Binding DivisionPlaceStr}" MinWidth="25"/> // div pl
-            <DataGridTextColumn Header="Distance" Binding="{Binding DistanceName}" MinWidth="110"/>
-            <DataGridTextColumn Header="T" Binding="{Binding PrettyType}" MinWidth="20"/>
-            <DataGridTextColumn Header="Segment" Binding="{Binding SegmentName}" MinWidth="120"/>
-            -->
+            <DataGridTextColumn Header="Loc" Binding="{Binding LocationName}" MinWidth="90" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="Occ" Binding="{Binding Occurrence}" MinWidth="32" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="System Time" Binding="{Binding SysTime}" MinWidth="140" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="Time" Binding="{Binding Time}" MinWidth="90" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="Chip Time" Binding="{Binding ChipLapTime}" MinWidth="90" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="50" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="Name" Binding="{Binding ParticipantName}" MinWidth="130" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="Pl" Binding="{Binding PlaceStr}" MinWidth="40" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="G" Binding="{Binding PrettyGender}" MinWidth="25" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="GP" Binding="{Binding GenderPlaceStr}" MinWidth="40" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="Age Grp" Binding="{Binding AgeGroupName}" MinWidth="60" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="AP" Binding="{Binding AgePlaceStr}" MinWidth="40" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="Division" Binding="{Binding Division}" MinWidth="25" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="DP" Binding="{Binding DivisionPlaceStr}" MinWidth="25" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="Distance" Binding="{Binding DistanceName}" MinWidth="110" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="T" Binding="{Binding PrettyType}" MinWidth="20" x:DataType="objects:TimeResult"/>
+            <DataGridTextColumn Header="Segment" Binding="{Binding SegmentName}" MinWidth="120" x:DataType="objects:TimeResult"/>
         </DataGrid.Columns>
     </DataGrid>
 </UserControl>
