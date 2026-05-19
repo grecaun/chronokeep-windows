@@ -3,12 +3,8 @@ using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
-using Chronokeep.UI.UIObjects;
 using System.Collections.Generic;
 using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Chronokeep.UI.Timing
 {

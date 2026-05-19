@@ -1,7 +1,10 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Chronokeep.Objects;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace Chronokeep.UI.RfidReader;
+namespace Chronokeep.UI.UhfRfidReader;
 
 public partial class ChipPersonWindow : Window
 {
@@ -34,8 +37,8 @@ public partial class ChipPersonWindow : Window
             AgeGender.Text = string.Format("{0} {1}", person.Age(eventDate), person.Gender);
             Distance.Text = "" + person.EventSpecific.DistanceName;
             Unknown.Text = "";
-            Unknown.Visibility = Visibility.Collapsed;
-            InfoHolder.Visibility = Visibility.Visible;
+            Unknown.IsVisible = false;
+            InfoHolder.IsVisible = true;
         }
         else
         {
@@ -45,8 +48,8 @@ public partial class ChipPersonWindow : Window
             AgeGender.Text = "";
             Distance.Text = "";
             Unknown.Text = "Information not found.";
-            Unknown.Visibility = Visibility.Visible;
-            InfoHolder.Visibility = Visibility.Collapsed;
+            Unknown.IsVisible = true;
+            InfoHolder.IsVisible = false;
         }
         await Task.Run(() =>
         {
@@ -60,12 +63,12 @@ public partial class ChipPersonWindow : Window
         AgeGender.Text = "";
         Distance.Text = "";
         Unknown.Text = "";
-        Unknown.Visibility = Visibility.Collapsed;
-        InfoHolder.Visibility = Visibility.Collapsed;
+        Unknown.IsVisible = false;
+        InfoHolder.IsVisible = false;
     }
 
 
-    private void Window_KeyUp(object sender, Avalonia.Input.KeyEventArgs e)
+    private void Window_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)
         {

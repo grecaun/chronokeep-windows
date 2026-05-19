@@ -20,6 +20,7 @@ public partial class ChangeLogWindow : Window
     {
         InitializeComponent();
         this.window = window;
+        this.database = database;
 
         string changelogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "changelog");
         string[] changelogFiles = Directory.GetFiles(changelogPath);
@@ -32,13 +33,12 @@ public partial class ChangeLogWindow : Window
         foreach (string file in changelogFiles)
         {
             string jsonData = File.ReadAllText(file);
-            Entry entry = JsonSerializer.Deserialize<Entry>(jsonData);
+            Entry entry = JsonSerializer.Deserialize<Entry>(jsonData)!;
             changelogEntries.Add(entry);
         }
         changelogEntries.Sort();
         changelogEntries[0].IsExpanded = true;
         logList.ItemsSource = changelogEntries;
-        this.database = database;
         AppSetting autoChangelog = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG);
         autoChangelogToggleSwitch.IsChecked = autoChangelog != null && autoChangelog.Value == Constants.Settings.SETTING_TRUE;
     }

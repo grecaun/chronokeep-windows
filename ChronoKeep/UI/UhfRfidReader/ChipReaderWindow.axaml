@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.UhfRfidReader.ChipReaderWindow"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title="Chip Reader"
         Width="770"

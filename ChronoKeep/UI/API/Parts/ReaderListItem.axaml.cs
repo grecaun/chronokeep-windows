@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -5,7 +6,8 @@ using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.UI.Parts;
-using static Chronokeep.UI.API.RemoteReadersWindow;
+using System;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.API.Parts;
 
@@ -23,7 +25,6 @@ public partial class ReaderListItem : UserControl
         IMainWindow mainWindow
         )
     {
-        string dateStr = DateTime.Now.ToString("MM/dd/yyyy");
         var theEvent = database.GetCurrentEvent();
         if (theEvent == null || theEvent.Identifier < 1)
         {
@@ -48,7 +49,7 @@ public partial class ReaderListItem : UserControl
             locationBox.Items.Add(new ComboBoxItem()
             {
                 Content = loc.Name,
-                Uid = loc.Identifier.ToString(),
+                Tag = loc.Identifier.ToString(),
                 IsSelected = reader.LocationID == loc.Identifier,
             });
         }
@@ -56,8 +57,9 @@ public partial class ReaderListItem : UserControl
         {
             locationBox.SelectedIndex = 0;
         }
-        startDatePicker.Text = dateStr;
-        endDatePicker.Text = dateStr;
+        DateTime dateStr = DateTime.Now;
+        startDatePicker.SelectedDate = dateStr;
+        endDatePicker.SelectedDate = dateStr;
     }
 
     public RemoteReader GetUpdatedReader()

@@ -6,9 +6,8 @@
         x:Class="Chronokeep.UI.UhfRfidReader.ChipPersonWindow"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
-        Title="ChipPersonWindow"
+        Title="Person"
         WindowState="Maximized"
         KeyUp="Window_KeyUp"
         Closing="Window_Closing">

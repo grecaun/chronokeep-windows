@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.Timing.Notifications.SMSWaveEnabledWindow"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title="SMS Waves"
         Height="300"

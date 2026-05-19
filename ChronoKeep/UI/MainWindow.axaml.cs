@@ -1,4 +1,6 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
@@ -22,6 +24,7 @@ using System.IO;
 using System.Media;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using static Chronokeep.Helpers.Globals;
 
 namespace Chronokeep.UI
@@ -31,35 +34,34 @@ namespace Chronokeep.UI
         internal IMainPage CurrentPage;
 
         private readonly MemStore.MemStore database;
-        private IMainPage page;
         private readonly string dbName = "Chronokeep.sqlite";
 
         // Network objects
-        private HttpServer httpServer = null;
+        private HttpServer? httpServer = null;
         private readonly int httpServerPort = 6933;
 
         // Zero Conf/Registration objects.
-        private Thread ZConfThread = null;
-        private ZeroConf ZConfServer = null;
-        private Thread RegistrationThread = null;
-        private RegistrationWorker RegistrationWorker = null;
+        private Thread? ZConfThread = null;
+        private ZeroConf? ZConfServer = null;
+        private Thread? RegistrationThread = null;
+        private RegistrationWorker? RegistrationWorker = null;
 
         // Timing objects.
-        private Thread TimingControllerThread = null;
-        private TimingController TimingController = null;
-        private Thread TimingWorkerThread = null;
-        private TimingWorker TimingWorker = null;
+        private Thread? TimingControllerThread = null;
+        private TimingController? TimingController = null;
+        private Thread? TimingWorkerThread = null;
+        private TimingWorker? TimingWorker = null;
 
         // API objects.
-        private Thread APIControllerThread = null;
-        private APIController APIController = null;
+        private Thread? APIControllerThread = null;
+        private APIController? APIController = null;
 
         // Remote Reads objects
-        private Thread RemoteThread = null;
-        private RemoteReadsController RemoteController = null;
+        private Thread? RemoteThread = null;
+        private RemoteReadsController? RemoteController = null;
 
         // Announcer objects
-        private AnnouncerWindow announcerWindow = null;
+        private AnnouncerWindow? announcerWindow = null;
 
         private readonly List<Window> openWindows = [];
 
@@ -244,7 +246,7 @@ namespace Chronokeep.UI
                     Log.D("UI.MainWindow", "Oh well!");
                 }
             }
-            if (page != null) page.Closing();
+            if (CurrentPage != null) CurrentPage.Closing();
             TimingUpdater.Stop();
         }
 
@@ -332,7 +334,7 @@ namespace Chronokeep.UI
 
         public void SwitchPage(IMainPage iPage)
         {
-            page.Closing();
+            CurrentPage.Closing();
             CurrentPage = iPage;
             ParentSplitView.Content = CurrentPage;
         }
@@ -353,10 +355,10 @@ namespace Chronokeep.UI
         private void TimingButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Timing button clicked.");
-            if (page is TimingPage)
+            if (CurrentPage is TimingPage)
             {
                 Log.D("UI.MainWindow", "Timing page already displayed.");
-                ((TimingPage)page).LoadMainDisplay();
+                ((TimingPage)CurrentPage).LoadMainDisplay();
                 return;
             }
             UncheckAll();
@@ -364,14 +366,10 @@ namespace Chronokeep.UI
             SwitchPage(new TimingPage(this, database));
         }
 
-        private void Announcer_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-        }
-
         private void ParticipantsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Participants button clicked.");
-            if (page is ParticipantsPage)
+            if (CurrentPage is ParticipantsPage)
             {
                 Log.D("UI.MainWindow", "Participants page already displayed.");
                 return;
@@ -384,7 +382,7 @@ namespace Chronokeep.UI
         private void ChipsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Chips button clicked.");
-            if (page is ChipAssignmentPage)
+            if (CurrentPage is ChipAssignmentPage)
             {
                 Log.D("UI.MainWindow", "Chips page already displayed.");
                 return;
@@ -397,7 +395,7 @@ namespace Chronokeep.UI
         private void LocationsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Locations button clicked.");
-            if (page is LocationsPage)
+            if (CurrentPage is LocationsPage)
             {
                 Log.D("UI.MainWindow", "Locations page already displayed.");
                 return;
@@ -409,7 +407,7 @@ namespace Chronokeep.UI
         private void DistancesButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Distances button clicked.");
-            if (page is DistancesPage)
+            if (CurrentPage is DistancesPage)
             {
                 Log.D("UI.MainWindow", "Distances page already displayed.");
                 return;
@@ -422,7 +420,7 @@ namespace Chronokeep.UI
         private void SegmentsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Segments button clicked.");
-            if (page is SegmentsPage)
+            if (CurrentPage is SegmentsPage)
             {
                 Log.D("UI.MainWindow", "Segments page already displayed.");
                 return;
@@ -435,7 +433,7 @@ namespace Chronokeep.UI
         private void AgeGroupsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Age Groups button clicked.");
-            if (page is AgeGroupsPage)
+            if (CurrentPage is AgeGroupsPage)
             {
                 Log.D("UI.MainWindow", "Age groups page already displayed.");
                 return;
@@ -448,7 +446,7 @@ namespace Chronokeep.UI
         private void SettingsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Settings button clicked.");
-            if (page is SettingsPage)
+            if (CurrentPage is SettingsPage)
             {
                 Log.D("UI.MainWindow", "Settings page already displayed.");
                 return;
@@ -461,7 +459,7 @@ namespace Chronokeep.UI
         private void AboutButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "About button clicked.");
-            if (page is AboutPage)
+            if (CurrentPage is AboutPage)
             {
                 Log.D("UI.MainWindow", "About page already displayed.");
                 return;
@@ -607,7 +605,7 @@ namespace Chronokeep.UI
             {
                 return false;
             }
-            page.UpdateView();
+            CurrentPage.UpdateView();
             return true;
         }
 
@@ -636,11 +634,11 @@ namespace Chronokeep.UI
 
         public void UpdateParticipantsFromRegistration()
         {
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current!.Dispatcher.Invoke(new Action(delegate ()
             {
-                if (page is ParticipantsPage)
+                if (CurrentPage is ParticipantsPage)
                 {
-                    page.UpdateView();
+                    CurrentPage.UpdateView();
                 }
             }));
         }
@@ -648,9 +646,9 @@ namespace Chronokeep.UI
         public void UpdateTimingFromController()
         {
             TimingWorker.Notify();
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current!.Dispatcher.Invoke(new Action(delegate ()
             {
-                if (page is TimingPage timingPage)
+                if (CurrentPage is TimingPage timingPage)
                 {
                     timingPage.UpdateView();
                     timingPage.NewMessage();
@@ -686,7 +684,7 @@ namespace Chronokeep.UI
             {
                 return false;
             }
-            page.UpdateView();
+            CurrentPage.UpdateView();
             return true;
         }
 
@@ -703,7 +701,7 @@ namespace Chronokeep.UI
         public void UpdateAnnouncerWindow()
         {
             // Let the announcer window know that it has new information.
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current.Dispatcher.Invoke(new Action(delegate ()
             {
                 announcerWindow?.UpdateView();
             }));
@@ -712,11 +710,11 @@ namespace Chronokeep.UI
         public void UpdateTiming()
         {
             // Let the timing page know that it has new information.
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current!.Dispatcher.Invoke(new Action(delegate ()
             {
-                if (page is TimingPage)
+                if (CurrentPage is TimingPage)
                 {
-                    page.UpdateView();
+                    CurrentPage.UpdateView();
                 }
             }));
         }
@@ -740,28 +738,28 @@ namespace Chronokeep.UI
                 // show any dialogboxes that need to be shown due to importance
                 foreach (ReaderMessage message in toShow)
                 {
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+                    Application.Current!.Dispatcher.Invoke(new Action(delegate ()
                     {
                         DialogBox.Show(message.DialogBoxString);
                     }));
                 }
                 // Let the announcer window know that it has new information.
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+                Application.Current!.Dispatcher.Invoke(new Action(delegate ()
                 {
-                    if (page is TimingPage)
+                    if (CurrentPage is TimingPage)
                     {
-                        page.UpdateView();
+                        CurrentPage.UpdateView();
                     }
                 }));
             }));
             newThread.Start();
         }
 
-        public void UpdateTimingTick(object sender, EventArgs e)
+        public void UpdateTimingTick(object? sender, EventArgs e)
         {
             if (TimingWorker.NewResultsExist())
             {
-                if (page is TimingPage timingPage)
+                if (CurrentPage is TimingPage timingPage)
                 {
                     timingPage.UpdateSubView();
                 }
@@ -823,41 +821,41 @@ namespace Chronokeep.UI
             }
             if (OperatingSystem.IsWindowsVersionAtLeast(8))
             {
-                dashboardButton.IsActive = page is DashboardPage;
-                timingButton.IsActive = page is TimingPage;
+                dashboardButton.IsActive = CurrentPage is DashboardPage;
+                timingButton.IsActive = CurrentPage is TimingPage;
                 announcerButton.IsActive = announcerWindow != null;
-                participantsButton.IsActive = page is ParticipantsPage;
-                chipsButton.IsActive = page is ChipAssigmentPage;
-                locationsButton.IsActive = page is LocationsPage;
-                distancesButton.IsActive = page is DistancesPage;
-                segmentsButton.IsActive = page is SegmentsPage;
-                agegroupsButton.IsActive = page is AgeGroupsPage;
-                settingsButton.IsActive = page is SettingsPage;
-                aboutButton.IsActive = page is AboutPage;
+                participantsButton.IsActive = CurrentPage is ParticipantsPage;
+                chipsButton.IsActive = CurrentPage is ChipAssigmentPage;
+                locationsButton.IsActive = CurrentPage is LocationsPage;
+                distancesButton.IsActive = CurrentPage is DistancesPage;
+                segmentsButton.IsActive = CurrentPage is SegmentsPage;
+                agegroupsButton.IsActive = CurrentPage is AgeGroupsPage;
+                settingsButton.IsActive = CurrentPage is SettingsPage;
+                aboutButton.IsActive = CurrentPage is AboutPage;
             }
             UpdateTimingBadge();
         }
 
         public void UpdateTimingBadge()
         {
-            if (page is not TimingPage)
+            if (CurrentPage is not TimingPage)
             {
                 List<ReaderMessage> messages = GetReaderMessages();
                 messages.RemoveAll(x => x.Notified);
                 if (messages.Count > 0)
                 {
-                    TimingButtonInfoBadge.Visibility = Visibility.Visible;
+                    TimingButtonInfoBadge.IsVisible = true;
                     TimingButtonInfoBadge.Value = $"{messages.Count}";
                 }
                 else
                 {
-                    TimingButtonInfoBadge.Visibility = Visibility.Hidden;
+                    TimingButtonInfoBadge.IsVisible = false;
                     TimingButtonInfoBadge.Value = "0";
                 }
             }
             else
             {
-                TimingButtonInfoBadge.Visibility = Visibility.Hidden;
+                TimingButtonInfoBadge.IsVisible = false;
                 TimingButtonInfoBadge.Value = "0";
             }
         }
@@ -866,7 +864,7 @@ namespace Chronokeep.UI
         {
             await Task.Run(() =>
             {
-                TimingController.ConnectTimingSystem(system);
+                TimingController!.ConnectTimingSystem(system);
             });
             UpdateTiming();
             announcerWindow?.UpdateView();
@@ -874,7 +872,7 @@ namespace Chronokeep.UI
             {
                 if (!TimingController.IsRunning())
                 {
-                    TimingControllerThread = new Thread(new ThreadStart(TimingController.Run));
+                    TimingControllerThread = new Thread(new ThreadStart(TimingController!.Run));
                     TimingControllerThread.Start();
                 }
             });
@@ -884,7 +882,7 @@ namespace Chronokeep.UI
         {
             await Task.Run(() =>
             {
-                TimingController.DisconnectTimingSystem(system);
+                TimingController!.DisconnectTimingSystem(system);
             });
             UpdateTiming();
             announcerWindow?.UpdateView();
@@ -892,7 +890,7 @@ namespace Chronokeep.UI
 
         public void ShutdownTimingController()
         {
-            TimingController.Shutdown();
+            TimingController!.Shutdown();
         }
 
         public List<TimingSystem> GetConnectedSystems()
@@ -906,7 +904,7 @@ namespace Chronokeep.UI
 
         public void TimingSystemDisconnected(TimingSystem system)
         {
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current!.Dispatcher.Invoke(new Action(delegate ()
             {
                 if (!system.SystemInterface.WasShutdown())
                 {
@@ -1109,9 +1107,9 @@ namespace Chronokeep.UI
         public void NotifyAlarm(string Bib, string Chip)
         {
             Event theEvent = database.GetCurrentEvent();
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current!.Dispatcher.Invoke(new Action(delegate ()
             {
-                Alarm alarm = null;
+                Alarm? alarm = null;
                 if (Bib.Length > 0)
                 {
                     alarm = Alarm.GetAlarmByBib(Bib);
@@ -1173,9 +1171,9 @@ namespace Chronokeep.UI
                     }
                     new SoundPlayer(soundFile).Play();
                 }
-                if (page is TimingPage)
+                if (CurrentPage is TimingPage)
                 {
-                    ((TimingPage)page).UpdateAlarms();
+                    ((TimingPage)CurrentPage).UpdateAlarms();
                 }
             }));
         }

@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.ChangeLogWindow"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title="Change Event"
         Width="600"

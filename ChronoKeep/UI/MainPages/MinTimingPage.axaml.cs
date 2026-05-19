@@ -1,13 +1,20 @@
+using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Constants;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
+using Chronokeep.UI.Timing;
 using Chronokeep.UI.Timing.Windows;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.NetworkInformation;
 
 namespace Chronokeep.UI.MainPages;
 
-public partial class MinTimingPage : UserControl
+public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
@@ -16,8 +23,8 @@ public partial class MinTimingPage : UserControl
     private Event theEvent;
     List<TimingLocation> locations;
 
-    private SetTimeWindow timeWindow = null;
-    private RewindWindow rewindWindow = null;
+    private SetTimeWindow? timeWindow = null;
+    private RewindWindow? rewindWindow = null;
 
     int total = 4, connected = 0;
 
@@ -142,7 +149,7 @@ public partial class MinTimingPage : UserControl
         {
             subPage = null;
             TimingFrame.Content = subPage;
-            TimingFrame.Visibility = Visibility.Hidden;
+            TimingFrame.IsVisible = false;
             // Something went wrong and this shouldn't be visible.
             return;
         }
@@ -150,7 +157,7 @@ public partial class MinTimingPage : UserControl
         {
             subPage = new TimingRawReadsPage(this, database);
             TimingFrame.Content = subPage;
-            TimingFrame.Visibility = Visibility.Visible;
+            TimingFrame.IsVisible = true;
         }
 
         // Get updated list of locations
@@ -236,7 +243,7 @@ public partial class MinTimingPage : UserControl
     {
         Log.D("UI.MainPages.TimingPage", "Opening Set Time Window.");
         timeWindow = new(this, system);
-        timeWindow.ShowDialog();
+        timeWindow.ShowDialog((Window)mWindow);
         timeWindow = null;
     }
 
@@ -244,7 +251,7 @@ public partial class MinTimingPage : UserControl
     {
         Log.D("UI.MainPages.TimingPage", "Opening Rewind Window.");
         rewindWindow = new(system);
-        rewindWindow.ShowDialog();
+        rewindWindow.ShowDialog((Window)mWindow);
         rewindWindow = null;
 
     }

@@ -1,10 +1,11 @@
+using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Timing.Interfaces;
+using Chronokeep.UI.API.Parts;
 using Chronokeep.UI.Parts;
-using static Chronokeep.UI.API.RemoteReadersWindow;
-using Button = Wpf.Ui.Controls.Button;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.Timing.ReaderSettings;
 

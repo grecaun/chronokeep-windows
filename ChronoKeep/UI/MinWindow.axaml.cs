@@ -7,6 +7,9 @@ using Chronokeep.MemStore;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing;
+using Chronokeep.UI.EventWindows;
+using Chronokeep.UI.MainPages;
+using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -93,7 +96,7 @@ public partial class MinWindow : Window, IMainWindow
         if (newEventWindow != null)
         {
             this.AddWindow(newEventWindow);
-            newEventWindow.ShowDialog();
+            newEventWindow.ShowDialog(this);
         }
     }
 
@@ -108,7 +111,7 @@ public partial class MinWindow : Window, IMainWindow
         if (changeEventWindow != null)
         {
             this.AddWindow(changeEventWindow);
-            changeEventWindow.ShowDialog();
+            changeEventWindow.ShowDialog(this);
         }
     }
 
@@ -131,7 +134,7 @@ public partial class MinWindow : Window, IMainWindow
                             if (newEventWindow != null)
                             {
                                 this.AddWindow(newEventWindow);
-                                newEventWindow.ShowDialog();
+                                newEventWindow.ShowDialog(this);
                             }
                             break;
                         case EventClickType.ChangeEvent:
@@ -139,7 +142,7 @@ public partial class MinWindow : Window, IMainWindow
                             if (changeEventWindow != null)
                             {
                                 this.AddWindow(changeEventWindow);
-                                changeEventWindow.ShowDialog();
+                                changeEventWindow.ShowDialog(this);
                             }
                             break;
                     }
@@ -281,7 +284,7 @@ public partial class MinWindow : Window, IMainWindow
 
     public void TimingSystemDisconnected(TimingSystem system)
     {
-        Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+        Application.Current!.Dispatcher.Invoke(new Action(delegate ()
         {
             if (!system.SystemInterface.WasShutdown())
             {
@@ -298,16 +301,13 @@ public partial class MinWindow : Window, IMainWindow
     {
         // Check for current theme color and apply it.
         AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
-        if (OperatingSystem.IsWindowsVersionAtLeast(7))
+        string theme = "light";
+        bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
+        if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
         {
-            Wpf.Ui.Appearance.ApplicationTheme theme = Wpf.Ui.Appearance.ApplicationTheme.Light;
-            bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
-            if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
-            {
-                theme = Wpf.Ui.Appearance.ApplicationTheme.Dark;
-            }
-            UpdateTheme(theme, system);
+            theme = "dark";
         }
+        UpdateTheme(theme, system);
     }
 
     public void Exit()
@@ -363,13 +363,13 @@ public partial class MinWindow : Window, IMainWindow
             // show any dialogboxes that need to be shown due to importance
             foreach (ReaderMessage message in toShow)
             {
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+                Application.Current!.Dispatcher.Invoke(new Action(delegate ()
                 {
                     DialogBox.Show(message.DialogBoxString);
                 }));
             }
             // Let the announcer window know that it has new information.
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current!.Dispatcher.Invoke(new Action(delegate ()
             {
                 if (page is TimingPage)
                 {
@@ -396,7 +396,7 @@ public partial class MinWindow : Window, IMainWindow
 
     public void UpdateTimingFromController()
     {
-        Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+        Application.Current!.Dispatcher.Invoke(new Action(delegate ()
         {
             if (page is MinTimingPage)
             {
@@ -408,7 +408,7 @@ public partial class MinWindow : Window, IMainWindow
 
     public void UpdateTiming()
     {
-        Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+        Application.Current!.Dispatcher.Invoke(new Action(delegate ()
         {
             if (page is MinTimingPage)
             {

@@ -1,6 +1,9 @@
+using Avalonia.Controls;
 using Chronokeep.Helpers;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Timing.Interfaces;
+using Chronokeep.UI.Parts;
+using System.Text.RegularExpressions;
 
 namespace Chronokeep.UI.Timing.ReaderSettings.Parts;
 
@@ -28,26 +31,26 @@ public partial class ReaderPart : UserControl
                     : -1;
         ipBox.Text = reader.IPAddress;
         portBox.Text = reader.Port.ToString();
-        autConnectSwitch.Checked = reader.AutoConnect;
-        connectedSwitch.Checked = reader.Connected;
+        autoConnectSwitch.IsChecked = reader.AutoConnect;
+        connectedSwitch.IsChecked = reader.Connected;
         if (reader.Antennas != null)
         {
-            for (int ix = 0; ix < readers.Antennas.Length; ix++)
+            for (int ix = 0; ix < reader.Antennas.Length; ix++)
             {
                 // TODO -- update border background with correct coloring
                 if (reader.Antennas[ix] != Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_NONE)
                 {
                     antennaPanel.Children.Add(new Border()
                     {
-                        Content = new TextBlock()
+                        Child = new TextBlock()
                         {
                             Text = (ix + 1).ToString(),
-                            VerticalAlignment = VerticalAlignment.Center,
-                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
                         },
                         Width = 30,
                         Height = 30,
-                        CornerRadius = 15,
+                        CornerRadius = Avalonia.CornerRadius.Parse("15"),
                     });
                 }
             }
@@ -69,15 +72,15 @@ public partial class ReaderPart : UserControl
             {
                 antennaPanel.Children.Add(new Border()
                 {
-                    Content = new TextBlock()
+                    Child = new TextBlock()
                     {
                         Text = (ix + 1).ToString(),
-                        VerticalAlignment = VerticalAlignment.Center,
-                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                        HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
                     },
                     Width = 30,
                     Height = 30,
-                    CornerRadius = 15,
+                    CornerRadius = Avalonia.CornerRadius.Parse("15"),
                 });
             }
         }
@@ -115,15 +118,15 @@ public partial class ReaderPart : UserControl
             {
                 antennaPanel.Children.Add(new Border()
                 {
-                    Content = new TextBlock()
+                    Child = new TextBlock()
                     {
                         Text = (ix + 1).ToString(),
-                        VerticalAlignment = VerticalAlignment.Center,
-                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                        HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
                     },
                     Width = 30,
                     Height = 30,
-                    CornerRadius = 15,
+                    CornerRadius = Avalonia.CornerRadius.Parse("15"),
                 });
             }
         }

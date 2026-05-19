@@ -1,4 +1,5 @@
-﻿using Chronokeep.Database;
+﻿using Avalonia.Controls;
+using Chronokeep.Database;
 using Chronokeep.Database.SQLite;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -15,7 +16,7 @@ namespace Chronokeep.UI.Timing
     /// <summary>
     /// Interaction logic for TimingResultsPage.xaml
     /// </summary>
-    public partial class TimingResultsPage : ISubPage
+    public partial class TimingResultsPage : UserControl, ISubPage
     {
         private readonly TimingPage parent;
         private readonly IDBInterface database;

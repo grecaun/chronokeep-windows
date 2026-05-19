@@ -1,6 +1,8 @@
+using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.Timing.Notifications;
 

@@ -16,7 +16,7 @@
             <ComboBox x:Name="kindBox"
                       Width="120" Margin="5"
                       SelectedIndex="0"
-                      ValueChanged="KindBox_ValueChanged" >
+                      SelectionChanged="KindBox_ValueChanged" >
 			    <ComboBoxItem Content="Zebra" />	
             </ComboBox>
         </StackPanel>

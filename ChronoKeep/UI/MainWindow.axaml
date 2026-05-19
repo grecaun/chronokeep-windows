@@ -16,7 +16,6 @@
         TransparencyLevelHint="Mica,AcrylicBlur"
         Background="{DynamicResource SecondaryBackground}"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         x:DataType="vm:MainWindow"

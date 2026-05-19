@@ -7,7 +7,6 @@ using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronokeepPortal.Requests;
 using Chronokeep.Objects.ChronokeepPortal.Responses;
 using Chronokeep.UI.Timing.ReaderSettings;
-using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -16,12 +15,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Threading;
-
 namespace Chronokeep.Timing.Interfaces
 {
-    internal partial class ChronokeepInterface(IDBInterface database, int locationId, IMainWindow window) : ITimingSystemInterface
+    public partial class ChronokeepInterface(IDBInterface database, int locationId, IMainWindow window) : ITimingSystemInterface
     {
         private readonly Event theEvent = database.GetCurrentEvent();
         private readonly StringBuilder buffer = new();

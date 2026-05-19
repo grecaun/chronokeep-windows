@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using Chronokeep.Helpers;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Timing.Interfaces;
@@ -6,10 +7,10 @@ namespace Chronokeep.UI.Timing.ReaderSettings.Parts;
 
 public partial class APIPart : UserControl
 {
-    private PortalAPI api = null;
-    private readonly ChronokeepInterface reader = null;
+    private PortalAPI? api = null;
+    private readonly ChronokeepInterface? reader = null;
 
-    public ReaderPart(PortalAPI api, ChronokeepInterface reader)
+    public APIPart(PortalAPI api, ChronokeepInterface reader)
     {
         InitializeComponent();
         this.api = api;
@@ -49,15 +50,15 @@ public partial class APIPart : UserControl
 
     public void PrivateUpdateURI()
     {
-        switch (((ComboBoxItem)kindBox.SelectedItem).Uid)
+        switch (((ComboBoxItem)kindBox.SelectedItem!).Tag)
         {
             case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE:
-                uriBox.Visibility = Visibility.Collapsed;
+                uriBox.IsVisible = false;
                 uriBox.Text = PortalAPI.API_URI_CHRONOKEEP_REMOTE;
                 break;
             case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF:
             default:
-                uriBox.Visibility = Visibility.Visible;
+                uriBox.IsVisible = true;
                 uriBox.Text = api.Uri;
                 break;
         }
@@ -77,10 +78,10 @@ public partial class APIPart : UserControl
     private void SaveAPI(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Saving api " + api.Id);
-        api.Nickname = nameBox.Text.Trim();
-        api.Token = tokenBox.Text.Trim();
-        api.Uri = uriBox.Text.Trim();
-        api.Kind = ((ComboBoxItem)kindBox.SelectedItem).Uid;
+        api.Nickname = nameBox.Text!.Trim();
+        api.Token = tokenBox.Text!.Trim();
+        api.Uri = uriBox.Text!.Trim();
+        api.Kind = ((ComboBoxItem)kindBox.SelectedItem).Tag as string;
         reader.SendSaveApi(api);
     }
 }

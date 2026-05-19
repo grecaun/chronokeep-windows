@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading;
 
-namespace Chronokeep
+namespace Chronokeep.UI.UhfRfidReader
 {
     class NewReader(ChipReaderWindow chipReaderWindow)
     {
         private readonly int Delay = 500;
         private bool KeepAlive = false;
         private int counter = 1;
-        private RFIDSerial serial = null;
+        private RFIDSerial? serial = null;
 
         public void SetSerial(RFIDSerial serial)
         {
@@ -22,7 +22,7 @@ namespace Chronokeep
             {
                 System.Console.WriteLine("Active - Loop Number " + counter++);
                 Console.Write("Hello? Is anyone there?");
-                RFIDSerial.Info read = serial.ReadData();
+                RFIDSerial.Info read = serial!.ReadData();
                 if (read.ErrorCode == RFIDSerial.Error.NOERR)
                 {
                     Console.WriteLine(" Ahhh! It's a monster!");
@@ -39,7 +39,7 @@ namespace Chronokeep
 
         public void Kill()
         {
-            System.Console.WriteLine("Kill command received.");
+            Console.WriteLine("Kill command received.");
             KeepAlive = false;
         }
 

@@ -1,26 +1,30 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Chronokeep;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using Chronokeep.UI.RfidReader;
+using System;
+using System.Collections.Generic;
+using System.IO.Ports;
+using System.Threading;
 
 namespace Chronokeep.UI.UhfRfidReader;
 
 public partial class ChipReaderWindow : Window
 {
-    private static Thread readingThread;
-    private static NewReader reader;
+    private static Thread? readingThread;
+    private static NewReader? reader;
     private static int ReadNo = 1;
-    RFIDSerial serial;
-    private static ChipPersonWindow personWindow = null;
+    RFIDSerial? serial;
+    private static ChipPersonWindow? personWindow = null;
     private readonly IDBInterface database;
-    private readonly IWindowCallback window = null;
+    private readonly IWindowCallback? window = null;
     private readonly int eventId = -1;
+
+    private readonly List<RFIDSerial.Info> chipInfo = [];
 
     public ChipReaderWindow(IWindowCallback window, IDBInterface database)
     {
@@ -35,8 +39,9 @@ public partial class ChipReaderWindow : Window
             throw new Exception("no event set");
         }
         eventId = theEvent.Identifier;
-        EventNameHolder.Visibility = Visibility.Visible;
+        EventNameHolder.IsVisible = true;
         eventName.Text = theEvent.Name;
+        chipNumbers.ItemsSource = chipInfo;
     }
 
     public static ChipReaderWindow NewWindow(IWindowCallback window, IDBInterface database)
@@ -67,7 +72,7 @@ public partial class ChipReaderWindow : Window
     internal void KillReader()
     {
         serial?.Disconnect();
-        chipNumbers.Items.Add(new RFIDSerial.Info { DecNumber = -1 });
+        chipInfo.Add(new RFIDSerial.Info { DecNumber = -1 });
         reader.Kill();
         if (readingThread != null)
         {
@@ -78,15 +83,14 @@ public partial class ChipReaderWindow : Window
 
     internal void AddRFIDItem(RFIDSerial.Info read)
     {
-        Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+        Application.Current!.Dispatcher.Invoke(new Action(delegate ()
         {
             read.ReadNumber = ReadNo++;
-            chipNumbers.Items.Add(read);
+            chipInfo.Add(read);
             if (personWindow != null)
             {
-                Participant person = null;
                 string chip = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE).Value.Equals(Constants.Settings.CHIP_TYPE_DEC) ? read.DecNumber.ToString() : read.HexNumber;
-                person = database.GetParticipantChip(eventId, chip);
+                Participant person = database.GetParticipantChip(eventId, chip);
                 personWindow.UpdateInfo(person, chip);
             }
         }));
@@ -124,12 +128,12 @@ public partial class ChipReaderWindow : Window
 
     private void ConnectBtn_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (connectBtn.Content.Equals("Connect"))
+        if (connectBtn.Content!.Equals("Connect"))
         {
             if (serialPortCB.SelectedIndex >= 0)
             {
-                serial = new RFIDSerial(serialPortCB.Text, 9600);
-                reader.SetSerial(serial);
+                serial = new RFIDSerial(serialPortCB.Text!, 9600);
+                reader!.SetSerial(serial);
             }
             else
             {
@@ -142,16 +146,16 @@ public partial class ChipReaderWindow : Window
                 return;
             }
             connectBtn.Content = "Disconnect";
-            beautyBtn.Visibility = Visibility.Visible;
+            beautyBtn.IsVisible = true;
             beautyBtn.Content = "Show Info Window";
-            chipNumbers.Items.Add(new RFIDSerial.Info { DecNumber = 0 });
+            chipInfo.Add(new RFIDSerial.Info { DecNumber = 0 });
             readingThread = new Thread(new ThreadStart(reader.Run));
             readingThread.Start();
         }
         else
         {
             connectBtn.Content = "Connect";
-            beautyBtn.Visibility = Visibility.Hidden;
+            beautyBtn.IsVisible = false;
             beautyBtn.Content = "Show Info Window";
             try
             {
