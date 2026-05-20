@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.Timing.Import.ImportLogWindow"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title="Load Log"
         SizeToContent="Height"

@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.Timing.ReaderSettings.RFIDSettings"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title="RFID Settings"
         Width="300"

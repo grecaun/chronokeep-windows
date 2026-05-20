@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.Timing.ReaderSettings.ChronokeepSettings"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title="Chronokeep Settings"
         Height="500"

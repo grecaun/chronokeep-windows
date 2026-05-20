@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Chronokeep.Helpers;
 using Chronokeep.Objects;
+using Chronokeep.UI.MainPages.Dashboard;
 
 namespace Chronokeep.UI.Parts;
 
@@ -20,29 +21,29 @@ public partial class APIPart : UserControl
             APIType.Items.Add(new ComboBoxItem()
             {
                 Content = Constants.APIConstants.API_TYPE_NAMES[uid],
-                Uid = uid,
+                Tag = uid,
                 IsSelected = theAPI.Type.Equals(uid),
             });
         }
         APIURL.Text = api.URL;
         APIURL.IsEnabled = Constants.APIConstants.API_SELF_HOSTED[theAPI.Type];
-        APIToken = api.AuthToken;
-        APIWebURL = api.WebURL;
+        APIToken.Text = api.AuthToken;
+        APIWebURL.Text = api.WebURL;
     }
 
     public void UpdateResultsAPI()
     {
         Log.D("UI.MainPages.APIPage", "Updating api.");
-        theAPI.Nickname = APINickname.Text;
-        theAPI.URL = APIURL.Text;
-        if (!theAPI.URL.EndsWith("/"))
+        theAPI.Nickname = APINickname.Text!;
+        theAPI.URL = APIURL.Text!;
+        if (!theAPI.URL!.EndsWith("/"))
         {
             theAPI.URL = theAPI.URL + "/";
         }
-        theAPI.AuthToken = APIToken.Text;
-        theAPI.Type = ((ComboBoxItem)APIType.SelectedItem).Uid;
-        theAPI.WebURL = APIWebURL.Text;
-        if (theAPI.WebURL.Length > 0 && !theAPI.WebURL.EndsWith("/"))
+        theAPI.AuthToken = APIToken.Text!;
+        theAPI.Type = (string)((ComboBoxItem)APIType.SelectedItem!).Tag!;
+        theAPI.WebURL = APIWebURL.Text!;
+        if (theAPI.WebURL!.Length > 0 && !theAPI.WebURL.EndsWith("/"))
         {
             theAPI.WebURL = theAPI.WebURL + "/";
         }
@@ -54,7 +55,7 @@ public partial class APIPart : UserControl
         // Ensure we've got something selected, and then change the URL if they've selected Chronokeep.
         if (APIType.SelectedItem != null)
         {
-            string type = ((ComboBoxItem)APIType.SelectedItem).Uid;
+            string type = (string)((ComboBoxItem)APIType.SelectedItem).Tag!;
             if (!Constants.APIConstants.API_SELF_HOSTED[type])
             {
                 theAPI.URL = Constants.APIConstants.API_URL[type];

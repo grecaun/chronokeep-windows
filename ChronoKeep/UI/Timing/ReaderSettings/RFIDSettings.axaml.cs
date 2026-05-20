@@ -1,13 +1,16 @@
+using Avalonia;
+using Avalonia.Controls;
 using Chronokeep.Helpers;
 using Chronokeep.Objects.RFID;
 using Chronokeep.Timing.Interfaces;
 using Chronokeep.UI.Parts;
+using System;
 
 namespace Chronokeep.UI.Timing.ReaderSettings;
 
 public partial class RFIDSettings : Window
 {
-    private readonly RFIDUltraInterface reader = null;
+    private readonly RFIDUltraInterface? reader = null;
 
     public RFIDSettings(RFIDUltraInterface reader)
     {
@@ -15,14 +18,14 @@ public partial class RFIDSettings : Window
         this.MinWidth = 100;
         this.MinHeight = 100;
         this.reader = reader;
-        reader.GetStatus();
-        reader.QuerySettings();
+        reader?.GetStatus();
+        reader?.QuerySettings();
     }
 
     public void UpdateView(RFIDSettingsHolder settings)
     {
         Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Updating View.");
-        Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+        Application.Current!.Dispatcher.Invoke(new Action(delegate ()
         {
             if (settings.UltraID > 0 && settings.UltraID < 256)
             {
@@ -99,23 +102,19 @@ public partial class RFIDSettings : Window
                     readingSwitch.IsChecked = false;
                     break;
             }
-            sacrifice.Visibility = Visibility.Collapsed;
-            settingsPanel.Visibility = Visibility.Visible;
+            settingsPanel.IsVisible = true;
         }));
     }
 
     public void CloseWindow()
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "CloseWindow.");
-        Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
-        {
-            Close();
-        }));
+        Application.Current!.Dispatcher.Invoke(new Action(Close));
     }
 
-    private void Window_Closed(object? sender, System.EventArgs e)
+    private void Window_Closed(object? sender, EventArgs e)
     {
-        reader.SettingsWindowFinalize();
+        reader?.SettingsWindowFinalize();
     }
 
     private void SaveID_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -127,7 +126,7 @@ public partial class RFIDSettings : Window
             "No",
             () =>
             {
-                reader.SetUltraId(Convert.ToInt32(Math.Floor(idSlider.Value)));
+                reader?.SetUltraId(Convert.ToInt32(Math.Floor(idSlider.Value)));
             });
     }
 
@@ -153,7 +152,7 @@ public partial class RFIDSettings : Window
                 byteVal = (char)0x01;
                 break;
         }
-        reader.SetChipOutputType(byteVal);
+        reader?.SetChipOutputType(byteVal);
     }
 
     private void GatingSlider_ValueChanged(object? sender, Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
@@ -181,13 +180,13 @@ public partial class RFIDSettings : Window
                 byteVal = (char)0x02;
                 break;
         }
-        reader.SetGatingMode(byteVal);
+        reader?.SetGatingMode(byteVal);
     }
 
     private void SaveGatingInterval_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Save Gating Interval button clicked.");
-        reader.SetGatingInterval(Convert.ToInt32(Math.Floor(gatingSlider.Value)));
+        reader?.SetGatingInterval(Convert.ToInt32(Math.Floor(gatingSlider.Value)));
     }
 
     private void SaveWhenBeep_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -203,7 +202,7 @@ public partial class RFIDSettings : Window
                 byteVal = (char)0x01;
                 break;
         }
-        reader.SetWhenToBeep(byteVal);
+        reader?.SetWhenToBeep(byteVal);
     }
 
     private void SaveVolume_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -222,7 +221,7 @@ public partial class RFIDSettings : Window
                 byteVal = (char)0x02;
                 break;
         }
-        reader.SetBeeperVolume(byteVal);
+        reader?.SetBeeperVolume(byteVal);
     }
 
     private void TimeZoneSlider_ValueChanged(object? sender, Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
@@ -242,13 +241,13 @@ public partial class RFIDSettings : Window
         {
             byteVal = (char)0x01;
         }
-        reader.SetAutoGPSTime(byteVal);
+        reader?.SetAutoGPSTime(byteVal);
     }
 
     private void SaveTimezone_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Save Timezone button clicked.");
-        reader.SetTimeZone(Convert.ToInt32(Math.Floor(timeZoneSlider.Value)));
+        reader?.SetTimeZone(Convert.ToInt32(Math.Floor(timeZoneSlider.Value)));
     }
 
     private void ReadingSwitch_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -257,18 +256,18 @@ public partial class RFIDSettings : Window
         if (readingSwitch.IsChecked == true)
         {
             // switch just switched on
-            reader.StartReading();
+            reader?.StartReading();
         }
         else
         {
             // switch just switch off
-            reader.StopReading();
+            reader?.StopReading();
         }
     }
 
     private void CloseButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Close button clicked.");
-        this.Close();
+        Close();
     }
 }

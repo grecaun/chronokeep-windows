@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="using:Chronokeep.UI.Timing.Notifications"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="230"
         x:Class="Chronokeep.UI.Timing.Notifications.SMSWaveEnabledWindow"
@@ -26,16 +27,15 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <!--
-                                <TextBlock Text="{Binding WaveName}" Margin="4,4"/>
+                                <TextBlock Text="{Binding WaveName}" Margin="4,4" x:DataType="local:WaveSMS"/>
                                 <ToggleSwitch x:Name="smsEnabledSwitch"
                                               DockPanel.Dock="Right"
                                               IsChecked="{Binding SMSEnabled}"
                                               Margin="4,4"
                                               OnContent=""
                                               OffContent=""
-                                              VerticalAlignment="Center"/>
-                                -->
+                                              VerticalAlignment="Center"
+                                              x:DataType="local:WaveSMS"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

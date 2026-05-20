@@ -14,9 +14,9 @@
                      Width="170"
                      Margin="5"/>
             <ComboBox x:Name="kindBox"
-                      Widht="140"
+                      Width="140"
                       Margin="5"
-                      ValueChanged="KindBox_ValueChanged">
+                      SelectionChanged="KindBox_ValueChanged">
                 <ComboBoxItem Content="Remote" Tag="CHRONOKEEP_REMOTE"/>
                 <ComboBoxItem Content="Remote Self" Tag="CHRONOKEEP_REMOTE_SELF"/>
             </ComboBox>

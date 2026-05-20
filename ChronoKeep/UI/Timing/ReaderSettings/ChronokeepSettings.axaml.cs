@@ -1,23 +1,25 @@
+using Avalonia;
 using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Timing.Interfaces;
-using Chronokeep.UI.API.Parts;
 using Chronokeep.UI.Parts;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.Timing.ReaderSettings;
 
 public partial class ChronokeepSettings : Window
 {
-    private readonly ChronokeepInterface reader = null;
-    private readonly IDBInterface database = null;
+    private readonly ChronokeepInterface? reader = null;
+    private readonly IDBInterface? database = null;
 
     private bool saving = false;
 
-    private Dictionary<long, ReaderListItem> readerDict = [];
-    private Dictionary<long, APIListItem> apiDict = [];
+    private Dictionary<long, Parts.ReaderPart> readerDict = [];
+    private Dictionary<long, Parts.APIPart> apiDict = [];
 
     internal ChronokeepSettings(ChronokeepInterface reader, IDBInterface database)
     {
@@ -26,27 +28,20 @@ public partial class ChronokeepSettings : Window
         this.MinHeight = 100;
         this.reader = reader;
         this.database = database;
-        reader.SendGetSettings();
+        reader?.SendGetSettings();
     }
 
     internal void UpdateView(PortalSettingsHolder allSettings)
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "UpdateView.");
-        Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+        Application.Current!.Dispatcher.Invoke(new Action(delegate ()
         {
             if (saving)
             {
                 this.Close();
             }
-            sacrifice.Visibility = Visibility.Collapsed;
-            settingsPanel.Visibility = Visibility.Visible;
             if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.SETTINGS))
             {
-                if (allSettings.PortalVersion != null && allSettings.PortalVersion.Length > 0)
-                {
-                    titleBar.Title = string.Format("v{0}", allSettings.PortalVersion.Trim());
-                }
-
                 nameBox.Text = allSettings.Name;
                 readWindowBox.Text = allSettings.ReadWindow.ToString();
                 chipTypeBox.SelectedIndex = allSettings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? 0 : 1;
@@ -72,17 +67,17 @@ public partial class ChronokeepSettings : Window
                 enableNTFYSwitch.IsChecked = allSettings.EnableNTFY;
                 if (allSettings.ScreenType == Constants.Readers.CHRONOKEEP_SCREEN_ADAFRUIT)
                 {
-                    screenPanel.Visibility = Visibility.Visible;
+                    screenPanel.IsVisible = true;
                     screenBox.SelectedIndex = 0;
                 }
                 else if (allSettings.ScreenType == Constants.Readers.CHRONOKEEP_SCREEN_PCF8574T)
                 {
-                    screenPanel.Visibility = Visibility.Visible;
+                    screenPanel.IsVisible = true;
                     screenBox.SelectedIndex = 1;
                 }
                 else
                 {
-                    screenPanel.Visibility = Visibility.Collapsed;
+                    screenPanel.IsVisible = false;
                     screenBox.SelectedIndex = -1;
                 }
             }
@@ -95,20 +90,20 @@ public partial class ChronokeepSettings : Window
                 {
                     found.Add(read.Id);
                     // update if we know about them
-                    if (readerDict.TryGetValue(read.Id, out ReaderListItem oReaderItem))
+                    if (readerDict.TryGetValue(read.Id, out Parts.ReaderPart? oReaderItem))
                     {
                         oReaderItem.UpdateReader(read);
                     }
                     // otherwise add new
                     else
                     {
-                        readerDict[read.Id] = new(read, reader);
+                        readerDict[read.Id] = new(read, reader!);
                     }
                 }
                 var newDictionary = readerDict.Where(pair => found.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
                 readerDict = newDictionary;
                 readerListView.Items.Clear();
-                foreach (ReaderListItem item in readerDict.Values)
+                foreach (Parts.ReaderPart item in readerDict.Values)
                 {
                     readerListView.Items.Add(item);
                 }
@@ -121,31 +116,31 @@ public partial class ChronokeepSettings : Window
                 {
                     found.Add(api.Id);
                     // update if we know about them
-                    if (apiDict.TryGetValue(api.Id, out APIListItem oAPIItem))
+                    if (apiDict.TryGetValue(api.Id, out Parts.APIPart? oAPIItem))
                     {
                         oAPIItem.UpdateAPI(api);
                     }
                     else
                     {
-                        apiDict[api.Id] = new(api, reader);
+                        apiDict[api.Id] = new(api, reader!);
                     }
                 }
                 var newDictionary = apiDict.Where(pair => found.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
                 apiDict = newDictionary;
                 apiListView.Items.Clear();
-                foreach (APIListItem item in apiDict.Values)
+                foreach (Parts.APIPart item in apiDict.Values)
                 {
                     apiListView.Items.Add(item);
                 }
             }
             if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.ANTENNAS))
             {
-                Dictionary<string, ReaderListItem> readerNameDict = [];
-                foreach (ReaderListItem reader in readerDict.Values)
+                Dictionary<string, Parts.ReaderPart> readerNameDict = [];
+                foreach (Parts.ReaderPart reader in readerDict.Values)
                 {
                     if (reader.GetReaderName().Equals(allSettings.Antennas.ReaderName, StringComparison.OrdinalIgnoreCase))
                     {
-                        reader.UpdateAntennas(allSettings.Antennas.Antennas);
+                        reader?.UpdateAntennas(allSettings.Antennas.Antennas);
                         break;
                     }
                 }
@@ -173,15 +168,12 @@ public partial class ChronokeepSettings : Window
     public void CloseWindow()
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "CloseWindow.");
-        Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
-        {
-            Close();
-        }));
+        Application.Current!.Dispatcher.Invoke(new Action(Close));
     }
 
     private void Window_Closed(object sender, EventArgs e)
     {
-        reader.SettingsWindowFinalize();
+        reader?.SettingsWindowFinalize();
     }
 
     private void VolumeSlider_ValueChanged(object? sender, Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
@@ -197,18 +189,18 @@ public partial class ChronokeepSettings : Window
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Reader expander expanding/contracting.");
         if (readerExpander.IsExpanded)
         {
-            addReaderButton.Visibility = Visibility.Visible;
+            addReaderButton.IsVisible = true;
         }
         else
         {
-            addReaderButton.Visibility = Visibility.Collapsed;
+            addReaderButton.IsVisible = false;
         }
     }
 
     private void AddReaderButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Adding new reader.");
-        reader.SendSaveReader(new()
+        reader?.SendSaveReader(new()
         {
             Id = -1,
             Name = "New Reader",
@@ -224,18 +216,18 @@ public partial class ChronokeepSettings : Window
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "API expander expanding/contracting.");
         if (apiExpander.IsExpanded)
         {
-            addAPIButton.Visibility = Visibility.Visible;
+            addAPIButton.IsVisible = true;
         }
         else
         {
-            addAPIButton.Visibility = Visibility.Collapsed;
+            addAPIButton.IsVisible = false;
         }
     }
 
     private void AddAPIButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Add API button clicked.");
-        reader.SendSaveApi(new()
+        reader?.SendSaveApi(new()
         {
             Id = -1,
             Nickname = "New API",
@@ -256,7 +248,7 @@ public partial class ChronokeepSettings : Window
     private void ManualResultsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Manually uploading results.");
-        reader.SendManualResultsUpload();
+        reader?.SendManualResultsUpload();
     }
 
     private void DeleteReadsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -265,7 +257,7 @@ public partial class ChronokeepSettings : Window
         DialogBox.Show("This will delete all of the chip reads from the reader.  This action is not reversible. Continue?", "Yes", "No", () =>
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Clearing chip reads from reader.");
-            reader.SendDeleteAllReads();
+            reader?.SendDeleteAllReads();
         });
     }
 
@@ -279,7 +271,7 @@ public partial class ChronokeepSettings : Window
             () =>
             {
                 // send update command
-                reader.SendUpdate();
+                reader?.SendUpdate();
                 this.Close();
             }
             );
@@ -295,7 +287,7 @@ public partial class ChronokeepSettings : Window
             () =>
             {
                 // send restart command
-                reader.SendRestart();
+                reader?.SendRestart();
                 this.Close();
             }
             );
@@ -311,7 +303,7 @@ public partial class ChronokeepSettings : Window
             () =>
             {
                 // send stop command
-                reader.SendQuit();
+                reader?.SendQuit();
                 this.Close();
             }
             );
@@ -327,7 +319,7 @@ public partial class ChronokeepSettings : Window
             () =>
             {
                 // send shutdown command
-                reader.SendShutdown();
+                reader?.SendShutdown();
                 this.Close();
             }
             );
@@ -341,8 +333,8 @@ public partial class ChronokeepSettings : Window
         {
             PortalSettingsHolder sett = new()
             {
-                Name = nameBox.Text.Trim(),
-                ReadWindow = int.Parse(readWindowBox.Text.Trim()),
+                Name = nameBox.Text!.Trim(),
+                ReadWindow = int.Parse(readWindowBox.Text!.Trim()),
                 ChipType = chipTypeBox.SelectedIndex == 0 ? PortalSettingsHolder.ChipTypeEnum.DEC
                     : PortalSettingsHolder.ChipTypeEnum.HEX,
                 Volume = volumeSlider.Value / 10,
@@ -351,14 +343,14 @@ public partial class ChronokeepSettings : Window
                 Voice = voiceBox.SelectedIndex == 0 ? PortalSettingsHolder.VoiceType.EMILY
                     : voiceBox.SelectedIndex == 1 ? PortalSettingsHolder.VoiceType.MICHAEL
                     : PortalSettingsHolder.VoiceType.CUSTOM,
-                NtfyURL = ntfyUrlBox.Text.Trim(),
-                NtfyTopic = ntfyTopicBox.Text.Trim(),
-                NtfyUser = ntfyUserBox.Text.Trim(),
-                NtfyPass = ntfyPassBox.Text.Trim(),
+                NtfyURL = ntfyUrlBox.Text!.Trim(),
+                NtfyTopic = ntfyTopicBox.Text!.Trim(),
+                NtfyUser = ntfyUserBox.Text!.Trim(),
+                NtfyPass = ntfyPassBox.Text!.Trim(),
                 EnableNTFY = enableNTFYSwitch.IsChecked == true,
-                ScreenType = screenBox.SelectedItem != null ? ((ComboBoxItem)screenBox.SelectedItem).Uid : ""
+                ScreenType = screenBox.SelectedItem != null ? (string)((ComboBoxItem)screenBox.SelectedItem).Tag! : ""
             };
-            reader.SendSetSettings(sett);
+            reader?.SendSetSettings(sett);
         }
         catch (Exception ex)
         {
@@ -382,11 +374,11 @@ public partial class ChronokeepSettings : Window
         }
         if (autoResultsSwitch.IsChecked == false)
         {
-            reader.SendAutoUploadResults(Objects.ChronokeepPortal.Requests.AutoUploadQuery.STOP);
+            reader?.SendAutoUploadResults(Objects.ChronokeepPortal.Requests.AutoUploadQuery.STOP);
         }
         else
         {
-            reader.SendAutoUploadResults(Objects.ChronokeepPortal.Requests.AutoUploadQuery.START);
+            reader?.SendAutoUploadResults(Objects.ChronokeepPortal.Requests.AutoUploadQuery.START);
         }
     }
 }

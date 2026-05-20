@@ -10,7 +10,7 @@ public partial class SMSWaveEnabledWindow : Window
 {
     private readonly IMainWindow window;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
 
     private readonly Dictionary<int, bool> initialValues = [];
     private readonly Dictionary<int, bool> updatedValues = [];
@@ -60,22 +60,22 @@ public partial class SMSWaveEnabledWindow : Window
         window?.WindowFinalize(this);
         if (updatedValues.Keys.Count > 0)
         {
-            window.NotifyTimingWorker();
+            window?.NotifyTimingWorker();
         }
     }
 
     private void Set_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        foreach (WaveSMS waveSMS in WaveList.Items)
+        foreach (WaveSMS? waveSMS in WaveList.Items)
         {
-            if (initialValues[waveSMS.Wave] != waveSMS.SMSEnabled)
+            if (initialValues[waveSMS!.Wave] != waveSMS.SMSEnabled)
             {
                 updatedValues[waveSMS.Wave] = waveSMS.SMSEnabled;
             }
         }
         foreach (int wave in updatedValues.Keys)
         {
-            if (waveDistanceDictionary.TryGetValue(wave, out List<Distance> tDistList))
+            if (waveDistanceDictionary.TryGetValue(wave, out List<Distance>? tDistList))
             {
                 foreach (Distance dist in tDistList)
                 {
@@ -90,12 +90,5 @@ public partial class SMSWaveEnabledWindow : Window
     private void Done_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Close();
-    }
-
-    internal class WaveSMS
-    {
-        public int Wave { get; set; }
-        public string WaveName { get => string.Format("Wave {0}", Wave); }
-        public bool SMSEnabled { get; set; }
     }
 }

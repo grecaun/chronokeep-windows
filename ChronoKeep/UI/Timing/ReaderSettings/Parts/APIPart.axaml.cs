@@ -59,7 +59,7 @@ public partial class APIPart : UserControl
             case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF:
             default:
                 uriBox.IsVisible = true;
-                uriBox.Text = api.Uri;
+                uriBox.Text = api!.Uri;
                 break;
         }
     }
@@ -71,17 +71,17 @@ public partial class APIPart : UserControl
     }
     private void DeleteAPI(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Deleting api " + api.Id);
-        reader.SendDeleteApi(api);
+        Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Deleting api " + api!.Id);
+        reader?.SendDeleteApi(api);
     }
 
     private void SaveAPI(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Saving api " + api.Id);
+        Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Saving api " + api!.Id);
         api.Nickname = nameBox.Text!.Trim();
         api.Token = tokenBox.Text!.Trim();
         api.Uri = uriBox.Text!.Trim();
-        api.Kind = ((ComboBoxItem)kindBox.SelectedItem).Tag as string;
-        reader.SendSaveApi(api);
+        api.Kind = (string)((ComboBoxItem)kindBox.SelectedItem!).Tag!;
+        reader?.SendSaveApi(api);
     }
 }

@@ -1,8 +1,11 @@
+using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Chronokeep.UI.Timing.Import;
 
@@ -44,7 +47,7 @@ public partial class ImportLogWindow : Window
 
     public void Update()
     {
-        if (Frame.Content.GetType() == typeof(ImportLogPage1))
+        if (Frame.Content!.GetType() == typeof(ImportLogPage1))
         {
             Log.D("UI.Timing.Import.ImportLogWindow", "Updating locations on page.");
             List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
