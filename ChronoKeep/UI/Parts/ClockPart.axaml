@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Chronokeep.UI.Parts"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="450"
              x:Class="Chronokeep.UI.Parts.ClockPart">
@@ -34,8 +35,10 @@
                 Height="35"
                 IsEnabled="False"
                 VerticalAlignment="Center">
-            <PathIcon IsVisible="{Binding IsLocked}" Data="{StaticResource lock_regular}"/>
-            <PathIcon IsVisible="{Binding IsOpen}" Data="{StaticResource unlock_regular}"/>
+            <Panel>
+                <PathIcon IsVisible="{Binding IsLocked}" Data="{StaticResource lock_regular}" x:DataType="local:ClockPart"/>
+                <PathIcon IsVisible="{Binding IsOpen}" Data="{StaticResource unlock_regular}" x:DataType="local:ClockPart"/>
+            </Panel>
         </Button>
         <Label VerticalAlignment="Center">
             <PathIcon Data="{StaticResource lightbulb_regular}"/>
@@ -81,6 +84,9 @@
                        Width="80"
                        VerticalAlignment="Center"
                        TextAlignment="Center"/>
+        <Button Name="Start" Height="5" Margin="5" Click="Start_Click">
+            <PathIcon Data="{StaticResource stop_regular}"/>
+        </Button>
     </StackPanel>
 </StackPanel>
 </UserControl>

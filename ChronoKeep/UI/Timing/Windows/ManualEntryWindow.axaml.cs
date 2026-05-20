@@ -1,11 +1,12 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Input;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
+using System;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -13,7 +14,7 @@ public partial class ManualEntryWindow : Window
 {
     private readonly IMainWindow window;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
 
     private readonly HashSet<string> bibsAdded = [];
 
@@ -34,7 +35,7 @@ public partial class ManualEntryWindow : Window
         {
             return;
         }
-        DateBox.Text = theEvent.Date;
+        DateBox.SelectedDate = DateTime.Parse(theEvent.Date);
         UpdateLocations(locations);
     }
 
@@ -48,7 +49,7 @@ public partial class ManualEntryWindow : Window
         this.Height = 320;
         this.Topmost = true;
         this.Title = "Add DNF Entry";
-        LocationPanel.Visibility = Visibility.Collapsed;
+        LocationPanel.IsVisible = false;
         this.window = window;
         this.database = database;
         theEvent = database.GetCurrentEvent();
@@ -72,7 +73,7 @@ public partial class ManualEntryWindow : Window
         {
             if (LocationBox.SelectedIndex >= 0)
             {
-                selectedLoc = Convert.ToInt32(((ComboBoxItem)LocationBox.SelectedItem).Uid);
+                selectedLoc = Convert.ToInt32(((ComboBoxItem)LocationBox.SelectedItem!).Tag);
             }
             else
             {
@@ -83,14 +84,14 @@ public partial class ManualEntryWindow : Window
         {
             selectedLoc = Constants.Timing.LOCATION_FINISH;
         }
-        ComboBoxItem current, selected = null;
+        ComboBoxItem? current, selected = null;
         LocationBox.Items.Clear();
         foreach (TimingLocation loc in locations)
         {
             current = new ComboBoxItem()
             {
                 Content = loc.Name,
-                Uid = loc.Identifier.ToString()
+                Tag = loc.Identifier.ToString()
             };
             LocationBox.Items.Add(current);
             if (loc.Identifier == selectedLoc)
@@ -120,13 +121,13 @@ public partial class ManualEntryWindow : Window
     private void AddDNF()
     {
         Log.D("UI.Timing.ManualEntryWindow", "DNF entry detected.");
-        string bib = BibBox.Text.Trim();
+        string bib = BibBox.Text!.Trim();
         if (string.IsNullOrEmpty(bib))
         {
             DialogBox.Show("Invalid bib value given.");
             return;
         }
-        string timeVal = TimeBox.Text.Replace('_', '0');
+        string timeVal = TimeBox.Text!.Replace('_', '0');
         int locationId = Constants.Timing.LOCATION_FINISH;
         DateTime time;
         long hours, minutes, seconds, milliseconds;
@@ -174,7 +175,7 @@ public partial class ManualEntryWindow : Window
             }
             else
             {
-                time = DateTime.Parse(DateBox.Text + " 00:00:00.000");
+                time = DateTime.Parse(DateBox.SelectedDate + " 00:00:00.000");
                 if (hours > 23)
                 {
                     hours = 23;
@@ -184,7 +185,7 @@ public partial class ManualEntryWindow : Window
             time = time.AddSeconds(seconds);
             time = time.AddMilliseconds(milliseconds);
         }
-        ChipRead newEntry = new(theEvent.Identifier, locationId, bib, time, Constants.Timing.CHIPREAD_STATUS_DNF);
+        ChipRead newEntry = new(theEvent!.Identifier, locationId, bib, time, Constants.Timing.CHIPREAD_STATUS_DNF);
         Log.D("UI.Timing.ManualEntryWindow", "Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
         database.AddChipRead(newEntry);
         bibsAdded.Add(bib);
@@ -197,15 +198,15 @@ public partial class ManualEntryWindow : Window
         string bib = "-1";
         try
         {
-            bib = BibBox.Text;
+            bib = BibBox.Text!;
         }
         catch
         {
             DialogBox.Show("Invalid bib value given.");
             return;
         }
-        string timeVal = TimeBox.Text.Replace('_', '0');
-        int locationId = Convert.ToInt32(((ComboBoxItem)LocationBox.SelectedItem).Uid);
+        string timeVal = TimeBox.Text!.Replace('_', '0');
+        int locationId = Convert.ToInt32(((ComboBoxItem)LocationBox.SelectedItem!).Tag);
         DateTime time;
         long hours, minutes, seconds, milliseconds;
         hours = Convert.ToInt32(timeVal.Substring(0, 2));
@@ -219,7 +220,7 @@ public partial class ManualEntryWindow : Window
         }
         if (NetTimeButton.IsChecked == true)
         {
-            List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+            List<Participant> participants = database.GetParticipants(theEvent!.Identifier);
             List<Distance> distances = database.GetDistances(theEvent.Identifier);
             // Store the offset start values for each distance by distance ID
             Dictionary<int, (int seconds, int milliseconds)> distanceStartOffsetDictionary = [];
@@ -245,13 +246,13 @@ public partial class ManualEntryWindow : Window
         }
         else if (ClockTimeButton.IsChecked == true)
         {
-            time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
+            time = DateTime.Parse(theEvent!.Date + " 00:00:00.000");
             milliseconds += theEvent.StartMilliseconds;
             seconds += (minutes * 60) + (hours * 3600) + theEvent.StartSeconds;
         }
         else
         {
-            time = DateTime.Parse(DateBox.Text + " 00:00:00.000");
+            time = DateTime.Parse(DateBox.SelectedDate + " 00:00:00.000");
             if (hours > 23)
             {
                 hours = 23;
@@ -260,7 +261,7 @@ public partial class ManualEntryWindow : Window
         }
         time = time.AddSeconds(seconds);
         time = time.AddMilliseconds(milliseconds);
-        ChipRead newEntry = new(theEvent.Identifier, locationId, bib, time, Constants.Timing.CHIPREAD_STATUS_NONE);
+        ChipRead newEntry = new(theEvent!.Identifier, locationId, bib, time, Constants.Timing.CHIPREAD_STATUS_NONE);
         Log.D("UI.Timing.ManualEntryWindow", "Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
         database.AddChipRead(newEntry);
         bibsAdded.Add(bib);
@@ -272,12 +273,12 @@ public partial class ManualEntryWindow : Window
         window?.WindowFinalize(this);
         if (bibsAdded.Count > 0)
         {
-            database.ResetTimingResultsEvent(theEvent.Identifier);
-            window.NotifyTimingWorker();
+            database.ResetTimingResultsEvent(theEvent!.Identifier);
+            window?.NotifyTimingWorker();
         }
     }
 
-    private void Enter_KeyDown(object sender, Avalonia.Input.KeyEventArgs e)
+    private void Enter_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {

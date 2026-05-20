@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Chronokeep.UI.Parts"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="450"
              x:Class="Chronokeep.UI.Parts.WavePart">
@@ -13,7 +14,7 @@
         </Style>
     </UserControl.Styles>
     <DockPanel VerticalAlignment="Center">
-        <TextBlock Name="WaveType" Width="60" Text="{Binding Wave}"/>
+        <TextBlock Name="WaveType" Width="60" Text="{Binding Wave}" x:DataType="local:WavePart"/>
         <Button Name="WavePlus"
                 Classes="invis"
                 Click="SwapWaveType_Click"
@@ -22,8 +23,8 @@
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center">
             <Grid>
-                <PathIcon Data="{StaticResource add_regular}" IsVisible="{Binding PlusWave}"/>
-                <PathIcon Data="{StaticResource subtract_regular}" IsVisible="{Binding MinusWave}"/>
+                <PathIcon Data="{StaticResource add_regular}" IsVisible="{Binding PlusWave}" x:DataType="local:WavePart"/>
+                <PathIcon Data="{StaticResource subtract_regular}" IsVisible="{Binding MinusWave}" x:DataType="local:WavePart"/>
             </Grid>
         </Button>
         <MaskedTextBox Name="StartOffset"

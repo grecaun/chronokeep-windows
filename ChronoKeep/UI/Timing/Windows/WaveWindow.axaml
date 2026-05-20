@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.Timing.Windows.WaveWindow"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title="Set Wave Times"
         Width="300"

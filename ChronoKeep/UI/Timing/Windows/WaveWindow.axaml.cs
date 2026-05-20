@@ -1,10 +1,10 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
+using Chronokeep.UI.Parts;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -12,12 +12,10 @@ public partial class WaveWindow : Window
 {
     private readonly IMainWindow window;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
     private readonly Dictionary<int, Distance> distanceDictionary = [];
     private readonly Dictionary<int, (long seconds, int milliseconds)> waveTimes = [];
     private readonly HashSet<int> waves = [];
-
-    private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
 
     public WaveWindow(IMainWindow window, IDBInterface database)
     {
@@ -42,7 +40,7 @@ public partial class WaveWindow : Window
             long seconds = waveTimes[waveNum].seconds;
             int milliseconds = waveTimes[waveNum].milliseconds;
             Log.D("UI.Timing.WaveWindow", string.Format("Seconds {0} - Milliseconds {1}", seconds, milliseconds));
-            WaveList.Items.Add(new AWave(waveNum, waveTimes[waveNum].seconds, waveTimes[waveNum].milliseconds));
+            WaveList.Items.Add(new WavePart(waveNum, waveTimes[waveNum].seconds, waveTimes[waveNum].milliseconds));
         }
     }
 
@@ -54,9 +52,9 @@ public partial class WaveWindow : Window
     private void NetTimeButton_Checked(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.WaveWindow", "Net Time Selected.");
-        foreach (AWave wave in WaveList.Items)
+        foreach (WavePart? wave in WaveList.Items)
         {
-            int waveId = wave.GetWave();
+            int waveId = wave!.GetWave();
             wave.SetTime(waveTimes[waveId].seconds, waveTimes[waveId].milliseconds);
         }
     }
@@ -64,22 +62,22 @@ public partial class WaveWindow : Window
     private void TimeofDayButton_Checked(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.WaveWindow", "Time of day selected.");
-        foreach (AWave wave in WaveList.Items)
+        foreach (WavePart? wave in WaveList.Items)
         {
-            int waveId = wave.GetWave();
-            wave.SetTime(waveTimes[waveId].seconds + theEvent.StartSeconds, waveTimes[waveId].milliseconds + theEvent.StartMilliseconds);
+            int waveId = wave!.GetWave();
+            wave.SetTime(waveTimes[waveId].seconds + theEvent!.StartSeconds, waveTimes[waveId].milliseconds + theEvent.StartMilliseconds);
         }
     }
 
     private void SetButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.WaveWindow", "Aye aye! Updating!");
-        foreach (AWave wave in WaveList.Items)
+        foreach (WavePart? wave in WaveList.Items)
         {
-            (int waveNo, long seconds, int milliseconds) = wave.GetValues();
+            (int waveNo, long seconds, int milliseconds) = wave!.GetValues();
             if (TimeofDayButton.IsChecked == true)
             {
-                seconds = seconds - theEvent.StartSeconds;
+                seconds = seconds - theEvent!.StartSeconds;
                 milliseconds = milliseconds - theEvent.StartMilliseconds;
                 if (milliseconds < 0)
                 {
@@ -92,13 +90,13 @@ public partial class WaveWindow : Window
                     milliseconds = 0;
                 }
             }
-            database.SetWaveTimes(theEvent.Identifier, waveNo, seconds, milliseconds);
+            database.SetWaveTimes(theEvent!.Identifier, waveNo, seconds, milliseconds);
         }
-        List<Distance> newDistances = database.GetDistances(theEvent.Identifier);
+        List<Distance> newDistances = database.GetDistances(theEvent!.Identifier);
         bool update = false;
         foreach (Distance div in newDistances)
         {
-            if (!distanceDictionary.TryGetValue(div.Identifier, out Distance oDist)
+            if (!distanceDictionary.TryGetValue(div.Identifier, out Distance? oDist)
                 || oDist.StartOffsetSeconds != div.StartOffsetSeconds
                 || oDist.StartOffsetMilliseconds != div.StartOffsetMilliseconds)
             {
@@ -111,12 +109,12 @@ public partial class WaveWindow : Window
             window.UpdateTiming();
             window.NotifyTimingWorker();
         }
-        this.Close();
+        Close();
     }
 
     private void DoneButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.WaveWindow", "We don't really want to set the wave times.");
-        this.Close();
+        Close();
     }
 }

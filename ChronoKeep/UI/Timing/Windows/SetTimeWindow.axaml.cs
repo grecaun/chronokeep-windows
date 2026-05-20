@@ -1,8 +1,7 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
+using System;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -43,7 +42,7 @@ public partial class SetTimeWindow : Window
     private void Set_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         DateTime alternateDate;
-        if (DateTime.TryParse(string.Format("{0} {1}", SpecificDateBox.Text, SpecificTimeBox.Text.Replace('_', '0')), out alternateDate) == false)
+        if (DateTime.TryParse(string.Format("{0} {1}", SpecificDateBox.SelectedDate, SpecificTimeBox.Text!.Replace('_', '0')), out alternateDate) == false)
         {
             alternateDate = DateTime.Now;
         }

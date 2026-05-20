@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Chronokeep.Helpers;
+using System;
 
 namespace Chronokeep.UI.Parts;
 
@@ -8,6 +9,8 @@ public partial class WavePart : UserControl
     public int Wave { get; private set; }
     public bool PlusWave { get; set; }
     public bool MinusWave { get => !PlusWave; }
+
+    private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
 
     public WavePart(int num, long startSeconds, int startMilliseconds)
     {
@@ -26,9 +29,9 @@ public partial class WavePart : UserControl
         {
             startMilliseconds = startMilliseconds * -1;
         }
-        StartOffset.Text = string.Format(TimeFormat, seconds / 3600,
-            (seconds % 3600) / 60, seconds % 60,
-            milliseconds);
+        StartOffset.Text = string.Format(TimeFormat, startSeconds / 3600,
+            (startSeconds % 3600) / 60, startSeconds % 60,
+            startMilliseconds);
     }
 
     public void SetTime(long seconds, int milliseconds)
@@ -45,7 +48,7 @@ public partial class WavePart : UserControl
 
     public (int, long, int) GetValues()
     {
-        string[] firstparts = StartOffset.Text.Replace('_', '0').Split(':');
+        string[] firstparts = StartOffset.Text!.Replace('_', '0').Split(':');
         string[] secondparts = firstparts[2].Split('.');
         try
         {
@@ -69,15 +72,15 @@ public partial class WavePart : UserControl
         return (Wave, 0, 0);
     }
 
-    private void SelectAll(object sender, Avalonia.Input.GotFocusEventArgs e)
+    private void SelectAll(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        TextBox src = (TextBox)e.OriginalSource;
+        TextBox src = (TextBox)e.Source!;
         src.SelectAll();
     }
 
     private void SwapWaveType_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        Log.D("UI.Timing.WaveWindow", "Plus/Minus sign clicked. WaveType is: " + waveType);
+        Log.D("UI.Timing.WaveWindow", "Plus/Minus sign clicked. WaveType is: " + (PlusWave ? "+" : "-"));
         PlusWave = !PlusWave;
     }
 }

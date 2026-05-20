@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.Timing.Windows.ManualEntryWindow"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title="Manual Entry"
         Width="300"

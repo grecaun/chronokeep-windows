@@ -1,11 +1,13 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Input;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -19,7 +21,7 @@ public partial class EditRawReadsWindow : Window
     [GeneratedRegex("[^0-9]")]
     private static partial Regex AllowedChars();
 
-    public EditRawReadsWindow()
+    public EditRawReadsWindow(ITimingPage parent, IDBInterface database, List<ChipRead> chipReads)
     {
         InitializeComponent();
         this.parent = parent;
@@ -33,14 +35,14 @@ public partial class EditRawReadsWindow : Window
         TimeBox.Focus();
     }
 
-    private void Window_Closed(object sender, System.EventArgs e) { }
+    private void Window_Closed(object sender, EventArgs e) { }
 
-    private void DaysBox_PreviewTextInput(object sender, Avalonia.Input.TextInputEventArgs e)
+    private void DaysBox_PreviewTextInput(object sender, TextInputEventArgs e)
     {
-        e.Handled = AllowedChars().IsMatch(e.Text);
+        e.Handled = AllowedChars().IsMatch(e.Text!);
     }
 
-    private void Enter_KeyDown(object sender, Avalonia.Input.KeyEventArgs e)
+    private void Enter_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
@@ -48,14 +50,14 @@ public partial class EditRawReadsWindow : Window
         }
     }
 
-    private void Submit_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Submit_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs? e)
     {
         Log.D("UI.Timing.EditRawReadsWindow", "Submit clicked.");
         // Keep track of any bibs/chips we've changed.
         HashSet<string> bibsChanged = [];
         HashSet<string> chipsChanged = [];
         bool add = AddRadio.IsChecked == true;
-        string[] firstparts = TimeBox.Text.Replace('_', '0').Split(':');
+        string[] firstparts = TimeBox.Text!.Replace('_', '0').Split(':');
         string[] secondparts = firstparts[2].Split('.');
         int seconds, milliseconds;
         int.TryParse(DaysBox.Text, out int days);

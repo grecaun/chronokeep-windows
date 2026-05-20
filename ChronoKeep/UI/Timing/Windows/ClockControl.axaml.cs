@@ -1,17 +1,18 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
+using Chronokeep.UI.Parts;
+using System;
+using System.Collections.Generic;
 using static Chronokeep.UI.Timing.ClockControl;
 
 namespace Chronokeep.UI.Timing.Windows;
 
 public partial class ClockControl : Window
 {
-    private static ClockControl theOne = null;
+    private static ClockControl? theOne = null;
 
     private readonly IMainWindow window;
     private readonly IDBInterface database;
@@ -48,33 +49,33 @@ public partial class ClockControl : Window
     private void UpdateView()
     {
         Log.D("UI.Timing.ClockControl", "UpdateView");
-        foreach (ClockListItem clItem in clockListView.Items)
+        foreach (ClockPart? clItem in clockListView.Items)
         {
-            Chronoclock clock = clItem.GetUpdatedClock();
+            Chronoclock clock = clItem!.GetUpdatedClock();
             ClockDict[clock.Identifier] = clock;
         }
         clockListView.Items.Clear();
         foreach (Chronoclock clock in ClockDict.Values)
         {
-            clockListView.Items.Add(new ClockListItem(clock, this, database.GetCurrentEvent()));
+            clockListView.Items.Add(new ClockPart(clock, this, database.GetCurrentEvent()));
         }
     }
 
     private void UpdateTime(string time)
     {
         TimeLabel.Text = string.Format("Clock time is {0}", time);
-        TimeLabel.Visibility = Visibility.Visible;
+        TimeLabel.IsVisible = true;
         CurrentTimeLabel.Text = string.Format("System time is {0}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-        CurrentTimeLabel.Visibility = Visibility.Visible;
+        CurrentTimeLabel.IsVisible = true;
     }
 
     private void Window_Closed(object? sender, System.EventArgs e)
     {
         Log.D("UI.Timing.ClockControl", "Window is closed.");
         theOne = null;
-        foreach (ClockListItem clItem in clockListView.Items)
+        foreach (ClockPart? clItem in clockListView.Items)
         {
-            Chronoclock clock = clItem.GetUpdatedClock();
+            Chronoclock clock = clItem!.GetUpdatedClock();
             database.UpdateClock(clock);
         }
         window.WindowFinalize(this);

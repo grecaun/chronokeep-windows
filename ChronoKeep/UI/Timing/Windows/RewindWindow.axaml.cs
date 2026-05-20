@@ -1,10 +1,9 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Chronokeep.Constants;
-using Chronokeep.Database.SQLite;
 using Chronokeep.Objects;
+using Chronokeep.Timing.Interfaces;
 using Chronokeep.UI.Parts;
+using System;
+using System.ComponentModel;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -20,15 +19,15 @@ public partial class RewindWindow : Window
         this.SizeToContent = SizeToContent.Height;
         this.Width = 400;
         this.system = system;
-        string dateStr = DateTime.Now.ToString("MM/dd/yyyy");
-        FromDate.Text = dateStr;
-        ToDate.Text = dateStr;
+        DateTime dateStr = DateTime.Now;
+        FromDate.SelectedDate = dateStr;
+        ToDate.SelectedDate = dateStr;
         FromTime.Text = "00:00:00";
         ToTime.Text = "23:59:59";
         if (system.Type == Constants.Readers.SYSTEM_IPICO || system.Type == Constants.Readers.SYSTEM_IPICO_LITE)
         {
-            Reader1.Visibility = Visibility.Visible;
-            Reader2.Visibility = Visibility.Visible;
+            Reader1.IsVisible = true;
+            Reader2.IsVisible = true;
         }
     }
 
@@ -41,38 +40,38 @@ public partial class RewindWindow : Window
 
     private void SetYesterday_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        string dateStr = DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy");
-        FromDate.Text = dateStr;
-        ToDate.Text = dateStr;
+        DateTime dateStr = DateTime.Now.AddDays(-1);
+        FromDate.SelectedDate = dateStr;
+        ToDate.SelectedDate = dateStr;
         FromTime.Text = "00:00:00";
         ToTime.Text = "23:59:59";
     }
 
     private void SetToday_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        string dateStr = DateTime.Now.ToString("MM/dd/yyyy");
-        FromDate.Text = dateStr;
-        ToDate.Text = dateStr;
+        DateTime dateStr = DateTime.Now;
+        FromDate.SelectedDate = dateStr;
+        ToDate.SelectedDate = dateStr;
         FromTime.Text = "00:00:00";
         ToTime.Text = "23:59:59";
     }
 
     private void SetTomorrow_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        string dateStr = DateTime.Now.AddDays(1).ToString("MM/dd/yyyy");
-        FromDate.Text = dateStr;
-        ToDate.Text = dateStr;
+        DateTime dateStr = DateTime.Now.AddDays(1);
+        FromDate.SelectedDate = dateStr;
+        ToDate.SelectedDate = dateStr;
         FromTime.Text = "00:00:00";
         ToTime.Text = "23:59:59";
     }
 
     private void Rewind_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (!DateTime.TryParse(string.Format("{0} {1}", FromDate.Text, FromTime.Text.Replace('_', '0')), out DateTime from))
+        if (!DateTime.TryParse(string.Format("{0} {1}", FromDate.SelectedDate, FromTime.Text!.Replace('_', '0')), out DateTime from))
         {
             from = DateTime.Now;
         }
-        if (!DateTime.TryParse(string.Format("{0} {1}", ToDate.Text, ToTime.Text.Replace('_', '0')), out DateTime to))
+        if (!DateTime.TryParse(string.Format("{0} {1}", ToDate.SelectedDate, ToTime.Text!.Replace('_', '0')), out DateTime to))
         {
             to = DateTime.Now;
         }
@@ -84,7 +83,7 @@ public partial class RewindWindow : Window
                 "No",
                 () =>
                 {
-                    BackgroundWorker worker = new BackgroundWorker();
+                    BackgroundWorker worker = new();
                     worker.DoWork += (o, ea) =>
                     {
                         system.SystemInterface.Rewind(from, to, Reader1.IsChecked == true ? 1 : 2);
@@ -92,9 +91,9 @@ public partial class RewindWindow : Window
                     };
                     worker.RunWorkerCompleted += (o, ea) =>
                     {
-                        busyIndicator.IsBusy = false;
+                        busyIndicator.IsVisible = false;
                     };
-                    busyIndicator.IsBusy = true;
+                    busyIndicator.IsVisible = true;
                     worker.RunWorkerAsync();
                 });
         }
@@ -102,11 +101,11 @@ public partial class RewindWindow : Window
         {
             system.SystemInterface.Rewind(from, to);
         }
-        this.Close();
+        Close();
     }
 
     private void Done_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        this.Close();
+        Close();
     }
 }
