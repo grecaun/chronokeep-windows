@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Chronokeep.UI.Timing.ReaderSettings.Parts;
 
-public partial class ReaderPart : UserControl
+public partial class ReaderSubPart : UserControl
 {
     private PortalReader reader;
     private readonly ChronokeepInterface readerInterface;
@@ -19,7 +19,7 @@ public partial class ReaderPart : UserControl
     [GeneratedRegex("[^0-9]")]
     private static partial Regex AllowedNums();
 
-    public ReaderPart(PortalReader reader, ChronokeepInterface readerInterface)
+    public ReaderSubPart(PortalReader reader, ChronokeepInterface readerInterface)
     {
         InitializeComponent();
         this.reader = reader;

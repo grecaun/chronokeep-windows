@@ -1,8 +1,5 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace Chronokeep.Helpers
 {
@@ -22,23 +19,6 @@ namespace Chronokeep.Helpers
             return new string(charArray);
         }
 
-        public static DependencyObject GetScrollViewer(DependencyObject o)
-        {
-            if (o is ScrollViewer)
-                return o;
-
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(o); i++)
-            {
-                var child = VisualTreeHelper.GetChild(o, i);
-                var result = GetScrollViewer(child);
-                if (result == null)
-                    continue;
-                else
-                    return result;
-            }
-            return null;
-        }
-
         public static int GetSystemTheme()
         {
             if (OperatingSystem.IsWindows())
@@ -46,7 +26,7 @@ namespace Chronokeep.Helpers
                 var registryValue = Registry.GetValue(REGISTRY_KEY_NAME, APPS_USE_LIGHT_THEME, -1);
                 if (registryValue != null)
                 {
-                    return int.Parse(registryValue.ToString());
+                    return int.Parse(registryValue.ToString()!);
                 }
             }
             return -1;

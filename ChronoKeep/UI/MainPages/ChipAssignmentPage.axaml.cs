@@ -1,21 +1,26 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.IO;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
+using Chronokeep.UI.ChipAssignment;
+using Chronokeep.UI.IO;
 using Chronokeep.UI.Parts;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Chronokeep.UI.MainPages;
 
-public partial class ChipAssignmentPage : IMainPage
+public partial class ChipAssignmentPage : UserControl, IMainPage
 {
     private List<BibChipAssociation> EventChips { get; } = [];
     private List<BibChipAssociation> GlobalChips { get; } = [];
@@ -46,7 +51,7 @@ public partial class ChipAssignmentPage : IMainPage
         {
             ChipTypeBox.SelectedIndex = 1;
         }
-        ChipTypeBox.SelectionChanged += new SelectionChangedEventHandler(ChipTypeBox_SelectionChanged);
+        ChipTypeBox.SelectionChanged += ChipTypeBox_SelectionChanged;
         theEvent = database.GetCurrentEvent();
     }
 
@@ -121,7 +126,7 @@ public partial class ChipAssignmentPage : IMainPage
                 boxItem = new()
                 {
                     Content = name,
-                    Uid = e.Identifier.ToString()
+                    Tag = e.Identifier.ToString()
                 };
                 previousEvents.Items.Add(boxItem);
             }
@@ -157,7 +162,7 @@ public partial class ChipAssignmentPage : IMainPage
         }
     }
 
-    private void Delete_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Delete_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Delete clicked.");
         IList selected = bibChipList.SelectedItems;
@@ -171,7 +176,7 @@ public partial class ChipAssignmentPage : IMainPage
         UpdateView();
     }
 
-    private void Clear_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Clear_Click(object? sender, RoutedEventArgs? e)
     {
         DialogBox.Show(
             "Are you sure you want to delete everything? This cannot be undone.",
@@ -186,7 +191,7 @@ public partial class ChipAssignmentPage : IMainPage
             );
     }
 
-    private void DeleteIgnored_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void DeleteIgnored_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Delete ignored clicked.");
         IList selected = ignoredChipList.SelectedItems;
@@ -200,7 +205,7 @@ public partial class ChipAssignmentPage : IMainPage
         UpdateView();
     }
 
-    private void ClearIgnored_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void ClearIgnored_Click(object? sender, RoutedEventArgs? e)
     {
         DialogBox.Show(
             "Are you sure you want to delete everything? This cannot be undone.",
@@ -223,7 +228,7 @@ public partial class ChipAssignmentPage : IMainPage
         }
     }
 
-    private void SelectAll(object? sender,GotFocusEventArgs e)
+    private void SelectAll(object? sender, FocusChangedEventArgs e)
     {
         TextBox? src = e.Source as TextBox;
         src?.SelectAll();
@@ -267,7 +272,7 @@ public partial class ChipAssignmentPage : IMainPage
         [
             new()
                 {
-                    Bib = SingleBibBox.Text,
+                    Bib = SingleBibBox.Text!,
                     Chip = Constants.Settings.CHIP_TYPE_DEC == chipType.Value ? chip.ToString() : chip.ToString("X")
                 }
         ];
@@ -285,7 +290,7 @@ public partial class ChipAssignmentPage : IMainPage
         SingleBibBox.Focus();
     }
 
-    private void FileImport_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void FileImport_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Import from file clicked.");
         OpenFileDialog bib_dialog = new();
@@ -313,7 +318,7 @@ public partial class ChipAssignmentPage : IMainPage
                 if (bcWindow != null)
                 {
                     mWindow.AddWindow(bcWindow);
-                    bcWindow.ShowDialog();
+                    await bcWindow.ShowDialog((Window)mWindow);
                     if (bcWindow.ImportComplete)
                     {
                         BibsChanged = true;
@@ -327,14 +332,14 @@ public partial class ChipAssignmentPage : IMainPage
         }
     }
 
-    private void UseTool_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void UseTool_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Use Tool clicked.");
         ChipTool chipTool = ChipTool.NewWindow(mWindow, database);
         if (chipTool != null)
         {
             mWindow.AddWindow(chipTool);
-            chipTool.ShowDialog();
+            chipTool.ShowDialog((Window)mWindow);
             if (chipTool.ImportComplete)
             {
                 BibsChanged = true;
@@ -342,7 +347,7 @@ public partial class ChipAssignmentPage : IMainPage
         }
     }
 
-    private void Export_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Export_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Export clicked.");
         SaveFileDialog saveFileDialog = new()
@@ -391,7 +396,7 @@ public partial class ChipAssignmentPage : IMainPage
         }
     }
 
-    private void KeyPressHandlerRange(object? sender, Avalonia.Input.KeyEventArgs e)
+    private void KeyPressHandlerRange(object? sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
@@ -432,7 +437,7 @@ public partial class ChipAssignmentPage : IMainPage
         }
     }
 
-    private void SaveRangeButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SaveRangeButton_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Save Range clicked.");
         long startChip = -1, endChip = -1, startBib, endBib;
@@ -445,7 +450,7 @@ public partial class ChipAssignmentPage : IMainPage
         if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
         {
             if (!long.TryParse(RangeStartChipBox.Text, out startChip) ||
-                !long.TryParse(RangeEndChipLabel.Text.ToString(), out endChip))
+                !long.TryParse(RangeEndChipLabel.Text!.ToString(), out endChip))
             {
                 DialogBox.Show("Invalid chip values.");
                 return;
@@ -454,7 +459,7 @@ public partial class ChipAssignmentPage : IMainPage
         else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
         {
             if (!long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip) ||
-                !long.TryParse(RangeEndChipLabel.Text.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out endChip))
+                !long.TryParse(RangeEndChipLabel.Text!.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out endChip))
             {
                 DialogBox.Show("Invalid chip values.");
                 return;
@@ -483,10 +488,10 @@ public partial class ChipAssignmentPage : IMainPage
         RangeStartBibBox.Focus();
     }
 
-    private void Copy_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Copy_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Copy clicked.");
-        int oldEventId = Convert.ToInt32(((ComboBoxItem)previousEvents.SelectedItem).Uid);
+        int oldEventId = Convert.ToInt32((string)((ComboBoxItem)previousEvents.SelectedItem!).Tag!);
         Log.D("UI.MainPages.ChipAssignmentPage", "Old event Id is " + oldEventId);
         if (oldEventId > 0)
         {
@@ -497,7 +502,7 @@ public partial class ChipAssignmentPage : IMainPage
         }
     }
 
-    private void KeyPressHandlerIgnored(object? sender, Avalonia.Input.KeyEventArgs e)
+    private void KeyPressHandlerIgnored(object? sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
@@ -505,7 +510,7 @@ public partial class ChipAssignmentPage : IMainPage
         }
     }
 
-    private void SaveIgnored_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SaveIgnored_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Save Ignored clicked.");
         long chip = -1, bib = -1;
@@ -527,7 +532,7 @@ public partial class ChipAssignmentPage : IMainPage
         [
             new()
                 {
-                    Bib = IgnoredChipBox.Text,
+                    Bib = IgnoredChipBox.Text!,
                     Chip = Constants.Settings.CHIP_TYPE_DEC == chipType.Value ? chip.ToString() : chip.ToString("X")
                 }
         ];
@@ -546,7 +551,7 @@ public partial class ChipAssignmentPage : IMainPage
         IgnoredChipBox.Focus();
     }
 
-    private void ChipTypeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void ChipTypeBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (0 == ChipTypeBox.SelectedIndex)
         {

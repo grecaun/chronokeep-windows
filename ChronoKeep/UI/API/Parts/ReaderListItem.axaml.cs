@@ -16,15 +16,20 @@ public partial class ReaderListItem : UserControl
     private readonly RemoteReader reader;
     private readonly APIObject api;
     private readonly IDBInterface database;
+    private readonly IMainWindow mWindow;
 
     public ReaderListItem(
         RemoteReader reader,
         APIObject api,
         Dictionary<(int, string), RemoteReader> savedReaders,
         IDBInterface database,
-        IMainWindow mainWindow
+        IMainWindow mWindow
         )
     {
+        this.database = database;
+        this.mWindow = mWindow;
+        this.api = api;
+        this.reader = reader;
         var theEvent = database.GetCurrentEvent();
         if (theEvent == null || theEvent.Identifier < 1)
         {
@@ -57,9 +62,9 @@ public partial class ReaderListItem : UserControl
         {
             locationBox.SelectedIndex = 0;
         }
-        DateTime dateStr = DateTime.Now;
-        startDatePicker.SelectedDate = dateStr;
-        endDatePicker.SelectedDate = dateStr;
+        string dateStr = DateTime.Now.ToString("MM/dd/yyyy");
+        startDatePicker.Text = dateStr;
+        endDatePicker.Text = dateStr;
     }
 
     public RemoteReader GetUpdatedReader()
@@ -68,9 +73,9 @@ public partial class ReaderListItem : UserControl
         {
             Name = reader.Name,
             EventID = reader.EventID,
-            APIIDentifier = api.Identifier
+            APIIDentifier = api!.Identifier
         };
-        if (locationBox.SelectedItem != null && int.TryParse(((ComboBoxItem)locationBox.SelectedItem).Uid, out var locId))
+        if (locationBox.SelectedItem != null && int.TryParse((string)((ComboBoxItem)locationBox.SelectedItem).Tag!, out var locId))
         {
             output.LocationID = locId;
         }
@@ -86,20 +91,20 @@ public partial class ReaderListItem : UserControl
         return autoFetch.IsChecked == true;
     }
 
-    private void Rewind_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Rewind_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.API.RemoteReadersWindow.ReaderListItem", "Rewind clicked.");
-        if (!DateTime.TryParse(string.Format("{0} {1}", startDatePicker.Text, startTimeBox.Text.Replace('_', '0')), out DateTime startDate))
+        if (!DateTime.TryParse(string.Format("{0} {1}", startDatePicker.Text, startTimeBox.Text!.Replace('_', '0')), out DateTime startDate))
         {
             startDate = DateTime.Now;
         }
-        if (!DateTime.TryParse(string.Format("{0} {1}", endDatePicker.Text, endTimeBox.Text.Replace('_', '0')), out DateTime endDate))
+        if (!DateTime.TryParse(string.Format("{0} {1}", endDatePicker.Text, endTimeBox.Text!.Replace('_', '0')), out DateTime endDate))
         {
             endDate = DateTime.Now;
         }
         try
         {
-            var theEvent = database.GetCurrentEvent();
+            var theEvent = database!.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 1)
             {
                 return;
@@ -111,11 +116,11 @@ public partial class ReaderListItem : UserControl
             }
             else
             {
-                this.reader.LocationID = Convert.ToInt32(((ComboBoxItem)locationBox.SelectedItem).Uid);
+                this.reader.LocationID = Convert.ToInt32(((ComboBoxItem)locationBox.SelectedItem).Tag);
             }
-            (var reads, var note) = await api.GetReads(this.reader, startDate, endDate);
+            (var reads, var note) = await api!.GetReads(this.reader, startDate, endDate);
             this.database.AddChipReads(reads);
-            mainWindow.UpdateTimingFromController();
+            mWindow.UpdateTimingFromController();
             DialogBox.Show("Rewind complete.");
         }
         catch (APIException ex)
@@ -135,18 +140,18 @@ public partial class ReaderListItem : UserControl
             async () =>
             {
                 Log.D("UI.API.RemoteReadersWindow.ReaderListItem", "User requests deletion.");
-                if (!DateTime.TryParse(string.Format("{0} {1}", startDatePicker.Text, startTimeBox.Text.Replace('_', '0')), out DateTime startDate))
+                if (!DateTime.TryParse(string.Format("{0} {1}", startDatePicker.Text, startTimeBox.Text!.Replace('_', '0')), out DateTime startDate))
                 {
                     startDate = DateTime.Now;
                 }
-                if (!DateTime.TryParse(string.Format("{0} {1}", endDatePicker.Text, endTimeBox.Text.Replace('_', '0')), out DateTime endDate))
+                if (!DateTime.TryParse(string.Format("{0} {1}", endDatePicker.Text, endTimeBox.Text!.Replace('_', '0')), out DateTime endDate))
                 {
                     endDate = DateTime.Now;
                 }
                 try
                 {
                     long count = await api.DeleteReads(this.reader, startDate, endDate);
-                    mainWindow.UpdateTimingFromController();
+                    mWindow.UpdateTimingFromController();
                     DialogBox.Show(string.Format("Successfully deleted\n\n{0}\n\nreads.", count));
                 }
                 catch (APIException ex)

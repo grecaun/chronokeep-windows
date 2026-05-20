@@ -1,8 +1,12 @@
+using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
+using System;
+using System.Media;
+using System.Threading.Tasks;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -23,22 +27,22 @@ public partial class SettingsPage : UserControl, IMainPage
         DefaultTimingBox.Items.Add(new ComboBoxItem()
         {
             Content = Constants.Readers.SYSTEM_NAMES[Constants.Readers.SYSTEM_RFID],
-            Uid = Constants.Readers.SYSTEM_RFID
+            Tag = Constants.Readers.SYSTEM_RFID
         });
         DefaultTimingBox.Items.Add(new ComboBoxItem()
         {
             Content = Constants.Readers.SYSTEM_NAMES[Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL],
-            Uid = Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL
+            Tag = Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL
         });
         DefaultTimingBox.Items.Add(new ComboBoxItem()
         {
             Content = Constants.Readers.SYSTEM_NAMES[Constants.Readers.SYSTEM_IPICO],
-            Uid = Constants.Readers.SYSTEM_IPICO
+            Tag = Constants.Readers.SYSTEM_IPICO
         });
         DefaultTimingBox.Items.Add(new ComboBoxItem()
         {
             Content = Constants.Readers.SYSTEM_NAMES[Constants.Readers.SYSTEM_IPICO_LITE],
-            Uid = Constants.Readers.SYSTEM_IPICO_LITE
+            Tag = Constants.Readers.SYSTEM_IPICO_LITE
         });
         SystemTheme = Utils.GetSystemTheme();
         if (SystemTheme != -1)
@@ -47,18 +51,18 @@ public partial class SettingsPage : UserControl, IMainPage
             ThemeColorBox.Items.Add(new ComboBoxItem()
             {
                 Content = "System",
-                Uid = Constants.Settings.THEME_SYSTEM
+                Tag = Constants.Settings.THEME_SYSTEM
             });
         }
         ThemeColorBox.Items.Add(new ComboBoxItem()
         {
             Content = "Light",
-            Uid = Constants.Settings.THEME_LIGHT
+            Tag = Constants.Settings.THEME_LIGHT
         });
         ThemeColorBox.Items.Add(new ComboBoxItem()
         {
             Content = "Dark",
-            Uid = Constants.Settings.THEME_DARK
+            Tag = Constants.Settings.THEME_DARK
         });
         UpdateView();
     }
@@ -139,11 +143,11 @@ public partial class SettingsPage : UserControl, IMainPage
     private void SaveSettings()
     {
         Log.D("UI.MainPages.SettingsPage", "Saving.");
-        database.SetAppSetting(Constants.Settings.COMPANY_NAME, CompanyNameBox.Text.Trim());
-        database.SetAppSetting(Constants.Settings.CONTACT_EMAIL, ContactEmailBox.Text.Trim());
-        database.SetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM, ((ComboBoxItem)DefaultTimingBox.SelectedItem).Uid);
-        database.SetAppSetting(Constants.Settings.CURRENT_THEME, ((ComboBoxItem)ThemeColorBox.SelectedItem).Uid);
-        database.SetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR, DefaultExportDirBox.Text.Trim());
+        database.SetAppSetting(Constants.Settings.COMPANY_NAME, CompanyNameBox.Text!.Trim());
+        database.SetAppSetting(Constants.Settings.CONTACT_EMAIL, ContactEmailBox.Text!.Trim());
+        database.SetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM, (string)((ComboBoxItem)DefaultTimingBox.SelectedItem!).Tag!);
+        database.SetAppSetting(Constants.Settings.CURRENT_THEME, (string)((ComboBoxItem)ThemeColorBox.SelectedItem!).Tag!);
+        database.SetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR, DefaultExportDirBox.Text!.Trim());
         database.SetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE, UpdatePage.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
         database.SetAppSetting(Constants.Settings.EXIT_NO_PROMPT, ExitNoPrompt.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
         database.SetAppSetting(Constants.Settings.CHECK_UPDATES, CheckUpdates.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
@@ -154,18 +158,18 @@ public partial class SettingsPage : UserControl, IMainPage
         Globals.DownloadInterval = Convert.ToInt32(downloadSlider.Value);
         database.SetAppSetting(Constants.Settings.ANNOUNCER_WINDOW, Convert.ToInt32(announcerSlider.Value).ToString());
         Globals.AnnouncerWindow = Convert.ToInt32(announcerSlider.Value);
-        database.SetAppSetting(Constants.Settings.ALARM_SOUND, ((ComboBoxItem)AlarmSoundBox.SelectedItem).Uid);
-        database.SetAppSetting(Constants.Settings.SERVER_NAME, RegistrationServerNameBox.Text.Trim());
+        database.SetAppSetting(Constants.Settings.ALARM_SOUND, (string)((ComboBoxItem)AlarmSoundBox.SelectedItem!).Tag!);
+        database.SetAppSetting(Constants.Settings.SERVER_NAME, RegistrationServerNameBox.Text!.Trim());
 
-        Constants.GlobalVars.SetTwilioCredentials(TwilioAccountSIDBox.Text.Trim(), TwilioAuthTokenBox.Text.Trim(), TwilioPhoneNumberBox.Text.Trim());
+        Constants.GlobalVars.SetTwilioCredentials(TwilioAccountSIDBox.Text!.Trim(), TwilioAuthTokenBox.Text!.Trim(), TwilioPhoneNumberBox.Text!.Trim());
         database.SetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID, Constants.GlobalVars.TwilioCredentials.AccountSID);
         database.SetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN, Constants.GlobalVars.TwilioCredentials.AuthToken);
         database.SetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER, Constants.GlobalVars.TwilioCredentials.PhoneNumber);
 
-        database.SetAppSetting(Constants.Settings.MAILGUN_FROM_NAME, MailgunFromNameBox.Text.Trim());
-        database.SetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL, MailgunFromEmailBox.Text.Trim());
-        database.SetAppSetting(Constants.Settings.MAILGUN_API_KEY, MailgunAPIKeyBox.Text.Trim());
-        database.SetAppSetting(Constants.Settings.MAILGUN_API_URL, MailgunAPIURLBox.Text.Trim());
+        database.SetAppSetting(Constants.Settings.MAILGUN_FROM_NAME, MailgunFromNameBox.Text!.Trim());
+        database.SetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL, MailgunFromEmailBox.Text!.Trim());
+        database.SetAppSetting(Constants.Settings.MAILGUN_API_KEY, MailgunAPIKeyBox.Text!.Trim());
+        database.SetAppSetting(Constants.Settings.MAILGUN_API_URL, MailgunAPIURLBox.Text!.Trim());
     }
 
     public void UpdateDatabase() { }
@@ -191,7 +195,7 @@ public partial class SettingsPage : UserControl, IMainPage
         }
     }
 
-    private void ResetDB_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void ResetDB_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.SettingsPage", "Reset button clicked.");
         bool YesClicked = false;
@@ -217,7 +221,7 @@ public partial class SettingsPage : UserControl, IMainPage
         }
     }
 
-    private void RebuildDB_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void RebuildDB_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.SettingsPage", "Rebuild button clicked.");
         bool YesClicked = false;
@@ -243,7 +247,7 @@ public partial class SettingsPage : UserControl, IMainPage
         }
     }
 
-    private void Save_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Save_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.SettingsPage", "Save button clicked.");
         SaveSettings();
@@ -252,15 +256,15 @@ public partial class SettingsPage : UserControl, IMainPage
 
     private void ThemeColorBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        ComboBoxItem selectedItem = ThemeColorBox.SelectedItem as ComboBoxItem;
+        ComboBoxItem? selectedItem = ThemeColorBox.SelectedItem as ComboBoxItem;
         if (selectedItem != null)
         {
-            database.SetAppSetting(Constants.Settings.CURRENT_THEME, ((ComboBoxItem)ThemeColorBox.SelectedItem).Uid);
-            Wpf.Ui.Appearance.ApplicationTheme theme = Wpf.Ui.Appearance.ApplicationTheme.Light;
-            bool system = selectedItem.Uid == Constants.Settings.THEME_SYSTEM;
-            if ((selectedItem.Uid == Constants.Settings.THEME_SYSTEM && SystemTheme == 0) || selectedItem.Uid == Constants.Settings.THEME_DARK)
+            database.SetAppSetting(Constants.Settings.CURRENT_THEME, (string)((ComboBoxItem)ThemeColorBox.SelectedItem!).Tag!);
+            string theme = "light";
+            bool system = (string)selectedItem.Tag! == Constants.Settings.THEME_SYSTEM;
+            if (((string)selectedItem.Tag! == Constants.Settings.THEME_SYSTEM && SystemTheme == 0) || (string)selectedItem.Tag! == Constants.Settings.THEME_DARK)
             {
-                theme = Wpf.Ui.Appearance.ApplicationTheme.Dark;
+                theme = "dark";
             }
             mWindow.UpdateTheme(theme, system);
         }
@@ -269,9 +273,10 @@ public partial class SettingsPage : UserControl, IMainPage
     private void ChangeExport_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.SettingsPage", "Change export directory button clicked.");
+        /*
         try
         {
-            using (var dialog = new System.Windows.Forms.FolderBrowserDialog
+            using (var dialog = new FolderBrowserDialog
             {
                 Description = "Export Directory",
                 UseDescriptionForTitle = true,
@@ -290,7 +295,7 @@ public partial class SettingsPage : UserControl, IMainPage
         catch
         {
             Log.E("UI.MainPages.SettingsPage", "Something went wrong with the dialog.");
-        }
+        }//*/
     }
 
     private void UploadSlider_ValueChanged(object? sender, Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
@@ -363,6 +368,7 @@ public partial class SettingsPage : UserControl, IMainPage
         Log.D("UI.MainPages.SettingsPage", "Path we're trying to play: " + soundFile);
         try
         {
+            // Windows Only
             new SoundPlayer(soundFile).Play();
         }
         catch (Exception ex)

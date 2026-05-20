@@ -24,9 +24,9 @@ namespace Chronokeep.Timing.API
 
         private static readonly int SleepSeconds = 30;
 
-        public static async Task<AddResultsResponse> DeleteResults(APIObject api, string slug, string year, string distance)
+        public static async Task<AddResultsResponse?> DeleteResults(APIObject api, string slug, string year, string distance)
         {
-            AddResultsResponse response = null;
+            AddResultsResponse? response = null;
             try
             {
                 if (distance != null && distance.Length > 0)
@@ -48,8 +48,8 @@ namespace Chronokeep.Timing.API
             APIObject api,
             string[] event_ids,
             IDBInterface database,
-            APIController controller,
-            IMainWindow mainWindow,
+            APIController? controller,
+            IMainWindow? mainWindow,
             Event theEvent
             )
         {

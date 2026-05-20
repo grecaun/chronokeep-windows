@@ -56,7 +56,8 @@
                              VerticalContentAlignment="Center"/>
           </DockPanel>
       </Grid>
-      <Button Content="Remove"
+      <Button Name="Remove"
+              Content="Remove"
               Click="Remove_Click"
               Width="100"
               Height="35"

@@ -21,7 +21,7 @@
                    Width="140"/>
         <TextBlock Text="Name"
                    Width="190"/>
-        <TextBlock Name="OccTextBlock"
+        <TextBlock Name="Occurrence"
                    Text="Occ"
                    Width="70"/>
         <TextBlock Text="Dist"

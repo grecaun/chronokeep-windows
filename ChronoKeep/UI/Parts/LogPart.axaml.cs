@@ -11,7 +11,10 @@ public partial class LogPart : UserControl
         InitializeComponent();
         Index = ix;
         HeaderLabel.Text = s;
-        HeaderBox.ItemSource = human_fields;
+        foreach (string field in human_fields)
+        {
+            HeaderBox.Items.Add(field);
+        }
         HeaderBox.SelectedIndex = selectedIx;
     }
 }

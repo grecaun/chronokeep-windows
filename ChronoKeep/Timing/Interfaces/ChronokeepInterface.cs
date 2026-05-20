@@ -1,4 +1,5 @@
-﻿using Chronokeep.Database;
+﻿using Avalonia;
+using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.Timing;
 using Chronokeep.Interfaces.UI;
@@ -6,6 +7,7 @@ using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronokeepPortal.Requests;
 using Chronokeep.Objects.ChronokeepPortal.Responses;
+using Chronokeep.UI.Parts;
 using Chronokeep.UI.Timing.ReaderSettings;
 using System;
 using System.Collections.Generic;
@@ -21,10 +23,10 @@ namespace Chronokeep.Timing.Interfaces
     {
         private readonly Event theEvent = database.GetCurrentEvent();
         private readonly StringBuilder buffer = new();
-        private Socket sock;
+        private Socket? sock;
         private bool wasShutdown = false;
 
-        private ChronokeepSettings settingsWindow = null;
+        private ChronokeepSettings? settingsWindow = null;
         private string reader_ip = "";
         private string reader_name = "";
 
@@ -33,7 +35,7 @@ namespace Chronokeep.Timing.Interfaces
         [GeneratedRegex(@"^[^\n]*\n")]
         private static partial Regex Msg();
 
-        public List<Socket> Connect(string IP_Address, int Port)
+        public List<Socket>? Connect(string IP_Address, int Port)
         {
             reader_ip = IP_Address;
             List<Socket> output = [];
@@ -114,7 +116,7 @@ namespace Chronokeep.Timing.Interfaces
                 string message = m.Value;
                 try
                 {
-                    Response res = JsonSerializer.Deserialize<Response>(message);
+                    Response res = JsonSerializer.Deserialize<Response>(message)!;
                     switch (res.Command)
                     {
                         case Response.KEEPALIVE:
@@ -125,13 +127,13 @@ namespace Chronokeep.Timing.Interfaces
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent readers message.");
                             try
                             {
-                                ReadersResponse readRes = JsonSerializer.Deserialize<ReadersResponse>(message);
+                                ReadersResponse readRes = JsonSerializer.Deserialize<ReadersResponse>(message)!;
                                 if (settingsWindow != null)
                                 {
                                     settingsWindow.UpdateView(new()
                                         {
                                             Readers = readRes.List,
-                                            Changes = { PortalSettingsHolder.ChangeType.READERS }
+                                            Changes = [PortalSettingsHolder.ChangeType.READERS]
                                         }
                                         );
                                 }
@@ -143,7 +145,7 @@ namespace Chronokeep.Timing.Interfaces
                                         oneReadingCount++;
                                     }
                                 }
-                                if (!output.TryGetValue(MessageType.STATUS, out List<string> readersStatusList))
+                                if (!output.TryGetValue(MessageType.STATUS, out List<string>? readersStatusList))
                                 {
                                     readersStatusList = [];
                                     output[MessageType.STATUS] = readersStatusList;
@@ -160,7 +162,7 @@ namespace Chronokeep.Timing.Interfaces
                                 {
                                     output[MessageType.STATUS].Add(TimingSystem.READING_STATUS_PARTIAL);
                                 }
-                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string> settingList))
+                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string>? settingList))
                                 {
                                     settingList = [];
                                     output[MessageType.SETTINGVALUE] = settingList;
@@ -171,7 +173,7 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing readers. " + e.Message);
-                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                                 {
                                     errorList = [];
                                     output[MessageType.ERROR] = errorList;
@@ -184,7 +186,7 @@ namespace Chronokeep.Timing.Interfaces
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent reader antennas message.");
                             try
                             {
-                                ReaderAntennasResponse antRes = JsonSerializer.Deserialize<ReaderAntennasResponse>(message);
+                                ReaderAntennasResponse antRes = JsonSerializer.Deserialize<ReaderAntennasResponse>(message)!;
                                 if (settingsWindow != null)
                                 {
                                     settingsWindow.UpdateView(new()
@@ -194,7 +196,7 @@ namespace Chronokeep.Timing.Interfaces
                                             ReaderName = antRes.ReaderName,
                                             Antennas = antRes.Antennas,
                                         },
-                                        Changes = { PortalSettingsHolder.ChangeType.ANTENNAS }
+                                        Changes = [PortalSettingsHolder.ChangeType.ANTENNAS]
                                     }
                                     );
                                 }
@@ -202,7 +204,7 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing reader antennas. " + e.Message);
-                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                                 {
                                     errorList = [];
                                     output[MessageType.ERROR] = errorList;
@@ -215,14 +217,14 @@ namespace Chronokeep.Timing.Interfaces
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent error message.");
                             try
                             {
-                                ErrorResponse err = JsonSerializer.Deserialize<ErrorResponse>(message);
-                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                                ErrorResponse err = JsonSerializer.Deserialize<ErrorResponse>(message)!;
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                                 {
                                     errorList = [];
                                     output[MessageType.ERROR] = errorList;
                                 }
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error sent to us is of type '" + err.Value.Type + "' and has message '" + err.Value.Message + "'.");
-                                window.ShowNotificationDialog(reader_name, reader_ip, new()
+                                window?.ShowNotificationDialog(reader_name, reader_ip, new()
                                 {
                                     Type = err.Value.Type,
                                     When = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -233,7 +235,7 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Unable to process chip read. " + e.Message);
-                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                                 {
                                     errorList = [];
                                     output[MessageType.ERROR] = errorList;
@@ -245,7 +247,7 @@ namespace Chronokeep.Timing.Interfaces
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent settings message.");
                             try
                             {
-                                SettingsResponse settingsList = JsonSerializer.Deserialize<SettingsResponse>(message);
+                                SettingsResponse settingsList = JsonSerializer.Deserialize<SettingsResponse>(message)!;
                                 if (settingsWindow != null)
                                 {
                                     PortalSettingsHolder updSettings = new();
@@ -308,11 +310,11 @@ namespace Chronokeep.Timing.Interfaces
                                                 updSettings.ScreenType = set.Value;
                                                 break;
                                         }
-                                        updSettings.Changes.Add(PortalSettingsHolder.ChangeType.SETTINGS);
+                                        updSettings.Changes!.Add(PortalSettingsHolder.ChangeType.SETTINGS);
                                     }
                                     settingsWindow.UpdateView(updSettings);
                                 }
-                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string> settingList))
+                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string>? settingList))
                                 {
                                     settingList = [];
                                     output[MessageType.SETTINGVALUE] = settingList;
@@ -323,7 +325,7 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing settings. " + e.Message);
-                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                                 {
                                     errorList = [];
                                     output[MessageType.ERROR] = errorList;
@@ -335,17 +337,17 @@ namespace Chronokeep.Timing.Interfaces
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent api list message.");
                             try
                             {
-                                ApiListResponse apiList = JsonSerializer.Deserialize<ApiListResponse>(message);
+                                ApiListResponse apiList = JsonSerializer.Deserialize<ApiListResponse>(message)!;
                                 if (settingsWindow != null)
                                 {
                                     settingsWindow.UpdateView(new()
                                         {
                                             APIs = apiList.List,
-                                            Changes = { PortalSettingsHolder.ChangeType.APIS }
+                                            Changes = [PortalSettingsHolder.ChangeType.APIS]
                                         }
                                         );
                                 }
-                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string> settingList))
+                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string>? settingList))
                                 {
                                     settingList = [];
                                     output[MessageType.SETTINGVALUE] = settingList;
@@ -356,7 +358,7 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing api list. " + e.Message);
-                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                                 {
                                     errorList = [];
                                     output[MessageType.ERROR] = errorList;
@@ -368,7 +370,7 @@ namespace Chronokeep.Timing.Interfaces
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent all settings message.");
                             try
                             {
-                                SettingsAllResponse allSettings = JsonSerializer.Deserialize<SettingsAllResponse>(message);
+                                SettingsAllResponse allSettings = JsonSerializer.Deserialize<SettingsAllResponse>(message)!;
                                 if (settingsWindow != null)
                                 {
                                     PortalSettingsHolder updSettings = new()
@@ -446,7 +448,7 @@ namespace Chronokeep.Timing.Interfaces
                                             settingsReadingCount++;
                                         }
                                     }
-                                    if (!output.TryGetValue(MessageType.STATUS, out List<string> settingsStatusList))
+                                    if (!output.TryGetValue(MessageType.STATUS, out List<string>? settingsStatusList))
                                     {
                                         settingsStatusList = [];
                                         output[MessageType.STATUS] = settingsStatusList;
@@ -463,14 +465,14 @@ namespace Chronokeep.Timing.Interfaces
                                     {
                                         output[MessageType.STATUS].Add(TimingSystem.READING_STATUS_PARTIAL);
                                     }
-                                    updSettings.Changes.Add(PortalSettingsHolder.ChangeType.SETTINGS);
-                                    updSettings.Changes.Add(PortalSettingsHolder.ChangeType.READERS);
-                                    updSettings.Changes.Add(PortalSettingsHolder.ChangeType.APIS);
+                                    updSettings.Changes!.Add(PortalSettingsHolder.ChangeType.SETTINGS);
+                                    updSettings.Changes!.Add(PortalSettingsHolder.ChangeType.READERS);
+                                    updSettings.Changes!.Add(PortalSettingsHolder.ChangeType.APIS);
                                     settingsWindow?.UpdateView(
                                         updSettings
                                         );
                                 }
-                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string> settingList))
+                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string>? settingList))
                                 {
                                     settingList = [];
                                     output[MessageType.SETTINGVALUE] = settingList;
@@ -481,7 +483,7 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing all settings. " + e.Message);
-                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                                 {
                                     errorList = [];
                                     output[MessageType.ERROR] = errorList;
@@ -493,7 +495,7 @@ namespace Chronokeep.Timing.Interfaces
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent reads message.");
                             try
                             {
-                                ReadsResponse reads = JsonSerializer.Deserialize<ReadsResponse>(message);
+                                ReadsResponse reads = JsonSerializer.Deserialize<ReadsResponse>(message)!;
                                 if (reads.List.Count > 0)
                                 {
                                     foreach (PortalRead pRead in reads.List)
@@ -524,14 +526,14 @@ namespace Chronokeep.Timing.Interfaces
                                     }
                                     if (chipReads.Count > 0)
                                     {
-                                        output[MessageType.CHIPREAD] = null;
+                                        output[MessageType.CHIPREAD] = [];
                                     }
                                 }
                             }
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Unable to process chip read. " + e.Message);
-                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                                 {
                                     errorList = [];
                                     output[MessageType.ERROR] = errorList;
@@ -541,14 +543,14 @@ namespace Chronokeep.Timing.Interfaces
                             break;
                         case Response.SUCCESS:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent success message.");
-                            output[MessageType.SUCCESS] = null;
+                            output[MessageType.SUCCESS] = [];
                             break;
                         case Response.TIME:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent time message.");
                             try
                             {
-                                TimeResponse t = JsonSerializer.Deserialize<TimeResponse>(message);
-                                if (!output.TryGetValue(MessageType.TIME, out List<string> timeList))
+                                TimeResponse t = JsonSerializer.Deserialize<TimeResponse>(message)!;
+                                if (!output.TryGetValue(MessageType.TIME, out List<string>? timeList))
                                 {
                                     timeList = [];
                                     output[MessageType.TIME] = timeList;
@@ -561,7 +563,7 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Unable to process time message. " + e.Message);
-                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                                 {
                                     errorList = [];
                                     output[MessageType.ERROR] = errorList;
@@ -573,8 +575,8 @@ namespace Chronokeep.Timing.Interfaces
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent read auto upload message.");
                             try
                             {
-                                ReadAutoUploadResponse autoUploadResponse = JsonSerializer.Deserialize<ReadAutoUploadResponse>(message);
-                                settingsWindow.UpdateView(new()
+                                ReadAutoUploadResponse autoUploadResponse = JsonSerializer.Deserialize<ReadAutoUploadResponse>(message)!;
+                                settingsWindow?.UpdateView(new()
                                     {
                                         AutoUpload = autoUploadResponse.Status,
                                     }
@@ -583,7 +585,7 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error auto upload message. " + e.Message);
-                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                                 {
                                     errorList = [];
                                     output[MessageType.ERROR] = errorList;
@@ -593,7 +595,7 @@ namespace Chronokeep.Timing.Interfaces
                             break;
                         case Response.CONNECTION_SUCCESSFUL:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent connection successful message.");
-                            ConnectionSuccessfulResponse connectionResponse = JsonSerializer.Deserialize<ConnectionSuccessfulResponse>(message);
+                            ConnectionSuccessfulResponse connectionResponse = JsonSerializer.Deserialize<ConnectionSuccessfulResponse>(message)!;
                             int readingCount = 0;
                             foreach (PortalReader reader in connectionResponse.Readers)
                             {
@@ -602,7 +604,7 @@ namespace Chronokeep.Timing.Interfaces
                                     readingCount++;
                                 }
                             }
-                            if (!output.TryGetValue(MessageType.STATUS, out List<string> statusList))
+                            if (!output.TryGetValue(MessageType.STATUS, out List<string>? statusList))
                             {
                                 statusList = [];
                                 output[MessageType.STATUS] = statusList;
@@ -619,17 +621,17 @@ namespace Chronokeep.Timing.Interfaces
                             {
                                 output[MessageType.STATUS].Add(TimingSystem.READING_STATUS_PARTIAL);
                             }
-                            output[MessageType.CONNECTED] = null;
+                            output[MessageType.CONNECTED] = [];
                             break;
                         case Response.DISCONNECT:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent disconnect message.");
-                            output[MessageType.DISCONNECT] = null;
+                            output[MessageType.DISCONNECT] = [];
                             break;
                         case Response.NOTIFICATION:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent notification message.");
                             try
                             {
-                                NotificationResponse notRes = JsonSerializer.Deserialize<NotificationResponse>(message);
+                                NotificationResponse notRes = JsonSerializer.Deserialize<NotificationResponse>(message)!;
                                 string msg = "";
                                 switch (notRes.Type)
                                 {
@@ -667,7 +669,7 @@ namespace Chronokeep.Timing.Interfaces
                                         msg = "Portal at " + reader_ip + " is indicating the battery is critical.";
                                         break;
                                 }
-                                Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
+                                Application.Current!.Dispatcher.Invoke(() =>
                                 {
                                     DialogBox.Show(msg);
                                 });
@@ -675,7 +677,7 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing reader antennas. " + e.Message);
-                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                                 {
                                     errorList = [];
                                     output[MessageType.ERROR] = errorList;
@@ -685,7 +687,7 @@ namespace Chronokeep.Timing.Interfaces
                             break;
                         default:
                             Log.E("Timing.Interfaces.ChronokeepInterface", "Unknown message received: " + res.Command);
-                            output[MessageType.UNKNOWN] = null;
+                            output[MessageType.UNKNOWN] = [];
                             break;
                     }
                 }
@@ -782,12 +784,12 @@ namespace Chronokeep.Timing.Interfaces
             settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_PORTAL_NAME,
-                Value = settings.Name
+                Value = settings.Name!
             });
             settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_READ_WINDOW,
-                Value = settings.ReadWindow.ToString()
+                Value = settings.ReadWindow.ToString()!
             });
             settingsReq.Settings.Add(new()
             {
@@ -798,7 +800,7 @@ namespace Chronokeep.Timing.Interfaces
             settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_VOLUME,
-                Value = settings.Volume.ToString()
+                Value = settings.Volume.ToString()!
             });
             settingsReq.Settings.Add(new()
             {
@@ -808,7 +810,7 @@ namespace Chronokeep.Timing.Interfaces
             settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_UPLOAD_INTERVAL,
-                Value = settings.UploadInterval.ToString()
+                Value = settings.UploadInterval.ToString()!
             });
             settingsReq.Settings.Add(new()
             {
@@ -820,22 +822,22 @@ namespace Chronokeep.Timing.Interfaces
             settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_NTFY_URL,
-                Value = settings.NtfyURL
+                Value = settings.NtfyURL!
             });
             settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_NTFY_TOPIC,
-                Value = settings.NtfyTopic
+                Value = settings.NtfyTopic!
             });
             settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_NTFY_USER,
-                Value = settings.NtfyUser
+                Value = settings.NtfyUser!
             });
             settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_NTFY_PASS,
-                Value = settings.NtfyPass
+                Value = settings.NtfyPass!
             });
             settingsReq.Settings.Add(new()
             {
@@ -845,7 +847,7 @@ namespace Chronokeep.Timing.Interfaces
             settingsReq.Settings.Add(new()
             {
                 Name = PortalSetting.SETTING_SCREEN_TYPE,
-                Value = settings.ScreenType,
+                Value = settings.ScreenType!
             });
             SendMessage(JsonSerializer.Serialize(settingsReq));
         }
@@ -946,7 +948,7 @@ namespace Chronokeep.Timing.Interfaces
         private void SendMessage(string msg)
         {
             Log.D("Timing.Interfaces.ChronokeepInterface", "Sending message '" + msg + "'");
-            sock.Send(Encoding.Default.GetBytes(msg + "\n"));
+            sock!.Send(Encoding.Default.GetBytes(msg + "\n"));
         }
 
         public bool SettingsEditable()

@@ -3,6 +3,9 @@ using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
+using Chronokeep.UI.Parts;
+using System;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -27,12 +30,12 @@ public partial class AgeGroupsPage : UserControl, IMainPage
     {
         if (theEvent.CommonAgeGroups)
         {
-            DistanceRow.Height = new GridLength(0);
+            DistancesBox.IsVisible = true;
             UpdateAgeGroupsList();
         }
         else
         {
-            DistanceRow.Height = new GridLength(55);
+            DistancesBox.IsVisible = false;
             UpdateDistancesBox();
         }
     }
@@ -43,18 +46,18 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         {
             return;
         }
-        Distances.Items.Clear();
+        DistancesBox.Items.Clear();
         List<Distance> distances = database.GetDistances(theEvent.Identifier);
         distances.Sort();
         foreach (Distance d in distances)
         {
-            Distances.Items.Add(new ComboBoxItem()
+            DistancesBox.Items.Add(new ComboBoxItem()
             {
                 Content = d.Name,
-                Uid = d.Identifier.ToString()
+                Tag = d.Identifier.ToString()
             });
         }
-        Distances.SelectedIndex = 0;
+        DistancesBox.SelectedIndex = 0;
     }
 
     private void UpdateAgeGroupsList()
@@ -70,11 +73,11 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         ageGroups.Sort();
         foreach (AgeGroup group in ageGroups)
         {
-            AgeGroupsBox.Items.Add(new AAgeGroup(this, group));
+            AgeGroupsBox.Items.Add(new AgeGroupPart(this, group));
         }
     }
 
-    internal void RemoveAgeGroup(AAgeGroup group)
+    internal void RemoveAgeGroup(AgeGroupPart group)
     {
         Log.D("UI.MainPages.AgeGroupsPage", "Removing Age Group from view.");
         AgeGroupsBox.Items.Remove(group);
@@ -167,9 +170,9 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         Log.D("UI.MainPages.AgeGroupsPage", "Update age groups button clicked.");
         List<AgeGroup> ageGroups = [];
         List<AgeGroup> toAdd = [];
-        foreach (ListBoxItem aAge in AgeGroupsBox.Items)
+        foreach (AgeGroupPart? aAge in AgeGroupsBox.Items)
         {
-            if (aAge is AAgeGroup group)
+            if (aAge is AgeGroupPart group)
             {
                 ageGroups.Add(group.GetAgeGroup());
             }
@@ -210,7 +213,7 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         int divId = Constants.Timing.COMMON_AGEGROUPS_DISTANCEID;
         if (!theEvent.CommonAgeGroups)
         {
-            divId = Convert.ToInt32(((ComboBoxItem)Distances.SelectedItem).Uid);
+            divId = Convert.ToInt32((string)((ComboBoxItem)DistancesBox.SelectedItem!).Tag!);
         }
         database.RemoveAgeGroups(theEvent.Identifier, divId);
         foreach (AgeGroup age in ageGroups)
@@ -227,9 +230,9 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         int divId = Constants.Timing.COMMON_AGEGROUPS_DISTANCEID;
         if (!theEvent.CommonAgeGroups)
         {
-            divId = Convert.ToInt32(((ComboBoxItem)Distances.SelectedItem).Uid);
+            divId = Convert.ToInt32((string)((ComboBoxItem)DistancesBox.SelectedItem!).Tag!);
         }
-        AgeGroupsBox.Items.Add(new AAgeGroup(this, new(theEvent.Identifier, divId, 0, 0)));
+        AgeGroupsBox.Items.Add(new AgeGroupPart(this, new(theEvent.Identifier, divId, 0, 0)));
     }
 
     private void Distances_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -248,7 +251,7 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         int divId = Constants.Timing.COMMON_AGEGROUPS_DISTANCEID;
         if (!theEvent.CommonAgeGroups)
         {
-            divId = Convert.ToInt32(((ComboBoxItem)Distances.SelectedItem).Uid);
+            divId = Convert.ToInt32((string)((ComboBoxItem)DistancesBox.SelectedItem!).Tag!);
         }
         database.RemoveAgeGroups(theEvent.Identifier, divId);
         int increment = 5;
@@ -296,8 +299,8 @@ public partial class AgeGroupsPage : UserControl, IMainPage
             {
                 Text = "Start Age",
                 FontSize = 16,
-                Margin = new Thickness(10, 10, 10, 10),
-                HorizontalAlignment = HorizontalAlignment.Center
+                Margin = new Avalonia.Thickness(10, 10, 10, 10),
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
             };
             theGrid.Children.Add(l);
             Grid.SetColumn(l, 0);
@@ -305,8 +308,8 @@ public partial class AgeGroupsPage : UserControl, IMainPage
             {
                 Text = "End Age",
                 FontSize = 16,
-                Margin = new Thickness(10, 10, 10, 10),
-                HorizontalAlignment = HorizontalAlignment.Center
+                Margin = new Avalonia.Thickness(10, 10, 10, 10),
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
             };
             theGrid.Children.Add(l);
             Grid.SetColumn(l, 1);

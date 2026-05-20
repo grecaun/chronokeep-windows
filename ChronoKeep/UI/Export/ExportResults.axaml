@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.Export.ExportResults"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title="Export Results"
         Height="450"
@@ -37,7 +36,7 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                    x:Name="Done"
+                    Name="Done"
                     Content="Submit"
                     Click="Done_Click"
                     FontSize="16"
@@ -45,7 +44,7 @@
                     Margin="10,5,5,10"
                     HorizontalAlignment="Stretch"/>
             <Button Grid.Column="1"
-                    x:Name="Cancel"
+                    Name="Cancel"
                     Content="Cancel"
                     Click="Cancel_Click"
                     FontSize="16"

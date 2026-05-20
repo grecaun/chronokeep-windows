@@ -124,7 +124,7 @@
                 </DockPanel>
                 <DockPanel LastChildFill="True">
                     <TextBlock Text="Date" />
-                    <DatePicker Name="eventDatePicker" IsEnabled="False" />
+                    <MaskedTextBox Mask="90/90/0000" Name="eventDatePicker" IsEnabled="False" />
                 </DockPanel>
                 <Separator Margin="5,5,5,5" />
                 <StackPanel Orientation="Horizontal" Classes="toggle">

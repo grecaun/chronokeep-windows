@@ -10,12 +10,12 @@ namespace Chronokeep.UI.API.Windows;
 
 public partial class EditAPIWindow : Window
 {
-    private readonly IMainWindow window = null;
-    private readonly Event theEvent;
+    private readonly IMainWindow? window = null;
+    private readonly Event? theEvent;
 
     // Variables relating to information we're collecting.
-    private readonly APIObject api;
-    private readonly string slug, year;
+    private readonly APIObject? api;
+    private readonly string? slug, year;
 
     public EditAPIWindow(IMainWindow window, IDBInterface database)
     {
@@ -45,7 +45,7 @@ public partial class EditAPIWindow : Window
 
     public void NetworkUpdateResults()
     {
-        window.NetworkUpdateResults();
+        window?.NetworkUpdateResults();
     }
 
     public static EditAPIWindow NewWindow(IMainWindow window, IDBInterface database)

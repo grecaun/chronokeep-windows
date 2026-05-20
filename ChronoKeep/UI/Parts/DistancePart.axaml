@@ -99,17 +99,12 @@
                          VerticalContentAlignment="Center"/>
             </DockPanel>
             <ComboBox Grid.Column="2"
+                      Name="DistanceUnit"
                       FontSize="16"
                       Margin="10,5,0,5"
                       SelectedIndex="0"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Stretch">
-                <ComboBoxItem Content=""/>
-                <ComboBoxItem Content="Miles"/>
-                <ComboBoxItem Content="Kilometers"/>
-                <ComboBoxItem Content="Meters"/>
-                <ComboBoxItem Content="Yards"/>
-                <ComboBoxItem Content="Feet"/>
             </ComboBox>
             <DockPanel Grid.Column="3" IsVisible="True">
 				<TextBlock Text="Occurrence"

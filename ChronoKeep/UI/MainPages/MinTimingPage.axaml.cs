@@ -5,7 +5,8 @@ using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
-using Chronokeep.UI.Timing;
+using Chronokeep.UI.MainPages.Timing;
+using Chronokeep.UI.Parts;
 using Chronokeep.UI.Timing.Windows;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,10 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
-    private TimingRawReadsPage subPage;
+    private TimingRawReadsPage? subPage;
 
-    private Event theEvent;
-    List<TimingLocation> locations;
+    private Event? theEvent;
+    List<TimingLocation>? locations;
 
     private SetTimeWindow? timeWindow = null;
     private RewindWindow? rewindWindow = null;
@@ -120,14 +121,14 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
         connected = 0;
         foreach (TimingSystem sys in systems)
         {
-            ReadersBox.Items.Add(new ReaderBox(this, sys, locations));
+            ReadersBox.Items.Add(new ReaderPart(this, sys, locations));
             if (sys.Status == SYSTEM_STATUS.CONNECTED || sys.Status == SYSTEM_STATUS.WORKING)
             {
                 connected++;
             }
         }
         total = ReadersBox.Items.Count;
-        subPage = new TimingRawReadsPage(this, database);
+        subPage = new TimingRawReadsPage(this, database, mWindow);
         TimingFrame.Content = subPage;
     }
 
@@ -155,7 +156,7 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
         }
         if (subPage == null)
         {
-            subPage = new TimingRawReadsPage(this, database);
+            subPage = new TimingRawReadsPage(this, database, mWindow);
             TimingFrame.Content = subPage;
             TimingFrame.IsVisible = true;
         }
@@ -176,10 +177,10 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
 
         // Update locations in the list of readers
         connected = 0; total = ReadersBox.Items.Count;
-        foreach (ReaderBox read in ReadersBox.Items)
+        foreach (ReaderPart? read in ReadersBox.Items)
         {
-            read.UpdateLocations(locations);
-            read.UpdateStatus();
+            read!.UpdateLocations(locations);
+            read!.UpdateStatus();
             connected += read.reader.Status == SYSTEM_STATUS.DISCONNECTED ? 0 : 1;
             if (read.reader.Status == SYSTEM_STATUS.DISCONNECTED)
             {
@@ -209,7 +210,7 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
             }
             for (int i = total; i < 4; i++)
             {
-                ReadersBox.Items.Add(new ReaderBox(
+                ReadersBox.Items.Add(new ReaderPart(
                     this,
                     new(
                         string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
@@ -274,10 +275,10 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
 
     public void RemoveSystem(TimingSystem sys)
     {
-        ReaderBox removed = null;
-        foreach (ReaderBox box in ReadersBox.Items)
+        ReaderPart? removed = null;
+        foreach (ReaderPart? box in ReadersBox.Items)
         {
-            if (box.reader.SystemIdentifier == sys.SystemIdentifier && sys.Saved())
+            if (box!.reader.SystemIdentifier == sys.SystemIdentifier && sys.Saved())
             {
                 removed = box;
                 break;
@@ -307,7 +308,7 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
                 Log.D("UI.MainPages.TimingPage", "Error fetching default timing system information.");
                 system = Readers.DEFAULT_TIMING_SYSTEM;
             }
-            ReadersBox.Items.Add(new ReaderBox(this, new(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system), locations));
+            ReadersBox.Items.Add(new ReaderPart(this, new(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system), locations!));
             total = ReadersBox.Items.Count;
         }
         return sys.Status != SYSTEM_STATUS.DISCONNECTED;

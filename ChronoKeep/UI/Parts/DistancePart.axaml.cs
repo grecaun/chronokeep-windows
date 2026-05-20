@@ -1,6 +1,12 @@
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Chronokeep.Helpers;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Chronokeep.UI.Parts;
 
@@ -41,14 +47,14 @@ public partial class DistancePart : UserControl
         CopyFromBox.Items.Add(new ComboBoxItem()
         {
             Content = "",
-            Uid = "-1"
+            Tag = "-1"
         });
         foreach (Distance div in otherDistances)
         {
             CopyFromBox.Items.Add(new ComboBoxItem()
             {
                 Content = div.Name,
-                Uid = div.Identifier.ToString()
+                Tag = div.Identifier.ToString()
             });
         }
         CopyFromBox.SelectedIndex = 0;
@@ -56,32 +62,32 @@ public partial class DistancePart : UserControl
         DistanceUnit.Items.Add(new ComboBoxItem()
         {
             Content = "",
-            Uid = Constants.Distances.UNKNOWN.ToString()
+            Tag = Constants.Distances.UNKNOWN
         });
         DistanceUnit.Items.Add(new ComboBoxItem()
         {
             Content = "Miles",
-            Uid = Constants.Distances.MILES.ToString()
+            Tag = Constants.Distances.MILES
         });
         DistanceUnit.Items.Add(new ComboBoxItem()
         {
             Content = "Kilometers",
-            Uid = Constants.Distances.KILOMETERS.ToString()
+            Tag = Constants.Distances.KILOMETERS
         });
         DistanceUnit.Items.Add(new ComboBoxItem()
         {
             Content = "Meters",
-            Uid = Constants.Distances.METERS.ToString()
+            Tag = Constants.Distances.METERS
         });
         DistanceUnit.Items.Add(new ComboBoxItem()
         {
             Content = "Yards",
-            Uid = Constants.Distances.YARDS.ToString()
+            Tag = Constants.Distances.YARDS
         });
         DistanceUnit.Items.Add(new ComboBoxItem()
         {
             Content = "Feet",
-            Uid = Constants.Distances.FEET.ToString()
+            Tag = Constants.Distances.FEET
         });
         if (theDistance.DistanceUnit == Constants.Distances.MILES)
         {
@@ -109,13 +115,13 @@ public partial class DistancePart : UserControl
         }
         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
         {
-            ComboBoxItem selected = null, current;
+            ComboBoxItem? selected = null, current;
             for (int i = 1; i <= maxOccurrences; i++)
             {
                 current = new()
                 {
                     Content = i.ToString(),
-                    Uid = i.ToString()
+                    Tag = i.ToString()
                 };
                 if (i == theDistance.FinishOccurrence)
                 {
@@ -141,7 +147,7 @@ public partial class DistancePart : UserControl
                 Width = 65,
                 FontSize = 12,
                 Margin = new(10, 0, 0, 0),
-                VerticalAlignment = VerticalAlignment.Center
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
             });
             string limit = string.Format(LimitFormat, theDistance.EndSeconds / 3600,
                 theDistance.EndSeconds % 3600 / 60, theDistance.EndSeconds % 60);
@@ -165,49 +171,48 @@ public partial class DistancePart : UserControl
         Certification.Text = theDistance.Certification;
         if (theEvent.UploadSpecific == true)
         {
-            // Upload Specific checkbox...
+            UploadPanel.IsVisible = true;
+            Upload.IsChecked = theDistance.Upload;
         }
         if (theEvent.EventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
         {
-            copyPanel.Visibility = Visibility.Collapsed;
-            AddSubDistance.Visibility = Visibility.Collapsed;
-            secondGrid.Children.Remove(Remove);
+            IsMain = false;
         }
         TypeBox.Items.Add(
             new ComboBoxItem
             {
                 Content = "Normal",
-                Uid = Constants.Timing.DISTANCE_TYPE_NORMAL.ToString()
+                Tag = Constants.Timing.DISTANCE_TYPE_NORMAL
             });
         TypeBox.Items.Add(
             new ComboBoxItem
             {
                 Content = "Early Start",
-                Uid = Constants.Timing.DISTANCE_TYPE_EARLY.ToString()
+                Tag = Constants.Timing.DISTANCE_TYPE_EARLY
             });
         TypeBox.Items.Add(
             new ComboBoxItem
             {
                 Content = "Late Start",
-                Uid = Constants.Timing.DISTANCE_TYPE_LATE.ToString()
+                Tag = Constants.Timing.DISTANCE_TYPE_LATE
             });
         TypeBox.Items.Add(
             new ComboBoxItem
             {
                 Content = "Drop",
-                Uid = Constants.Timing.DISTANCE_TYPE_DROP.ToString()
+                Tag = Constants.Timing.DISTANCE_TYPE_DROP
             });
         TypeBox.Items.Add(
             new ComboBoxItem
             {
                 Content = "Unranked",
-                Uid = Constants.Timing.DISTANCE_TYPE_UNOFFICIAL.ToString()
+                Tag = Constants.Timing.DISTANCE_TYPE_UNOFFICIAL
             });
         TypeBox.Items.Add(
             new ComboBoxItem
             {
                 Content = "Virtual",
-                Uid = Constants.Timing.DISTANCE_TYPE_VIRTUAL.ToString()
+                Tag = Constants.Timing.DISTANCE_TYPE_VIRTUAL
             });
         if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_EARLY)
         {
@@ -245,11 +250,11 @@ public partial class DistancePart : UserControl
     public void UpdateDistance()
     {
         Log.D("UI.MainPages.DistancesPage", "Updating distance.");
-        theDistance.Name = DistanceName.Text;
+        theDistance.Name = DistanceName.Text!;
         double dist;
         try
         {
-            dist = Convert.ToDouble(Distance.Text);
+            dist = Convert.ToDouble(DistanceBox.Text!);
         }
         catch
         {
@@ -259,15 +264,15 @@ public partial class DistancePart : UserControl
         {
             theDistance.DistanceValue = dist;
         }
-        theDistance.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
+        theDistance.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem!).Tag);
         if (FinishOccurrence != null && FinishOccurrence.SelectedItem != null)
         {
-            theDistance.FinishOccurrence = Convert.ToInt32(((ComboBoxItem)FinishOccurrence.SelectedItem).Uid);
+            theDistance.FinishOccurrence = Convert.ToInt32(((ComboBoxItem)FinishOccurrence.SelectedItem).Tag!);
         }
         theDistance.EndSeconds = 0;
         if (TimeLimit != null)
         {
-            string[] limitParts = TimeLimit.Text.Replace('_', '0').Split(':');
+            string[] limitParts = TimeLimit.Text!.Replace('_', '0').Split(':');
             theDistance.EndSeconds = (Convert.ToInt32(limitParts[0]) * 3600)
                 + (Convert.ToInt32(limitParts[1]) * 60)
                 + Convert.ToInt32(limitParts[2]);
@@ -297,7 +302,7 @@ public partial class DistancePart : UserControl
         {
             DialogBox.Show("Error with values given.");
         }
-        if (waveType < 0)
+        if (MinusWave)
         {
             Log.D("UI.MainPages.DistancesPage", "Recording negative values.");
             theDistance.StartOffsetSeconds *= -1;
@@ -313,7 +318,7 @@ public partial class DistancePart : UserControl
         }
         if (Certification != null)
         {
-            theDistance.Certification = Certification.Text;
+            theDistance.Certification = Certification.Text!;
         }
         else
         {
@@ -321,18 +326,18 @@ public partial class DistancePart : UserControl
         }
     }
 
-    private void SelectAll(object? sender, Avalonia.Input.GotFocusEventArgs e)
+    private void SelectAll(object? sender, FocusChangedEventArgs e)
     {
-        TextBox src = (TextBox)e.OriginalSource;
+        TextBox src = (TextBox)e.Source!;
         src.SelectAll();
     }
 
-    private void NumberValidation(object? sender, Avalonia.Input.TextInputEventArgs e)
+    private void NumberValidation(object? sender, TextInputEventArgs e)
     {
-        e.Handled = AllowedChars().IsMatch(e.Text);
+        e.Handled = AllowedChars().IsMatch(e.Text!);
     }
 
-    private void Remove_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Remove_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.DistancesPage", "Removing distance.");
         page.RemoveDistance(theDistance);
@@ -352,18 +357,18 @@ public partial class DistancePart : UserControl
         }
     }
 
-    private void SwapWaveType_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SwapWaveType_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.DistancesPage", "Plus/Minus sign clicked. PlusWave is: " + PlusWave);
         PlusWave = !PlusWave;
     }
 
-    private void DotValidation(object? sender, Avalonia.Input.TextInputEventArgs e)
+    private void DotValidation(object? sender, TextInputEventArgs e)
     {
-        e.Handled = AllowedWithDot().IsMatch(e.Text);
+        e.Handled = AllowedWithDot().IsMatch(e.Text!);
     }
 
-    private void AddSub_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void AddSub_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.DistancesPage", "Adding sub distance.");
         page.AddSubDistance(theDistance);
@@ -375,10 +380,10 @@ public partial class DistancePart : UserControl
         // Ensure we've got something selected, it has a parseable UID,
         // and there's a distance related to it
         if (CopyFromBox.SelectedItem != null
-            && int.TryParse(((ComboBoxItem)CopyFromBox.SelectedItem).Uid, out int newDivId)
-            && distanceDictionary.TryGetValue(newDivId, out Distance newDiv))
+            && int.TryParse((string)((ComboBoxItem)CopyFromBox.SelectedItem).Tag!, out int newDivId)
+            && distanceDictionary.TryGetValue(newDivId, out Distance? newDiv))
         {
-            theDistance.Name = DistanceName.Text;
+            theDistance.Name = DistanceName.Text!;
             theDistance.DistanceValue = newDiv.DistanceValue;
             theDistance.DistanceUnit = newDiv.DistanceUnit;
             theDistance.FinishOccurrence = newDiv.FinishOccurrence;

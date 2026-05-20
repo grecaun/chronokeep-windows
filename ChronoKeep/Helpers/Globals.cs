@@ -2,7 +2,7 @@
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronokeepRemote;
-using Chronokeep.UI.UIObjects;
+using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -72,7 +72,7 @@ namespace Chronokeep.Helpers
         public class ReaderMessage : IComparable
         {
             public SeverityLevel Severity;
-            public RemoteNotification Message;
+            public RemoteNotification Message = new();
             public bool Notified = false;
             public string SystemName = "";
             public string Address = "";
@@ -92,7 +92,7 @@ namespace Chronokeep.Helpers
             public string SeverityString { get => Severity == SeverityLevel.High ? "High" : Severity == SeverityLevel.Moderate ? "Moderate" : "Low"; }
             public string Background { get => Severity == SeverityLevel.High ? "#3FFF0000" : Severity == SeverityLevel.Moderate ? "#4FF75605" : "#3FF7CF05"; }
 
-            public int CompareTo(object other)
+            public int CompareTo(object? other)
             {
                 if (other is not ReaderMessage) return -1;
                 if (DateTime.TryParse(Message.When, out DateTime thisWhen)
@@ -137,7 +137,7 @@ namespace Chronokeep.Helpers
                 {
                     foreach (ReaderMessage m in msgs)
                     {
-                        if (readerMessages.TryGetValue((m.SystemName, m.Message), out ReaderMessage found))
+                        if (readerMessages.TryGetValue((m.SystemName, m.Message), out ReaderMessage? found))
                         {
                             found.Notified = m.Notified;
                         }
@@ -156,7 +156,7 @@ namespace Chronokeep.Helpers
             {
                 try
                 {
-                    if (readerMessages.TryGetValue((msg.SystemName, msg.Message), out ReaderMessage found))
+                    if (readerMessages.TryGetValue((msg.SystemName, msg.Message), out ReaderMessage? found))
                     {
                         found.Notified = msg.Notified;
                     }

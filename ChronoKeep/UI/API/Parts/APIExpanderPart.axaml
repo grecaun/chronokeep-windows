@@ -10,8 +10,6 @@
               Width="1050"
               VerticalContentAlignment="Center"
               HorizontalContentAlignment="Center">
-        <ListView x:Name="readerListView"
-                  VerticalContentAlignment="Center"
-                  HorizontalContentAlignment="Center"/>
+        <ListBox Name="readerListView" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Expander>
 </UserControl>

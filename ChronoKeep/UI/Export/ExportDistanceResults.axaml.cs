@@ -1,6 +1,4 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.IO;
@@ -9,6 +7,9 @@ using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.IO;
 using Chronokeep.UI.Parts;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace Chronokeep.UI.Export;
 
@@ -16,13 +17,13 @@ public partial class ExportDistanceResults : Window
 {
     private readonly IMainWindow window;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
 
     private readonly OutputType type;
 
     private readonly bool noOpen;
 
-    private readonly Dictionary<string, Distance> distanceDictionary;
+    private readonly Dictionary<string, Distance>? distanceDictionary;
 
     public ExportDistanceResults(IMainWindow window, IDBInterface database, OutputType type = OutputType.Boston)
     {
@@ -46,7 +47,7 @@ public partial class ExportDistanceResults : Window
                 distanceBox.Items.Add(new ComboBoxItem()
                 {
                     Content = distance.Name,
-                    Uid = distance.Identifier.ToString(),
+                    Tag = distance.Identifier.ToString(),
                 });
             }
         }
@@ -55,7 +56,7 @@ public partial class ExportDistanceResults : Window
         this.MinHeight = 200;
         this.Width = 300;
         this.Height = 220;
-        this.ResizeMode = ResizeMode.NoResize;
+        this.CanResize = false;
         bool supported = false;
         if (OutputType.Boston == type)
         {
@@ -97,7 +98,7 @@ public partial class ExportDistanceResults : Window
         {
             distanceBox.SelectedIndex = 0;
             Distance selected;
-            if (distanceBox.SelectedItem != null && distanceDictionary.TryGetValue(((ComboBoxItem)distanceBox.SelectedItem).Uid, out Distance oDist))
+            if (distanceBox.SelectedItem != null && distanceDictionary.TryGetValue((string)((ComboBoxItem)distanceBox.SelectedItem).Tag!, out Distance? oDist))
             {
                 selected = oDist;
             }
@@ -132,7 +133,7 @@ public partial class ExportDistanceResults : Window
         distanceBox.Items.Insert(0, new ComboBoxItem()
         {
             Content = "All",
-            Uid = "ALL_DISTANCES",
+            Tag = "ALL_DISTANCES",
         });
     }
 
@@ -154,7 +155,7 @@ public partial class ExportDistanceResults : Window
             string extension = Path.GetExtension(saveFileDialog.FileName);
             string fileName = Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
             string filePath = Path.GetDirectoryName(saveFileDialog.FileName);
-            foreach (Distance distance in distanceDictionary.Values)
+            foreach (Distance distance in distanceDictionary!.Values)
             {
                 SaveBostonInternal(
                     distance.Name,
@@ -179,7 +180,7 @@ public partial class ExportDistanceResults : Window
             string extension = Path.GetExtension(saveFileDialog.FileName);
             string fileName = Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
             string filePath = Path.GetDirectoryName(saveFileDialog.FileName);
-            foreach (Distance distance in distanceDictionary.Values)
+            foreach (Distance distance in distanceDictionary!.Values)
             {
                 SaveUltraSignupInternal(
                     distance.Name,
@@ -203,7 +204,7 @@ public partial class ExportDistanceResults : Window
             string extension = Path.GetExtension(saveFileDialog.FileName);
             string fileName = Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
             string filePath = Path.GetDirectoryName(saveFileDialog.FileName);
-            foreach (Distance distance in distanceDictionary.Values)
+            foreach (Distance distance in distanceDictionary!.Values)
             {
                 SaveRunsignupInternal(
                     distance.Name,
@@ -246,7 +247,7 @@ public partial class ExportDistanceResults : Window
                 "place_no_sex"  // gender place
         ];
         List<object[]> data = [];
-        List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+        List<Participant> participants = database.GetParticipants(theEvent!.Identifier);
         Dictionary<string, Participant> participantDictionary = [];
         foreach (Participant person in participants)
         {
@@ -255,7 +256,7 @@ public partial class ExportDistanceResults : Window
         List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
         foreach (TimeResult result in results)
         {
-            if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant oPart) && (result.DistanceName == distance) && result.Time.Length > 4)
+            if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant? oPart) && (result.DistanceName == distance) && result.Time.Length > 4)
             {
                 string country = oPart.Country;
                 if (country.Length != 3)
@@ -414,8 +415,8 @@ public partial class ExportDistanceResults : Window
 
     private void SaveBostonInternal(string distance, string fileName, string extension)
     {
-        Distance dist = null;
-        foreach (Distance d in database.GetDistances(theEvent.Identifier))
+        Distance? dist = null;
+        foreach (Distance d in database.GetDistances(theEvent!.Identifier))
         {
             if (d.Name == distance)
             {
@@ -493,7 +494,7 @@ public partial class ExportDistanceResults : Window
         }
         foreach (TimeResult result in results)
         {
-            if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant tPart) && (result.DistanceName == distance) && result.Time.Length > 4)
+            if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant? tPart) && (result.DistanceName == distance) && result.Time.Length > 4)
             {
                 List<string> values =
                 [
@@ -510,7 +511,7 @@ public partial class ExportDistanceResults : Window
                 ];
                 foreach (Segment seg in segments)
                 {
-                    if (segmentResults.TryGetValue((result.Bib, seg.Identifier), out TimeResult res))
+                    if (segmentResults.TryGetValue((result.Bib, seg.Identifier), out TimeResult? res))
                     {
                         values.Add(res.ChipTime[..(res.ChipTime.Length > 4 ? res.ChipTime.Length - 4 : 0)]);
                     }
@@ -614,7 +615,7 @@ public partial class ExportDistanceResults : Window
                 "status"
         ];
         Dictionary<string, Participant> participantDictionary = [];
-        foreach (Participant person in database.GetParticipants(theEvent.Identifier))
+        foreach (Participant person in database.GetParticipants(theEvent!.Identifier))
         {
             participantDictionary[person.Bib] = person;
         }
@@ -626,7 +627,7 @@ public partial class ExportDistanceResults : Window
             Dictionary<string, TimeResult> finalResult = [];
             foreach (TimeResult result in results)
             {
-                if (!finalResult.TryGetValue(result.Identifier, out TimeResult other))
+                if (!finalResult.TryGetValue(result.Identifier, out TimeResult? other))
                 {
                     other = result;
                     finalResult[result.Identifier] = result;
@@ -640,7 +641,7 @@ public partial class ExportDistanceResults : Window
         }
         foreach (TimeResult result in results)
         {
-            if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant yPart) && (result.DistanceName == distance))
+            if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant? yPart) && (result.DistanceName == distance))
             {
                 int status = 1;
                 if (Constants.Timing.TIMERESULT_STATUS_DNF == result.Status)
@@ -674,13 +675,13 @@ public partial class ExportDistanceResults : Window
                     }
                     int hour = (result.Occurrence / 2) + 1;
                     if (result.LinkedDistanceName.Length > 0
-                        && distances.TryGetValue(result.LinkedDistanceName, out Distance localLinked)
+                        && distances.TryGetValue(result.LinkedDistanceName, out Distance? localLinked)
                         && localLinked.DistanceValue > 0)
                     {
                         newLine[1] = (localLinked.DistanceValue * hour).ToString();
                     }
                     else if (result.DistanceName.Length > 0
-                        && distances.TryGetValue(result.DistanceName, out Distance localDist)
+                        && distances.TryGetValue(result.DistanceName, out Distance? localDist)
                         && localDist.DistanceValue > 0)
                     {
                         newLine[1] = (localDist.DistanceValue * hour).ToString();
@@ -723,14 +724,14 @@ public partial class ExportDistanceResults : Window
                 "state"
         ];
         Dictionary<string, Participant> participantDictionary = [];
-        foreach (Participant person in database.GetParticipants(theEvent.Identifier))
+        foreach (Participant person in database.GetParticipants(theEvent!.Identifier))
         {
             participantDictionary[person.Bib] = person;
         }
         List<object[]> data = [];
         foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
         {
-            if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant zPart) && (result.DistanceName == distance))
+            if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant? zPart) && (result.DistanceName == distance))
             {
                 data.Add(
                 [
@@ -772,7 +773,7 @@ public partial class ExportDistanceResults : Window
         Distance selected;
         // Ensure we've selected a distance and that distance is either known
         if (distanceBox.SelectedItem != null
-            && distanceDictionary.TryGetValue(((ComboBoxItem)distanceBox.SelectedItem).Uid, out Distance tDist))
+            && distanceDictionary!.TryGetValue((string)((ComboBoxItem)distanceBox.SelectedItem).Tag!, out Distance? tDist))
         {
             selected = tDist;
             if (OutputType.Boston == type)
@@ -797,7 +798,7 @@ public partial class ExportDistanceResults : Window
             }
         }
         // Check if they've told us to save all distances.
-        else if (((ComboBoxItem)distanceBox.SelectedItem).Uid == "ALL_DISTANCES")
+        else if ((string)((ComboBoxItem)distanceBox.SelectedItem!).Tag! == "ALL_DISTANCES")
         {
             if (OutputType.Boston == type)
             {

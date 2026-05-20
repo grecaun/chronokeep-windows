@@ -6,7 +6,16 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
+using Chronokeep.Objects.ChronoKeepAPI;
+using Chronokeep.UI.Import;
+using Chronokeep.UI.IO;
+using Chronokeep.UI.Participants;
+using Chronokeep.UI.Parts;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -36,7 +45,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         int distanceId = -1;
         try
         {
-            distanceId = Convert.ToInt32(((ComboBoxItem)DistanceBox.SelectedItem).Uid);
+            distanceId = Convert.ToInt32((string)((ComboBoxItem)DistanceBox.SelectedItem!).Tag!);
         }
         catch
         {
@@ -57,7 +66,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         Dictionary<string, BibStats> bibStats = [];
         foreach (Participant p in newParts)
         {
-            if (!bibStats.TryGetValue(p.Distance, out BibStats bStats))
+            if (!bibStats.TryGetValue(p.Distance, out BibStats? bStats))
             {
                 bStats = new()
                 {
@@ -92,24 +101,24 @@ public partial class ParticipantsPage : UserControl, IMainPage
         if (bibStats.Values.Count > 1)
         {
             listStats.Insert(0, totals);
-            ViewPanel.Visibility = Visibility.Visible;
+            ViewPanel.IsVisible = true;
         }
         else
         {
-            ViewPanel.Visibility = Visibility.Collapsed;
+            ViewPanel.IsVisible = false;
         }
         statsListView.ItemsSource = listStats;
         if (totals.Without > 0)
         {
-            statsExpander.Visibility = Visibility.Visible;
+            statsExpander.IsVisible = true;
         }
         else
         {
-            statsExpander.Visibility = Visibility.Collapsed;
+            statsExpander.IsVisible = false;
         }
         participants.Clear();
         participants.AddRange(newParts);
-        switch (((ComboBoxItem)SortBox.SelectedItem).Content)
+        switch (((ComboBoxItem)SortBox.SelectedItem!).Content)
         {
             case "Name":
                 newParts.Sort(Participant.CompareByName);
@@ -121,27 +130,26 @@ public partial class ParticipantsPage : UserControl, IMainPage
                 newParts.Sort();
                 break;
         }
-        string search = SearchBox != null ? SearchBox.Text.Trim() : "";
+        string search = SearchBox != null ? SearchBox.Text!.Trim() : "";
         newParts.RemoveAll(x => x.IsNotMatch(search));
         ParticipantsList.SelectedItems.Clear();
         ParticipantsList.ItemsSource = newParts;
-        ParticipantsList.Items.Refresh();
         if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
         {
-            apiPanel.Visibility = Visibility.Visible;
+            apiPanel.IsVisible = true;
         }
         else
         {
-            apiPanel.Visibility = Visibility.Collapsed;
+            apiPanel.IsVisible = false;
         }
         if (conflicts.Count > 0)
         {
             ConflictsBtn.Content = string.Format("Conflicts - {0}", conflicts.Count);
-            ConflictsBtn.Visibility = Visibility.Visible;
+            ConflictsBtn.IsVisible = true;
         }
         else
         {
-            ConflictsBtn.Visibility = Visibility.Collapsed;
+            ConflictsBtn.IsVisible = false;
         }
         Log.D("UI.MainPages.ParticipantsPage", "Participants updated.");
     }
@@ -153,7 +161,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         DistanceBox.Items.Add(new ComboBoxItem()
         {
             Content = "All",
-            Uid = "-1"
+            Tag = "-1"
         });
         if (theEvent == null || theEvent.Identifier < 0)
         {
@@ -166,7 +174,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
             DistanceBox.Items.Add(new ComboBoxItem()
             {
                 Content = d.Name,
-                Uid = d.Identifier.ToString()
+                Tag = d.Identifier.ToString()
             });
         }
         DistanceBox.SelectedIndex = 0;
@@ -627,7 +635,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
     {
         Log.D("UI.MainPages.ParticipantsPage", "Import Excel clicked.");
         OpenFileDialog open_dialog = new() { Filter = "Excel files (*.xlsx,*.xls,*.csv)|*.xlsx;*.xls;*.csv|All files|*" };
-        if (open_dialog.ShowDialog() == true)
+        if (open_dialog.ShowDialog((Window)mWindow) == true)
         {
             string ext = Path.GetExtension(open_dialog.FileName);
             Log.D("UI.MainPages.ParticipantsPage", $"Extension found: {ext}");
@@ -647,7 +655,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
                 if (importWindow != null)
                 {
                     mWindow.AddWindow(importWindow);
-                    importWindow.ShowDialog();
+                    importWindow.ShowDialog((Window)mWindow);
                 }
             }
             catch (Exception ex)
@@ -667,7 +675,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
             FileName = string.Format("{0} {1} Entrants.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
             InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
         };
-        if (saveFileDialog.ShowDialog() == true)
+        if (saveFileDialog.ShowDialog((Window)mWindow) == true)
         {
             if (theEvent != null)
             {
@@ -772,7 +780,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
     private void Upload_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Upload clicked.");
-        if (Upload.Content.ToString() != "Working")
+        if (Upload.Content!.ToString() != "Working")
         {
             Log.D("UI.MainPages.TimingPage", "Uploading data.");
             Upload.Content = "Working";
@@ -785,7 +793,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
     private void Download_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Download clicked.");
-        if (Download.Content.ToString() != "Working")
+        if (Download.Content!.ToString() != "Working")
         {
             Log.D("UI.MainPages.TimingPage", "Downloading data.");
             Download.Content = "Working";
@@ -795,14 +803,14 @@ public partial class ParticipantsPage : UserControl, IMainPage
         Log.D("UI.MainPages.ParticipantsPage", "Already downloading.");
     }
 
-    private void Delete_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Delete_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Delete clicked.");
-        if (Delete.Content.ToString() != "Working")
+        if (Delete.Content!.ToString() != "Working")
         {
             Log.D("UI.MainPages.ParticipantsPage", "Deleting uploaded participants data.");
             Delete.Content = "Working";
-            APIObject api = null;
+            APIObject? api = null;
             try
             {
                 api = database.GetAPI(theEvent.API_ID);
@@ -817,8 +825,8 @@ public partial class ParticipantsPage : UserControl, IMainPage
                 try
                 {
                     Log.D("UI.MainPages.ParticipantsPage", "Deleting participants from API.");
-                    await APIHandlers.DeleteParticipants(api, event_ids[0], event_ids[1]);
-                    await APIHandlers.DeleteBibChips(api, event_ids[0], event_ids[1]);
+                    await APIHandlers.DeleteParticipants(api!, event_ids[0], event_ids[1]);
+                    await APIHandlers.DeleteBibChips(api!, event_ids[0], event_ids[1]);
                 }
                 catch (APIException ex)
                 {
@@ -838,7 +846,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         if (conflictWindow != null)
         {
             mWindow.AddWindow(conflictWindow);
-            conflictWindow.ShowDialog();
+            conflictWindow.ShowDialog((Window)mWindow);
         }
     }
 
@@ -852,7 +860,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         Log.D("UI.MainPages.ParticipantsPage", "Sort style changed.");
         if (participants != null)
         {
-            switch (((ComboBoxItem)SortBox.SelectedItem).Content)
+            switch (((ComboBoxItem)SortBox.SelectedItem!).Content)
             {
                 case "Name":
                     participants.Sort(Participant.CompareByName);
@@ -868,7 +876,6 @@ public partial class ParticipantsPage : UserControl, IMainPage
             {
                 ParticipantsList.ItemsSource = participants;
                 ParticipantsList.SelectedItems.Clear();
-                ParticipantsList.Items.Refresh();
             }
         }
         Log.D("UI.MainPages.ParticipantsPage", "Done");
@@ -887,7 +894,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         {
             ChangeMultiParticipantWindow changeMultiParticipantWindow = new(mWindow, database, selected);
             mWindow.AddWindow(changeMultiParticipantWindow);
-            changeMultiParticipantWindow.ShowDialog();
+            changeMultiParticipantWindow.ShowDialog((Window)mWindow);
             return;
         }
         Participant part = null;
@@ -900,7 +907,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         if (modifyParticipant != null)
         {
             mWindow.AddWindow(modifyParticipant);
-            modifyParticipant.ShowDialog();
+            modifyParticipant.ShowDialog((Window)mWindow);
         }
     }
 
@@ -911,14 +918,14 @@ public partial class ParticipantsPage : UserControl, IMainPage
         if (addParticipant != null)
         {
             mWindow.AddWindow(addParticipant);
-            addParticipant.ShowDialog();
+            addParticipant.ShowDialog((Window)mWindow);
         }
     }
 
     private void SearchBox_TextChanged(object? sender, TextChangedEventArgs e)
     {
         List<Participant> newParts = [.. participants];
-        switch (((ComboBoxItem)SortBox.SelectedItem).Content)
+        switch (((ComboBoxItem)SortBox.SelectedItem!).Content)
         {
             case "Name":
                 newParts.Sort(Participant.CompareByName);
@@ -930,11 +937,10 @@ public partial class ParticipantsPage : UserControl, IMainPage
                 newParts.Sort();
                 break;
         }
-        string search = SearchBox != null ? SearchBox.Text.Trim() : "";
+        string search = SearchBox != null ? SearchBox.Text!.Trim() : "";
         newParts.RemoveAll(x => x.IsNotMatch(search));
         ParticipantsList.SelectedItems.Clear();
         ParticipantsList.ItemsSource = newParts;
-        ParticipantsList.Items.Refresh();
     }
 
     private void Remove_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -950,14 +956,14 @@ public partial class ParticipantsPage : UserControl, IMainPage
         UpdateView();
     }
 
-    private void ParticipantsList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void ParticipantsList_MouseDoubleClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (ParticipantsList.SelectedItem == null) return;
         ModifyParticipantWindow modifyParticipant = ModifyParticipantWindow.NewWindow(mWindow, database, (Participant)ParticipantsList.SelectedItem);
         if (modifyParticipant != null)
         {
             mWindow.AddWindow(modifyParticipant);
-            modifyParticipant.ShowDialog();
+            modifyParticipant.ShowDialog((Window)mWindow);
         }
     }
 }

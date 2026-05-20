@@ -1,15 +1,18 @@
+using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
+using Chronokeep.UI.Parts;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.MainPages.Dashboard;
 
-public partial class APIPage : UserControl
+public partial class APIPage : UserControl, IMainPage
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
-    private List<APIObject> resultsAPI;
+    private List<APIObject>? resultsAPI;
 
     public APIPage(IMainWindow mWindow, IDBInterface database)
     {
@@ -43,7 +46,7 @@ public partial class APIPage : UserControl
         resultsAPI = database.GetAllAPI();
         foreach (APIObject api in resultsAPI)
         {
-            APIBox.Items.Add(new AnAPI(this, api));
+            APIBox.Items.Add(new APIPart(this, api));
         }
     }
 
@@ -57,9 +60,9 @@ public partial class APIPage : UserControl
 
     public void UpdateResultsAPI()
     {
-        foreach (AnAPI listDiv in APIBox.Items)
+        foreach (APIPart? listDiv in APIBox.Items)
         {
-            listDiv.UpdateResultsAPI();
+            listDiv!.UpdateResultsAPI();
             database.UpdateAPI(listDiv.theAPI);
         }
     }
@@ -80,7 +83,7 @@ public partial class APIPage : UserControl
         UpdateView();
     }
 
-    private void Add_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Add_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.APIPage", "Add api clicked.");
         if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)

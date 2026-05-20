@@ -18,7 +18,10 @@ public partial class BibChipHeaderPart : UserControl
         InitializeComponent();
         Index = ix;
         HeaderLabel.Text = s;
-        HeaderBox.ItemSource = human_fields;
+        foreach (string field in human_fields)
+        {
+            HeaderBox.Items.Add(field);
+        }
         HeaderBox.SelectedIndex = GetHeaderBoxIndex(s.Trim());
     }
 

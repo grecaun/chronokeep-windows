@@ -1,9 +1,9 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Database;
 using Chronokeep.Objects;
 using Chronokeep.UI.API.Windows;
+using System;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.API;
 
@@ -41,7 +41,7 @@ public partial class APIPage1 : UserControl
             APIBox.Items.Add(new ComboBoxItem
             {
                 Content = api.Nickname,
-                Uid = api.Identifier.ToString()
+                Tag = api.Identifier.ToString()
             });
             if (api_id > 0 && api_id == api.Identifier)
             {
@@ -60,6 +60,6 @@ public partial class APIPage1 : UserControl
 
     private void Next_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        window.GotoPage2(apiDict[((ComboBoxItem)APIBox.SelectedItem).Uid]);
+        window.GotoPage2(apiDict[(string)((ComboBoxItem)APIBox.SelectedItem!).Tag!]);
     }
 }

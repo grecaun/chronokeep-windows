@@ -25,7 +25,7 @@
                            VerticalAlignment="Center"
                            TextAlignment="Right"
                            Padding="0,0,5,0"/>
-                <TextBox x:Name="nameBox"
+                <TextBox Name="nameBox"
                          FontSize="15"
                          Width="180"
                          VerticalAlignment="Center"
@@ -38,7 +38,7 @@
                            VerticalAlignment="Center"
                            TextAlignment="Right"
                            Padding="0,0,5,0"/>
-                <TextBox x:Name="certNameBox"
+                <TextBox Name="certNameBox"
                          FontSize="15"
                          Width="180"
                          VerticalAlignment="Center"
@@ -111,11 +111,11 @@
                           HorizontalAlignment="Stretch">
                     <ComboBoxItem Content="Distance" />
                     <ComboBoxItem Content="Time" />
-                    <!--<ComboBoxItem Content="Backyard Ultra" />-->
+                    <ComboBoxItem Content="Backyard Ultra" />
                 </ComboBox>
             </DockPanel>
             <DockPanel HorizontalAlignment="Center">
-                <ToggleSwitch x:Name="restrictBox"
+                <ToggleSwitch Name="restrictBox"
                               FontSize="15"
                               OnContent=""
                               OffContent=""

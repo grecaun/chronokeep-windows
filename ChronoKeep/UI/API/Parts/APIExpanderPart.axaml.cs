@@ -1,7 +1,9 @@
+using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.API.Parts;
 
@@ -18,7 +20,7 @@ public partial class APIExpanderPart : UserControl
         foreach (RemoteReader reader in readers)
         {
             reader.APIIDentifier = api.Identifier;
-            if (savedReaders.TryGetValue((reader.APIIDentifier, reader.Name), out RemoteReader rReader))
+            if (savedReaders.TryGetValue((reader.APIIDentifier, reader.Name), out RemoteReader? rReader))
             {
                 reader.LocationID = rReader.LocationID;
             }
@@ -29,9 +31,9 @@ public partial class APIExpanderPart : UserControl
     public Dictionary<RemoteReader, bool> GetAutoDownloadDictionary()
     {
         Dictionary<RemoteReader, bool> output = [];
-        foreach (ReaderListItem item in readerListView.Items)
+        foreach (ReaderListItem? item in readerListView.Items)
         {
-            output[item.GetUpdatedReader()] = item.AutoDownloadReads();
+            output[item!.GetUpdatedReader()] = item.AutoDownloadReads();
         }
         return output;
     }

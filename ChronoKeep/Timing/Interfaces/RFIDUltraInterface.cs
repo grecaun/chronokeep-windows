@@ -4,8 +4,8 @@ using Chronokeep.Interfaces.Timing;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.Objects.RFID;
+using Chronokeep.UI.Parts;
 using Chronokeep.UI.Timing.ReaderSettings;
-using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,8 +20,8 @@ namespace Chronokeep.Timing.Interfaces
     {
         private readonly Event theEvent = database.GetCurrentEvent();
         private readonly StringBuilder buffer = new();
-        private RFIDSettings settingsWindow = null;
-        Socket sock;
+        private RFIDSettings? settingsWindow = null;
+        Socket? sock;
 
         [GeneratedRegex(@"^V=.*")]
         private static partial Regex Voltage();
@@ -40,7 +40,7 @@ namespace Chronokeep.Timing.Interfaces
         [GeneratedRegex(@"^[^\n]*\n")]
         private static partial Regex Msg();
 
-        public List<Socket> Connect(string IpAddress, int Port)
+        public List<Socket>? Connect(string IpAddress, int Port)
         {
             List<Socket> output = [];
             sock = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -82,7 +82,7 @@ namespace Chronokeep.Timing.Interfaces
                 ignoredChips.Add(ignore.Chip);
             }
             List<ChipRead> chipReads = [];
-            RFIDSettingsHolder settingsHolder = null;
+            RFIDSettingsHolder? settingsHolder = null;
             while (m.Success)
             {
                 buffer.Remove(m.Index, m.Length);
@@ -117,7 +117,7 @@ namespace Chronokeep.Timing.Interfaces
                         }
                         chipReads.Add(chipRead);
                         // we don't need to do anything other than notify of a chipread
-                        output[MessageType.CHIPREAD] = null;
+                        output[MessageType.CHIPREAD] = [];
                     }
                 }
                 // If "V=" then it's a voltage status.
@@ -130,7 +130,7 @@ namespace Chronokeep.Timing.Interfaces
                     }
                     catch
                     {
-                        if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
+                        if (!output.TryGetValue(MessageType.ERROR, out List<string>? errorList))
                         {
                             errorList = ([]);
                             output[MessageType.ERROR] = errorList;
@@ -140,12 +140,12 @@ namespace Chronokeep.Timing.Interfaces
                     if (voltVal != 0 && voltVal < 23)
                     {
                         // Voltage low and normal don't require anything else.
-                        output[MessageType.VOLTAGELOW] = null;
+                        output[MessageType.VOLTAGELOW] = [];
                     }
                     else
                     {
                         // Voltage low and normal don't require anything else.
-                        output[MessageType.VOLTAGENORMAL] = null;
+                        output[MessageType.VOLTAGENORMAL] = [];
                     }
                 }
                 // If "U[...]" Setting information
@@ -266,7 +266,7 @@ namespace Chronokeep.Timing.Interfaces
                         default:
                             break;
                     }
-                    output[MessageType.SETTINGVALUE] = null;
+                    output[MessageType.SETTINGVALUE] = [];
                 }
                 // If "u[...]" setting changed
                 else if (Settingconfirmation().IsMatch(message))
@@ -338,14 +338,14 @@ namespace Chronokeep.Timing.Interfaces
                         default:
                             break;
                     }
-                    output[MessageType.SETTINGCHANGE] = null;
+                    output[MessageType.SETTINGCHANGE] = [];
                 }
                 // If "HH:MM:SS DD-MM-YYYY" then it's a time message
                 else if (Time().IsMatch(message))
                 {
                     Log.D("Timing.Interfaces.RFIDUltraInterface", "It's a time message.");
                     Match match = Time().Match(message);
-                    if (!output.TryGetValue(MessageType.TIME, out List<string> timeList))
+                    if (!output.TryGetValue(MessageType.TIME, out List<string>? timeList))
                     {
                         timeList = ([]);
                         output[MessageType.TIME] = timeList;
@@ -364,7 +364,7 @@ namespace Chronokeep.Timing.Interfaces
                         settingsHolder = new();
                     }
                     Match match = Status().Match(message);
-                    if (!output.TryGetValue(MessageType.STATUS, out List<string> statusList))
+                    if (!output.TryGetValue(MessageType.STATUS, out List<string>? statusList))
                     {
                         statusList = ([]);
                         output[MessageType.STATUS] = statusList;
@@ -389,11 +389,11 @@ namespace Chronokeep.Timing.Interfaces
                 else if (Connected().IsMatch(message))
                 {
                     // Nothing other than connected care about for right now.
-                    output[MessageType.CONNECTED] = null;
+                    output[MessageType.CONNECTED] = [];
                 }
                 else
                 {
-                    output[MessageType.UNKNOWN] = null;
+                    output[MessageType.UNKNOWN] = [];
                 }
                 m = Msg().Match(buffer.ToString());
             }
@@ -874,7 +874,7 @@ namespace Chronokeep.Timing.Interfaces
         private void SendMessage(string msg)
         {
             Log.D("Timing.Interfaces.RFIDUltraInterface", "Sending message '" + msg + "'");
-            sock.Send(Encoding.ASCII.GetBytes(msg + "\n"));
+            sock!.Send(Encoding.ASCII.GetBytes(msg + "\n"));
         }
 
         public void SetMainSocket(Socket sock)

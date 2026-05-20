@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:objects="using:Chronokeep.Objects"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
              x:Class="Chronokeep.UI.MainPages.ParticipantsPage"
              Padding="16"
@@ -129,7 +130,7 @@
                     Height="45"
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
-                    Watermark="Search"
+                    PlaceholderText="Search"
                     />
                 <Button
                     Name="Add"
@@ -157,12 +158,12 @@
                     IsVisible="False"
                     >
                     <DataGrid Grid.Row="0"
-                                Name="bibChipList"
+                                Name="statsListView"
                                 Margin="3,0">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Distance" Width="75"/>
-                            <DataGridTextColumn Header="w/" Width="35"/>
-                            <DataGridTextColumn Header="w/o" Width="35"/>
+                            <DataGridTextColumn Header="Distance" Width="75" Binding="{Binding DistanceName}" x:DataType="objects:BibStats"/>
+                            <DataGridTextColumn Header="w/" Width="35" Binding="{Binding With}" x:DataType="objects:BibStats"/>
+                            <DataGridTextColumn Header="w/o" Width="35" Binding="{Binding Without}" x:DataType="objects:BibStats"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>

@@ -1,36 +1,36 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
+using Chronokeep.UI.ChipAssignment.Parts;
 using Chronokeep.UI.Parts;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.ChipAssignment;
 
 public partial class ChipTool : Window
 {
-    private readonly IWindowCallback window;
-    private readonly IDBInterface database;
+    private readonly IWindowCallback? window;
+    private readonly IDBInterface? database;
 
     public bool ImportComplete = false;
 
     public ChipTool()
     {
         InitializeComponent();
-        correlationBox.Items.Add(new ATagRange(correlationBox));
+        correlationBox.Items.Add(new TagRangePart(correlationBox));
     }
 
     private ChipTool(IWindowCallback window, IDBInterface database)
     {
         InitializeComponent();
-        correlationBox.Items.Add(new ATagRange(correlationBox));
+        correlationBox.Items.Add(new TagRangePart(correlationBox));
         this.window = window;
         this.database = database;
         this.MinHeight = 100;
         this.MinWidth = 550;
-        this.ResizeMode = ResizeMode.NoResize;
+        this.CanResize = false;
     }
 
     public static ChipTool NewWindow(IWindowCallback window, IDBInterface database)
@@ -40,18 +40,18 @@ public partial class ChipTool : Window
 
     private void AddRange_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        correlationBox.Items.Add(new ATagRange(correlationBox));
+        correlationBox.Items.Add(new TagRangePart(correlationBox));
     }
 
     private void Save_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         List<Range> ranges = [];
-        foreach (ATagRange tag in correlationBox.Items)
+        foreach (TagRangePart? tag in correlationBox.Items)
         {
-            _ = int.TryParse(tag.StartBib.Text, out int startBib);
-            _ = int.TryParse(tag.EndBib.Text, out int endBib);
-            _ = int.TryParse(tag.StartChip.Text, out int startChip);
-            _ = int.TryParse(tag.EndChip.Text.ToString(), out int endChip);
+            _ = int.TryParse(tag!.StartBib.Text, out int startBib);
+            _ = int.TryParse(tag!.EndBib.Text, out int endBib);
+            _ = int.TryParse(tag!.StartChip.Text, out int startChip);
+            _ = int.TryParse(tag!.EndChip.Text!.ToString(), out int endChip);
             Log.D("UI.ChipAssignment.ChipTool", "StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
             Range curRange = new()
             {

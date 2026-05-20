@@ -1,6 +1,4 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -8,20 +6,22 @@ using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing.Remote;
+using Chronokeep.UI.API.Parts;
 using Chronokeep.UI.Parts;
-using static Chronokeep.UI.API.RemoteReadersWindow;
+using System;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.API.Windows;
 
 public partial class RemoteReadersWindow : Window
 {
-    private static RemoteReadersWindow theOne = null;
+    private static RemoteReadersWindow? theOne = null;
 
     private readonly IMainWindow window;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
 
-    private readonly List<APIObject> remoteAPIs;
+    private readonly List<APIObject> remoteAPIs = [];
 
     public static RemoteReadersWindow CreateWindow(IMainWindow window, IDBInterface database)
     {
@@ -56,7 +56,7 @@ public partial class RemoteReadersWindow : Window
         try
         {
             Dictionary<(int, string), RemoteReader> savedReaders = [];
-            foreach (RemoteReader reader in database.GetRemoteReaders(theEvent.Identifier))
+            foreach (RemoteReader reader in database.GetRemoteReaders(theEvent!.Identifier))
             {
                 savedReaders[(reader.APIIDentifier, reader.Name)] = reader;
             }
@@ -64,7 +64,7 @@ public partial class RemoteReadersWindow : Window
             foreach (APIObject api in remoteAPIs)
             {
                 var readers = await api.GetReaders();
-                apiListView.Items.Add(new APIExpander(api, readers, savedReaders, database, window));
+                apiListView.Items.Add(new APIExpanderPart(api, readers, savedReaders, database, window));
             }
         }
         catch (APIException ex)
@@ -73,8 +73,8 @@ public partial class RemoteReadersWindow : Window
             Close();
             return;
         }
-        loadingPanel.Visibility = Visibility.Collapsed;
-        apiListView.Visibility = Visibility.Visible;
+        loadingPanel.IsVisible = false;
+        apiListView.IsVisible = true;
     }
 
     private void Window_Closed(object sender, EventArgs e)
@@ -89,9 +89,9 @@ public partial class RemoteReadersWindow : Window
         Log.D("UI.API.RemoteReaders", "Close button clicked.");
         List<RemoteReader> readersToSave = [];
         List<RemoteReader> otherReaders = [];
-        foreach (APIExpander item in apiListView.Items)
+        foreach (APIExpanderPart? item in apiListView.Items)
         {
-            var downDict = item.GetAutoDownloadDictionary();
+            var downDict = item!.GetAutoDownloadDictionary();
             foreach (RemoteReader reader in downDict.Keys)
             {
                 if (downDict[reader])
@@ -106,7 +106,7 @@ public partial class RemoteReadersWindow : Window
         }
         List<RemoteReader> deleteReaders = [];
         HashSet<(int, string)> readerNames = [];
-        foreach (RemoteReader reader in database.GetRemoteReaders(theEvent.Identifier))
+        foreach (RemoteReader reader in database.GetRemoteReaders(theEvent!.Identifier))
         {
             readerNames.Add((reader.APIIDentifier, reader.Name));
         }

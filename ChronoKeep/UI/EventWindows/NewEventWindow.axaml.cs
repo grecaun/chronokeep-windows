@@ -1,11 +1,13 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
+using System;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.EventWindows;
 
@@ -25,7 +27,6 @@ public partial class NewEventWindow : Window
         this.MinHeight = 200;
         this.Width = 350;
         this.Height = 310;
-        oldEvent.Items.Clear();
         List<Event> events = database.GetEvents();
         events.Sort();
         List<string> eventNames = [];
@@ -35,7 +36,7 @@ public partial class NewEventWindow : Window
             eventDict.Add(name, e);
             eventNames.Add(name);
         }
-        oldEvent.OriginalItemsSource = eventNames;
+        oldEvent.ItemsSource = eventNames;
     }
 
     public static NewEventWindow NewWindow(IWindowCallback window, IDBInterface database)
@@ -45,8 +46,8 @@ public partial class NewEventWindow : Window
 
     private void Submit()
     {
-        string nameString = nameBox.Text.Trim();
-        string yearString = yearCodeBox.Text.Trim();
+        string nameString = nameBox.Text!.Trim();
+        string yearString = yearCodeBox.Text!.Trim();
         long dateVal = DateTime.Now.Date.Ticks;
         if (datePicker.SelectedDate != null)
         {
@@ -61,7 +62,7 @@ public partial class NewEventWindow : Window
         else
         {
             int oldEventId = -1;
-            if (oldEvent.Text.Length > 0 && eventDict.TryGetValue(oldEvent.Text, out Event oEvent))
+            if (oldEvent.Text!.Length > 0 && eventDict.TryGetValue(oldEvent.Text, out Event? oEvent))
             {
                 oldEventId = oEvent.Identifier;
             }
@@ -185,7 +186,7 @@ public partial class NewEventWindow : Window
         window?.WindowFinalize(this);
     }
 
-    private void Keyboard_Up(object? sender, Avalonia.Input.KeyEventArgs e)
+    private void Keyboard_Up(object? sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
@@ -193,12 +194,12 @@ public partial class NewEventWindow : Window
         }
     }
 
-    private void Submit_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Submit_Click(object? sender, RoutedEventArgs e)
     {
         Submit();
     }
 
-    private void Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Cancel_Click(object? sender, RoutedEventArgs e)
     {
         this.Close();
     }

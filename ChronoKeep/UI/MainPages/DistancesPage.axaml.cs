@@ -1,9 +1,14 @@
+using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Database.SQLite;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
+using Chronokeep.Objects.ChronoKeepAPI;
+using Chronokeep.UI.Parts;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -11,11 +16,11 @@ public partial class DistancesPage : UserControl
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
     private readonly Dictionary<int, Distance> distanceDictionary = [];
     private readonly Dictionary<int, List<Distance>> subDistanceDictionary = [];
     private readonly HashSet<int> distancesChanged = [];
-    private List<Distance> distances;
+    private List<Distance>? distances;
     private bool UpdateTimingWorker = false;
     private int DistanceCount = 1;
 
@@ -27,11 +32,11 @@ public partial class DistancesPage : UserControl
         this.theEvent = database.GetCurrentEvent();
         if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
         {
-            apiPanel.Visibility = Visibility.Visible;
+            apiPanel.IsVisible = true;
         }
         else
         {
-            apiPanel.Visibility = Visibility.Collapsed;
+            apiPanel.IsVisible = false;
         }
         UpdateView();
     }
@@ -69,11 +74,11 @@ public partial class DistancesPage : UserControl
         foreach (Distance div in superDivs)
         {
             distanceDictionary[div.Identifier] = div;
-            ADistance parent = new(this, div, theEvent.FinishMaxOccurrences, distances, distanceDictionary, theEvent);
+            DistancePart parent = new(this, div, theEvent.FinishMaxOccurrences, distances, distanceDictionary, theEvent);
             DistancesBox.Items.Add(parent);
             DistanceCount = div.Identifier > DistanceCount - 1 ? div.Identifier + 1 : DistanceCount;
             // Add linked distances
-            if (subDistanceDictionary.TryGetValue(div.Identifier, out List<Distance> tSubDistList))
+            if (subDistanceDictionary.TryGetValue(div.Identifier, out List<Distance>? tSubDistList))
             {
                 foreach (Distance sub in tSubDistList)
                 {
@@ -100,7 +105,7 @@ public partial class DistancesPage : UserControl
             UpdateDatabase();
         }
         // Check for and delete linked distances
-        List<Distance> allDistances = database.GetDistances(theEvent.Identifier);
+        List<Distance> allDistances = database.GetDistances(theEvent!.Identifier);
         bool keepDeleting = true, ignoreParticipantCheck = false;
         foreach (Distance d in allDistances)
         {
@@ -159,7 +164,7 @@ public partial class DistancesPage : UserControl
     public void UpdateDatabase()
     {
         Dictionary<int, Distance> oldDistances = [];
-        foreach (Distance distance in database.GetDistances(theEvent.Identifier))
+        foreach (Distance distance in database.GetDistances(theEvent!.Identifier))
         {
             oldDistances[distance.Identifier] = distance;
         }
@@ -209,7 +214,7 @@ public partial class DistancesPage : UserControl
         }
         if (UpdateTimingWorker || distancesChanged.Count > 0)
         {
-            database.ResetTimingResultsEvent(theEvent.Identifier);
+            database.ResetTimingResultsEvent(theEvent!.Identifier);
             mWindow.NotifyTimingWorker();
             mWindow.UpdateRegistrationDistances();
             mWindow.NetworkUpdateResults();
@@ -241,7 +246,7 @@ public partial class DistancesPage : UserControl
         UpdateView();
     }
 
-    private void Update_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Update_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.DistancesPage", "Update clicked.");
         UpdateDatabase();
@@ -249,20 +254,20 @@ public partial class DistancesPage : UserControl
         mWindow.NetworkUpdateResults();
     }
 
-    private void Revert_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Revert_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.DistancesPage", "Revert clicked.");
         UpdateView();
     }
 
-    private async void DeleteButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void DeleteButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.DistancesPage", "Deleting uploaded distances.");
-        if (DeleteButton.Content.ToString() == "Delete Uploaded")
+        if (DeleteButton.Content!.ToString() == "Delete Uploaded")
         {
             DeleteButton.IsEnabled = false;
             DeleteButton.Content = "Working...";
-            if (theEvent.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
+            if (theEvent!.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
             {
                 DeleteButton.Content = "Error";
                 return;
@@ -288,14 +293,14 @@ public partial class DistancesPage : UserControl
         }
     }
 
-    private async void UploadButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void UploadButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.DistancesPage", "Uploading distances.");
-        if (UploadButton.Content.ToString() == "Upload")
+        if (UploadButton.Content!.ToString() == "Upload")
         {
             UploadButton.IsEnabled = false;
             UploadButton.Content = "Working...";
-            if (theEvent.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
+            if (theEvent!.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
             {
                 UploadButton.Content = "Error";
                 return;
@@ -348,14 +353,14 @@ public partial class DistancesPage : UserControl
         }
     }
 
-    private void Add_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Add_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.DistancesPage", "Add distance clicked.");
         if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }
-        database.AddDistance(new("New Distance " + DistanceCount, theEvent.Identifier));
+        database.AddDistance(new("New Distance " + DistanceCount, theEvent!.Identifier));
         UpdateTimingWorker = true;
         UpdateView();
     }

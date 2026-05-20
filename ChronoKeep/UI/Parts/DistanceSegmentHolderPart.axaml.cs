@@ -1,7 +1,11 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Helpers;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.Parts;
 
@@ -12,7 +16,7 @@ public partial class DistanceSegmentHolderPart : UserControl
     private SegmentsPage page;
     private readonly int finish_occurrences;
     private readonly List<Distance> otherDistances;
-    public readonly List<ListBoxItem> SegmentItems = [];
+    public readonly List<UserControl> SegmentItems = [];
 
     public DistanceSegmentHolderPart(Event theEvent, SegmentsPage page, Distance distance,
                 List<Distance> distances, List<Segment> segments, List<TimingLocation> locations)
@@ -26,24 +30,24 @@ public partial class DistanceSegmentHolderPart : UserControl
         copyFromDistance.Items.Add(new ComboBoxItem()
         {
             Content = "",
-            Uid = "-1"
+            Tag = "-1"
         });
         foreach (Distance d in otherDistances)
         {
             copyFromDistance.Items.Add(new ComboBoxItem()
             {
                 Content = d.Name,
-                Uid = d.Identifier.ToString()
+                Tag = d.Identifier.ToString()
             });
         }
         copyFromDistance.SelectedIndex = 0;
         finish_occurrences = 0;
-        SegmentItems.Add(new ASegmentHeader(theEvent));
+        SegmentItems.Add(new SegmentHeaderPart(theEvent));
         //segmentHolder.Items.Add(new ASegmentHeader(theEvent));
         segments.Sort((x1, x2) => x1.CompareTo(x2));
         foreach (Segment s in segments)
         {
-            ASegment newSeg = new(theEvent, page, s, locations);
+            SegmentPart newSeg = new(theEvent, page, s, locations);
             SegmentItems.Add(newSeg);
             //segmentHolder.Items.Add(newSeg);
             if (s.LocationId == Constants.Timing.LOCATION_FINISH || s.LocationId == Constants.Timing.LOCATION_START)
@@ -54,7 +58,7 @@ public partial class DistanceSegmentHolderPart : UserControl
         finish_occurrences++;
     }
 
-    private void AddClick(Object sender, RoutedEventArgs e)
+    private void AddClick(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.SegmentsPage", "Add segment clicked.");
         int selectedDistance = Constants.Timing.COMMON_SEGMENTS_DISTANCEID;
@@ -76,11 +80,11 @@ public partial class DistanceSegmentHolderPart : UserControl
         {
             return;
         }
-        page.CopyFromDistance(distance.Identifier, Convert.ToInt32(((ComboBoxItem)copyFromDistance.SelectedItem).Uid));
+        page.CopyFromDistance(distance.Identifier, Convert.ToInt32(((ComboBoxItem)copyFromDistance.SelectedItem!).Tag!));
     }
 
     private void NumberValidation(object? sender, Avalonia.Input.TextInputEventArgs e)
     {
-        e.Handled = !e.Text.All(char.IsDigit);
+        e.Handled = !e.Text!.All(char.IsDigit);
     }
 }

@@ -1,11 +1,14 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Chronokeep.UI.EventWindows;
 
@@ -29,13 +32,13 @@ public partial class ChangeEventWindow : Window
 
     internal async void UpdateEventBox()
     {
-        List<Event> events = null;
+        List<Event> events = [];
         await Task.Run(() =>
         {
             events = database.GetEvents();
         });
         events.Sort();
-        if (searchBox.Text.Length > 0)
+        if (searchBox.Text!.Length > 0)
         {
             Log.D("UI.ChangeEventWindow", "searchBox.Text " + searchBox.Text);
             events.RemoveAll(x => !x.Name.Contains(searchBox.Text, StringComparison.OrdinalIgnoreCase));
@@ -43,7 +46,7 @@ public partial class ChangeEventWindow : Window
         eventList.ItemsSource = events;
         if (events.Count < 1)
         {
-            changeButton.IsEnabled = false;
+            ChangeButton.IsEnabled = false;
         }
     }
 
@@ -52,10 +55,10 @@ public partial class ChangeEventWindow : Window
         UpdateEventBox();
     }
 
-    private void ChangeButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void ChangeButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.ChangeEventWindow", "Change Button Clicked.");
-        Event one = (Event)eventList.SelectedItem;
+        Event one = (Event)eventList.SelectedItem!;
         if (one != null)
         {
             Log.D("UI.ChangeEventWindow", "Selected event has ID of " + one.Identifier);
@@ -68,13 +71,13 @@ public partial class ChangeEventWindow : Window
             DialogBox.Show("No event selected.");
             return;
         }
-        this.Close();
+        Close();
     }
 
-    private void DeleteButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void DeleteButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.ChangeEventWindow", "Delete button clicked.");
-        Event one = (Event)eventList.SelectedItem;
+        Event one = (Event)eventList.SelectedItem!;
         if (one != null)
         {
             Log.D("UI.ChangeEventWindow", "Selected event has ID of " + one.Identifier);
@@ -88,16 +91,16 @@ public partial class ChangeEventWindow : Window
         }
     }
 
-    private void CancelButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void CancelButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.ChangeEventWindow", "Cancel button clicked.");
-        this.Close();
+        Close();
     }
 
-    private void EventList_MouseDoubleClick(object? sender, Avalonia.Input.TappedEventArgs e)
+    private void EventList_MouseDoubleClick(object? sender, TappedEventArgs e)
     {
         Log.D("UI.ChangeEventWindow", "Double Click detected.");
-        Event one = (Event)eventList.SelectedItem;
+        Event one = (Event)eventList.SelectedItem!;
         if (one != null)
         {
             Log.D("UI.ChangeEventWindow", "Selected event has ID of " + one.Identifier);
@@ -110,7 +113,7 @@ public partial class ChangeEventWindow : Window
             DialogBox.Show("No event selected.");
             return;
         }
-        this.Close();
+        Close();
     }
 
     private void Window_Closing(object? sender, WindowClosingEventArgs e)

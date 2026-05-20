@@ -1,11 +1,10 @@
-﻿using Chronokeep.UI.UIObjects;
-using Hardware.Info;
+﻿using Hardware.Info;
 using System.Text;
 using System;
-using System.Windows;
-using System.Windows.Threading;
 using Chronokeep.Database;
 using Chronokeep.Objects;
+using Avalonia;
+using Chronokeep.UI.Parts;
 
 namespace Chronokeep.Helpers
 {
@@ -81,7 +80,7 @@ namespace Chronokeep.Helpers
                     if (!hardwareSetting.Value.Equals(hwID, StringComparison.OrdinalIgnoreCase))
                     {
                         Log.D("Helpers.HardwareChecker", "Hardware identifier appears to have changed.");
-                        Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+                        Application.Current!.Dispatcher.Invoke(new Action(delegate ()
                         {
                             DialogBox.Show(
                                 "We've detected that our database file may have been transferred from a different computer. Would you like to change the program's unique identifier to ensure there are no conflicts between devices?",

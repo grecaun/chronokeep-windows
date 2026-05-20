@@ -30,7 +30,7 @@ public partial class AboutPage : UserControl
         if (Directory.Exists(dirPath))
         {
             dirPath = Path.Combine(dirPath, "index.html");
-            HelpDocsButton.NavigateUri = dirPath;
+            HelpDocsButton.Tag = dirPath;
         }
         VersionLabel.Text = gitVersion.Trim();
         this.database = database;
@@ -55,7 +55,7 @@ public partial class AboutPage : UserControl
 
     private void Changelog_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        ChangelogWindow clw = ChangelogWindow.NewWindow(mWindow, database);
+        ChangeLogWindow clw = ChangeLogWindow.NewWindow(mWindow, database);
         clw.Show();
     }
 
@@ -71,6 +71,9 @@ public partial class AboutPage : UserControl
 
     private void UrlBtn_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        // Open URL
+        if (sender != null && sender is Button button && button.Tag != null)
+        {
+            // click Tag...
+        }
     }
 }

@@ -1,10 +1,10 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
+using Chronokeep.UI.API.Windows;
 using Chronokeep.UI.Parts;
+using System;
 
 namespace Chronokeep.UI.API;
 
@@ -16,7 +16,7 @@ public partial class EditYearPage : UserControl
     private readonly string slug;
     private readonly string year;
 
-    private EventYearResponse response;
+    private EventYearResponse? response;
 
     public EditYearPage(EditAPIWindow window, APIObject api, string slug, string year)
     {
@@ -49,12 +49,12 @@ public partial class EditYearPage : UserControl
             rankBox.Items.Add(new ComboBoxItem
             {
                 Content = "Elapsed",
-                Uid = "Clock"
+                Tag = "Clock"
             });
             rankBox.Items.Add(new ComboBoxItem
             {
                 Content = "Cumulative",
-                Uid = "Chip"
+                Tag = "Chip"
             });
         }
         else
@@ -62,20 +62,20 @@ public partial class EditYearPage : UserControl
             rankBox.Items.Add(new ComboBoxItem
             {
                 Content = "Clock",
-                Uid = "Clock"
+                Tag = "Clock"
             });
             rankBox.Items.Add(new ComboBoxItem
             {
                 Content = "Chip",
-                Uid = "Chip"
+                Tag = "Chip"
             });
         }
         rankBox.SelectedIndex = response.EventYear.RankingType.Equals("chip", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
         LiveBox.IsChecked = response.EventYear.Live;
         DaysAllowedText.Text = response.EventYear.DaysAllowed.ToString();
         DaysAllowedSlider.Value = response.EventYear.DaysAllowed;
-        yearPanel.Visibility = Visibility.Visible;
-        holdingLabel.Visibility = Visibility.Collapsed;
+        yearPanel.IsVisible = true;
+        holdingLabel.IsVisible = false;
         SaveButton.IsEnabled = true;
     }
 
@@ -93,11 +93,11 @@ public partial class EditYearPage : UserControl
         {
             await APIHandlers.UpdateEventYear(api, slug, new APIEventYear
             {
-                Year = yearBox.Text,
+                Year = yearBox.Text!,
                 DateTime = Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss zzz"),
                 Live = LiveBox.IsChecked == true,
                 DaysAllowed = Convert.ToInt32(DaysAllowedSlider.Value),
-                RankingType = ((ComboBoxItem)rankBox.SelectedItem).Uid.ToString().Equals("Chip", StringComparison.OrdinalIgnoreCase) ? "chip" : "gun",
+                RankingType = ((string)((ComboBoxItem)rankBox.SelectedItem!).Tag!).Equals("Chip", StringComparison.OrdinalIgnoreCase) ? "chip" : "gun",
             });
             window.Close();
         }

@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.Export.ExportDistanceResults"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title="Export Ultrasignup Results"
         Height="220"

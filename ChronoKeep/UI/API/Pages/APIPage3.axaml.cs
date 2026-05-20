@@ -1,12 +1,11 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Helpers;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.UI.API.Windows;
 using Chronokeep.UI.Parts;
+using System;
 
 namespace Chronokeep.UI.API;
 
@@ -17,7 +16,7 @@ public partial class APIPage3 : UserControl
     private readonly Event theEvent;
     private readonly string slug;
 
-    private GetEventYearsResponse years;
+    private GetEventYearsResponse? years;
 
     public APIPage3(APIWindow window, APIObject api, Event theEvent, string slug)
     {
@@ -26,7 +25,6 @@ public partial class APIPage3 : UserControl
         this.api = api;
         this.theEvent = theEvent;
         this.slug = slug;
-
         GetEventYears();
     }
 
@@ -45,7 +43,7 @@ public partial class APIPage3 : UserControl
         yearCopyBox.Items.Add(new ComboBoxItem
         {
             Content = "New Year",
-            Uid = "NEW"
+            Tag = "NEW"
         });
         int ix = 0;
         int count = 1;
@@ -56,7 +54,7 @@ public partial class APIPage3 : UserControl
                 yearCopyBox.Items.Add(new ComboBoxItem
                 {
                     Content = y.Year,
-                    Uid = y.Year
+                    Tag = y.Year
                 });
                 if (theEvent.YearCode == y.Year)
                 {
@@ -68,11 +66,11 @@ public partial class APIPage3 : UserControl
         yearCopyBox.SelectedIndex = ix;
         if (ix == 0)
         {
-            newPanel.Visibility = Visibility.Visible;
+            newPanel.IsVisible = true;
         }
         else
         {
-            newPanel.Visibility = Visibility.Collapsed;
+            newPanel.IsVisible = false;
         }
         yearBox.Text = theEvent.YearCode;
         dateBox.Text = theEvent.Date;
@@ -81,12 +79,12 @@ public partial class APIPage3 : UserControl
             rankBox.Items.Add(new ComboBoxItem
             {
                 Content = "Elapsed",
-                Uid = "Clock"
+                Tag = "Clock"
             });
             rankBox.Items.Add(new ComboBoxItem
             {
                 Content = "Cumulative",
-                Uid = "Chip"
+                Tag = "Chip"
             });
         }
         else
@@ -94,28 +92,28 @@ public partial class APIPage3 : UserControl
             rankBox.Items.Add(new ComboBoxItem
             {
                 Content = "Clock",
-                Uid = "Clock"
+                Tag = "Clock"
             });
             rankBox.Items.Add(new ComboBoxItem
             {
                 Content = "Chip",
-                Uid = "Chip"
+                Tag = "Chip"
             });
         }
-        rankBox.SelectedIndex = theEvent.RankByGun ? 0 : 1;
-        yearPanel.Visibility = Visibility.Visible;
-        holdingLabel.Visibility = Visibility.Collapsed;
+        rankBox.SelectedIndex = theEvent!.RankByGun ? 0 : 1;
+        yearPanel.IsVisible = true;
+        holdingLabel.IsVisible = false;
     }
 
     private void YearBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (((ComboBoxItem)yearCopyBox.SelectedItem).Uid == "NEW")
+        if ((string)((ComboBoxItem)yearCopyBox.SelectedItem!).Tag! == "NEW")
         {
-            newPanel.Visibility = Visibility.Visible;
+            newPanel.IsVisible = true;
         }
         else
         {
-            newPanel.Visibility = Visibility.Collapsed;
+            newPanel.IsVisible = false;
         }
     }
 
@@ -130,18 +128,18 @@ public partial class APIPage3 : UserControl
     private async void Next_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.API.APIPage3", "DateTime: " + Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss"));
-        string year = ((ComboBoxItem)yearCopyBox.SelectedItem).Uid;
+        string year = (string)((ComboBoxItem)yearCopyBox.SelectedItem!).Tag!;
         if (year == "NEW")
         {
             try
             {
                 EventYearResponse addResponse = await APIHandlers.AddEventYear(api, slug, new APIEventYear
                 {
-                    Year = yearBox.Text,
+                    Year = yearBox.Text!,
                     DateTime = Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss zzz"),
                     Live = LiveBox.IsChecked == true,
                     DaysAllowed = Convert.ToInt32(DaysAllowedSlider.Value),
-                    RankingType = ((ComboBoxItem)rankBox.SelectedItem).Uid.ToString().Equals("Chip", StringComparison.OrdinalIgnoreCase) ? "chip" : "gun",
+                    RankingType = ((string)((ComboBoxItem)rankBox.SelectedItem!).Tag!).Equals("Chip", StringComparison.OrdinalIgnoreCase) ? "chip" : "gun",
                 });
                 year = addResponse.EventYear.Year;
             }

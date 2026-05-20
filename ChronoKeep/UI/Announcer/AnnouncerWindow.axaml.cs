@@ -1,9 +1,13 @@
+using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing.Announcer;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Chronokeep.UI.Announcer;
 
@@ -56,10 +60,8 @@ public partial class AnnouncerWindow : Window
         }
         if (!window.AnnouncerConnected() && !remote_announcer)
         {
-            AnnouncerBox.Visibility = Visibility.Collapsed;
-            AnnouncerHeader.Visibility = Visibility.Collapsed;
-            ResultsBox.Visibility = Visibility.Visible;
-            ResultsHeader.Visibility = Visibility.Visible;
+            AnnouncerBox.IsVisible = false;
+            ResultsBox.IsVisible = true;
             // Get our list of results to display.
             List<TimeResult> results;
             try
@@ -81,7 +83,6 @@ public partial class AnnouncerWindow : Window
             results.Reverse();
             // Remove old entries.
             ResultsBox.ItemsSource = results;
-            ResultsBox.Items.Refresh();
         }
     }
 
@@ -99,10 +100,8 @@ public partial class AnnouncerWindow : Window
         // Check if we've got an announcer reader connected.
         if (window.AnnouncerConnected() || remote_announcer)
         {
-            AnnouncerBox.Visibility = Visibility.Visible;
-            AnnouncerHeader.Visibility = Visibility.Visible;
-            ResultsBox.Visibility = Visibility.Collapsed;
-            ResultsHeader.Visibility = Visibility.Collapsed;
+            AnnouncerBox.IsVisible = true;
+            ResultsBox.IsVisible = false;
             // Get our list of people to display. Remove anything older than 45 seconds.
             List<AnnouncerParticipant> participants;
             try
@@ -121,7 +120,6 @@ public partial class AnnouncerWindow : Window
             // Reverse all entries so the last person to cross the line is at the top.
             participants.Reverse();
             AnnouncerBox.ItemsSource = participants;
-            AnnouncerBox.Items.Refresh();
         }
     }
 }

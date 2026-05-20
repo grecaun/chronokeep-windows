@@ -127,6 +127,9 @@
     <Compile Update="UI\ChipAssignment\Parts\TagRangePart.axaml.cs">
       <DependentUpon>TagRangePart.axaml</DependentUpon>
     </Compile>
+    <Compile Update="UI\MainPages\Timing\DistanceStatsPage.axaml.cs">
+      <DependentUpon>DistanceStatsPage.axaml</DependentUpon>
+    </Compile>
     <Compile Update="UI\Parts\MultipleEntryPart.axaml.cs">
       <DependentUpon>MultipleEntryPart.axaml</DependentUpon>
     </Compile>
@@ -154,11 +157,11 @@
     <Compile Update="UI\Parts\WavePart.axaml.cs">
       <DependentUpon>WavePart.axaml</DependentUpon>
     </Compile>
-    <Compile Update="UI\Timing\ClockControl.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="UI\Timing\ReaderSettings\Parts\APIPart.axaml.cs">
       <DependentUpon>APIPart.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Timing\ReaderSettings\Parts\ReaderSubPart.axaml.cs">
+      <DependentUpon>ReaderSubPart.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.Participants.ChangeMultiParticipantWindow"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title="Modify Participants"
         Width="300"

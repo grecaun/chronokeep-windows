@@ -19,7 +19,7 @@ namespace Chronokeep.Objects
             linked_distance_name = "", chip = "", participantId = "", division = "";
         private bool anonymous;
         DateTime systemTime;
-        Event theEvent;
+        Event? theEvent;
 
         [GeneratedRegex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})")]
         public static partial Regex TimeRegex();
@@ -70,7 +70,7 @@ namespace Chronokeep.Objects
             this.segmentId = segmentId;
             this.time = time ?? "";
             this.occurrence = occurrence;
-            locationName = locations != null ? locations.TryGetValue(locationId, out TimingLocation loc) ? loc.Name : "Unknown" : "Unknown";
+            locationName = locations != null ? locations.TryGetValue(locationId, out TimingLocation? loc) ? loc.Name : "Unknown" : "Unknown";
             if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
             {
                 segmentName = "Finish ";
@@ -79,7 +79,7 @@ namespace Chronokeep.Objects
             {
                 segmentName = "Start ";
             }
-            else if (segments != null && segments.TryGetValue(this.segmentId, out Segment seg))
+            else if (segments != null && segments.TryGetValue(this.segmentId, out Segment? seg))
             {
                 segmentName = seg.Name + " ";
             }
@@ -92,7 +92,7 @@ namespace Chronokeep.Objects
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && distances.TryGetValue(linked_distance_name, out Distance linkedDist)
+                        && distances.TryGetValue(linked_distance_name, out Distance? linkedDist)
                         && linkedDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Lap {0}",
@@ -102,7 +102,7 @@ namespace Chronokeep.Objects
                             );
                     }
                     else if (distance.Length > 0
-                        && distances.TryGetValue(distance, out Distance oDist)
+                        && distances.TryGetValue(distance, out Distance? oDist)
                         && oDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Lap {0}",
@@ -119,7 +119,7 @@ namespace Chronokeep.Objects
                 else if (Constants.Timing.SEGMENT_START != this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && segments.TryGetValue(this.segmentId, out Segment oSeg)
+                        && segments.TryGetValue(this.segmentId, out Segment? oSeg)
                         && oSeg.CumulativeDistance > 0)
                     {
                         segmentName = string.Format("{2:0.##} {3} - {0}{1}",
@@ -141,7 +141,7 @@ namespace Chronokeep.Objects
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && distances.TryGetValue(linked_distance_name, out Distance linkedDist)
+                        && distances.TryGetValue(linked_distance_name, out Distance? linkedDist)
                         && linkedDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Hour {0}",
@@ -151,7 +151,7 @@ namespace Chronokeep.Objects
                             );
                     }
                     else if (distance.Length > 0
-                        && distances.TryGetValue(distance, out Distance oDist)
+                        && distances.TryGetValue(distance, out Distance? oDist)
                         && oDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Hour {0}",
@@ -185,7 +185,7 @@ namespace Chronokeep.Objects
             this.gender = gender ?? "";
             this.ageGroupId = ageGroupId;
             this.ageGroupName = ageGroupName ?? "";
-            Match chipTimeMatch = TimeRegex().Match(chipTime);
+            Match chipTimeMatch = TimeRegex().Match(chipTime!);
             chipSeconds = 0;
             chipMilliseconds = 0;
             if (chipTimeMatch.Success)
@@ -195,7 +195,7 @@ namespace Chronokeep.Objects
                    + Convert.ToInt64(chipTimeMatch.Groups[3].Value);
                 chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
             }
-            Match timeMatch = TimeRegex().Match(time);
+            Match timeMatch = TimeRegex().Match(time!);
             seconds = 0;
             milliseconds = 0;
             if (timeMatch.Success)
@@ -307,9 +307,9 @@ namespace Chronokeep.Objects
         {
             get => gender == null ? "" : gender == "Man" ? "M" : gender == "Woman" ? "W" : gender == "Non-Binary" ? "X" : gender == "Not Specified" || gender.Equals("ns", StringComparison.OrdinalIgnoreCase) ? "" : gender.Length <= 2 ? gender : gender[..2];
         }
-        public int DivisionColWidth { get => theEvent.DivisionsEnabled ? 80 : 0; }
-        public int DivisionPlaceColWidth { get => theEvent.DivisionsEnabled ? 40 : 0; }
-        public int DivisionMargin { get => theEvent.DivisionsEnabled ? 4 : 0; }
+        public int DivisionColWidth { get => theEvent!.DivisionsEnabled ? 80 : 0; }
+        public int DivisionPlaceColWidth { get => theEvent!.DivisionsEnabled ? 40 : 0; }
+        public int DivisionMargin { get => theEvent!.DivisionsEnabled ? 4 : 0; }
 
         public string PrettyTypeStr()
         {
@@ -440,7 +440,7 @@ namespace Chronokeep.Objects
             Event theEvent
             )
         {
-            locationName = locations != null ? locations.TryGetValue(locationId, out TimingLocation loc) ? loc.Name : "Unknown" : "Unknown";
+            locationName = locations != null ? locations.TryGetValue(locationId, out TimingLocation? loc) ? loc.Name : "Unknown" : "Unknown";
             if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
             {
                 segmentName = "Finish ";
@@ -449,7 +449,7 @@ namespace Chronokeep.Objects
             {
                 segmentName = "Start ";
             }
-            else if (segments != null && segments.TryGetValue(this.segmentId, out Segment seg))
+            else if (segments != null && segments.TryGetValue(this.segmentId, out Segment? seg))
             {
                 segmentName = seg.Name + " ";
             }
@@ -462,7 +462,7 @@ namespace Chronokeep.Objects
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && distances.TryGetValue(linked_distance_name, out Distance linkedDist)
+                        && distances.TryGetValue(linked_distance_name, out Distance? linkedDist)
                         && linkedDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Lap {0}",
@@ -472,7 +472,7 @@ namespace Chronokeep.Objects
                             );
                     }
                     else if (distanceName.Length > 0
-                        && distances.TryGetValue(distanceName, out Distance oDist)
+                        && distances.TryGetValue(distanceName, out Distance? oDist)
                         && oDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Lap {0}",
@@ -489,7 +489,7 @@ namespace Chronokeep.Objects
                 else if (Constants.Timing.SEGMENT_START != this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && segments.TryGetValue(this.segmentId, out Segment oSeg)
+                        && segments!.TryGetValue(this.segmentId, out Segment? oSeg)
                         && oSeg.CumulativeDistance > 0)
                     {
                         segmentName = string.Format("{2:0.##} {3} - {0}{1}",
@@ -511,7 +511,7 @@ namespace Chronokeep.Objects
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && distances.TryGetValue(linked_distance_name, out Distance linkedDist)
+                        && distances.TryGetValue(linked_distance_name, out Distance? linkedDist)
                         && linkedDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Hour {0}",
@@ -521,7 +521,7 @@ namespace Chronokeep.Objects
                             );
                     }
                     else if (distanceName.Length > 0
-                        && distances.TryGetValue(distanceName, out Distance oDist)
+                        && distances.TryGetValue(distanceName, out Distance? oDist)
                         && oDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Hour {0}",
@@ -819,7 +819,7 @@ namespace Chronokeep.Objects
             {
                 return false;
             }
-            if (!dictionary.participantBibDictionary.TryGetValue(bib, out Participant part) || part.EventSpecific.SMSEnabled == false)
+            if (!dictionary.participantBibDictionary.TryGetValue(bib, out Participant? part) || part.EventSpecific.SMSEnabled == false)
             {
                 return false;
             }
@@ -875,9 +875,9 @@ namespace Chronokeep.Objects
             return SMSState.Success;
         }
 
-        public bool Equals(TimeResult other)
+        public bool Equals(TimeResult? other)
         {
-            return this.EventSpecificId == other.EventSpecificId
+            return other != null && this.EventSpecificId == other.EventSpecificId
                 && this.LocationId == other.LocationId
                 && this.SegmentId == other.SegmentId
                 && this.Occurrence == other.Occurrence;

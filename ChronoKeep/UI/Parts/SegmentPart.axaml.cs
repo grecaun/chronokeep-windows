@@ -1,7 +1,11 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Chronokeep.Helpers;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Chronokeep.UI.Parts;
 
@@ -25,13 +29,13 @@ public partial class SegmentPart : UserControl
         this.mySegment = segment;
         this.locationDictionary = [];
 
-        ComboBoxItem selected = null, current;
+        ComboBoxItem? selected = null, current;
         foreach (TimingLocation loc in locations)
         {
             current = new ComboBoxItem()
             {
                 Content = loc.Name,
-                Uid = loc.Identifier.ToString()
+                Tag = loc.Identifier.ToString()
             };
             Location.Items.Add(current);
             if (mySegment.LocationId == loc.Identifier)
@@ -48,7 +52,7 @@ public partial class SegmentPart : UserControl
         // Occurrence
         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
         {
-            if (Location.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)Location.SelectedItem).Uid, out int maxOccurrences))
+            if (Location.SelectedItem == null || !locationDictionary.TryGetValue((string)((ComboBoxItem)Location.SelectedItem).Tag!, out int maxOccurrences))
             {
                 maxOccurrences = 1;
             }
@@ -64,7 +68,7 @@ public partial class SegmentPart : UserControl
                 current = new()
                 {
                     Content = i.ToString(),
-                    Uid = i.ToString()
+                    Tag = i.ToString()
                 };
                 if (i == mySegment.Occurrence)
                 {
@@ -80,7 +84,6 @@ public partial class SegmentPart : UserControl
             {
                 Occurrence.SelectedIndex = 0;
             }
-            thePanel.Children.Add(Occurrence);
         }
         CumDistance.Text = mySegment.CumulativeDistance.ToString();
         DistanceUnit.SelectedIndex = 0;
@@ -109,21 +112,21 @@ public partial class SegmentPart : UserControl
         Log.D("UI.MainPages.SegmentsPage", "Segments - Updating segment.");
         try
         {
-            mySegment.Name = SegName.Text;
+            mySegment.Name = SegName.Text!;
             try
             {
-                mySegment.LocationId = Convert.ToInt32(((ComboBoxItem)Location.SelectedItem).Uid);
+                mySegment.LocationId = Convert.ToInt32(((ComboBoxItem)Location.SelectedItem!).Tag!);
             }
             catch
             {
                 mySegment.LocationId = Constants.Timing.LOCATION_DUMMY;
             }
             mySegment.CumulativeDistance = Convert.ToDouble(CumDistance.Text);
-            mySegment.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
-            if (Occurrence != null && Occurrence.SelectedItem != null) mySegment.Occurrence = Convert.ToInt32(((ComboBoxItem)Occurrence.SelectedItem).Uid);
+            mySegment.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem!).Tag!);
+            if (Occurrence != null && Occurrence.SelectedItem != null) mySegment.Occurrence = Convert.ToInt32(((ComboBoxItem)Occurrence.SelectedItem).Tag!);
             else mySegment.Occurrence = -1;
-            mySegment.GPS = GPS.Text;
-            mySegment.MapLink = MapLink.Text;
+            mySegment.GPS = GPS.Text!;
+            mySegment.MapLink = MapLink.Text!;
         }
         catch
         {
@@ -132,16 +135,16 @@ public partial class SegmentPart : UserControl
         }
     }
 
-    private void SelectAll(object? sender, Avalonia.Input.GotFocusEventArgs e)
+    private void SelectAll(object? sender, FocusChangedEventArgs e)
     {
-        TextBox src = (TextBox)e.OriginalSource;
+        TextBox src = (TextBox)e.Source!;
         src.SelectAll();
     }
 
     private void Location_Changed(object? sender, SelectionChangedEventArgs e)
     {
         Occurrence.Items.Clear();
-        if (Location.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)Location.SelectedItem).Uid, out int maxOccurrences))
+        if (Location.SelectedItem == null || !locationDictionary.TryGetValue((string)((ComboBoxItem)Location.SelectedItem).Tag!, out int maxOccurrences))
         {
             maxOccurrences = 1;
         }
@@ -157,7 +160,7 @@ public partial class SegmentPart : UserControl
             Occurrence.Items.Add(new ComboBoxItem()
             {
                 Content = i.ToString(),
-                Uid = i.ToString()
+                Tag = i.ToString()
             });
         }
         Occurrence.SelectedIndex = 0;
@@ -165,12 +168,12 @@ public partial class SegmentPart : UserControl
 
     private void DoubleValidation(object? sender, Avalonia.Input.TextInputEventArgs e)
     {
-        e.Handled = AllowedChars().IsMatch(e.Text);
+        e.Handled = AllowedChars().IsMatch(e.Text!);
     }
 
     private void Remove_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.SegmentsPage", "Removing an item.");
-        this.page.RemoveSegment(mySegment);
+        page.RemoveSegment(mySegment);
     }
 }

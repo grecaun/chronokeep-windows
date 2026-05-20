@@ -1,9 +1,15 @@
+using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
+using Chronokeep.UI.API.Windows;
+using Chronokeep.UI.EventWindows;
+using Chronokeep.UI.MainPages.Dashboard;
 using Chronokeep.UI.Parts;
 using Chronokeep.UI.UhfRfidReader;
+using System.Collections.Generic;
+using System.Data.SQLite;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -11,7 +17,7 @@ public partial class DashboardPage : UserControl, IMainPage
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
-    private Event theEvent = null;
+    private Event? theEvent = null;
 
     public DashboardPage(IMainWindow mainWindow, IDBInterface db)
     {
@@ -32,12 +38,12 @@ public partial class DashboardPage : UserControl, IMainPage
         }
         if (theEvent == null || theEvent.Identifier == -1)
         {
-            LeftPanel.Visibility = Visibility.Hidden;
-            RightPanel.Visibility = Visibility.Hidden;
+            LeftPanel.IsVisible = false;
+            RightPanel.IsVisible = false;
             return;
         }
-        LeftPanel.Visibility = Visibility.Visible;
-        RightPanel.Visibility = Visibility.Visible;
+        LeftPanel.IsVisible = true;
+        RightPanel.IsVisible = true;
         eventNameTextBox.Text = theEvent.Name;
         eventYearCodeTextBox.Text = theEvent.YearCode;
         eventDatePicker.Text = theEvent.Date;
@@ -50,16 +56,16 @@ public partial class DashboardPage : UserControl, IMainPage
         {
             rankByGunCheckBox.Content = "Rank by Clock Time";
         }
-        commonAgeCheckBox.IsChecked = theEvent.CommonAgeGroups;
-        commonStartCheckBox.IsChecked = theEvent.CommonStartFinish;
-        segmentCheckBox.IsChecked = theEvent.DistanceSpecificSegments;
-        placementsCheckBox.IsChecked = theEvent.DisplayPlacements;
-        divisionsEnabledCheckbox.IsChecked = theEvent.DivisionsEnabled;
-        uploadSpecificDistanceResults.IsChecked = theEvent.UploadSpecific;
-        ComboBoxItem eventType = null;
-        foreach (ComboBoxItem item in TypeBox.Items)
+        commonAgeCheckBox.IsChecked = theEvent!.CommonAgeGroups;
+        commonStartCheckBox.IsChecked = theEvent!.CommonStartFinish;
+        segmentCheckBox.IsChecked = theEvent!.DistanceSpecificSegments;
+        placementsCheckBox.IsChecked = theEvent!.DisplayPlacements;
+        divisionsEnabledCheckbox.IsChecked = theEvent!.DivisionsEnabled;
+        uploadSpecificDistanceResults.IsChecked = theEvent!.UploadSpecific;
+        ComboBoxItem? eventType = null;
+        foreach (ComboBoxItem? item in TypeBox.Items)
         {
-            if (item.Uid == theEvent.EventType.ToString())
+            if ((string)item!.Tag! == theEvent!.EventType.ToString())
             {
                 eventType = item;
             }
@@ -73,7 +79,7 @@ public partial class DashboardPage : UserControl, IMainPage
             TypeBox.SelectedIndex = 0;
         }
         editButton.Content = Constants.DashboardLabels.EDIT;
-        cancelButton.Visibility = Visibility.Collapsed;
+        cancelButton.IsVisible = false;
         if (theEvent.API_ID > 0 && theEvent.API_Event_ID != "")
         {
             apiLinkButton.Content = "Event Linked";
@@ -113,7 +119,7 @@ public partial class DashboardPage : UserControl, IMainPage
         eventYearCodeTextBox.IsEnabled = true;
         eventDatePicker.IsEnabled = true;
         rankByGunCheckBox.IsEnabled = true;
-        if (((ComboBoxItem)TypeBox.SelectedItem).Uid == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA.ToString())
+        if ((string)((ComboBoxItem)TypeBox.SelectedItem!).Tag! == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA.ToString())
         {
             commonAgeCheckBox.IsEnabled = false;
             segmentCheckBox.IsEnabled = false;
@@ -150,12 +156,12 @@ public partial class DashboardPage : UserControl, IMainPage
                             if (newEventWindow != null)
                             {
                                 mWindow.AddWindow(newEventWindow);
-                                newEventWindow.ShowDialog();
+                                newEventWindow.ShowDialog((Window)mWindow);
                             }
                             break;
                         case EventClickType.ImportEvent:
                             OpenFileDialog openFileDialog = new() { Filter = "SQLite Database Files (*.sqlite)|*.sqlite;|All files|*" };
-                            if (openFileDialog.ShowDialog() == true)
+                            if (openFileDialog.ShowDialog((Window)mWindow) == true)
                             {
                                 SQLiteInterface savedDatabase = new(openFileDialog.FileName);
                                 savedDatabase.Initialize();
@@ -179,7 +185,7 @@ public partial class DashboardPage : UserControl, IMainPage
                             if (changeEventWindow != null)
                             {
                                 mWindow.AddWindow(changeEventWindow);
-                                changeEventWindow.ShowDialog();
+                                changeEventWindow.ShowDialog((Window)mWindow);
                             }
                             break;
                         case EventClickType.DeleteEvent:
@@ -192,7 +198,7 @@ public partial class DashboardPage : UserControl, IMainPage
                                     "No",
                                     () =>
                                     {
-                                        database.RemoveEvent(theEvent.Identifier);
+                                        database.RemoveEvent(theEvent!.Identifier);
                                         database.SetCurrentEvent(-1);
                                     }
                                     );
@@ -494,7 +500,7 @@ public partial class DashboardPage : UserControl, IMainPage
         if (newEventWindow != null)
         {
             mWindow.AddWindow(newEventWindow);
-            newEventWindow.ShowDialog();
+            newEventWindow.ShowDialog((Window)mWindow);
         }
     }
 
@@ -509,7 +515,7 @@ public partial class DashboardPage : UserControl, IMainPage
         if (changeEventWindow != null)
         {
             mWindow.AddWindow(changeEventWindow);
-            changeEventWindow.ShowDialog();
+            changeEventWindow.ShowDialog((Window)mWindow);
         }
     }
 
@@ -522,7 +528,7 @@ public partial class DashboardPage : UserControl, IMainPage
             FileName = string.Format("{0} {1}.{2}", theEvent.YearCode, theEvent.Name, "sqlite"),
             InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
         };
-        if (saveFileDialog.ShowDialog() == true)
+        if (saveFileDialog.ShowDialog((Window)mWindow) == true)
         {
             Log.D("UI.DashboardPage", "Creating database file.");
             try
@@ -551,7 +557,7 @@ public partial class DashboardPage : UserControl, IMainPage
             return;
         }
         OpenFileDialog openFileDialog = new() { Filter = "SQLite Database Files (*.sqlite)|*.sqlite;|All files|*" };
-        if (openFileDialog.ShowDialog() == true)
+        if (openFileDialog.ShowDialog((Window)mWindow) == true)
         {
             SQLiteInterface savedDatabase = new(openFileDialog.FileName);
             savedDatabase.Initialize();
@@ -587,7 +593,7 @@ public partial class DashboardPage : UserControl, IMainPage
                 "No",
                 () =>
                 {
-                    database.RemoveEvent(theEvent.Identifier);
+                    database.RemoveEvent(theEvent!.Identifier);
                     database.SetCurrentEvent(-1);
                 }
                 );
@@ -607,7 +613,7 @@ public partial class DashboardPage : UserControl, IMainPage
         int eventType = -1;
         try
         {
-            eventType = int.Parse(((ComboBoxItem)TypeBox.SelectedItem).Uid);
+            eventType = int.Parse((string)((ComboBoxItem)TypeBox.SelectedItem!).Tag!);
         }
         catch
         {
@@ -626,7 +632,7 @@ public partial class DashboardPage : UserControl, IMainPage
             commonStartCheckBox.IsChecked = true;
             rankByGunCheckBox.Content = "Rank by Elapsed Time";
         }
-        else if (editButton != null && editButton.Content.ToString() == Constants.DashboardLabels.SAVE)
+        else if (editButton != null && editButton.Content!.ToString() == Constants.DashboardLabels.SAVE)
         {
             commonAgeCheckBox.IsEnabled = true;
             segmentCheckBox.IsEnabled = true;
@@ -642,13 +648,13 @@ public partial class DashboardPage : UserControl, IMainPage
     private void EditButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.DashboardPage", "Edit Button Clicked.");
-        if (editButton.Content.ToString() == Constants.DashboardLabels.EDIT)
+        if (editButton.Content!.ToString() == Constants.DashboardLabels.EDIT)
         {
             Log.D("UI.DashboardPage", "Editing.");
             editButton.Content = Constants.DashboardLabels.WORKING;
             EnableEditableFields();
             editButton.Content = Constants.DashboardLabels.SAVE;
-            cancelButton.Visibility = Visibility.Visible;
+            cancelButton.IsVisible = true;
         }
         else if (editButton.Content.ToString() == Constants.DashboardLabels.SAVE)
         {
@@ -657,13 +663,13 @@ public partial class DashboardPage : UserControl, IMainPage
             DisableEditableFields();
             // If distance specific segments are being enabled/disabled then reset all segments
             // so no residual segments stay around.
-            if (theEvent.DistanceSpecificSegments != segmentCheckBox.IsChecked)
+            if (theEvent!.DistanceSpecificSegments != segmentCheckBox.IsChecked)
             {
                 database.ResetSegments(theEvent.Identifier);
             }
-            theEvent.Name = eventNameTextBox.Text;
-            theEvent.YearCode = eventYearCodeTextBox.Text;
-            theEvent.Date = eventDatePicker.Text;
+            theEvent.Name = eventNameTextBox.Text!;
+            theEvent.YearCode = eventYearCodeTextBox.Text!;
+            theEvent.Date = eventDatePicker.Text!;
             theEvent.RankByGun = rankByGunCheckBox.IsChecked ?? false;
             theEvent.CommonAgeGroups = commonAgeCheckBox.IsChecked ?? false;
             theEvent.CommonStartFinish = commonStartCheckBox.IsChecked ?? false;
@@ -673,7 +679,7 @@ public partial class DashboardPage : UserControl, IMainPage
             theEvent.UploadSpecific = uploadSpecificDistanceResults.IsChecked ?? false;
             try
             {
-                theEvent.EventType = int.Parse(((ComboBoxItem)TypeBox.SelectedItem).Uid);
+                theEvent.EventType = int.Parse((string)((ComboBoxItem)TypeBox.SelectedItem!).Tag!);
             }
             catch
             {
@@ -720,19 +726,19 @@ public partial class DashboardPage : UserControl, IMainPage
         DisableEditableFields();
         UpdateView();
         editButton.Content = Constants.DashboardLabels.EDIT;
-        cancelButton.Visibility = Visibility.Collapsed;
+        cancelButton.IsVisible = false;
     }
 
     private void ApiLinkButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.DashboardPage", "Link/Edit API Event.");
-        if (theEvent.API_ID > 0 && theEvent.API_Event_ID != "")
+        if (theEvent!.API_ID > 0 && theEvent.API_Event_ID != "")
         {
             EditAPIWindow editWindow = EditAPIWindow.NewWindow(mWindow, database);
             if (editWindow != null)
             {
                 mWindow.AddWindow(editWindow);
-                editWindow.ShowDialog();
+                editWindow.ShowDialog((Window)mWindow);
                 UpdateView();
             }
         }
@@ -742,7 +748,7 @@ public partial class DashboardPage : UserControl, IMainPage
             if (apiWindow != null)
             {
                 mWindow.AddWindow(apiWindow);
-                apiWindow.ShowDialog();
+                apiWindow.ShowDialog((Window)mWindow);
                 UpdateView();
             }
         }

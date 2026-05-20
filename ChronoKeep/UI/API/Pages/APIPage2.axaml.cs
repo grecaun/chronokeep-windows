@@ -1,6 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Network.API;
@@ -8,6 +8,8 @@ using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.UI.API.Windows;
 using Chronokeep.UI.Parts;
+using System;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.API;
 
@@ -18,7 +20,7 @@ public partial class APIPage2 : UserControl
     private readonly APIObject api;
     private readonly Event theEvent;
 
-    private GetEventsResponse events;
+    private GetEventsResponse? events;
 
     public APIPage2(APIWindow window, IDBInterface database, APIObject api, Event theEvent)
     {
@@ -51,7 +53,7 @@ public partial class APIPage2 : UserControl
         });
         List<APIEvent> ev = [.. events.Events];
         eventList.ItemsSource = ev;
-        APIEvent maybeEvent = ev.Find(x => x.Name.Equals(theEvent.Name, StringComparison.OrdinalIgnoreCase));
+        APIEvent maybeEvent = ev.Find(x => x.Name.Equals(theEvent.Name, StringComparison.OrdinalIgnoreCase))!;
         if (maybeEvent != null)
         {
             eventList.SelectedItem = maybeEvent;
@@ -65,14 +67,14 @@ public partial class APIPage2 : UserControl
         nameBox.Text = theEvent.Name;
         slugBox.Text = theEvent.Name.Replace(' ', '-').Replace("'", "").ToLower();
         contactBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL).Value;
-        eventPanel.Visibility = Visibility.Visible;
-        holdingLabel.Visibility = Visibility.Collapsed;
+        eventPanel.IsVisible = true;
+        holdingLabel.IsVisible = false;
     }
 
     private void SearchBox_TextChanged(object? sender, TextChangedEventArgs e)
     {
         List<APIEvent> ev = [.. events.Events];
-        if (searchBox.Text.Trim().Length > 0)
+        if (searchBox.Text!.Trim().Length > 0)
         {
             Log.D("UI.API.APIPage2", $"searchBox.Text {searchBox.Text}");
             ev.RemoveAll(x =>
@@ -81,7 +83,7 @@ public partial class APIPage2 : UserControl
             );
         }
         eventList.ItemsSource = ev;
-        APIEvent maybeEvent = ev.Find(x => x.Name.Equals(theEvent.Name, StringComparison.OrdinalIgnoreCase));
+        APIEvent maybeEvent = ev.Find(x => x.Name.Equals(theEvent.Name, StringComparison.OrdinalIgnoreCase))!;
         if (maybeEvent != null)
         {
             eventList.SelectedItem = maybeEvent;
@@ -98,21 +100,21 @@ public partial class APIPage2 : UserControl
     {
         if (eventList.SelectedIndex < 1)
         {
-            newPanel.Visibility = Visibility.Visible;
+            newPanel.IsVisible = true;
         }
         else
         {
-            newPanel.Visibility = Visibility.Collapsed;
+            newPanel.IsVisible = false;
         }
     }
 
-    private void EventList_MouseDoubleClick(object? sender, Avalonia.Input.TappedEventArgs e)
+    private void EventList_MouseDoubleClick(object? sender, TappedEventArgs e)
     {
         Log.D("UI.ChangeEventWindow", "Double Click detected.");
         Next_Click(sender, null);
     }
 
-    private async void Next_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Next_Click(object? sender, RoutedEventArgs? e)
     {
         if (eventList == null)
         {
@@ -140,13 +142,13 @@ public partial class APIPage2 : UserControl
 
                 ModifyEventResponse addResponse = await APIHandlers.AddEvent(api, new APIEvent
                 {
-                    Name = nameBox.Text,
-                    CertificateName = certNameBox.Text,
-                    Slug = slugBox.Text,
-                    Website = websiteBox.Text,
-                    Image = imageBox.Text,
-                    ContactEmail = contactBox.Text,
-                    AccessRestricted = (bool)restrictBox.IsChecked,
+                    Name = nameBox.Text!,
+                    CertificateName = certNameBox.Text!,
+                    Slug = slugBox.Text!,
+                    Website = websiteBox.Text!,
+                    Image = imageBox.Text!,
+                    ContactEmail = contactBox.Text!,
+                    AccessRestricted = (bool)restrictBox.IsChecked!,
                     Type = type
                 });
                 slug = addResponse.Event.Slug;
@@ -164,7 +166,7 @@ public partial class APIPage2 : UserControl
         window.GotoPage3(slug);
     }
 
-    private void Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Cancel_Click(object? sender, RoutedEventArgs e)
     {
         window.Close();
     }

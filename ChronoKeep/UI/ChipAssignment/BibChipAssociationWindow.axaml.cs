@@ -6,8 +6,14 @@ using Chronokeep.Helpers;
 using Chronokeep.Interfaces.IO;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
+using Chronokeep.Objects;
 using Chronokeep.UI.Import;
 using Chronokeep.UI.Parts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Chronokeep.UI.ChipAssignment;
 
@@ -17,7 +23,7 @@ public partial class BibChipAssociationWindow : Window
     private readonly IWindowCallback window;
     private readonly IDBInterface database;
     private readonly bool init = true;
-    private int[] keys;
+    private int[]? keys;
 
     public bool ImportComplete = false;
 
@@ -34,21 +40,20 @@ public partial class BibChipAssociationWindow : Window
         this.Topmost = true;
         if (importer.Data.Type == ImportData.FileType.EXCEL)
         {
-            SheetsContainer.Visibility = Visibility.Visible;
+            SheetsContainer.IsVisible = true;
             SheetsBox.ItemsSource = ((ExcelImporter)importer).SheetNames;
             SheetsBox.SelectedIndex = 0;
             init = false;
         }
         else
         {
-            SheetsContainer.Visibility = Visibility.Collapsed;
+            SheetsContainer.IsVisible = false;
         }
         for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
         {
-            headerListBox.Items.Add(new BibChipHeaderListBoxItem(importer.Data.Headers[i], i));
+            headerListBox.Items.Add(new BibChipHeaderPart(importer.Data.Headers[i], i));
         }
-        EventHolder.Visibility = Visibility.Collapsed;
-        TopRow.Height = new GridLength(0);
+        EventHolder.IsVisible = false;
     }
 
     public static BibChipAssociationWindow NewWindow(IWindowCallback window, IDataImporter importer, IDBInterface database)
@@ -62,14 +67,14 @@ public partial class BibChipAssociationWindow : Window
         int[] check = new int[ImportFileWindow.human_fields.Length];
         bool repeat = false;
         List<string> output = [];
-        foreach (ListBoxItem item in headerListBox.Items)
+        foreach (BibChipHeaderPart? item in headerListBox.Items)
         {
-            int val = ((BibChipHeaderListBoxItem)item).HeaderBox.SelectedIndex;
+            int val = item!.HeaderBox.SelectedIndex;
             if (val > 0)
             {
                 if (check[val] > 0)
                 {
-                    output.Add(((BibChipHeaderListBoxItem)item).HeaderBox.SelectedItem.ToString());
+                    output.Add(item.HeaderBox.SelectedItem!.ToString()!);
                     repeat = true;
                 }
                 else
@@ -78,20 +83,23 @@ public partial class BibChipAssociationWindow : Window
                 }
             }
         }
-        return repeat ? output : null;
+        return repeat ? output : [];
     }
 
-    internal BibChipHeaderListBoxItem[] GetListBoxItems()
+    internal BibChipHeaderPart[] GetListBoxItems()
     {
-        BibChipHeaderListBoxItem[] output = new BibChipHeaderListBoxItem[headerListBox.Items.Count];
-        headerListBox.Items.CopyTo(output, 0);
+        BibChipHeaderPart[] output = new BibChipHeaderPart[headerListBox.Items.Count];
+        for (int i=0; i<headerListBox.Items.Count; i++)
+        {
+            output[i] = (BibChipHeaderPart)headerListBox.Items[i]!;
+        }
         return output;
     }
 
     private void SheetsBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (init) { return; }
-        int selection = ((ComboBox)sender).SelectedIndex;
+        int selection = ((ComboBox)sender!).SelectedIndex;
         Log.D("UI.BibChipAssociationWindow", "You've selected number " + selection);
         ExcelImporter excelImporter = (ExcelImporter)importer;
         excelImporter.ChangeSheet(selection);
@@ -99,7 +107,7 @@ public partial class BibChipAssociationWindow : Window
         headerListBox.Items.Clear();
         for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
         {
-            headerListBox.Items.Add(new BibChipHeaderListBoxItem(importer.Data.Headers[i], i));
+            headerListBox.Items.Add(new BibChipHeaderPart(importer.Data.Headers[i], i));
         }
     }
 
@@ -113,9 +121,9 @@ public partial class BibChipAssociationWindow : Window
         {
             importer.FetchData();
             keys = new int[3];
-            foreach (BibChipHeaderListBoxItem item in headerListBox.Items)
+            foreach (BibChipHeaderPart? item in headerListBox.Items)
             {
-                if (item.HeaderBox.SelectedIndex != 0)
+                if (item!.HeaderBox.SelectedIndex != 0)
                 {
                     keys[item.HeaderBox.SelectedIndex] = item.Index;
                 }
@@ -156,7 +164,7 @@ public partial class BibChipAssociationWindow : Window
                 {
                     // Check to ensure we aren't trying to associate this chip with a different bib
                     // when it already has one associated with it.
-                    if (currentAssociations.TryGetValue(assoc.Chip, out string oBib) && !oBib.Equals(assoc.Bib, StringComparison.OrdinalIgnoreCase))
+                    if (currentAssociations.TryGetValue(assoc.Chip, out string? oBib) && !oBib.Equals(assoc.Bib, StringComparison.OrdinalIgnoreCase))
                     {
                         conflicts.Add(assoc);
                     }

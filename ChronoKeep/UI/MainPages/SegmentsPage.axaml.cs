@@ -1,9 +1,13 @@
+using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Database.SQLite;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
+using Chronokeep.Objects.ChronoKeepAPI;
+using Chronokeep.UI.Parts;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -11,9 +15,9 @@ public partial class SegmentsPage : UserControl
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
-    private readonly List<TimingLocation> locations;
-    private readonly List<Distance> distances;
+    private readonly Event? theEvent;
+    private readonly List<TimingLocation>? locations;
+    private readonly List<Distance>? distances;
 
     private bool UpdateTimingWorker = false;
 
@@ -47,11 +51,11 @@ public partial class SegmentsPage : UserControl
             distances.RemoveAll(x => x.LinkedDistance != Constants.Timing.DISTANCE_NO_LINKED_ID);
             if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
             {
-                apiPanel.Visibility = Visibility.Visible;
+                apiPanel.IsVisible = true;
             }
             else
             {
-                apiPanel.Visibility = Visibility.Collapsed;
+                apiPanel.IsVisible = false;
             }
         }
         UpdateSegments();
@@ -63,14 +67,14 @@ public partial class SegmentsPage : UserControl
         {
             return;
         }
-        List<ListBoxItem> items = [];
+        List<UserControl> items = [];
         if (theEvent.DistanceSpecificSegments)
         {
-            foreach (Distance d in distances)
+            foreach (Distance d in distances!)
             {
-                ADistanceSegmentHolder newHolder = new(theEvent, this, d, distances, allSegments[d.Identifier], locations);
+                DistanceSegmentHolderPart newHolder = new(theEvent, this, d, distances, allSegments[d.Identifier], locations!);
                 items.Add(newHolder);
-                foreach (ListBoxItem item in newHolder.SegmentItems)
+                foreach (UserControl item in newHolder.SegmentItems)
                 {
                     items.Add(item);
                 }
@@ -78,9 +82,9 @@ public partial class SegmentsPage : UserControl
         }
         else
         {
-            ADistanceSegmentHolder newHolder = new(theEvent, this, null, distances, allSegments[Constants.Timing.COMMON_SEGMENTS_DISTANCEID], locations);
+            DistanceSegmentHolderPart newHolder = new(theEvent, this, null, distances, allSegments[Constants.Timing.COMMON_SEGMENTS_DISTANCEID], locations);
             items.Add(newHolder);
-            foreach (ListBoxItem item in newHolder.SegmentItems)
+            foreach (UserControl item in newHolder.SegmentItems)
             {
                 items.Add(item);
             }
@@ -91,16 +95,16 @@ public partial class SegmentsPage : UserControl
     private void UpdateSegments()
     {
         allSegments.Clear();
-        List<Segment> segments = database.GetSegments(theEvent.Identifier);
+        List<Segment> segments = database.GetSegments(theEvent!.Identifier);
         if (theEvent.DistanceSpecificSegments)
         {
-            foreach (Distance d in distances)
+            foreach (Distance d in distances!)
             {
                 allSegments[d.Identifier] = [];
             }
             foreach (Segment seg in segments)
             {
-                if (!allSegments.TryGetValue(seg.DistanceId, out List<Segment> segList))
+                if (!allSegments.TryGetValue(seg.DistanceId, out List<Segment>? segList))
                 {
                     segList = [];
                     allSegments[seg.DistanceId] = segList;
@@ -115,7 +119,7 @@ public partial class SegmentsPage : UserControl
         }
     }
 
-    private void RemoveSegment(Segment mySegment)
+    internal void RemoveSegment(Segment mySegment)
     {
         Log.D("UI.MainPages.SegmentsPage", "Removing segment.");
         UpdateDatabase();
@@ -129,13 +133,13 @@ public partial class SegmentsPage : UserControl
         List<Segment> upSegs = [];
         List<Segment> newSegs = [];
         HashSet<int> segSet = [];
-        foreach (Segment s in database.GetSegments(theEvent.Identifier))
+        foreach (Segment s in database.GetSegments(theEvent!.Identifier))
         {
             segSet.Add(s.Identifier);
         }
-        foreach (Object seg in SegmentsBox.Items)
+        foreach (object? seg in SegmentsBox.Items)
         {
-            if (seg is ASegment tSeg)
+            if (seg is SegmentPart tSeg)
             {
                 tSeg.UpdateSegment();
                 Segment thisSegment = tSeg.mySegment;
@@ -178,26 +182,26 @@ public partial class SegmentsPage : UserControl
         {
             UpdateDatabase();
             bool occurrence_error = false;
-            foreach (Object seg in SegmentsBox.Items)
+            foreach (object? seg in SegmentsBox.Items)
             {
-                if (seg is ASegment)
+                if (seg is SegmentPart)
                 {
-                    Segment thisSegment = ((ASegment)seg).mySegment;
-                    if (thisSegment.LocationId == Constants.Timing.LOCATION_FINISH && thisSegment.Occurrence >= theEvent.FinishMaxOccurrences)
+                    Segment thisSegment = ((SegmentPart)seg).mySegment;
+                    if (thisSegment.LocationId == Constants.Timing.LOCATION_FINISH && thisSegment.Occurrence >= theEvent!.FinishMaxOccurrences)
                     {
                         occurrence_error = true;
                     }
-                    Log.D("UI.MainPages.SegmentsPage", "Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
+                    Log.D("UI.MainPages.SegmentsPage", "Distance ID " + ((SegmentPart)seg).mySegment.DistanceId + " Segment Name " + ((SegmentPart)seg).mySegment.Name + " segment ID " + ((SegmentPart)seg).mySegment.Identifier);
                 }
             }
             if (occurrence_error)
             {
-                DialogBox.Show("Your finish lines has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  These will not be added. Update locations and max occurrences to fix this.");
+                DialogBox.Show("Your finish lines has one or more segments beyond the maximum number it supports (" + (theEvent!.FinishMaxOccurrences - 1) + ").  These will not be added. Update locations and max occurrences to fix this.");
             }
         }
         if (UpdateTimingWorker)
         {
-            database.ResetTimingResultsEvent(theEvent.Identifier);
+            database.ResetTimingResultsEvent(theEvent!.Identifier);
             mWindow.NetworkClearResults();
             mWindow.NotifyTimingWorker();
         }
@@ -206,7 +210,7 @@ public partial class SegmentsPage : UserControl
     public void AddSegment(int distanceId)
     {
         Log.D("UI.MainPages.SegmentsPage", "Adding segment.");
-        Segment newSeg = new(theEvent.Identifier, distanceId, Constants.Timing.LOCATION_FINISH, 0, 0.0, 0.0, Constants.Distances.MILES, "", "", "");
+        Segment newSeg = new(theEvent!.Identifier, distanceId, Constants.Timing.LOCATION_FINISH, 0, 0.0, 0.0, Constants.Distances.MILES, "", "", "");
         allSegments[distanceId].Add(newSeg);
         UpdateView();
     }
@@ -234,11 +238,11 @@ public partial class SegmentsPage : UserControl
     private async void UploadButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.SegmentsPage", "Uploading segments.");
-        if (UploadButton.Content.ToString() == "Upload")
+        if (UploadButton.Content!.ToString() == "Upload")
         {
             UploadButton.IsEnabled = false;
             UploadButton.Content = "Working...";
-            if (theEvent.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
+            if (theEvent!.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
             {
                 UploadButton.Content = "Error";
                 return;
@@ -279,11 +283,11 @@ public partial class SegmentsPage : UserControl
             List<APISegment> segments = [];
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
-                if (locations.TryGetValue(seg.LocationId, out TimingLocation segmentLocation))
+                if (locations.TryGetValue(seg.LocationId, out TimingLocation? segmentLocation))
                 {
                     if (theEvent.DistanceSpecificSegments)
                     {
-                        if (distances.TryGetValue(seg.DistanceId, out Distance segmentDistance))
+                        if (distances.TryGetValue(seg.DistanceId, out Distance? segmentDistance))
                         {
                             segments.Add(new()
                             {
@@ -318,7 +322,7 @@ public partial class SegmentsPage : UserControl
             // add finish segments
             foreach (Distance d in distances.Values)
             {
-                if (Constants.Timing.DISTANCE_NO_LINKED_ID == d.LinkedDistance && distanceUnits.TryGetValue(d.DistanceUnit, out string oDistUnit))
+                if (Constants.Timing.DISTANCE_NO_LINKED_ID == d.LinkedDistance && distanceUnits.TryGetValue(d.DistanceUnit, out string? oDistUnit))
                 {
                     segments.Add(new()
                     {
@@ -359,11 +363,11 @@ public partial class SegmentsPage : UserControl
     private async void DeleteButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.SegmentsPage", "Deleting uploaded segments.");
-        if (DeleteButton.Content.ToString() == "Delete Uploaded")
+        if (DeleteButton.Content!.ToString() == "Delete Uploaded")
         {
             DeleteButton.IsEnabled = false;
             DeleteButton.Content = "Working...";
-            if (theEvent.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
+            if (theEvent!.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
             {
                 DeleteButton.Content = "Error";
                 return;
@@ -393,16 +397,16 @@ public partial class SegmentsPage : UserControl
     {
         UpdateDatabase();
         UpdateSegments();
-        foreach (Object seg in SegmentsBox.Items)
+        foreach (object? seg in SegmentsBox.Items)
         {
-            if (seg is ASegment segment)
+            if (seg is SegmentPart segment)
             {
                 Segment thisSegment = segment.mySegment;
-                if (thisSegment.LocationId == Constants.Timing.LOCATION_FINISH && thisSegment.Occurrence >= theEvent.FinishMaxOccurrences)
+                if (thisSegment.LocationId == Constants.Timing.LOCATION_FINISH && thisSegment.Occurrence >= theEvent!.FinishMaxOccurrences)
                 {
                     DialogBox.Show("Your finish line has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  This could cause errors.");
                 }
-                else if (thisSegment.LocationId == Constants.Timing.LOCATION_START && thisSegment.Occurrence >= theEvent.StartMaxOccurrences)
+                else if (thisSegment.LocationId == Constants.Timing.LOCATION_START && thisSegment.Occurrence >= theEvent!.StartMaxOccurrences)
                 {
                     DialogBox.Show("Your start line has one or more segments beyond the maximum number it supports (" + (theEvent.StartMaxOccurrences - 1) + ").  This could cause errors.");
                 }

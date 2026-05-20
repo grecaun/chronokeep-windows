@@ -1,7 +1,5 @@
 using Avalonia.Controls;
-using Chronokeep.Helpers;
 using Chronokeep.Objects;
-using Chronokeep.UI.MainPages;
 
 namespace Chronokeep.UI.Parts;
 

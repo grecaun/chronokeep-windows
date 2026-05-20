@@ -18,7 +18,7 @@ public partial class ChronokeepSettings : Window
 
     private bool saving = false;
 
-    private Dictionary<long, Parts.ReaderPart> readerDict = [];
+    private Dictionary<long, Parts.ReaderSubPart> readerDict = [];
     private Dictionary<long, Parts.APIPart> apiDict = [];
 
     internal ChronokeepSettings(ChronokeepInterface reader, IDBInterface database)
@@ -90,7 +90,7 @@ public partial class ChronokeepSettings : Window
                 {
                     found.Add(read.Id);
                     // update if we know about them
-                    if (readerDict.TryGetValue(read.Id, out Parts.ReaderPart? oReaderItem))
+                    if (readerDict.TryGetValue(read.Id, out Parts.ReaderSubPart? oReaderItem))
                     {
                         oReaderItem.UpdateReader(read);
                     }
@@ -103,7 +103,7 @@ public partial class ChronokeepSettings : Window
                 var newDictionary = readerDict.Where(pair => found.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
                 readerDict = newDictionary;
                 readerListView.Items.Clear();
-                foreach (Parts.ReaderPart item in readerDict.Values)
+                foreach (Parts.ReaderSubPart item in readerDict.Values)
                 {
                     readerListView.Items.Add(item);
                 }
@@ -135,8 +135,8 @@ public partial class ChronokeepSettings : Window
             }
             if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.ANTENNAS))
             {
-                Dictionary<string, Parts.ReaderPart> readerNameDict = [];
-                foreach (Parts.ReaderPart reader in readerDict.Values)
+                Dictionary<string, Parts.ReaderSubPart> readerNameDict = [];
+                foreach (Parts.ReaderSubPart reader in readerDict.Values)
                 {
                     if (reader.GetReaderName().Equals(allSettings.Antennas.ReaderName, StringComparison.OrdinalIgnoreCase))
                     {

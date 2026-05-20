@@ -98,14 +98,14 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Margin="0,0,32,0">
                 <!-- NavigateUri="https://system.data.sqlite.org/" -->
-                <Button Name="SQLiteBtn" Click="UrlBtn_Click" Classes="link">
+                <Button Name="SQLiteBtn" Click="UrlBtn_Click" Classes="link" Tag="https://system.data.sqlite.org/">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
                         <Label>SQLite</Label>
                     </StackPanel>
                 </Button>
                 <!-- NavigateUri="https://wkhtmltopdf.org/" -->
-                <Button Name="WkHtmltoPdfBtn" Click="UrlBtn_Click" Classes="link">
+                <Button Name="WkHtmltoPdfBtn" Click="UrlBtn_Click" Classes="link" Tag="https://wkhtmltopdf.org/">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
                         <Label>wkhtmltopdf</Label>
@@ -113,15 +113,15 @@
                 </Button>
             </StackPanel>
             <StackPanel Grid.Column="1" Margin="0,0,32,0">
-                <!-- NavigateUri="https://github.com/lepoco/wpfui" -->
-                <Button Name="AvaloniaBtn" Click="UrlBtn_Click" Classes="link">
+                <!-- NavigateUri="https://avaloniaui.net/" -->
+                <Button Name="AvaloniaBtn" Click="UrlBtn_Click" Classes="link" Tag="https://avaloniaui.net/">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
-                        <Label>WPF UI</Label>
+                        <Label>Avalonia UI</Label>
                     </StackPanel>
                 </Button>
                 <!-- NavigateUri="https://www.ghostscript.com/" -->
-                <Button Name="GhostscriptBtn" Click="UrlBtn_Click" Classes="link">
+                <Button Name="GhostscriptBtn" Click="UrlBtn_Click" Classes="link" Tag="https://www.ghostscript.com/">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
                         <Label>Ghostscript</Label>
@@ -130,14 +130,14 @@
             </StackPanel>
             <StackPanel Grid.Column="2">
                 <!-- NavigateUri="https://github.com/xceedsoftware/wpftoolkit" -->
-                <Button Name="WpfToolkitBtn" Click="UrlBtn_Click" Classes="link">
+                <Button Name="WpfToolkitBtn" Click="UrlBtn_Click" Classes="link" Tag="https://github.com/xceedsoftware/wpftoolkit">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
                         <Label>Extended WPF Toolkit</Label>
                     </StackPanel>
                 </Button>
                 <!-- NavigateUri="https://closedxml.github.io/ClosedXML/" -->
-                <Button Name="ClosedXmlBtn" Click="UrlBtn_Click" Classes="link">
+                <Button Name="ClosedXmlBtn" Click="UrlBtn_Click" Classes="link" Tag="https://closedxml.github.io/ClosedXML/">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
                         <Label>ClosedXML</Label>
@@ -146,14 +146,14 @@
             </StackPanel>
             <StackPanel Grid.Column="3">
                 <!-- NavigateUri="https://github.com/Jinjinov/Hardware.Info" -->
-                <Button Name="HWInfoBtn" Click="UrlBtn_Click" Classes="link">
+                <Button Name="HWInfoBtn" Click="UrlBtn_Click" Classes="link" Tag="https://github.com/Jinjinov/Hardware.Info">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
                         <Label>Hardware.Info</Label>
                     </StackPanel>
                 </Button>
                 <!-- NavigateUri="https://sentry.io" -->
-                <Button Name="SentryBtn" Click="UrlBtn_Click" Classes="link">
+                <Button Name="SentryBtn" Click="UrlBtn_Click" Classes="link" Tag="https://sentry.io">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
                         <Label>Sentry</Label>

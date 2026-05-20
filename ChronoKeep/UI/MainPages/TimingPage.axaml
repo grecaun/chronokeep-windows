@@ -83,7 +83,7 @@
                             FontWeight="Bold"
                             FontSize="16"
                             KeyDown="StartTimeKeyDown"
-                            LostFocus="StartTimeLostFocus"
+                            LostFocus="StartTime_LostFocus"
                             />
                 </StackPanel>
                 <DockPanel
@@ -264,8 +264,7 @@
                                         DockPanel.Dock="Right"
                                         OnContent=""
                                         OffContent=""
-                                        Checked="CondenseSwitch_Checked"
-                                        Unchecked="CondenseSwitch_Checked"
+                                        IsCheckedChanged="CondenseSwitch_Checked"
                                         />
                                 </DockPanel>
                             </Expander.Header>

@@ -1,3 +1,7 @@
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Threading;
 using Chronokeep.Constants;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
@@ -6,14 +10,29 @@ using Chronokeep.IO;
 using Chronokeep.IO.HtmlTemplates;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
+using Chronokeep.Objects.Notifications;
 using Chronokeep.Timing.API;
+using Chronokeep.UI.API.Windows;
 using Chronokeep.UI.Export;
 using Chronokeep.UI.IO;
+using Chronokeep.UI.MainPages.Timing;
 using Chronokeep.UI.Parts;
-using Chronokeep.UI.Timing;
 using Chronokeep.UI.Timing.Import;
 using Chronokeep.UI.Timing.Notifications;
+using Chronokeep.UI.Timing.ReaderSettings.Parts;
 using Chronokeep.UI.Timing.Windows;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.NetworkInformation;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using static Chronokeep.Helpers.Globals;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -21,18 +40,18 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
-    private ISubPage subPage;
+    private ISubPage? subPage;
 
-    private CancellationTokenSource cts;
+    private CancellationTokenSource? cts;
 
-    private readonly Event theEvent;
-    private readonly List<TimingLocation> locations;
+    private readonly Event? theEvent;
+    private readonly List<TimingLocation>? locations;
 
     private DateTime startTime;
     private readonly DispatcherTimer Timer = new();
     private bool TimerStarted = false;
-    private SetTimeWindow timeWindow = null;
-    private RewindWindow rewindWindow = null;
+    private SetTimeWindow? timeWindow = null;
+    private RewindWindow? rewindWindow = null;
 
     private static bool alreadyRecalculating = false;
     private static readonly int uploadTimer = 1000;
@@ -175,11 +194,11 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                 }
             }
             locationBox.SelectedIndex = 0;
-            locationBox.Visibility = Visibility.Visible;
+            locationBox.IsVisible = true;
         }
         else
         {
-            locationBox.Visibility = Visibility.Collapsed;
+            locationBox.IsVisible = false;
         }
 
         List<TimingSystem> systems = mWindow.GetConnectedSystems();
@@ -210,7 +229,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         known = 0;
         foreach (TimingSystem sys in systems)
         {
-            ReadersBox.Items.Add(new AReaderBox(this, sys, locations));
+            ReadersBox.Items.Add(new ReaderPart(this, sys, locations));
             if (sys.IPAddress != string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]))
             {
                 known++;
@@ -236,22 +255,22 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (mWindow.HttpServerActive())
         {
             HttpServerButton.Content = "Stop Web";
-            IPContainer.Visibility = Visibility.Visible;
-            PortContainer.Visibility = Visibility.Visible;
+            IPContainer.IsVisible = true;
+            PortContainer.IsVisible = true;
         }
         else
         {
             HttpServerButton.Content = "Start Web";
-            IPContainer.Visibility = Visibility.Collapsed;
-            PortContainer.Visibility = Visibility.Collapsed;
+            IPContainer.IsVisible = false;
+            PortContainer.IsVisible = false;
         }
         if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
         {
-            apiPanel.Visibility = Visibility.Visible;
+            apiPanel.IsVisible = true;
         }
         else
         {
-            apiPanel.Visibility = Visibility.Collapsed;
+            apiPanel.IsVisible = false;
         }
         if (mWindow.IsAPIControllerRunning())
         {
@@ -285,11 +304,11 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             {
                 if (remoteControllerSwitch != null)
                 {
-                    remoteControllerSwitch.Visibility = Visibility.Visible;
+                    remoteControllerSwitch.IsVisible = true;
                 }
                 if (remoteReadersButton != null)
                 {
-                    remoteReadersButton.Visibility = readerExpander.IsExpanded ? Visibility.Visible : Visibility.Collapsed;
+                    remoteReadersButton.IsVisible = readerExpander.IsExpanded;
                 }
                 remote_api = true;
                 break;
@@ -299,13 +318,13 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         List<ReaderMessage> readerMsgs = GetReaderMessages();
         if (readerMsgs.Count > 0)
         {
-            ReaderMessageButton.Visibility = Visibility.Visible;
-            ReaderMessageNumberBox.Value = readerMsgs.FindAll(x => !x.Notified).Count.ToString();
+            ReaderMessageButton.IsVisible = true;
+            ReaderMessageNumberBox.Text = readerMsgs.FindAll(x => !x.Notified).Count.ToString();
         }
         else
         {
-            ReaderMessageButton.Visibility = Visibility.Hidden;
-            ReaderMessageNumberBox.Value = 0.ToString();
+            ReaderMessageButton.IsVisible = false;
+            ReaderMessageNumberBox.Text = 0.ToString();
         }
 
         if (alreadyRecalculating)
@@ -330,9 +349,9 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     {
         List<TimingSystem> removedSystems = database.GetTimingSystems();
         List<TimingSystem> ourSystems = [];
-        foreach (AReaderBox box in ReadersBox.Items)
+        foreach (ReaderPart? box in ReadersBox.Items)
         {
-            box.UpdateReader();
+            box!.UpdateReader();
             if (box.reader.IPAddress != "0.0.0.0" && box.reader.IPAddress.Length > 7 &&
                 box.reader.IPAddress != string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]))
             {
@@ -374,9 +393,9 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
         // Update locations in the list of readers (and reader status)
         total = ReadersBox.Items.Count; known = 0;
-        foreach (AReaderBox read in ReadersBox.Items)
+        foreach (ReaderPart? read in ReadersBox.Items)
         {
-            read.UpdateStatus();
+            read!.UpdateStatus();
             if (read.reader.Status == SYSTEM_STATUS.DISCONNECTED)
             {
                 if (timeWindow != null && timeWindow.IsTimingSystem(read.reader))
@@ -410,17 +429,17 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             }
             for (int i = total; i < 3; i++)
             {
-                ReadersBox.Items.Add(new AReaderBox(
+                ReadersBox.Items.Add(new ReaderPart(
                     this,
                     new(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
                         system),
-                        locations));
+                        locations!));
             }
-            ReadersBox.Items.Add(new AReaderBox(
+            ReadersBox.Items.Add(new ReaderPart(
                 this,
                 new(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
                     system),
-                    locations));
+                    locations!));
         }
         List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier, condenseSwitch.IsChecked == false);
         stats.Clear();
@@ -431,22 +450,22 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (mWindow.HttpServerActive())
         {
             HttpServerButton.Content = "Stop Web";
-            IPContainer.Visibility = Visibility.Visible;
-            PortContainer.Visibility = Visibility.Visible;
+            IPContainer.IsVisible = true;
+            PortContainer.IsVisible = true;
         }
         else
         {
             HttpServerButton.Content = "Start Web";
-            IPContainer.Visibility = Visibility.Collapsed;
-            PortContainer.Visibility = Visibility.Collapsed;
+            IPContainer.IsVisible = false;
+            PortContainer.IsVisible = false;
         }
         if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
         {
-            apiPanel.Visibility = Visibility.Visible;
+            apiPanel.IsVisible = true;
         }
         else
         {
-            apiPanel.Visibility = Visibility.Collapsed;
+            apiPanel.IsVisible = false;
         }
         if (mWindow.IsAPIControllerRunning())
         {
@@ -510,23 +529,23 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             }
             if (waves.Count > 1)
             {
-                EllapsedRelativeToBox.Visibility = Visibility.Visible;
+                EllapsedRelativeToBox.IsVisible = true;
             }
             else
             {
-                EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
+                EllapsedRelativeToBox.IsVisible = false;
             }
         }
         List<ReaderMessage> readerMsgs = GetReaderMessages();
-        if (readerMsgs.Count() > 0)
+        if (readerMsgs.Count > 0)
         {
-            ReaderMessageButton.Visibility = Visibility.Visible;
-            ReaderMessageNumberBox.Value = readerMsgs.FindAll(x => !x.Notified).Count().ToString();
+            ReaderMessageButton.IsVisible = true;
+            ReaderMessageNumberBox.Text = readerMsgs.FindAll(x => !x.Notified).Count.ToString();
         }
         else
         {
-            ReaderMessageButton.Visibility = Visibility.Hidden;
-            ReaderMessageNumberBox.Value = 0.ToString();
+            ReaderMessageButton.IsVisible = false;
+            ReaderMessageNumberBox.Text = 0.ToString();
         }
         UpdateSubView();
         if (alreadyRecalculating)
@@ -550,7 +569,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         cts = new();
         try
         {
-            subPage.CancelableUpdateView(cts.Token);
+            subPage!.CancelableUpdateView(cts.Token);
             cts = null;
         }
         catch
@@ -605,16 +624,16 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             TimerStarted = true;
             Timer.Start();
         }
-        string startTimeValue = StartTime.Text.Replace('_', '0');
+        string startTimeValue = StartTime.Text!.Replace('_', '0');
         StartRace.IsEnabled = false;
         EllapsedRelativeToBox.IsEnabled = true;
         if (waves.Count > 1)
         {
-            EllapsedRelativeToBox.Visibility = Visibility.Visible;
+            EllapsedRelativeToBox.IsVisible = true;
         }
         else
         {
-            EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
+            EllapsedRelativeToBox.IsVisible = false;
         }
         StartTime.Text = startTimeValue;
         Log.D("UI.MainPages.TimingPage", "Start time is " + startTimeValue);
@@ -631,7 +650,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     {
         Log.D("UI.MainPages.TimingPage", "Opening Set Time Window.");
         timeWindow = new(this, system);
-        timeWindow.ShowDialog();
+        timeWindow.ShowDialog((Window)mWindow);
         timeWindow = null;
     }
 
@@ -639,7 +658,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     {
         Log.D("UI.MainPages.TimingPage", "Opening Rewind Window.");
         rewindWindow = new(system);
-        rewindWindow.ShowDialog();
+        rewindWindow.ShowDialog((Window)mWindow);
         rewindWindow = null;
 
     }
@@ -673,10 +692,10 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     public void RemoveSystem(TimingSystem sys)
     {
         database.RemoveTimingSystem(sys.SystemIdentifier);
-        AReaderBox removed = null;
-        foreach (AReaderBox box in ReadersBox.Items)
+        ReaderPart? removed = null;
+        foreach (ReaderPart? box in ReadersBox.Items)
         {
-            if (box.reader.SystemIdentifier == sys.SystemIdentifier && sys.Saved())
+            if (box!.reader.SystemIdentifier == sys.SystemIdentifier && sys.Saved())
             {
                 removed = box;
                 break;
@@ -708,13 +727,12 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         Log.D("UI.MainPages.TimingPage", "Going back to main display.");
         SetRawReadsFinished();
         subPage = new TimingResultsPage(this, database);
-        TimingFrame.NavigationService.RemoveBackEntry();
         TimingFrame.Content = subPage;
     }
 
     public PeopleType GetPeopleType()
     {
-        switch (((ComboBoxItem)viewOnlyBox.SelectedItem).Content)
+        switch (((ComboBoxItem)viewOnlyBox.SelectedItem!).Content)
         {
             case "Show All":
                 return PeopleType.ALL;
@@ -734,7 +752,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     public SortType GetSortType()
     {
-        switch (((ComboBoxItem)SortBy.SelectedItem).Content)
+        switch (((ComboBoxItem)SortBy.SelectedItem!).Content)
         {
             case "Clock Time":
                 return SortType.GUNTIME;
@@ -754,23 +772,23 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     public string GetSearchValue()
     {
-        return searchBox.Text.Trim();
+        return searchBox.Text!.Trim();
     }
 
     public string GetLocation()
     {
-        ComboBoxItem locItem = (ComboBoxItem)locationBox.SelectedItem;
+        ComboBoxItem locItem = (ComboBoxItem)locationBox.SelectedItem!;
         if (locItem == null)
         {
             return "";
         }
-        return locItem.Content.ToString();
+        return locItem.Content!.ToString()!;
     }
 
     private async void UploadResults()
     {
         // Get API to upload.
-        if (theEvent.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
+        if (theEvent!.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
         {
             return;
         }
@@ -790,7 +808,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (results.Count < 1)
         {
             Log.D("UI.MainPages.TimingPage", "Nothing to upload.");
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current!.Dispatcher.Invoke(new Action(delegate ()
             {
                 ManualAPIButton.Content = "Manual Upload";
             }));
@@ -802,7 +820,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         {
             await APIController.UploadResults(results, api, event_ids, database, null, null, theEvent);
         }
-        Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+        Application.Current!.Dispatcher.Invoke( new Action(delegate ()
         {
             ManualAPIButton.Content = "Manual Upload";
         }));
@@ -828,12 +846,12 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             readerSelectionBox.Items.Add(reader);
         }
         readerSelectionBox.SelectedIndex = 0;
-        readerSelectionBox.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        readerSelectionBox.IsVisible = visible;
     }
 
     public string GetReader()
     {
-        return readerSelectionBox.SelectedItem != null ? readerSelectionBox.SelectedItem.ToString() : "";
+        return readerSelectionBox.SelectedItem != null ? readerSelectionBox.SelectedItem.ToString()! : "";
     }
 
     private void EllapsedRelativeToBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -846,15 +864,15 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void StartTimeKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+    private void StartTimeKeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key == Key.Return)
         {
-            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
             {
                 Log.D("UI.MainPages.TimingPage", "User wants to reset start time value.");
-                theEvent.StartSeconds = 0;
-                theEvent.StartMilliseconds = 0;
+                theEvent!.StartSeconds = 0;
+                theEvent!.StartMilliseconds = 0;
                 if (TimerStarted)
                 {
                     TimerStarted = false;
@@ -865,20 +883,11 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                 EllapsedTime.Text = "00:00:00";
                 StartRace.IsEnabled = true;
                 EllapsedRelativeToBox.IsEnabled = false;
-                EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
+                EllapsedRelativeToBox.IsVisible = false;
                 return;
             }
             Log.D("UI.MainPages.TimingPage", "Start Time Box return key found.");
             UpdateStartTime();
-        }
-    }
-
-    private void StartTimeLostFocus(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        Log.D("UI.MainPages.TimingPage", $"Start Time Box has lost focus. {StartTime.Text}");
-        if (StartTime.Text.Any(char.IsDigit))
-        {
-            StartTimeChanged();
         }
     }
 
@@ -890,11 +899,11 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         EllapsedRelativeToBox.IsEnabled = true;
         if (waves.Count > 1)
         {
-            EllapsedRelativeToBox.Visibility = Visibility.Visible;
+            EllapsedRelativeToBox.IsVisible = true;
         }
         else
         {
-            EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
+            EllapsedRelativeToBox.IsVisible = false;
         }
         foreach (Chronoclock clock in database.GetClocks())
         {
@@ -923,7 +932,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         Log.D("UI.MainPages.TimingPage", "Set Wave Times clicked.");
         WaveWindow waves = new(mWindow, database);
         mWindow.AddWindow(waves);
-        waves.ShowDialog();
+        waves.ShowDialog((Window)mWindow);
     }
 
     private void AlarmButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -931,7 +940,6 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         Log.D("UI.MainPages.TimingPage", "Alarms selected.");
         SetRawReadsFinished();
         subPage = new AlarmsPage(this, database);
-        TimingFrame.NavigationService.RemoveBackEntry();
         TimingFrame.Content = subPage;
     }
 
@@ -942,7 +950,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (manualEntryWindow != null)
         {
             mWindow.AddWindow(manualEntryWindow);
-            manualEntryWindow.ShowDialog();
+            manualEntryWindow.ShowDialog((Window)mWindow);
         }
     }
 
@@ -953,15 +961,15 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (manualEntryWindow != null)
         {
             mWindow.AddWindow(manualEntryWindow);
-            manualEntryWindow.ShowDialog();
+            manualEntryWindow.ShowDialog((Window)mWindow);
         }
     }
 
-    private void LoadLog(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void LoadLog(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Loading from log.");
         OpenFileDialog csv_dialog = new() { Filter = "Log Files (*.csv,*.txt,*.log)|*.csv;*.txt;*.log|All Files|*" };
-        if (csv_dialog.ShowDialog() == true)
+        if (csv_dialog.ShowDialog((Window)mWindow) == true)
         {
             try
             {
@@ -974,13 +982,13 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                 if (logWindow != null)
                 {
                     mWindow.AddWindow(logWindow);
-                    logWindow.ShowDialog();
+                    await logWindow.ShowDialog((Window)mWindow);
                 }
             }
             catch (Exception ex)
             {
                 Log.E("UI.MainPages.TimingPage", "Something went wrong when trying to read the CSV file.");
-                Log.E("UI.MainPages.TimingPage", ex.StackTrace);
+                Log.E("UI.MainPages.TimingPage", ex.StackTrace!);
             }
         }
     }
@@ -994,7 +1002,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             FileName = string.Format("{0} {1} Log.{2}", theEvent.YearCode, theEvent.Name, "csv"),
             InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
         };
-        if (saveFileDialog.ShowDialog() == true)
+        if (saveFileDialog.ShowDialog((Window)mWindow) == true)
         {
             Dictionary<string, List<ChipRead>> locationReadDict = [];
             string[] headers =
@@ -1105,15 +1113,12 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private void SearchBox_TextChanged(object? sender, TextChangedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Searchbox text has changed");
-        if (cts != null)
-        {
-            cts.Cancel();
-            cts = null;
-        }
+        cts?.Cancel();
+        cts = null;
         cts = new();
         try
         {
-            subPage.Search(cts.Token, searchBox.Text.Trim());
+            subPage!.Search(cts.Token, searchBox.Text!.Trim());
             cts = null;
         }
         catch
@@ -1128,7 +1133,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         {
             return;
         }
-        switch (((ComboBoxItem)viewOnlyBox.SelectedItem).Content)
+        switch (((ComboBoxItem)viewOnlyBox.SelectedItem!).Content)
         {
             case "Show Only Unknown":
                 subPage.Show(PeopleType.UNKNOWN);
@@ -1157,7 +1162,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private void ReaderSelectionBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (subPage == null) return;
-        string readerItem = (string)readerSelectionBox.SelectedItem;
+        string readerItem = (string)readerSelectionBox.SelectedItem!;
         if (readerItem == null)
         {
             subPage.Reader("");
@@ -1174,14 +1179,14 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         {
             return;
         }
-        ComboBoxItem locItem = (ComboBoxItem)locationBox.SelectedItem;
+        ComboBoxItem locItem = (ComboBoxItem)locationBox.SelectedItem!;
         if (locItem == null)
         {
             subPage.Location("");
         }
         else
         {
-            subPage.Location(locItem.Content.ToString());
+            subPage.Location(locItem.Content!.ToString()!);
         }
     }
 
@@ -1204,14 +1209,13 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         Log.D("UI.MainPages.TimingPage", "Stats double cliked. Distance is " + selected.DistanceName);
         SetRawReadsFinished();
         subPage = new DistanceStatsPage(this, mWindow, database, selected.DistanceID, selected.DistanceName, condenseSwitch.IsChecked == false);
-        TimingFrame.NavigationService.RemoveBackEntry();
         TimingFrame.Content = subPage;
     }
 
     private async void Recalculate_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Recalculate results clicked.");
-        if ((string)recalculateButton.Content == "Working..." || alreadyRecalculating)
+        if ((string)recalculateButton.Content! == "Working..." || alreadyRecalculating)
         {
             return;
         }
@@ -1240,7 +1244,8 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             });
             if (!canRecalculate)
             {
-                await Task.Run(() => {
+                await Task.Run(() =>
+                {
                     int counter = 0;
                     while (!APIController.SetUploadableTrue(uploadTimer))
                     {
@@ -1263,15 +1268,15 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             alreadyRecalculating = false;
             return;
         }
-        APIObject api = null;
+        APIObject? api = null;
         try
         {
-            api = database.GetAPI(theEvent.API_ID);
+            api = database.GetAPI(theEvent!.API_ID);
             Log.D("UI.MainPages.TimingPage", "API found.");
         }
         catch { }
         // Get the event id values. Exit if not valid.
-        string[] event_ids = theEvent.API_Event_ID.Split(',');
+        string[] event_ids = theEvent!.API_Event_ID.Split(',');
         Log.D("UI.MainPages.TimingPage", "Event Id's found: " + event_ids.Length + " API is null? " + (api == null).ToString());
         if (event_ids.Length == 2 && api != null)
         {
@@ -1303,7 +1308,8 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         // the auto uploader to start uploading any more results so we don't upload
         // old results over our brand new results.
         database.ResetTimingResultsEvent(theEvent.Identifier);
-        await Task.Run(() => {
+        await Task.Run(() =>
+        {
             int counter = 0;
             while (!APIController.SetUploadableTrue(uploadTimer))
             {
@@ -1324,7 +1330,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private void AutoAPI_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Auto API clicked.");
-        if ((string)AutoAPIButton.Content == "Auto Upload")
+        if ((string)AutoAPIButton.Content! == "Auto Upload")
         {
             AutoAPIButton.Content = "Starting...";
             mWindow.StartAPIController();
@@ -1336,10 +1342,10 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void ManualAPI_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void ManualAPI_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Manual API clicked.");
-        if (ManualAPIButton.Content.ToString() != "Uploading")
+        if (ManualAPIButton.Content!.ToString() != "Uploading")
         {
             Log.D("UI.MainPages.TimingPage", "Uploading data.");
             ManualAPIButton.Content = "Uploading";
@@ -1355,7 +1361,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private async void SendEmailsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Send Emails button clicked.");
-        if ((string)sendEmailsButton.Content != "Send Emails")
+        if ((string)sendEmailsButton.Content! != "Send Emails")
         {
             return;
         }
@@ -1363,7 +1369,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         await Task.Run(() =>
         {
             HashSet<int> sentIDs = [];
-            List<int> idents = database.GetEmailAlerts(theEvent.Identifier);
+            List<int> idents = database.GetEmailAlerts(theEvent!.Identifier);
             if (idents == null)
             {
                 return;
@@ -1445,7 +1451,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private void DnsMode_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         bool worked;
-        if (dnsMode.Content.Equals("Start DNS Mode"))
+        if (dnsMode.Content!.Equals("Start DNS Mode"))
         {
             Log.D("UI.MainPages.TimingPage", "Starting DNS Mode.");
             worked = mWindow.StartDidNotStartMode();
@@ -1465,11 +1471,10 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private void RawReads_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Raw Reads selected.");
-        if (RawButton.Content.ToString().Equals("Raw Data", StringComparison.OrdinalIgnoreCase))
+        if (RawButton.Content!.ToString()!.Equals("Raw Data", StringComparison.OrdinalIgnoreCase))
         {
             RawButton.Content = "Refresh Data";
-            subPage = new TimingRawReadsPage(this, database);
-            TimingFrame.NavigationService.RemoveBackEntry();
+            subPage = new TimingRawReadsPage(this, database, mWindow);
             TimingFrame.Content = subPage;
         }
         else if (subPage is TimingRawReadsPage rawReadsPage)
@@ -1485,30 +1490,30 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     private void HTMLServerButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (HttpServerButton.Content.ToString().Equals("Start Web", StringComparison.OrdinalIgnoreCase))
+        if (HttpServerButton.Content!.ToString()!.Equals("Start Web", StringComparison.OrdinalIgnoreCase))
         {
             try
             {
                 mWindow.StartHttpServer();
                 HttpServerButton.Content = "Stop Web";
-                IPContainer.Visibility = Visibility.Visible;
-                PortContainer.Visibility = Visibility.Visible;
+                IPContainer.IsVisible = true;
+                PortContainer.IsVisible = true;
             }
             catch
             {
                 mWindow.StopHttpServer();
                 HttpServerButton.Content = "Start Web";
                 DialogBox.Show("Unable to start the web server. Please type this command in an elevated command prompt:", "netsh http add urlacl url=http://*:6933/ user=everyone");
-                IPContainer.Visibility = Visibility.Collapsed;
-                PortContainer.Visibility = Visibility.Collapsed;
+                IPContainer.IsVisible = false;
+                PortContainer.IsVisible = false;
             }
         }
         else
         {
             mWindow.StopHttpServer();
             HttpServerButton.Content = "Start Web";
-            IPContainer.Visibility = Visibility.Collapsed;
-            PortContainer.Visibility = Visibility.Collapsed;
+            IPContainer.IsVisible = false;
+            PortContainer.IsVisible = false;
         }
     }
 
@@ -1517,7 +1522,6 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         Log.D("UI.MainPages.TimingPage", "Print clicked.");
         SetRawReadsFinished();
         subPage = new PrintPage(this, database);
-        TimingFrame.NavigationService.RemoveBackEntry();
         TimingFrame.Content = subPage;
     }
 
@@ -1526,7 +1530,6 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         Log.D("UI.MainPages.TimingPage", "Awards clicked.");
         SetRawReadsFinished();
         subPage = new AwardPage(this, database);
-        TimingFrame.NavigationService.RemoveBackEntry();
         TimingFrame.Content = subPage;
     }
 
@@ -1539,7 +1542,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             FileName = string.Format("{0} {1} Web.{2}", theEvent.YearCode, theEvent.Name, "html"),
             InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
         };
-        if (saveFileDialog.ShowDialog() == true)
+        if (saveFileDialog.ShowDialog((Window)mWindow) == true)
         {
             List<TimeResult> finishResults = database.GetFinishTimes(theEvent.Identifier);
             Dictionary<int, Participant> partDict = database.GetParticipants(theEvent.Identifier).ToDictionary(v => v.EventSpecific.Identifier, v => v);
@@ -1556,14 +1559,14 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (!exportResults.SetupError())
         {
             mWindow.AddWindow(exportResults);
-            exportResults.ShowDialog();
+            exportResults.ShowDialog((Window)mWindow);
         }
     }
 
     private void Export_BAA_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Export BAA Clicked.");
-        if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
+        if (theEvent!.EventType == Constants.Timing.EVENT_TYPE_TIME)
         {
             DialogBox.Show("Exporting time based events not supported.");
             return;
@@ -1572,7 +1575,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (!exportBAA.SetupError())
         {
             mWindow.AddWindow(exportBAA);
-            exportBAA.ShowDialog();
+            exportBAA.ShowDialog((Window)mWindow);
         }
     }
 
@@ -1583,14 +1586,14 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (!exportAbbott.SetupError())
         {
             mWindow.AddWindow(exportAbbott);
-            exportAbbott.ShowDialog();
+            exportAbbott.ShowDialog((Window)mWindow);
         }
     }
 
     private void Export_US_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Export Ultrasignup Clicked.");
-        if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
+        if (theEvent!.EventType == Constants.Timing.EVENT_TYPE_TIME)
         {
             DialogBox.Show("Exporting time based events not supported.");
             return;
@@ -1599,14 +1602,14 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (!exportUS.SetupError())
         {
             mWindow.AddWindow(exportUS);
-            exportUS.ShowDialog();
+            exportUS.ShowDialog((Window)mWindow);
         }
     }
 
     private void Export_Runsignup_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Export Runsignup Clicked.");
-        if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
+        if (theEvent!.EventType == Constants.Timing.EVENT_TYPE_TIME)
         {
             DialogBox.Show("Exporting time based events not supported.");
             return;
@@ -1615,7 +1618,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (!exportRunsignup.SetupError())
         {
             mWindow.AddWindow(exportRunsignup);
-            exportRunsignup.ShowDialog();
+            exportRunsignup.ShowDialog((Window)mWindow);
         }
     }
 
@@ -1625,11 +1628,11 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         {
             if (readerExpander.IsExpanded == true && remote_api)
             {
-                remoteReadersButton.Visibility = Visibility.Visible;
+                remoteReadersButton.IsVisible = true;
             }
             else
             {
-                remoteReadersButton.Visibility = Visibility.Collapsed;
+                remoteReadersButton.IsVisible = false;
             }
         }
     }
@@ -1661,19 +1664,22 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         notificationWindow.Show();
     }
 
-    private void CondenseSwitch_Checked(object sender, RoutedEventArgs e)
+    private void StartTime_LostFocus(object? sender, Avalonia.Input.FocusChangedEventArgs e)
     {
-        List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier, condenseSwitch.IsChecked == false);
+        Log.D("UI.MainPages.TimingPage", $"Start Time Box has lost focus. {StartTime.Text}");
+        if (StartTime.Text!.Any(char.IsDigit))
+        {
+            StartTimeChanged();
+        }
+    }
+
+    private void CondenseSwitch_Checked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        List<DistanceStat> inStats = database.GetDistanceStats(theEvent!.Identifier, condenseSwitch.IsChecked == false);
         stats.Clear();
         foreach (DistanceStat s in inStats)
         {
             stats.Add(s);
         }
-    }
-
-    public class TimeRelativeWave
-    {
-        public string Name { get; set; }
-        public int Wave { get; set; }
     }
 }

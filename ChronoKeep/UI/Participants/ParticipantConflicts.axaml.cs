@@ -1,4 +1,7 @@
+using Avalonia.Controls;
 using Chronokeep.Interfaces.UI;
+using Chronokeep.Objects;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.Participants;
 
@@ -12,7 +15,6 @@ public partial class ParticipantConflicts : Window
         this.window = window;
 
         ParticipantsList.ItemsSource = participants;
-        ParticipantsList.Items.Refresh();
     }
 
     public static ParticipantConflicts NewWindow(IMainWindow window, List<Participant> participants)
@@ -23,10 +25,5 @@ public partial class ParticipantConflicts : Window
     private void Window_Closing(object? sender, WindowClosingEventArgs e)
     {
         window?.WindowFinalize(this);
-    }
-
-    private void ParticipantsList_ScrollChanged(object? sender, ScrollChangedEventArgs e)
-    {
-        labelsViewer.ScrollToHorizontalOffset(e.HorizontalOffset);
     }
 }

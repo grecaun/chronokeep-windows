@@ -1,9 +1,12 @@
-using Chronokeep;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Database.SQLite;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
+using Chronokeep.UI.Parts;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -31,14 +34,14 @@ public partial class LocationsPage : UserControl, IMainPage
             return;
         }
         LocationsBox.Items.Clear();
-        LocationsBox.Items.Add(new ALocation(this, new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", theEvent.StartMaxOccurrences, theEvent.StartWindow), theEvent));
-        LocationsBox.Items.Add(new ALocation(this, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin), theEvent));
+        LocationsBox.Items.Add(new LocationPart(this, new(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", theEvent.StartMaxOccurrences, theEvent.StartWindow), theEvent));
+        LocationsBox.Items.Add(new LocationPart(this, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin), theEvent));
         List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
         LocationCount = 1;
         locations.Sort();
         foreach (TimingLocation loc in locations)
         {
-            LocationsBox.Items.Add(new ALocation(this, loc, theEvent));
+            LocationsBox.Items.Add(new LocationPart(this, loc, theEvent));
             LocationCount = loc.Identifier > LocationCount - 1 ? loc.Identifier + 1 : LocationCount;
         }
     }
@@ -64,9 +67,9 @@ public partial class LocationsPage : UserControl, IMainPage
 
     public void UpdateDatabase()
     {
-        foreach (ALocation locItem in LocationsBox.Items)
+        foreach (LocationPart? locItem in LocationsBox.Items)
         {
-            locItem.UpdateLocation();
+            locItem!.UpdateLocation();
             if (locItem.myLocation.Identifier == Constants.Timing.LOCATION_FINISH)
             {
                 if (theEvent.FinishMaxOccurrences != locItem.myLocation.MaxOccurrences
@@ -136,7 +139,7 @@ public partial class LocationsPage : UserControl, IMainPage
         }
     }
 
-    private void Add_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Add_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.LocationsPage", "Add Location clicked.");
         if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
@@ -148,12 +151,12 @@ public partial class LocationsPage : UserControl, IMainPage
         UpdateView();
     }
 
-    private void Update_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Update_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.LocationsPage", "Update all clicked.");
         UpdateDatabase();
         UpdateView();
     }
 
-    private void ResetBtn_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e) {}
+    private void ResetBtn_Click(object? sender, RoutedEventArgs e) {}
 }

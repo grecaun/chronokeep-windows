@@ -1,6 +1,4 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.IO;
@@ -9,6 +7,10 @@ using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.IO;
 using Chronokeep.UI.Parts;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace Chronokeep.UI.Export;
 
@@ -93,7 +95,7 @@ public partial class ExportResults : Window
         }
         foreach (string name in commonHeaders)
         {
-            headersList.Items.Add(new AHeaderBox(name));
+            headersList.Items.Add(new Parts.HeaderPart(name));
         }
     }
 
@@ -112,9 +114,9 @@ public partial class ExportResults : Window
         Log.D("UI.Export.ExportResults", "Done clicked.");
         List<string> headersToOutput = [];
         Dictionary<string, int> headerIndex = [];
-        foreach (AHeaderBox headerBox in headersList.Items)
+        foreach (Parts.HeaderPart? headerBox in headersList.Items)
         {
-            if (headerBox.Include.IsChecked == true)
+            if (headerBox!.Include.IsChecked == true)
             {
                 headersToOutput.Add(headerBox.NameValue);
             }
@@ -140,7 +142,7 @@ public partial class ExportResults : Window
             int maxLaps = 0;
             foreach (TimeResult result in results)
             {
-                if (!resultDictionary.TryGetValue(result.Bib, out List<TimeResult> value))
+                if (!resultDictionary.TryGetValue(result.Bib, out List<TimeResult>? value))
                 {
                     value = [];
                     resultDictionary[result.Bib] = value;
@@ -163,7 +165,7 @@ public partial class ExportResults : Window
             Dictionary<int, List<Segment>> distanceSegmentDict = [];
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
-                if (!distanceSegmentDict.TryGetValue(seg.DistanceId, out List<Segment> value))
+                if (!distanceSegmentDict.TryGetValue(seg.DistanceId, out List<Segment>? value))
                 {
                     value = [];
                     distanceSegmentDict[seg.DistanceId] = value;
@@ -290,7 +292,7 @@ public partial class ExportResults : Window
                 }
                 if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                 {
-                    if (resultDictionary.TryGetValue(participant.EventSpecific.Bib, out List<TimeResult> oResList))
+                    if (resultDictionary.TryGetValue(participant.EventSpecific.Bib, out List<TimeResult>? oResList))
                     {
                         int segmentNum = 1;
                         foreach (TimeResult result in oResList)
@@ -353,14 +355,14 @@ public partial class ExportResults : Window
                 else // Time Based
                 {
                     int finalLap = -1;
-                    if (headerIndex.TryGetValue("Start", out int startIx) && occurrenceResultDictionary.TryGetValue((participant.EventSpecific.Bib, 0), out TimeResult startRes))
+                    if (headerIndex.TryGetValue("Start", out int startIx) && occurrenceResultDictionary.TryGetValue((participant.EventSpecific.Bib, 0), out TimeResult? startRes))
                     {
                         line[startIx] = startRes.Time;
                     }
                     for (int i = 1; i <= maxLaps; i++)
                     {
                         string key = string.Format("Lap {0}", i);
-                        if (occurrenceResultDictionary.TryGetValue((participant.EventSpecific.Bib, i), out TimeResult occRes))
+                        if (occurrenceResultDictionary.TryGetValue((participant.EventSpecific.Bib, i), out TimeResult? occRes))
                         {
                             finalLap = i;
                             if (headerIndex.TryGetValue(key, out int occIx))
@@ -369,7 +371,7 @@ public partial class ExportResults : Window
                             }
                         }
                     }
-                    if (occurrenceResultDictionary.TryGetValue((participant.EventSpecific.Bib, finalLap), out TimeResult finalLapRes))
+                    if (occurrenceResultDictionary.TryGetValue((participant.EventSpecific.Bib, finalLap), out TimeResult? finalLapRes))
                     {
                         if (headerIndex.TryGetValue("Place", out int placeIx))
                         {
@@ -411,7 +413,7 @@ public partial class ExportResults : Window
                     }
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                     {
-                        if (resultDictionary.TryGetValue(bib, out List<TimeResult> resList))
+                        if (resultDictionary.TryGetValue(bib, out List<TimeResult>? resList))
                         {
                             int segmentNum = 1;
                             foreach (TimeResult result in resList)
@@ -470,14 +472,14 @@ public partial class ExportResults : Window
                     else // Time Based
                     {
                         int finalLap = -1;
-                        if (headerIndex.TryGetValue("Start", out int startIx) && occurrenceResultDictionary.TryGetValue((bib, 0), out TimeResult startRes))
+                        if (headerIndex.TryGetValue("Start", out int startIx) && occurrenceResultDictionary.TryGetValue((bib, 0), out TimeResult? startRes))
                         {
                             line[startIx] = startRes.Time;
                         }
                         for (int i = 1; i <= maxLaps; i++)
                         {
                             string key = string.Format("Lap {0}", i);
-                            if (occurrenceResultDictionary.TryGetValue((bib, i), out TimeResult lapRes))
+                            if (occurrenceResultDictionary.TryGetValue((bib, i), out TimeResult? lapRes))
                             {
                                 finalLap = i;
                                 if (headerIndex.TryGetValue(key, out int lapTimeIx))
@@ -486,7 +488,7 @@ public partial class ExportResults : Window
                                 }
                             }
                         }
-                        if (occurrenceResultDictionary.TryGetValue((bib, finalLap), out TimeResult finRes))
+                        if (occurrenceResultDictionary.TryGetValue((bib, finalLap), out TimeResult? finRes))
                         {
                             if (headerIndex.TryGetValue("Place", out int plIx))
                             {

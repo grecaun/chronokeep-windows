@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.ChipAssignment.ChipTool"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         SizeToContent="Height"
         Title="Chip Tool">
@@ -60,8 +59,8 @@
                        Margin="10,0,0,0"
                        Text="End Tag #"/>
         </Grid>
-        <Grid x:Name="itemsWindow" Grid.Row="2">
-            <ListBox x:Name="correlationBox" KeyboardNavigation.TabNavigation="Continue">
+        <Grid Name="itemsWindow" Grid.Row="2">
+            <ListBox Name="correlationBox" KeyboardNavigation.TabNavigation="Continue">
             </ListBox>
         </Grid>
     </Grid>

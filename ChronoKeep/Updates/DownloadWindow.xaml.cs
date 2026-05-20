@@ -1,6 +1,5 @@
 ﻿using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
-using Chronokeep.UI.UIObjects;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -8,7 +7,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using Wpf.Ui.Controls;
 
 namespace Chronokeep.Updates

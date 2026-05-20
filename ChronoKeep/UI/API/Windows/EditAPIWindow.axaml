@@ -6,9 +6,8 @@
         x:Class="Chronokeep.UI.API.Windows.EditAPIWindow"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         SizeToContent="Height"
         Title="Edit Linked Event">
-    <UserControl x:Name="EditAPIFrame" IsTabStop="False"/>
+    <UserControl Name="EditAPIFrame" IsTabStop="False"/>
 </Window>
