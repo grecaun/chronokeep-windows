@@ -8,7 +8,7 @@ namespace Chronokeep.Objects
         private int common_age_groups = 1, common_start_finish = 1, distance_specific_segments = 0, rank_by_gun = 1;
         private int finish_max_occurrences = 1, finish_ignore_within = 0, start_window = -1, start_max_occurrences = 1;
         private int event_type = Constants.Timing.EVENT_TYPE_DISTANCE;
-        private string name, date, yearcode = "";
+        private string name = "", date = "", yearcode = "";
         private long start_seconds = -1;
         private int start_milliseconds;
         private int api_id = Constants.APIConstants.NULL_ID;
@@ -143,7 +143,7 @@ namespace Chronokeep.Objects
             }
         }
 
-        public int CompareTo(Event other)
+        public int CompareTo(Event? other)
         {
             if (other == null) return 1;
             DateTime thisDate = DateTime.Parse(Date);
@@ -151,7 +151,7 @@ namespace Chronokeep.Objects
             return thisDate.CompareTo(otherDate) * -1;
         }
 
-        public bool Equals(Event other)
+        public bool Equals(Event? other)
         {
             if (other == null) return false;
             return Date == other.Date && name == other.name || Identifier == other.Identifier;

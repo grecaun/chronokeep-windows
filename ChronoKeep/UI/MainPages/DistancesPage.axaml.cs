@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace Chronokeep.UI.MainPages;
 
-public partial class DistancesPage : UserControl
+public partial class DistancesPage : UserControl, IMainPage
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;

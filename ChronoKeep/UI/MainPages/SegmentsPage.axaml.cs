@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Chronokeep.UI.MainPages;
 
-public partial class SegmentsPage : UserControl
+public partial class SegmentsPage : UserControl, IMainPage
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;

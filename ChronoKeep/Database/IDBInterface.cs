@@ -13,7 +13,7 @@ namespace Chronokeep.Database
         void HardResetDatabase();
 
         // Settings functions
-        AppSetting GetAppSetting(string name);
+        AppSetting? GetAppSetting(string name);
         void SetAppSetting(string name, string value);
         void SetAppSetting(AppSetting setting);
 
@@ -21,7 +21,7 @@ namespace Chronokeep.Database
         int AddAPI(APIObject anAPI);
         void UpdateAPI(APIObject anAPI);
         void RemoveAPI(int identifier);
-        APIObject GetAPI(int identifier);
+        APIObject? GetAPI(int identifier);
         List<APIObject> GetAllAPI();
 
         // Event Functions
@@ -33,9 +33,9 @@ namespace Chronokeep.Database
         void SetStartOptions(Event anEvent);
         void SetFinishOptions(Event anEvent);
         void SetStartFinishOptions(Event anEvent);
-        Event GetCurrentEvent();
+        Event? GetCurrentEvent();
         void SetCurrentEvent(int eventID);
-        Event GetEvent(int id);
+        Event? GetEvent(int id);
         List<Event> GetEvents();
         void UpdateDivisionsEnabled();
         void UpdateStart();
@@ -48,7 +48,7 @@ namespace Chronokeep.Database
         void UpdateDistance(Distance div);
         int GetDistanceID(Distance div);
         List<Distance> GetDistances(int eventId);
-        Distance GetDistance(int divId);
+        Distance? GetDistance(int divId);
         void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds);
 
         // Timing Location Functions
@@ -74,7 +74,7 @@ namespace Chronokeep.Database
         int GetMaxSegments(int eventId);
 
         // Participant Functions
-        Participant AddParticipant(Participant person);
+        Participant? AddParticipant(Participant person);
         List<Participant> AddParticipants(List<Participant> people);
         void RemoveParticipant(int identifier);
         void RemoveParticipantEntry(Participant person);
@@ -85,11 +85,11 @@ namespace Chronokeep.Database
         List<Participant> GetParticipants();
         List<Participant> GetParticipants(int eventId);
         List<Participant> GetParticipants(int eventId, int distanceId);
-        Participant GetParticipant(int eventIdentifier, int identifier);
-        Participant GetParticipant(int eventIdentifier, Participant unknown);
-        Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId);
-        Participant GetParticipantBib(int eventIdentifier, string bib);
-        Participant GetParticipantChip(int eventIdentifier, string chip);
+        Participant? GetParticipant(int eventIdentifier, int identifier);
+        Participant? GetParticipant(int eventIdentifier, Participant unknown);
+        Participant? GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId);
+        Participant? GetParticipantBib(int eventIdentifier, string bib);
+        Participant? GetParticipantChip(int eventIdentifier, string chip);
         List<string> GetDivisions(int eventIdentifier);
 
         // Bib Chip Association Functions

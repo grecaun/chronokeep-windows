@@ -166,7 +166,7 @@ namespace Chronokeep.MemStore
                 {
                     try
                     {
-                        if (timingSystems.TryGetValue(system.IPAddress.Trim(), out TimingSystem oldSystem))
+                        if (timingSystems.TryGetValue(system.IPAddress.Trim(), out TimingSystem? oldSystem))
                         {
                             oldSystem.CopyFrom(system);
                         }

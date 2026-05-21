@@ -6,12 +6,12 @@ namespace Chronokeep.Objects
 {
     public class Participant : IEquatable<Participant>, IComparable<Participant>
     {
-        private static string CurrentEventDate;
+        private static string CurrentEventDate = "";
 
         private int identifier = Constants.Timing.PARTICIPANT_DUMMYIDENTIFIER;
-        private string firstName, lastName, street, city, state, zip, email, phone,
-            mobile, parent, country, street2, gender, birthdate, emergencyName,
-            emergencyPhone;
+        private string firstName = "", lastName = "", street = "", city = "", state = "", zip = "", email = "", phone = "",
+            mobile = "", parent = "", country = "", street2 = "", gender = "", birthdate = "", emergencyName = "",
+            emergencyPhone = "";
         private readonly EventSpecific eventSpecific;
 
         public Participant()
@@ -56,7 +56,7 @@ namespace Chronokeep.Objects
 
         public Participant(
             int id, string first, string last, string street, string city, string state, string zip,
-            string birthday, EventSpecific epi, string email, string phone,
+            string birthday, EventSpecific? epi, string email, string phone,
             string mobile, string parent, string country, string street2, string gender,
             string ecName, string ecPhone
             )
@@ -447,11 +447,11 @@ namespace Chronokeep.Objects
                 tmpPhone = phone.Replace("-", "").Replace("+", "").Replace("(", "").Replace(")", "").Replace(" ", "").Replace(",", "").Replace(".", "").Trim();
                 if (tmpPhone.Length == 10)
                 {
-                    phone = tmpPhone.Substring(0, 3) + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
+                    phone = tmpPhone[..3] + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
                 }
                 else if (tmpPhone.Length == 11)
                 {
-                    phone = tmpPhone.Substring(0, 1) + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
+                    phone = tmpPhone[..1] + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
                 }
             }
             if (mobile != null && mobile.Length > 0)
@@ -459,11 +459,11 @@ namespace Chronokeep.Objects
                 tmpPhone = mobile.Replace("-", "").Replace("+", "").Replace("(", "").Replace(")", "").Replace(" ", "").Replace(",", "").Replace(".", "").Trim();
                 if (tmpPhone.Length == 10)
                 {
-                    mobile = tmpPhone.Substring(0, 3) + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
+                    mobile = tmpPhone[..3] + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
                 }
                 else if (tmpPhone.Length == 11)
                 {
-                    mobile = tmpPhone.Substring(0, 1) + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
+                    mobile = tmpPhone[..1] + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
                 }
             }
             if (emergencyPhone != null && emergencyPhone.Length > 0)
@@ -471,11 +471,11 @@ namespace Chronokeep.Objects
                 tmpPhone = emergencyPhone.Replace("-", "").Replace("+", "").Replace("(", "").Replace(")", "").Replace(" ", "").Replace(",", "").Replace(".", "").Trim();
                 if (tmpPhone.Length == 10)
                 {
-                    emergencyPhone = tmpPhone.Substring(0, 3) + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
+                    emergencyPhone = tmpPhone[..3] + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
                 }
                 else if (tmpPhone.Length == 11)
                 {
-                    emergencyPhone = tmpPhone.Substring(0, 1) + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
+                    emergencyPhone = tmpPhone[..1] + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
                 }
             }
             if (gender != null && gender.Length > 0)
@@ -513,12 +513,9 @@ namespace Chronokeep.Objects
             birthdate = birthDateTime.ToShortDateString();
         }
 
-        internal bool AllCaps(string val)
-        {
-            return val.Equals(val.ToUpper());
-        }
+        internal static bool AllCaps(string val) => val.Equals(val.ToUpper());
 
-        internal string CapitalizeFirst(string val)
+        internal static string CapitalizeFirst(string val)
         {
             string outval = val;
             if (AllCaps(val))
@@ -533,13 +530,13 @@ namespace Chronokeep.Objects
             {
                 return outval.ToUpper();
             }
-            return outval.Substring(0, 1).ToUpper() + outval.Substring(1, outval.Length - 1);
+            return string.Concat(outval[..1].ToUpper(), outval.AsSpan(1, outval.Length - 1));
         }
 
-        internal string CapitalizeFirstAll(string val)
+        internal static string CapitalizeFirstAll(string val)
         {
             string[] tmp = val.Split(' ');
-            StringBuilder output = new StringBuilder();
+            StringBuilder output = new();
             foreach (string s in tmp)
             {
                 output.Append(CapitalizeFirst(s.Trim()) + " ");
@@ -579,7 +576,7 @@ namespace Chronokeep.Objects
         public bool Anonymous { get => eventSpecific.Anonymous; }
         public string Division { get => eventSpecific.Division; }
 
-        public int CompareTo(Participant other)
+        public int CompareTo(Participant? other)
         {
             if (other == null) return 1;
             if (EventSpecific.DistanceIdentifier == other.EventSpecific.DistanceIdentifier)
@@ -593,7 +590,7 @@ namespace Chronokeep.Objects
             return EventSpecific.DistanceName.CompareTo(other.EventSpecific.DistanceName);
         }
 
-        public bool Equals(Participant other)
+        public bool Equals(Participant? other)
         {
             if (other == null) return false;
             return Identifier == other.Identifier
@@ -606,7 +603,7 @@ namespace Chronokeep.Objects
                 && Birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase);
         }
 
-        public bool Is(Participant other)
+        public bool Is(Participant? other)
         {
             if (other == null) return false;
             return FirstName.Equals(other.FirstName, StringComparison.OrdinalIgnoreCase)
@@ -616,7 +613,7 @@ namespace Chronokeep.Objects
                 && Birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase);
         }
 
-        public bool Matches(Participant other)
+        public bool Matches(Participant? other)
         {
             if (other == null) return false;
             return Identifier == other.Identifier
@@ -668,13 +665,13 @@ namespace Chronokeep.Objects
             return numYears;
         }
 
-        public static int CompareByDistance(Participant one, Participant two)
+        public static int CompareByDistance(Participant? one, Participant? two)
         {
             if (two == null || one == null) return 1;
             return one.CompareTo(two);
         }
 
-        public static int CompareByBib(Participant one, Participant two)
+        public static int CompareByBib(Participant? one, Participant? two)
         {
             if (two == null || one == null) return 1;
             if (int.TryParse(one.Bib, out int bibOne) && int.TryParse(two.Bib, out int bibTwo))
@@ -684,7 +681,7 @@ namespace Chronokeep.Objects
             return one.Bib.CompareTo(two.Bib);
         }
 
-        public static int CompareByName(Participant one, Participant two)
+        public static int CompareByName(Participant? one, Participant? two)
         {
             if (two == null || one == null) return 1;
             if (one.LastName == two.LastName)

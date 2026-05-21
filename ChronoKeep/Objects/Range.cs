@@ -18,13 +18,15 @@ namespace Chronokeep.Objects
             return -1;
         }
 
-        public int CompareTo(Range other)
+        public int CompareTo(Range? other)
         {
+            if (other == null) return -1;
             return StartBib.CompareTo(other.StartBib);
         }
 
-        public bool Equals(Range other)
+        public bool Equals(Range? other)
         {
+            if (other == null) return false;
             return StartBib.Equals(other.StartBib) && EndBib.Equals(other.EndBib) && StartChip.Equals(other.StartChip) && EndChip.Equals(other.EndChip);
         }
 

@@ -109,7 +109,7 @@ public partial class ManualEntryWindow : Window
         }
     }
 
-    public static ManualEntryWindow NewWindow(IMainWindow window, IDBInterface database, List<TimingLocation> locations = null)
+    public static ManualEntryWindow NewWindow(IMainWindow window, IDBInterface database, List<TimingLocation>? locations = null)
     {
         if (locations == null)
         {
@@ -131,7 +131,7 @@ public partial class ManualEntryWindow : Window
         int locationId = Constants.Timing.LOCATION_FINISH;
         DateTime time;
         long hours, minutes, seconds, milliseconds;
-        hours = Convert.ToInt32(timeVal.Substring(0, 2));
+        hours = Convert.ToInt32(timeVal[..2]);
         minutes = Convert.ToInt32(timeVal.Substring(3, 2));
         seconds = Convert.ToInt32(timeVal.Substring(6, 2));
         milliseconds = Convert.ToInt32(timeVal.Substring(9, 3));
@@ -143,7 +143,7 @@ public partial class ManualEntryWindow : Window
         {
             if (NetTimeButton.IsChecked == true)
             {
-                List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+                List<Participant> participants = database.GetParticipants(theEvent!.Identifier);
                 List<Distance> distances = database.GetDistances(theEvent.Identifier);
                 // Store the offset start values for each distance by distance ID
                 Dictionary<int, (int seconds, int milliseconds)> distanceStartOffsetDictionary = [];
@@ -159,7 +159,7 @@ public partial class ManualEntryWindow : Window
                 }
                 (int seconds, int milliseconds) startOffset = (0, 0);
                 // Check if the bib corresponds to a person, then if that person has a valid distance ID
-                if (participantsDictionary.TryGetValue(bib, out Participant oPart) && distanceStartOffsetDictionary.TryGetValue(oPart.EventSpecific.DistanceIdentifier, out (int seconds, int milliseconds) oStart))
+                if (participantsDictionary.TryGetValue(bib, out Participant? oPart) && distanceStartOffsetDictionary.TryGetValue(oPart.EventSpecific.DistanceIdentifier, out (int seconds, int milliseconds) oStart))
                 {
                     startOffset = oStart;
                 }
@@ -169,7 +169,7 @@ public partial class ManualEntryWindow : Window
             }
             else if (ClockTimeButton.IsChecked == true)
             {
-                time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
+                time = DateTime.Parse(theEvent!.Date + " 00:00:00.000");
                 milliseconds += theEvent.StartMilliseconds;
                 seconds += (minutes * 60) + (hours * 3600) + theEvent.StartSeconds;
             }
@@ -195,7 +195,7 @@ public partial class ManualEntryWindow : Window
     private void AddEntry()
     {
         Log.D("UI.Timing.ManualEntryWindow", "Manual entry detected.");
-        string bib = "-1";
+        string bib;
         try
         {
             bib = BibBox.Text!;
@@ -209,7 +209,7 @@ public partial class ManualEntryWindow : Window
         int locationId = Convert.ToInt32(((ComboBoxItem)LocationBox.SelectedItem!).Tag);
         DateTime time;
         long hours, minutes, seconds, milliseconds;
-        hours = Convert.ToInt32(timeVal.Substring(0, 2));
+        hours = Convert.ToInt32(timeVal[..2]);
         minutes = Convert.ToInt32(timeVal.Substring(3, 2));
         seconds = Convert.ToInt32(timeVal.Substring(6, 2));
         milliseconds = Convert.ToInt32(timeVal.Substring(9, 3));
@@ -236,7 +236,7 @@ public partial class ManualEntryWindow : Window
             }
             (int seconds, int milliseconds) startOffset = (0, 0);
             // Check if the bib corresponds to a person, then if that person has a valid distance ID
-            if (participantsDictionary.TryGetValue(bib, out Participant oPart) && distanceStartOffsetDictionary.TryGetValue(oPart.EventSpecific.DistanceIdentifier, out (int seconds, int milliseconds) oStart))
+            if (participantsDictionary.TryGetValue(bib, out Participant? oPart) && distanceStartOffsetDictionary.TryGetValue(oPart.EventSpecific.DistanceIdentifier, out (int seconds, int milliseconds) oStart))
             {
                 startOffset = oStart;
             }
@@ -307,6 +307,6 @@ public partial class ManualEntryWindow : Window
 
     private void Done_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        this.Close();
+        Close();
     }
 }

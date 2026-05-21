@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Avalonia.Platform.Storage;
+using Microsoft.Win32;
 using System;
 
 namespace Chronokeep.Helpers
@@ -33,5 +34,10 @@ namespace Chronokeep.Helpers
         }
 
         public enum FileType { CSV, EXCEL }
+
+        public static FilePickerFileType ExcelType { get; } = new("Excel File")
+        {
+            Patterns = ["*.xlsx", "*.xls", "*.csv"],
+        };
     }
 }

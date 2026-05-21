@@ -4,6 +4,7 @@ using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.API.Windows;
 
@@ -11,11 +12,11 @@ public partial class APIWindow : Window
 {
     private readonly IMainWindow window;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
 
     // Variables relating to information we're collecting.
-    private APIObject api;
-    private string slug, year;
+    private APIObject? api;
+    private string slug = "", year = "";
 
     public APIWindow(IMainWindow window, IDBInterface database)
     {
@@ -48,21 +49,21 @@ public partial class APIWindow : Window
     {
         this.api = api;
         database.SetAppSetting(Constants.Settings.LAST_USED_API_ID, api.Identifier.ToString());
-        APIFrame.Content = new APIPage2(this, database, api, theEvent);
+        APIFrame.Content = new APIPage2(this, database, api, theEvent!);
     }
 
     public void GotoPage3(string slug)
     {
         this.slug = slug;
-        APIFrame.Content = new APIPage3(this, api, theEvent, slug);
+        APIFrame.Content = new APIPage3(this, api!, theEvent!, slug);
     }
 
     public void Finish(string year)
     {
         this.year = year;
-        if (api.Identifier > 0 && this.slug != "" && this.year != "")
+        if (api!.Identifier > 0 && this.slug != "" && this.year != "")
         {
-            theEvent.API_ID = api.Identifier;
+            theEvent!.API_ID = api.Identifier;
             theEvent.API_Event_ID = this.slug + "," + this.year;
             database.UpdateEvent(theEvent);
             window.NetworkUpdateResults();

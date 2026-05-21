@@ -89,7 +89,7 @@ namespace Chronokeep.Objects
         public string GPS { get => gps; set => gps = value; }
         public string MapLink { get => map_link; set => map_link = value; }
 
-        public int CompareTo(Segment other)
+        public int CompareTo(Segment? other)
         {
             if (other == null) return 1;
             if (event_id != other.event_id)
@@ -111,8 +111,9 @@ namespace Chronokeep.Objects
             return occurrence.CompareTo(other.occurrence);
         }
 
-        public bool Equals(Segment other)
+        public bool Equals(Segment? other)
         {
+            if (other == null) return false;
             return event_id == other.event_id &&
                 distance_id == other.distance_id &&
                 location_id == other.location_id &&

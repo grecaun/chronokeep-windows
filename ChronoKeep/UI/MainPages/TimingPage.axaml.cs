@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Chronokeep.Constants;
 using Chronokeep.Database;
@@ -148,7 +149,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             Name = "Start Time",
             Wave = -1
         });
-        foreach (Distance div in database.GetDistances(theEvent.Identifier))
+        foreach (Distance div in database.GetDistances(theEvent!.Identifier))
         {
             relativeToWaveList.Add(new()
             {
@@ -206,7 +207,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         string system = Readers.DEFAULT_TIMING_SYSTEM;
         try
         {
-            system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM).Value;
+            system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM)!.Value;
         }
         catch
         {
@@ -420,7 +421,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             string system = Readers.DEFAULT_TIMING_SYSTEM;
             try
             {
-                system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM).Value;
+                system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM)!.Value;
             }
             catch
             {
@@ -583,7 +584,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         mWindow.NotifyTimingWorker();
     }
 
-    private void Timer_Tick(object sender, EventArgs e)
+    private void Timer_Tick(object? sender, EventArgs e)
     {
         long unixElapsed = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - (startTime.Ticks / TimeSpan.TicksPerMillisecond);
         if (waveTimes.TryGetValue(selectedWave, out (long seconds, int milliseconds) value))
@@ -602,7 +603,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private void StartTimeChanged()
     {
         UpdateStartTime();
-        long oldStartSeconds = theEvent.StartSeconds;
+        long oldStartSeconds = theEvent!.StartSeconds;
         int oldStartMilliseconds = theEvent.StartMilliseconds;
         theEvent.StartSeconds = (startTime.Hour * 3600) + (startTime.Minute * 60) + startTime.Second;
         theEvent.StartMilliseconds = startTime.Millisecond;
@@ -637,7 +638,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
         StartTime.Text = startTimeValue;
         Log.D("UI.MainPages.TimingPage", "Start time is " + startTimeValue);
-        startTime = DateTime.ParseExact(startTimeValue + DateTime.Parse(theEvent.Date).ToString("ddMMyyyy"), "HH:mm:ss.fffddMMyyyy", null);
+        startTime = DateTime.ParseExact(startTimeValue + DateTime.Parse(theEvent!.Date).ToString("ddMMyyyy"), "HH:mm:ss.fffddMMyyyy", null);
         Log.D("UI.MainPages.TimingPage", "Start time is " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
     }
 
@@ -792,7 +793,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         {
             return;
         }
-        APIObject api = database.GetAPI(theEvent.API_ID);
+        APIObject api = database.GetAPI(theEvent.API_ID)!;
         string[] event_ids = theEvent.API_Event_ID.Split(',');
         if (event_ids.Length != 2)
         {
@@ -891,7 +892,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void StartRaceClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void StartRaceClick(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Starting race.");
         StartTime.Text = DateTime.Now.ToString("HH:mm:ss.fff");
@@ -911,7 +912,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             {
                 try
                 {
-                    clock.StartCountUp();
+                    _ = clock.StartCountUp();
                 }
                 catch { } // Exception may get thrown due to not waiting on the async method
                           // The clocks need to start as fast as possible and it does not matter if the
@@ -921,13 +922,13 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         StartTimeChanged();
     }
 
-    private void OpenClock_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void OpenClock_Click(object? sender, RoutedEventArgs e)
     {
         ClockControl clockWindow = ClockControl.CreateWindow(mWindow, database);
         clockWindow.Show();
     }
 
-    private void ChangeWaves(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void ChangeWaves(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Set Wave Times clicked.");
         WaveWindow waves = new(mWindow, database);
@@ -935,7 +936,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         waves.ShowDialog((Window)mWindow);
     }
 
-    private void AlarmButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void AlarmButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Alarms selected.");
         SetRawReadsFinished();
@@ -943,7 +944,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         TimingFrame.Content = subPage;
     }
 
-    private void AddDNF_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void AddDNF_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Add DNF Entry clicked.");
         ManualEntryWindow manualEntryWindow = ManualEntryWindow.NewWindow(mWindow, database);
@@ -954,10 +955,10 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void ManualEntry(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void ManualEntry(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Manual Entry selected.");
-        ManualEntryWindow manualEntryWindow = ManualEntryWindow.NewWindow(mWindow, database, locations);
+        ManualEntryWindow manualEntryWindow = ManualEntryWindow.NewWindow(mWindow, database, locations!);
         if (manualEntryWindow != null)
         {
             mWindow.AddWindow(manualEntryWindow);
@@ -965,7 +966,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private async void LoadLog(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void LoadLog(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Loading from log.");
         OpenFileDialog csv_dialog = new() { Filter = "Log Files (*.csv,*.txt,*.log)|*.csv;*.txt;*.log|All Files|*" };
@@ -993,14 +994,14 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void SaveLog(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SaveLog(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Save Log clicked.");
         SaveFileDialog saveFileDialog = new()
         {
             Filter = "CSV (*.csv)|*.csv",
             FileName = string.Format("{0} {1} Log.{2}", theEvent.YearCode, theEvent.Name, "csv"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
+            InitialDirectory = database.GetAppSetting(Settings.DEFAULT_EXPORT_DIR).Value
         };
         if (saveFileDialog.ShowDialog((Window)mWindow) == true)
         {
@@ -1024,10 +1025,10 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                     "read_bib",
                     "type"
                 };
-            List<ChipRead> chipReads = database.GetChipReads(theEvent.Identifier);
+            List<ChipRead> chipReads = database.GetChipReads(theEvent!.Identifier);
             foreach (ChipRead read in chipReads)
             {
-                if (!locationReadDict.TryGetValue(read.LocationName, out List<ChipRead> locChipReads))
+                if (!locationReadDict.TryGetValue(read.LocationName, out List<ChipRead>? locChipReads))
                 {
                     locChipReads = [];
                     locationReadDict[read.LocationName] = locChipReads;
@@ -1199,7 +1200,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         subPage.SortBy(GetSortType());
     }
 
-    private void StatsListView_MouseDoubleClick(object? sender, Avalonia.Input.TappedEventArgs e)
+    private void StatsListView_MouseDoubleClick(object? sender, TappedEventArgs e)
     {
         DistanceStat selected = (DistanceStat)statsListView.SelectedItem;
         if (selected == null)
@@ -1212,7 +1213,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         TimingFrame.Content = subPage;
     }
 
-    private async void Recalculate_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Recalculate_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Recalculate results clicked.");
         if ((string)recalculateButton.Content! == "Working..." || alreadyRecalculating)
@@ -1327,7 +1328,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         mWindow.NotifyTimingWorker();
     }
 
-    private void AutoAPI_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void AutoAPI_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Auto API clicked.");
         if ((string)AutoAPIButton.Content! == "Auto Upload")
@@ -1342,7 +1343,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private async void ManualAPI_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void ManualAPI_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Manual API clicked.");
         if (ManualAPIButton.Content!.ToString() != "Uploading")
@@ -1358,7 +1359,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         Log.D("UI.MainPages.TimingPage", "Already uploading.");
     }
 
-    private async void SendEmailsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void SendEmailsButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Send Emails button clicked.");
         if ((string)sendEmailsButton.Content! != "Send Emails")
@@ -1379,7 +1380,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                 sentIDs.Add(es_id);
             }
             List<TimeResult> finishTimes = database.GetFinishTimes(theEvent.Identifier);
-            APIObject api = database.GetAPI(theEvent.API_ID);
+            APIObject api = database.GetAPI(theEvent.API_ID)!;
             Dictionary<string, Participant> participantDictionary = [];
             int distances = 0;
             foreach (Participant p in database.GetParticipants(theEvent.Identifier))
@@ -1404,7 +1405,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(@"Basic", base64String);
             foreach (TimeResult result in finishTimes)
             {
-                Participant part = participantDictionary.TryGetValue(result.ParticipantId, out Participant oPart) ? oPart : null;
+                Participant? part = participantDictionary.TryGetValue(result.ParticipantId, out Participant? oPart) ? oPart : null;
                 if (part != null && result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN)
                 {
                     if (part.Email.Length > 0 && !GlobalVars.BannedEmails.Contains(part.Email) && !sentIDs.Contains(result.EventSpecificId))
@@ -1441,14 +1442,14 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         sendEmailsButton.Content = "Send Emails";
     }
 
-    private void ModifySMSButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void ModifySMSButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Modify SMS button clicked.");
         SMSWaveEnabledWindow smsWindow = new(mWindow, database);
         smsWindow.Show();
     }
 
-    private void DnsMode_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void DnsMode_Click(object? sender, RoutedEventArgs e)
     {
         bool worked;
         if (dnsMode.Content!.Equals("Start DNS Mode"))
@@ -1468,7 +1469,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         UpdateDNSButton();
     }
 
-    private void RawReads_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void RawReads_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Raw Reads selected.");
         if (RawButton.Content!.ToString()!.Equals("Raw Data", StringComparison.OrdinalIgnoreCase))
@@ -1488,7 +1489,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void HTMLServerButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void HTMLServerButton_Click(object? sender, RoutedEventArgs e)
     {
         if (HttpServerButton.Content!.ToString()!.Equals("Start Web", StringComparison.OrdinalIgnoreCase))
         {
@@ -1517,7 +1518,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void Print_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Print_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Print clicked.");
         SetRawReadsFinished();
@@ -1525,7 +1526,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         TimingFrame.Content = subPage;
     }
 
-    private void Award_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Award_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Awards clicked.");
         SetRawReadsFinished();
@@ -1533,18 +1534,18 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         TimingFrame.Content = subPage;
     }
 
-    private void CreateHTML_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void CreateHTML_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Create HTML clicked.");
         SaveFileDialog saveFileDialog = new()
         {
             Filter = "HTML file (*.htm,*.html)|*.htm;*.html",
             FileName = string.Format("{0} {1} Web.{2}", theEvent.YearCode, theEvent.Name, "html"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
+            InitialDirectory = database.GetAppSetting(Settings.DEFAULT_EXPORT_DIR).Value
         };
         if (saveFileDialog.ShowDialog((Window)mWindow) == true)
         {
-            List<TimeResult> finishResults = database.GetFinishTimes(theEvent.Identifier);
+            List<TimeResult> finishResults = database.GetFinishTimes(theEvent!.Identifier);
             Dictionary<int, Participant> partDict = database.GetParticipants(theEvent.Identifier).ToDictionary(v => v.EventSpecific.Identifier, v => v);
             HtmlResultsTemplate template = new(theEvent, finishResults);
             File.WriteAllText(saveFileDialog.FileName, template.TransformText());
@@ -1552,7 +1553,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void Export_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Export_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Export clicked.");
         ExportResults exportResults = new(mWindow, database);
@@ -1563,7 +1564,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void Export_BAA_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Export_BAA_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Export BAA Clicked.");
         if (theEvent!.EventType == Constants.Timing.EVENT_TYPE_TIME)
@@ -1579,7 +1580,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void Export_Abbott_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Export_Abbott_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Export Abbott Clicked.");
         ExportDistanceResults exportAbbott = new(mWindow, database, OutputType.Abbott);
@@ -1590,7 +1591,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void Export_US_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Export_US_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Export Ultrasignup Clicked.");
         if (theEvent!.EventType == Constants.Timing.EVENT_TYPE_TIME)
@@ -1606,7 +1607,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void Export_Runsignup_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Export_Runsignup_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Export Runsignup Clicked.");
         if (theEvent!.EventType == Constants.Timing.EVENT_TYPE_TIME)
@@ -1622,7 +1623,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void Expander_Expanded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Expander_Expanded(object? sender, RoutedEventArgs e)
     {
         if (remoteReadersButton != null)
         {
@@ -1637,34 +1638,34 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void RemoteReadersButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void RemoteReadersButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Remote readers button clicked.");
         RemoteReadersWindow win = RemoteReadersWindow.CreateWindow(mWindow, database);
         win.Show();
     }
 
-    private void RemoteControllerSwitch_Checked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void RemoteControllerSwitch_Checked(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Remote toggle switch checked.");
         remoteControllerSwitch.IsEnabled = false;
         mWindow.StartRemote();
     }
 
-    private void RemoteControllerSwitch_Unchecked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void RemoteControllerSwitch_Unchecked(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Remote toggle switch unchecked.");
         remoteControllerSwitch.IsEnabled = false;
         mWindow.StopRemote();
     }
 
-    private void ReaderMessageButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void ReaderMessageButton_Click(object? sender, RoutedEventArgs e)
     {
         ReaderNotificationWindow notificationWindow = ReaderNotificationWindow.NewWindow(mWindow);
         notificationWindow.Show();
     }
 
-    private void StartTime_LostFocus(object? sender, Avalonia.Input.FocusChangedEventArgs e)
+    private void StartTime_LostFocus(object? sender, FocusChangedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", $"Start Time Box has lost focus. {StartTime.Text}");
         if (StartTime.Text!.Any(char.IsDigit))
@@ -1673,7 +1674,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void CondenseSwitch_Checked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void CondenseSwitch_Checked(object? sender, RoutedEventArgs e)
     {
         List<DistanceStat> inStats = database.GetDistanceStats(theEvent!.Identifier, condenseSwitch.IsChecked == false);
         stats.Clear();

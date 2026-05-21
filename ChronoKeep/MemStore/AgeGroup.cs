@@ -24,7 +24,7 @@ namespace Chronokeep.MemStore
                     {
                         currentAgeGroups[(g.DistanceId, i)] = g;
                     }
-                    if (!lastAgeGroup.TryGetValue(g.DistanceId, out AgeGroup group) || group.StartAge < g.StartAge)
+                    if (!lastAgeGroup.TryGetValue(g.DistanceId, out AgeGroup? group) || group.StartAge < g.StartAge)
                     {
                         group = g;
                         lastAgeGroup[g.DistanceId] = group;
@@ -43,7 +43,7 @@ namespace Chronokeep.MemStore
                 {
                     try
                     {
-                        if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
+                        if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup>? value))
                         {
                             value = [];
                             ageGroups[group.DistanceId] = value;
@@ -77,7 +77,7 @@ namespace Chronokeep.MemStore
                     {
                         foreach (AgeGroup group in output)
                         {
-                            if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
+                            if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup>? value))
                             {
                                 value = [];
                                 ageGroups[group.DistanceId] = value;
@@ -148,7 +148,7 @@ namespace Chronokeep.MemStore
                     {
                         if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            if (ageGroups.TryGetValue(distanceId, out List<AgeGroup> groups))
+                            if (ageGroups.TryGetValue(distanceId, out List<AgeGroup>? groups))
                             {
                                 output.AddRange(groups);
                             }
@@ -182,7 +182,7 @@ namespace Chronokeep.MemStore
                 {
                     try
                     {
-                        if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
+                        if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup>? list))
                         {
                             list.Remove(group);
                         }
@@ -213,7 +213,7 @@ namespace Chronokeep.MemStore
                     {
                         if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            if (ageGroups.TryGetValue(distanceId, out List<AgeGroup> list))
+                            if (ageGroups.TryGetValue(distanceId, out List<AgeGroup>? list))
                             {
                                 list.Clear();
                             }
@@ -245,7 +245,7 @@ namespace Chronokeep.MemStore
                     {
                         foreach (AgeGroup group in groups)
                         {
-                            if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
+                            if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup>? list))
                             {
                                 list.Remove(group);
                             }
@@ -304,7 +304,7 @@ namespace Chronokeep.MemStore
                 {
                     try
                     {
-                        if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
+                        if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup>? list))
                         {
                             foreach (AgeGroup ageGroup in list)
                             {

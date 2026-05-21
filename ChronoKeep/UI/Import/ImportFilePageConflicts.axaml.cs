@@ -1,7 +1,7 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Objects;
+using Chronokeep.UI.Parts;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.Import;
 
@@ -12,14 +12,14 @@ public partial class ImportFilePageConflicts : UserControl
         InitializeComponent();
         foreach (Participant part in conflicts)
         {
-            multiplesListBox.Items.Add(new MultipleEntryListBoxItem(part, theEvent));
+            multiplesListBox.Items.Add(new MultipleEntryPart(part, theEvent));
         }
     }
 
     public List<Participant> GetParticipantsToRemove()
     {
         List<Participant> output = [];
-        foreach (MultipleEntryListBoxItem item in multiplesListBox.Items)
+        foreach (MultipleEntryPart item in multiplesListBox.Items)
         {
             if (item.Keep.IsChecked == false)
             {

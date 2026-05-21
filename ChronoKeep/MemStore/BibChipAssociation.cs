@@ -31,7 +31,7 @@ namespace Chronokeep.MemStore
                             foreach (BibChipAssociation bc in assoc)
                             {
                                 chipToBibAssociations[bc.Chip] = bc;
-                                if (!bibToChipAssociations.TryGetValue(bc.Bib, out Dictionary<string, BibChipAssociation> chipDict))
+                                if (!bibToChipAssociations.TryGetValue(bc.Bib, out Dictionary<string, BibChipAssociation>? chipDict))
                                 {
                                     bibToChipAssociations[bc.Bib] = [];
                                 }
@@ -46,10 +46,10 @@ namespace Chronokeep.MemStore
                             {
                                 cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
                                 cr.Name = "";
-                                if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                                if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation? bc))
                                 {
                                     cr.ChipBib = bc.Bib;
-                                    if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                                    if (bibPartDict.TryGetValue(bc.Bib, out Participant? p))
                                     {
                                         cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
                                     }
@@ -171,10 +171,10 @@ namespace Chronokeep.MemStore
                             {
                                 cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
                                 cr.Name = "";
-                                if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                                if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation? bc))
                                 {
                                     cr.ChipBib = bc.Bib;
-                                    if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                                    if (bibPartDict.TryGetValue(bc.Bib, out Participant? p))
                                     {
                                         cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
                                     }
@@ -227,10 +227,10 @@ namespace Chronokeep.MemStore
                         {
                             cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
                             cr.Name = "";
-                            if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                            if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation? bc))
                             {
                                 cr.ChipBib = bc.Bib;
-                                if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                                if (bibPartDict.TryGetValue(bc.Bib, out Participant? p))
                                 {
                                     cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
                                 }
@@ -281,10 +281,10 @@ namespace Chronokeep.MemStore
                         {
                             cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
                             cr.Name = "";
-                            if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                            if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation? bc))
                             {
                                 cr.ChipBib = bc.Bib;
-                                if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                                if (bibPartDict.TryGetValue(bc.Bib, out Participant? p))
                                 {
                                     cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
                                 }

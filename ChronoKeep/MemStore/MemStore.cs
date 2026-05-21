@@ -18,7 +18,7 @@ namespace Chronokeep.MemStore
         private readonly int lockTimeout = 5000;
 
         // Singleton
-        private static MemStore instance;
+        private static MemStore? instance;
 
         private static readonly Lock memStoreLock = new();
 
@@ -34,7 +34,7 @@ namespace Chronokeep.MemStore
 
         // Event and the related fields
         private static readonly List<Event> allEvents = [];
-        private static Event theEvent;
+        private static Event? theEvent;
 
         // key == distance id
         private static readonly Dictionary<int, Distance> distances = [];
@@ -142,7 +142,7 @@ namespace Chronokeep.MemStore
             foreach (BibChipAssociation assoc in database.GetBibChips(theEvent.Identifier))
             {
                 chipToBibAssociations[assoc.Chip] = assoc;
-                if (!bibToChipAssociations.TryGetValue(assoc.Bib, out Dictionary<string, BibChipAssociation> chipDict))
+                if (!bibToChipAssociations.TryGetValue(assoc.Bib, out Dictionary<string, BibChipAssociation>? chipDict))
                 {
                     chipDict = [];
                     bibToChipAssociations[assoc.Bib] = chipDict;
@@ -156,7 +156,7 @@ namespace Chronokeep.MemStore
             // load age groups
             foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
             {
-                if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
+                if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup>? value))
                 {
                     value = [];
                     ageGroups[group.DistanceId] = value;
@@ -201,7 +201,7 @@ namespace Chronokeep.MemStore
          * Base Database Functions
          */
 
-        internal void ResetVariables()
+        internal static void ResetVariables()
         {
             // app setting
             settings.Clear();
@@ -281,41 +281,41 @@ namespace Chronokeep.MemStore
                     {
                         // Load settings
                         // Settings 1
-                        settings[Constants.Settings.SERVER_NAME] = database.GetAppSetting(Constants.Settings.SERVER_NAME);
-                        settings[Constants.Settings.DATABASE_VERSION] = database.GetAppSetting(Constants.Settings.DATABASE_VERSION);
-                        settings[Constants.Settings.HARDWARE_IDENTIFIER] = database.GetAppSetting(Constants.Settings.HARDWARE_IDENTIFIER);
-                        settings[Constants.Settings.PROGRAM_VERSION] = database.GetAppSetting(Constants.Settings.PROGRAM_VERSION);
-                        settings[Constants.Settings.AUTO_SHOW_CHANGELOG] = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG);
+                        settings[Constants.Settings.SERVER_NAME] = database.GetAppSetting(Constants.Settings.SERVER_NAME)!;
+                        settings[Constants.Settings.DATABASE_VERSION] = database.GetAppSetting(Constants.Settings.DATABASE_VERSION)!;
+                        settings[Constants.Settings.HARDWARE_IDENTIFIER] = database.GetAppSetting(Constants.Settings.HARDWARE_IDENTIFIER)!;
+                        settings[Constants.Settings.PROGRAM_VERSION] = database.GetAppSetting(Constants.Settings.PROGRAM_VERSION)!;
+                        settings[Constants.Settings.AUTO_SHOW_CHANGELOG] = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG)!;
                         // Settings 2
-                        settings[Constants.Settings.DEFAULT_EXPORT_DIR] = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
-                        settings[Constants.Settings.DEFAULT_TIMING_SYSTEM] = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
-                        settings[Constants.Settings.CURRENT_EVENT] = database.GetAppSetting(Constants.Settings.CURRENT_EVENT);
-                        settings[Constants.Settings.COMPANY_NAME] = database.GetAppSetting(Constants.Settings.COMPANY_NAME);
-                        settings[Constants.Settings.CONTACT_EMAIL] = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL);
+                        settings[Constants.Settings.DEFAULT_EXPORT_DIR] = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!;
+                        settings[Constants.Settings.DEFAULT_TIMING_SYSTEM] = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM)!;
+                        settings[Constants.Settings.CURRENT_EVENT] = database.GetAppSetting(Constants.Settings.CURRENT_EVENT)!;
+                        settings[Constants.Settings.COMPANY_NAME] = database.GetAppSetting(Constants.Settings.COMPANY_NAME)!;
+                        settings[Constants.Settings.CONTACT_EMAIL] = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL)!;
                         // Settings 3
-                        settings[Constants.Settings.UPDATE_ON_PAGE_CHANGE] = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE);
-                        settings[Constants.Settings.EXIT_NO_PROMPT] = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT);
-                        settings[Constants.Settings.DEFAULT_CHIP_TYPE] = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE);
-                        settings[Constants.Settings.LAST_USED_API_ID] = database.GetAppSetting(Constants.Settings.LAST_USED_API_ID);
-                        settings[Constants.Settings.CHECK_UPDATES] = database.GetAppSetting(Constants.Settings.CHECK_UPDATES);
-                        settings[Constants.Settings.CURRENT_THEME] = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
+                        settings[Constants.Settings.UPDATE_ON_PAGE_CHANGE] = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!;
+                        settings[Constants.Settings.EXIT_NO_PROMPT] = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT)!;
+                        settings[Constants.Settings.DEFAULT_CHIP_TYPE] = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE)!;
+                        settings[Constants.Settings.LAST_USED_API_ID] = database.GetAppSetting(Constants.Settings.LAST_USED_API_ID)!;
+                        settings[Constants.Settings.CHECK_UPDATES] = database.GetAppSetting(Constants.Settings.CHECK_UPDATES)!;
+                        settings[Constants.Settings.CURRENT_THEME] = database.GetAppSetting(Constants.Settings.CURRENT_THEME)!;
                         // Settings 4
-                        settings[Constants.Settings.UPLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL);
-                        settings[Constants.Settings.DOWNLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL);
-                        settings[Constants.Settings.ANNOUNCER_WINDOW] = database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW);
-                        settings[Constants.Settings.ALARM_SOUND] = database.GetAppSetting(Constants.Settings.ALARM_SOUND);
-                        settings[Constants.Settings.MINIMUM_COMPATIBLE_DATABASE] = database.GetAppSetting(Constants.Settings.MINIMUM_COMPATIBLE_DATABASE);
+                        settings[Constants.Settings.UPLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL)!;
+                        settings[Constants.Settings.DOWNLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL)!;
+                        settings[Constants.Settings.ANNOUNCER_WINDOW] = database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW)!;
+                        settings[Constants.Settings.ALARM_SOUND] = database.GetAppSetting(Constants.Settings.ALARM_SOUND)!;
+                        settings[Constants.Settings.MINIMUM_COMPATIBLE_DATABASE] = database.GetAppSetting(Constants.Settings.MINIMUM_COMPATIBLE_DATABASE)!;
                         // Settings 5
-                        settings[Constants.Settings.PROGRAM_UNIQUE_MODIFIER] = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
+                        settings[Constants.Settings.PROGRAM_UNIQUE_MODIFIER] = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER)!;
                         // Twilio
-                        settings[Constants.Settings.TWILIO_ACCOUNT_SID] = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID);
-                        settings[Constants.Settings.TWILIO_AUTH_TOKEN] = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN);
-                        settings[Constants.Settings.TWILIO_PHONE_NUMBER] = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER);
+                        settings[Constants.Settings.TWILIO_ACCOUNT_SID] = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID)!;
+                        settings[Constants.Settings.TWILIO_AUTH_TOKEN] = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN)!;
+                        settings[Constants.Settings.TWILIO_PHONE_NUMBER] = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER)!;
                         // Mailgun
-                        settings[Constants.Settings.MAILGUN_FROM_NAME] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME);
-                        settings[Constants.Settings.MAILGUN_FROM_EMAIL] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL);
-                        settings[Constants.Settings.MAILGUN_API_KEY] = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY);
-                        settings[Constants.Settings.MAILGUN_API_URL] = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL);
+                        settings[Constants.Settings.MAILGUN_FROM_NAME] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME)!;
+                        settings[Constants.Settings.MAILGUN_FROM_EMAIL] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL)!;
+                        settings[Constants.Settings.MAILGUN_API_KEY] = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY)!;
+                        settings[Constants.Settings.MAILGUN_API_URL] = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL)!;
                         // Load apis
                         foreach (APIObject api in database.GetAllAPI())
                         {

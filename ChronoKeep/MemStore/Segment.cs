@@ -305,7 +305,7 @@ namespace Chronokeep.MemStore
                 {
                     try
                     {
-                        if (segments.TryGetValue(seg.Identifier, out Segment oldSeg))
+                        if (segments.TryGetValue(seg.Identifier, out Segment? oldSeg))
                         {
                             oldSeg.CopyFrom(seg);
                         }
@@ -335,7 +335,7 @@ namespace Chronokeep.MemStore
                     {
                         foreach (Segment s in segs)
                         {
-                            if (segments.TryGetValue(s.Identifier, out Segment oldSeg))
+                            if (segments.TryGetValue(s.Identifier, out Segment? oldSeg))
                             {
                                 oldSeg.CopyFrom(s);
                             }

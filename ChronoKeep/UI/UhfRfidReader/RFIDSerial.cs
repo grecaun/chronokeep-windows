@@ -3,7 +3,7 @@ using System.IO;
 using System.IO.Ports;
 using System.Threading;
 
-namespace Chronokeep
+namespace Chronokeep.UI.UhfRfidReader
 {
     class RFIDSerial(string ComPort, int BaudRate)
     {
@@ -106,7 +106,7 @@ namespace Chronokeep
 
         public Info ReadData()
         {
-            byte[] OutMsg = { 0xA0, 0x03, 0x82, 0x00, 0xDB };
+            byte[] OutMsg = [0xA0, 0x03, 0x82, 0x00, 0xDB];
             byte[] InMsg = new byte[256];
             try
             {
@@ -148,7 +148,7 @@ namespace Chronokeep
             public long DecNumber { get; set; }
             public int DeviceNumber { get; set; }
             public int AntennaNumber { get; set; }
-            public string HexNumber { get; set; }
+            public string HexNumber { get; set; } = "";
             public byte[] Data { get; set; }
             public string DataRep { get => BitConverter.ToString(Data); }
             public int ReadNumber { get; set; }
@@ -164,10 +164,7 @@ namespace Chronokeep
                 this.ErrorCode = Error.NOERR;
             }
 
-            public Info()
-            {
-                Data = [0x00];
-            }
+            public Info() => Data = [0x00];
 
             public Info(byte[] inData)
             {

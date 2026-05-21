@@ -64,10 +64,10 @@ namespace Chronokeep.MemStore
             return output;
         }
 
-        public APIObject GetAPI(int identifier)
+        public APIObject? GetAPI(int identifier)
         {
             Log.D("MemStore", "GetAPI");
-            APIObject output = null;
+            APIObject? output = null;
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
@@ -128,7 +128,7 @@ namespace Chronokeep.MemStore
                 {
                     try
                     {
-                        if (apis.TryGetValue(anAPI.Identifier, out APIObject api))
+                        if (apis.TryGetValue(anAPI.Identifier, out APIObject? api))
                         {
                             api.Type = anAPI.Type;
                             api.URL = anAPI.URL;

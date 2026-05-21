@@ -4,8 +4,11 @@ using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Chronokeep.UI.Timing.Import;
 
@@ -130,20 +133,20 @@ public partial class ImportLogWindow : Window
                         theEvent.Identifier,        // event id
                         locationId,                 // location id
                         Constants.Timing.CHIPREAD_STATUS_NONE,   // status
-                        line[2].ToString().Trim(),  // chip number
+                        line[2].ToString()!.Trim(), // chip number
                         Convert.ToInt64(line[3]),   // seconds
                         Convert.ToInt32(line[4]),   // milliseconds
                         Convert.ToInt64(line[5]),   // time_seconds
                         Convert.ToInt32(line[6]),   // time_milliseconds
                         Convert.ToInt32(line[7]),   // antenna
-                        line[8].ToString(),         // reader
-                        line[9].ToString(),         // box
-                        Convert.ToInt32(line[10]),   // log_index
-                        line[11].ToString(),        // rssi
+                        line[8].ToString()!,        // reader
+                        line[9].ToString()!,        // box
+                        Convert.ToInt32(line[10]),  // log_index
+                        line[11].ToString()!,       // rssi
                         Convert.ToInt32(line[12]),  // is_rewind
-                        line[13].ToString(),        // reader_time
+                        line[13].ToString()!,       // reader_time
                         Convert.ToInt64(line[14]),  // start_time
-                        line[15].ToString(),  // read_bib
+                        line[15].ToString()!,       // read_bib
                         Convert.ToInt32(line[16]),  // type
                         false                       // placeholder
                         ));

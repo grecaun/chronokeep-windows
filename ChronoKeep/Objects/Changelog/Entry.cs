@@ -7,17 +7,17 @@ namespace Chronokeep.Objects.Changelog
     public class Entry : IComparable
     {
         [JsonPropertyName("version")]
-        public string Version { get; set; }
+        public string Version { get; set; } = "";
         [JsonPropertyName("changes")]
-        public List<string> ChangesList { get; set; }
+        public List<string> ChangesList { get; set; } = [];
         [JsonPropertyName("fixes")]
-        public List<string> FixesList { get; set; }
+        public List<string> FixesList { get; set; } = [];
 
         public string ChangesVisibility { get => ChangesList.Count > 0 ? "Visible" : "Collapsed"; }
         public string FixesVisibility { get => FixesList.Count > 0 ? "Visible" : "Collapsed"; }
         public bool IsExpanded { get; set; }
 
-        public int CompareTo(object other)
+        public int CompareTo(object? other)
         {
             ArgumentNullException.ThrowIfNull(other);
             if (other is not Entry) return -1;

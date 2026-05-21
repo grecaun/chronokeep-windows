@@ -39,7 +39,7 @@ public partial class ChangeLogWindow : Window
         changelogEntries.Sort();
         changelogEntries[0].IsExpanded = true;
         logList.ItemsSource = changelogEntries;
-        AppSetting autoChangelog = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG);
+        AppSetting autoChangelog = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG)!;
         autoChangelogToggleSwitch.IsChecked = autoChangelog != null && autoChangelog.Value == Constants.Settings.SETTING_TRUE;
     }
 

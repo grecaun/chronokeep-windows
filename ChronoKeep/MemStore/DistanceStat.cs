@@ -37,13 +37,13 @@ namespace Chronokeep.MemStore
                             foreach (Participant p in participants.Values)
                             {
                                 int distIdent = p.EventSpecific.DistanceIdentifier;
-                                string distName = distances.TryGetValue(distIdent, out Distance dist) ? dist.Name : "";
-                                if (condense && dist != null && dist.LinkedDistance != Constants.Timing.DISTANCE_DUMMYIDENTIFIER && distances.TryGetValue(dist.LinkedDistance, out Distance linkDist))
+                                string distName = distances.TryGetValue(distIdent, out Distance? dist) ? dist.Name : "";
+                                if (condense && dist != null && dist.LinkedDistance != Constants.Timing.DISTANCE_DUMMYIDENTIFIER && distances.TryGetValue(dist.LinkedDistance, out Distance? linkDist))
                                 {
                                     distName = linkDist.Name;
                                     distIdent = linkDist.Identifier;
                                 }
-                                if (!distStatDict.TryGetValue(distIdent, out DistanceStat distStats))
+                                if (!distStatDict.TryGetValue(distIdent, out DistanceStat? distStats))
                                 {
                                     distStats = new()
                                     {
@@ -105,7 +105,7 @@ namespace Chronokeep.MemStore
             List<Participant> dbParts = (distanceId == -1) ? GetParticipants(eventId) : GetParticipants(eventId, distanceId);
             foreach (Participant person in dbParts)
             {
-                if (!output.TryGetValue(person.Status, out List<Participant> localParts))
+                if (!output.TryGetValue(person.Status, out List<Participant>? localParts))
                 {
                     localParts = [];
                     output[person.Status] = localParts;

@@ -1,8 +1,10 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.Timing.Notifications;
 
@@ -34,7 +36,7 @@ public partial class SMSWaveEnabledWindow : Window
         foreach (Distance dist in database.GetDistances(theEvent.Identifier))
         {
             initialValues[dist.Wave] = dist.SMSEnabled;
-            if (!waveDistanceDictionary.TryGetValue(dist.Wave, out List<Distance> oDistList))
+            if (!waveDistanceDictionary.TryGetValue(dist.Wave, out List<Distance>? oDistList))
             {
                 oDistList = [];
                 waveDistanceDictionary[dist.Wave] = oDistList;
@@ -64,9 +66,9 @@ public partial class SMSWaveEnabledWindow : Window
         }
     }
 
-    private void Set_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Set_Click(object? sender, RoutedEventArgs e)
     {
-        foreach (WaveSMS? waveSMS in WaveList.Items)
+        foreach (WaveSMS? waveSMS in WaveList.Items.Cast<WaveSMS?>())
         {
             if (initialValues[waveSMS!.Wave] != waveSMS.SMSEnabled)
             {
@@ -87,7 +89,7 @@ public partial class SMSWaveEnabledWindow : Window
         Close();
     }
 
-    private void Done_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Done_Click(object? sender, RoutedEventArgs e)
     {
         Close();
     }

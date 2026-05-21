@@ -12,21 +12,21 @@ namespace Chronokeep.MemStore
          * Participant Functions
          */
 
-        public Participant AddParticipant(Participant person)
+        public Participant? AddParticipant(Participant person)
         {
             Log.D("MemStore", "AddParticipant");
-            Participant output = null;
+            Participant? output = null;
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
                 {
                     try
                     {
-                        if (theEvent.CommonAgeGroups)
+                        if (theEvent!.CommonAgeGroups)
                         {
                             if (currentAgeGroups.TryGetValue(
                                 (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
-                                out AgeGroup ageGroup))
+                                out AgeGroup? ageGroup))
                             {
                                 person.EventSpecific.AgeGroupId = ageGroup.GroupId;
                                 person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
@@ -36,14 +36,14 @@ namespace Chronokeep.MemStore
                         {
                             if (currentAgeGroups.TryGetValue(
                                 (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
-                                out AgeGroup ageGroup))
+                                out AgeGroup? ageGroup))
                             {
                                 person.EventSpecific.AgeGroupId = ageGroup.GroupId;
                                 person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
                             }
                         }
                         output = database.AddParticipant(person);
-                        if (distances.TryGetValue(output.EventSpecific.DistanceIdentifier, out Distance dist))
+                        if (distances.TryGetValue(output!.EventSpecific.DistanceIdentifier, out Distance? dist))
                         {
                             output.EventSpecific.DistanceName = dist.Name;
                         }
@@ -54,7 +54,7 @@ namespace Chronokeep.MemStore
                         {
                             if (part.Bib.Length > 0)
                             {
-                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation> chipList))
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation>? chipList))
                                 {
                                     foreach (BibChipAssociation bc in chipList.Values)
                                     {
@@ -66,11 +66,11 @@ namespace Chronokeep.MemStore
                         }
                         foreach (ChipRead read in chipReads.Values)
                         {
-                            if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
+                            if (bibParticipantsList.TryGetValue(read.Bib, out string? bibName))
                             {
                                 read.Name = bibName;
                             }
-                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
+                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string? chipName))
                             {
                                 read.Name = chipName;
                             }
@@ -106,11 +106,11 @@ namespace Chronokeep.MemStore
                     {
                         foreach (Participant person in people)
                         {
-                            if (theEvent.CommonAgeGroups)
+                            if (theEvent!.CommonAgeGroups)
                             {
                                 if (currentAgeGroups.TryGetValue(
                                     (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
-                                    out AgeGroup ageGroup))
+                                    out AgeGroup? ageGroup))
                                 {
                                     person.EventSpecific.AgeGroupId = ageGroup.GroupId;
                                     person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
@@ -120,7 +120,7 @@ namespace Chronokeep.MemStore
                             {
                                 if (currentAgeGroups.TryGetValue(
                                     (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
-                                    out AgeGroup ageGroup))
+                                    out AgeGroup? ageGroup))
                                 {
                                     person.EventSpecific.AgeGroupId = ageGroup.GroupId;
                                     person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
@@ -130,7 +130,7 @@ namespace Chronokeep.MemStore
                         output.AddRange(database.AddParticipants(people));
                         foreach (Participant person in output)
                         {
-                            if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                            if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance? dist))
                             {
                                 person.EventSpecific.DistanceName = dist.Name;
                             }
@@ -142,7 +142,7 @@ namespace Chronokeep.MemStore
                         {
                             if (part.Bib.Length > 0)
                             {
-                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation> chipList))
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation>? chipList))
                                 {
                                     foreach (BibChipAssociation bc in chipList.Values)
                                     {
@@ -154,11 +154,11 @@ namespace Chronokeep.MemStore
                         }
                         foreach (ChipRead read in chipReads.Values)
                         {
-                            if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
+                            if (bibParticipantsList.TryGetValue(read.Bib, out string? bibName))
                             {
                                 read.Name = bibName;
                             }
-                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
+                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string? chipName))
                             {
                                 read.Name = chipName;
                             }
@@ -182,10 +182,10 @@ namespace Chronokeep.MemStore
             return output;
         }
 
-        public Participant GetParticipant(int eventId, int identifier)
+        public Participant? GetParticipant(int eventId, int identifier)
         {
             Log.D("MemStore", "GetParticipant");
-            Participant output = null;
+            Participant? output = null;
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
@@ -218,10 +218,10 @@ namespace Chronokeep.MemStore
             return output;
         }
 
-        public Participant GetParticipant(int eventId, Participant unknown)
+        public Participant? GetParticipant(int eventId, Participant unknown)
         {
             Log.D("MemStore", "GetParticipant");
-            Participant output = null;
+            Participant? output = null;
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
@@ -260,10 +260,10 @@ namespace Chronokeep.MemStore
             return output;
         }
 
-        public Participant GetParticipantBib(int eventId, string bib)
+        public Participant? GetParticipantBib(int eventId, string bib)
         {
             Log.D("MemStore", "GetParticipantBib");
-            Participant output = null;
+            Participant? output = null;
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
@@ -296,10 +296,10 @@ namespace Chronokeep.MemStore
             return output;
         }
 
-        public Participant GetParticipantChip(int eventId, string chip)
+        public Participant? GetParticipantChip(int eventId, string chip)
         {
             Log.D("MemStore", "GetParticipantBib");
-            Participant output = null;
+            Participant? output = null;
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
@@ -308,7 +308,7 @@ namespace Chronokeep.MemStore
                     {
                         if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            if (chipToBibAssociations.TryGetValue(chip, out BibChipAssociation assoc))
+                            if (chipToBibAssociations.TryGetValue(chip, out BibChipAssociation? assoc))
                             {
                                 foreach (Participant person in participants.Values)
                                 {
@@ -335,10 +335,10 @@ namespace Chronokeep.MemStore
             return output;
         }
 
-        public Participant GetParticipantEventSpecific(int eventId, int eventSpecificId)
+        public Participant? GetParticipantEventSpecific(int eventId, int eventSpecificId)
         {
             Log.D("MemStore", "GetParticipantEventSpecific");
-            Participant output = null;
+            Participant? output = null;
             try
             {
 
@@ -600,11 +600,11 @@ namespace Chronokeep.MemStore
                 {
                     try
                     {
-                        if (theEvent.CommonAgeGroups)
+                        if (theEvent!.CommonAgeGroups)
                         {
                             if (currentAgeGroups.TryGetValue(
                                 (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
-                                out AgeGroup ageGroup))
+                                out AgeGroup? ageGroup))
                             {
                                 person.EventSpecific.AgeGroupId = ageGroup.GroupId;
                                 person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
@@ -614,7 +614,7 @@ namespace Chronokeep.MemStore
                         {
                             if (currentAgeGroups.TryGetValue(
                                 (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
-                                out AgeGroup ageGroup))
+                                out AgeGroup? ageGroup))
                             {
                                 person.EventSpecific.AgeGroupId = ageGroup.GroupId;
                                 person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
@@ -623,10 +623,10 @@ namespace Chronokeep.MemStore
                         // This is one of the few functions that has a database call within the ReadWriteLock
                         // This is because we need to update the age group id before putting it in the database
                         database.UpdateParticipant(person);
-                        if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
+                        if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant? toUpdate))
                         {
                             toUpdate.CopyFrom(person);
-                            if (distances.TryGetValue(toUpdate.EventSpecific.DistanceIdentifier, out Distance dist))
+                            if (distances.TryGetValue(toUpdate.EventSpecific.DistanceIdentifier, out Distance? dist))
                             {
                                 toUpdate.EventSpecific.DistanceName = dist.Name;
                             }
@@ -634,7 +634,7 @@ namespace Chronokeep.MemStore
                         else
                         {
                             participants[person.EventSpecific.Identifier] = person;
-                            if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                            if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance? dist))
                             {
                                 person.EventSpecific.DistanceName = dist.Name;
                             }
@@ -645,7 +645,7 @@ namespace Chronokeep.MemStore
                         {
                             if (part.Bib.Length > 0)
                             {
-                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation> chipList))
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation>? chipList))
                                 {
                                     foreach (BibChipAssociation bc in chipList.Values)
                                     {
@@ -657,11 +657,11 @@ namespace Chronokeep.MemStore
                         }
                         foreach (ChipRead read in chipReads.Values)
                         {
-                            if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
+                            if (bibParticipantsList.TryGetValue(read.Bib, out string? bibName))
                             {
                                 read.Name = bibName;
                             }
-                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
+                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string? chipName))
                             {
                                 read.Name = chipName;
                             }
@@ -695,11 +695,11 @@ namespace Chronokeep.MemStore
                     {
                         foreach (Participant person in parts)
                         {
-                            if (theEvent.CommonAgeGroups)
+                            if (theEvent!.CommonAgeGroups)
                             {
                                 if (currentAgeGroups.TryGetValue(
                                     (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
-                                    out AgeGroup ageGroup))
+                                    out AgeGroup? ageGroup))
                                 {
                                     person.EventSpecific.AgeGroupId = ageGroup.GroupId;
                                     person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
@@ -709,7 +709,7 @@ namespace Chronokeep.MemStore
                             {
                                 if (currentAgeGroups.TryGetValue(
                                     (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
-                                    out AgeGroup ageGroup))
+                                    out AgeGroup? ageGroup))
                                 {
                                     person.EventSpecific.AgeGroupId = ageGroup.GroupId;
                                     person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
@@ -721,10 +721,10 @@ namespace Chronokeep.MemStore
                         database.UpdateParticipants(parts);
                         foreach (Participant person in parts)
                         {
-                            if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
+                            if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant? toUpdate))
                             {
                                 toUpdate.CopyFrom(person);
-                                if (distances.TryGetValue(toUpdate.EventSpecific.DistanceIdentifier, out Distance dist))
+                                if (distances.TryGetValue(toUpdate.EventSpecific.DistanceIdentifier, out Distance? dist))
                                 {
                                     toUpdate.EventSpecific.DistanceName = dist.Name;
                                 }
@@ -732,7 +732,7 @@ namespace Chronokeep.MemStore
                             else
                             {
                                 participants[person.EventSpecific.Identifier] = person;
-                                if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                                if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance? dist))
                                 {
                                     person.EventSpecific.DistanceName = dist.Name;
                                 }
@@ -744,7 +744,7 @@ namespace Chronokeep.MemStore
                         {
                             if (part.Bib.Length > 0)
                             {
-                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation> chipList))
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out Dictionary<string, BibChipAssociation>? chipList))
                                 {
                                     foreach (BibChipAssociation bc in chipList.Values)
                                     {
@@ -756,11 +756,11 @@ namespace Chronokeep.MemStore
                         }
                         foreach (ChipRead read in chipReads.Values)
                         {
-                            if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
+                            if (bibParticipantsList.TryGetValue(read.Bib, out string? bibName))
                             {
                                 read.Name = bibName;
                             }
-                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
+                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string? chipName))
                             {
                                 read.Name = chipName;
                             }

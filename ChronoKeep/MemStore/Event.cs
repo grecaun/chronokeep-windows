@@ -39,10 +39,10 @@ namespace Chronokeep.MemStore
             return output;
         }
 
-        public Event GetCurrentEvent()
+        public Event? GetCurrentEvent()
         {
             Log.D("MemStore", "GetCurrentEvent");
-            Event output = null;
+            Event? output = null;
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
@@ -90,10 +90,10 @@ namespace Chronokeep.MemStore
             }
         }
 
-        public Event GetEvent(int id)
+        public Event? GetEvent(int id)
         {
             Log.D("MemStore", "GetEvent");
-            Event output = null;
+            Event? output = null;
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))

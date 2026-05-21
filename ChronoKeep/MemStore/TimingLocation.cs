@@ -111,7 +111,7 @@ namespace Chronokeep.MemStore
         public List<TimingLocation> GetTimingLocations(int eventId)
         {
             Log.D("MemStore", "GetTimingLocations");
-            List<TimingLocation> output = new();
+            List<TimingLocation> output = [];
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
@@ -209,7 +209,7 @@ namespace Chronokeep.MemStore
                 {
                     try
                     {
-                        if (locations.TryGetValue(tp.Identifier, out TimingLocation loc))
+                        if (locations.TryGetValue(tp.Identifier, out TimingLocation? loc))
                         {
                             loc.CopyFrom(tp);
                         }

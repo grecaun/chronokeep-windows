@@ -1,12 +1,14 @@
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Chronokeep.Helpers;
 
 namespace Chronokeep.UI.ChipAssignment.Parts;
 
 public partial class TagRangePart : UserControl
 {
-    public string EndBibVal { get => EndBib.Text; }
-    public string EndChipVal { get => EndChip.Text; }
+    public string EndBibVal { get => EndBib.Text!; }
+    public string EndChipVal { get => EndChip.Text!; }
 
     private readonly ListBox parent;
 
@@ -17,11 +19,11 @@ public partial class TagRangePart : UserControl
         parent = correlationBox;
         if (correlationBox.Items.Count > 0)
         {
-            TagRangePart lastItem = (TagRangePart)correlationBox.Items.GetItemAt(correlationBox.Items.Count - 1);
+            TagRangePart? lastItem = correlationBox.Items[^1] as TagRangePart;
             try
             {
-                int.TryParse(lastItem.EndBibVal, out lastEndBib);
-                int.TryParse(lastItem.EndChipVal, out lastEndChip);
+                _ = int.TryParse(lastItem!.EndBibVal, out lastEndBib);
+                _ = int.TryParse(lastItem.EndChipVal, out lastEndChip);
             }
             catch { }
         }
@@ -33,15 +35,14 @@ public partial class TagRangePart : UserControl
 
     private void UpdateEndChip()
     {
-        int startBib = -1, endBib = -1, startChip = -1, endChip;
-        int.TryParse(StartBib.Text, out startBib);
-        int.TryParse(EndBib.Text, out endBib);
-        int.TryParse(StartChip.Text, out startChip);
-        endChip = endBib - startBib + startChip;
+        _ = int.TryParse(StartBib.Text, out int startBib);
+        _ = int.TryParse(EndBib.Text, out int endBib);
+        _ = int.TryParse(StartChip.Text, out int startChip);
+        int endChip = endBib - startBib + startChip;
         EndChip.Text = endChip.ToString();
     }
 
-    private void Remove_Click(object sender, EventArgs e)
+    private void Remove_Click(object sender, RoutedEventArgs e)
     {
         Log.D("UI.ChipAssignment.ChipTool", "Removing an item.");
         try
@@ -51,9 +52,9 @@ public partial class TagRangePart : UserControl
         catch { }
     }
 
-    private void StartBib_TextChanged(object sender, EventArgs e)
+    private void StartBib_TextChanged(object sender, RoutedEventArgs e)
     {
-        string replaceStr = StartBib.Text.Replace(" ", "");
+        string replaceStr = StartBib.Text!.Replace(" ", "");
         if (StartBib.Text.Length != replaceStr.Length)
         {
             StartBib.Text = replaceStr;
@@ -61,9 +62,9 @@ public partial class TagRangePart : UserControl
         UpdateEndChip();
     }
 
-    private void EndBib_TextChanged(object sender, EventArgs e)
+    private void EndBib_TextChanged(object sender, RoutedEventArgs e)
     {
-        string replaceStr = EndBib.Text.Replace(" ", "");
+        string replaceStr = EndBib.Text!.Replace(" ", "");
         if (EndBib.Text.Length != replaceStr.Length)
         {
             EndBib.Text = replaceStr;
@@ -71,15 +72,14 @@ public partial class TagRangePart : UserControl
         UpdateEndChip();
     }
 
-    private void StartChip_TextChanged(object sender, EventArgs e)
+    private void StartChip_TextChanged(object sender, RoutedEventArgs e)
     {
-        string replaceStr = StartChip.Text.Replace(" ", "");
+        string replaceStr = StartChip.Text!.Replace(" ", "");
         if (StartChip.Text.Length != replaceStr.Length)
         {
             StartChip.Text = replaceStr;
         }
-        int startChip = -1;
-        int.TryParse(StartChip.Text, out startChip);
+        int.TryParse(StartChip.Text, out int startChip);
         if (string.CompareOrdinal(StartChip.Text, startChip.ToString()) != 0)
         {
             StartChip.Text = startChip.ToString();
@@ -89,7 +89,7 @@ public partial class TagRangePart : UserControl
 
     private void SelectAll(object sender, RoutedEventArgs e)
     {
-        System.Windows.Controls.TextBox src = (System.Windows.Controls.TextBox)e.OriginalSource;
+        TextBox src = (TextBox)e.Source!;
         src.SelectAll();
     }
 

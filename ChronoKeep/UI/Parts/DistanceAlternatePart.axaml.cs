@@ -32,7 +32,7 @@ public partial class DistanceAlternatePart : UserControl
 
     public int DistanceId()
     {
-        if (int.TryParse(((ComboBoxItem)Distances.SelectedItem).Tag, out int output))
+        if (int.TryParse((string)((ComboBoxItem)Distances.SelectedItem!).Tag!, out int output))
         {
             return output;
         }

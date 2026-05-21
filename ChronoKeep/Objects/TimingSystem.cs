@@ -23,8 +23,8 @@ namespace Chronokeep.Objects
         public string LocationName { get; set; } = "Unknown";
         public string Type { get; set; } = Constants.Readers.SYSTEM_RFID;
         public SYSTEM_STATUS Status { get; set; } = SYSTEM_STATUS.DISCONNECTED;
-        public List<Socket> Sockets { get; private set; }
-        public ITimingSystemInterface SystemInterface;
+        public List<Socket>? Sockets { get; private set; }
+        public ITimingSystemInterface? SystemInterface;
         private DateTime ConnectedAt;
 
         public string SystemTime { get; set; } = "";
@@ -68,7 +68,7 @@ namespace Chronokeep.Objects
             this.Status = SYSTEM_STATUS.DISCONNECTED;
         }
 
-        public List<Socket> Connect()
+        public List<Socket>? Connect()
         {
             if (SystemInterface == null)
             {
@@ -82,10 +82,13 @@ namespace Chronokeep.Objects
 
         public void Disconnect()
         {
-            SystemInterface.Disconnect();
-            foreach (Socket sock in Sockets)
+            SystemInterface?.Disconnect();
+            if (Sockets != null)
             {
-                sock.Disconnect(false);
+                foreach (Socket sock in Sockets)
+                {
+                    sock.Disconnect(false);
+                }
             }
         }
 
@@ -150,7 +153,7 @@ namespace Chronokeep.Objects
             return ellapsed.Seconds > 5;
         }
 
-        public bool Equals(TimingSystem other)
+        public bool Equals(TimingSystem? other)
         {
             return other != null && this.IPAddress.Trim().Equals(other.IPAddress.Trim()) && this.Port == other.Port
                 && this.LocationID == other.LocationID && this.Type.Equals(other.Type);

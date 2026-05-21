@@ -1,6 +1,7 @@
 ﻿using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
-using Chronokeep.UI.UIObjects;
+using Chronokeep.UI;
+using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -61,7 +62,7 @@ namespace Chronokeep.Updates
         public static async void Do(IMainWindow mWindow, bool messageOnNoUpdate = false)
         {
             string curVersion;
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt")!)
             {
                 using StreamReader reader = new(stream);
                 curVersion = reader.ReadToEnd();
@@ -70,7 +71,7 @@ namespace Chronokeep.Updates
             string[] version = curVersion.Split('.');
             if (version.Length >= 3)
             {
-                current.major = int.Parse(version[0].Substring(1));
+                current.major = int.Parse(version[0][1..]);
                 current.minor = int.Parse(version[1]);
                 current.patch = int.Parse(version[2].Split('-')[0]);
             }
@@ -86,7 +87,7 @@ namespace Chronokeep.Updates
                 DialogBox.Show("Unable to check for update.");
                 return;
             }
-            GithubRelease latestRelease = null;
+            GithubRelease? latestRelease = null;
             Version latestVersion = new();
             foreach (GithubRelease release in releases)
             {
@@ -111,8 +112,8 @@ namespace Chronokeep.Updates
             if (latestVersion.Newer(current))
             {
                 Log.D("Updates.Check", "Newer version found.");
-                DownloadWindow downloadWindow = new(latestRelease, latestVersion, mWindow);
-                downloadWindow.ShowDialog();
+                DownloadWindow downloadWindow = new(latestRelease!, latestVersion, mWindow);
+                _ = downloadWindow.ShowDialog(MainWindow.mWindow!);
             }
             else if (messageOnNoUpdate)
             {
@@ -133,7 +134,7 @@ namespace Chronokeep.Updates
                 {
                     Log.D("Updates.Check", "Status Code OK");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<List<GithubRelease>>(json);
+                    var result = JsonSerializer.Deserialize<List<GithubRelease>>(json)!;
                     return result;
                 }
                 Log.D("Updates.Check", "Status Code not OK");

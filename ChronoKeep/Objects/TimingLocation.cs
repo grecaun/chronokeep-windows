@@ -5,7 +5,7 @@ namespace Chronokeep.Objects
     public class TimingLocation : IEquatable<TimingLocation>, IComparable<TimingLocation>
     {
         private int identifier = -1, eventIdentifier, max_occurrences, ignore_within;
-        private string name;
+        private string name = "";
 
         public TimingLocation() { }
 
@@ -41,13 +41,13 @@ namespace Chronokeep.Objects
         public int MaxOccurrences { get => max_occurrences; set => max_occurrences = value; }
         public int IgnoreWithin { get => ignore_within; set => ignore_within = value; }
 
-        public int CompareTo(TimingLocation other)
+        public int CompareTo(TimingLocation? other)
         {
             if (other == null) return 1;
             return Identifier.CompareTo(other.Identifier);
         }
 
-        public bool Equals(TimingLocation other)
+        public bool Equals(TimingLocation? other)
         {
             if (other == null) return false;
             return Identifier == other.Identifier && EventIdentifier == other.EventIdentifier;

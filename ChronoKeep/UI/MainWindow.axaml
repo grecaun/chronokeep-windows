@@ -2,7 +2,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:sty="using:FluentAvalonia.Styling"
         mc:Ignorable="d" d:DesignWidth="1320" d:DesignHeight="700"
         x:Class="Chronokeep.UI.MainWindow"
         xmlns:vm="using:Chronokeep.UI"
@@ -124,7 +123,7 @@
                             <Label>Timing</Label>
                         </StackPanel>
                     </ToggleButton>
-			        <ToggleButton Name="Announcer" Click="Announcer_Click" Classes="nav">
+			        <ToggleButton Name="AnnouncerButton" Click="Announcer_Click" Classes="nav">
                         <StackPanel Orientation="Horizontal">
                             <Rectangle/>
                             <PathIcon Data="{StaticResource alert_urgent_regular}" />

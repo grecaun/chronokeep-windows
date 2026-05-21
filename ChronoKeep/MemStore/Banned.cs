@@ -120,7 +120,7 @@ namespace Chronokeep.MemStore
         public List<string> GetBannedEmails()
         {
             Log.D("MemStore", "GetBannedEmails");
-            List<string> output = new();
+            List<string> output = [];
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
@@ -146,7 +146,7 @@ namespace Chronokeep.MemStore
         public List<string> GetBannedPhones()
         {
             Log.D("MemStore", "GetBannedPhones");
-            List<string> output = new();
+            List<string> output = [];
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))

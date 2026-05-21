@@ -31,7 +31,7 @@ public partial class EditRawReadsWindow : Window
         this.Width = 280;
         this.MinHeight = 230;
         this.Height = 230;
-        theEvent = database.GetCurrentEvent();
+        theEvent = database.GetCurrentEvent()!;
         TimeBox.Focus();
     }
 
@@ -60,7 +60,7 @@ public partial class EditRawReadsWindow : Window
         string[] firstparts = TimeBox.Text!.Replace('_', '0').Split(':');
         string[] secondparts = firstparts[2].Split('.');
         int seconds, milliseconds;
-        int.TryParse(DaysBox.Text, out int days);
+        _ = int.TryParse(DaysBox.Text, out int days);
         try
         {
             int hours = Convert.ToInt32(firstparts[0]),
@@ -77,9 +77,9 @@ public partial class EditRawReadsWindow : Window
         }
         if (!add)
         {
-            seconds = seconds * -1;
-            milliseconds = milliseconds * -1;
-            days = days * -1;
+            seconds *= -1;
+            milliseconds *= -1;
+            days *= -1;
         }
         foreach (ChipRead read in chipReads)
         {
@@ -92,7 +92,7 @@ public partial class EditRawReadsWindow : Window
                 bibsChanged.Add(read.Bib);
             }
             read.TimeSeconds = read.TimeSeconds + (86400 * days) + seconds;
-            read.TimeMilliseconds = read.TimeMilliseconds + milliseconds;
+            read.TimeMilliseconds += milliseconds;
             if (read.TimeMilliseconds < 0)
             {
                 read.TimeSeconds--;
@@ -108,12 +108,12 @@ public partial class EditRawReadsWindow : Window
         database.ResetTimingResultsEvent(theEvent.Identifier);
         parent.UpdateView();
         parent.NotifyTimingWorker();
-        this.Close();
+        Close();
     }
 
     private void Cancel_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.EditRawReadsWindow", "Cancel clicked.");
-        this.Close();
+        Close();
     }
 }

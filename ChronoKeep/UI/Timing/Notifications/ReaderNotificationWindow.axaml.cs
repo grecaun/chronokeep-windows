@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ public partial class ReaderNotificationWindow : Window
         window.WindowFinalize(this);
     }
 
-    private void CancelButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void CancelButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.Timing.Notifications.ReaderNotificationWindow", "Done button clicked.");
         this.Close();

@@ -1,7 +1,8 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Objects;
+using Chronokeep.UI.Parts;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.Import;
 
@@ -15,13 +16,13 @@ public partial class ImportFilePage2Alt : UserControl
         no_distance = noDistances;
         if (no_distance)
         {
-            distanceListBox.Items.Add(new DistanceListBoxItemAlternate("Default Distance", dbDistances));
+            distanceListBox.Items.Add(new DistanceAlternatePart("Default Distance", dbDistances));
         }
         else
         {
             foreach (string distance in fileDistances)
             {
-                distanceListBox.Items.Add(new DistanceListBoxItemAlternate(distance, dbDistances));
+                distanceListBox.Items.Add(new DistanceAlternatePart(distance, dbDistances));
             }
         }
     }
@@ -29,7 +30,7 @@ public partial class ImportFilePage2Alt : UserControl
     public List<ImportDistance> GetDistances()
     {
         List<ImportDistance> output = [];
-        foreach (DistanceListBoxItemAlternate distanceItem in distanceListBox.Items)
+        foreach (DistanceAlternatePart distanceItem in distanceListBox.Items.Cast<DistanceAlternatePart>())
         {
             output.Add(new ImportDistance()
             {
@@ -42,7 +43,7 @@ public partial class ImportFilePage2Alt : UserControl
 
     public class ImportDistance
     {
-        public string NameFromFile { get; set; }
+        public string NameFromFile { get; set; } = "";
         public int DistanceId { get; set; }
     }
 }

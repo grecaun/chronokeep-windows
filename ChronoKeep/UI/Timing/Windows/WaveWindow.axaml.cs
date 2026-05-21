@@ -5,6 +5,7 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -52,7 +53,7 @@ public partial class WaveWindow : Window
     private void NetTimeButton_Checked(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.WaveWindow", "Net Time Selected.");
-        foreach (WavePart? wave in WaveList.Items)
+        foreach (WavePart? wave in WaveList.Items.Cast<WavePart?>())
         {
             int waveId = wave!.GetWave();
             wave.SetTime(waveTimes[waveId].seconds, waveTimes[waveId].milliseconds);
@@ -62,7 +63,7 @@ public partial class WaveWindow : Window
     private void TimeofDayButton_Checked(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.WaveWindow", "Time of day selected.");
-        foreach (WavePart? wave in WaveList.Items)
+        foreach (WavePart? wave in WaveList.Items.Cast<WavePart?>())
         {
             int waveId = wave!.GetWave();
             wave.SetTime(waveTimes[waveId].seconds + theEvent!.StartSeconds, waveTimes[waveId].milliseconds + theEvent.StartMilliseconds);
@@ -72,13 +73,13 @@ public partial class WaveWindow : Window
     private void SetButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.WaveWindow", "Aye aye! Updating!");
-        foreach (WavePart? wave in WaveList.Items)
+        foreach (WavePart? wave in WaveList.Items.Cast<WavePart?>())
         {
             (int waveNo, long seconds, int milliseconds) = wave!.GetValues();
             if (TimeofDayButton.IsChecked == true)
             {
-                seconds = seconds - theEvent!.StartSeconds;
-                milliseconds = milliseconds - theEvent.StartMilliseconds;
+                seconds -= theEvent!.StartSeconds;
+                milliseconds -= theEvent.StartMilliseconds;
                 if (milliseconds < 0)
                 {
                     seconds -= 1;

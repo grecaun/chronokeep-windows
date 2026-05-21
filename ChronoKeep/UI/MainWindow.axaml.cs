@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Media;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,9 +30,10 @@ namespace Chronokeep.UI
 {
     public partial class MainWindow : Window, IMainWindow
     {
-        internal IMainPage CurrentPage;
+        internal static Window? mWindow;
+        internal IMainPage? CurrentPage;
 
-        private readonly MemStore.MemStore database;
+        private readonly MemStore.MemStore? database;
         private readonly string dbName = "Chronokeep.sqlite";
 
         // Network objects
@@ -83,6 +83,7 @@ namespace Chronokeep.UI
         public MainWindow()
         {
             InitializeComponent();
+            mWindow = this;
 
             // Check that no other instance of this program are running.
             if (!OneWindow.WaitOne(TimeSpan.Zero, true))
@@ -126,7 +127,7 @@ namespace Chronokeep.UI
             Globals.SetupValues(database);
 
             // Setup AgeGroup static variables
-            Event theEvent = database.GetCurrentEvent();
+            Event? theEvent = database.GetCurrentEvent();
 
             CurrentPage = new DashboardPage(this, database);
             ParentSplitView.Content = CurrentPage;
@@ -134,7 +135,7 @@ namespace Chronokeep.UI
             UpdateStatus();
 
             // Check for updates.
-            if (database.GetAppSetting(Constants.Settings.CHECK_UPDATES).Value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.CHECK_UPDATES)!.Value == Constants.Settings.SETTING_TRUE)
             {
                 Updates.Check.Do(this);
             }
@@ -147,13 +148,13 @@ namespace Chronokeep.UI
             TimingUpdater.Start();
 
             // Set the global upload interval.
-            if (!int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).Value, out Globals.UploadInterval))
+            if (!int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL)!.Value, out Globals.UploadInterval))
             {
                 DialogBox.Show("Something went wrong trying to update the upload interval.");
             }
 
             // Set the global download interval.
-            if (!int.TryParse(database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL).Value, out Globals.DownloadInterval))
+            if (!int.TryParse(database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL)!.Value, out Globals.DownloadInterval))
             {
                 DialogBox.Show("Something went wrong trying to update the download interval.");
             }
@@ -186,7 +187,7 @@ namespace Chronokeep.UI
             {
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).Value == Constants.Settings.SETTING_FALSE &&
+            if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT)!.Value == Constants.Settings.SETTING_FALSE &&
                 (BackgroundProcessesRunning()))
             {
                 bool AllowClose = false;
@@ -231,10 +232,7 @@ namespace Chronokeep.UI
                 StopRegistration();
             }
             catch { }
-            if (httpServer != null)
-            {
-                httpServer.Stop();
-            }
+            httpServer?.Stop();
             foreach (Window w in openWindows)
             {
                 try
@@ -246,29 +244,26 @@ namespace Chronokeep.UI
                     Log.D("UI.MainWindow", "Oh well!");
                 }
             }
-            if (CurrentPage != null) CurrentPage.Closing();
+            CurrentPage?.Closing();
             TimingUpdater.Stop();
         }
 
-        private void Window_Loaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            TimingController = new TimingController(this, database);
-            TimingWorker = TimingWorker.NewWorker(this, database);
+            TimingController = new TimingController(this, database!);
+            TimingWorker = TimingWorker.NewWorker(this, database!);
             TimingWorkerThread = new Thread(new ThreadStart(TimingWorker.Run));
             TimingWorkerThread.Start();
             TimingWorker.Notify();
             // Check for current theme color and apply it.
-            AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
-            if (OperatingSystem.IsWindowsVersionAtLeast(7))
+            AppSetting themeColor = database!.GetAppSetting(Constants.Settings.CURRENT_THEME)!;
+            string theme = "light";
+            bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
+            if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
             {
-                string theme = "light";
-                bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
-                if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
-                {
-                    theme = "dark";
-                }
-                UpdateTheme(theme, system);
+                theme = "dark";
             }
+            UpdateTheme(theme, system);
             // Check for hardware changes.
             Log.D("UI.MainWindow", "Starting hardware checker.");
             HardwareChecker hwCheck = new(database);
@@ -278,7 +273,7 @@ namespace Chronokeep.UI
             // Check last known program version
             Log.D("UI.MainWindow", "Starting changelog version checker.");
             string gitVersion = "";
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt")!)
             {
                 using StreamReader reader = new(stream);
                 gitVersion = reader.ReadToEnd();
@@ -288,8 +283,8 @@ namespace Chronokeep.UI
                 gitVersion = gitVersion.Split('-')[0];
             }
             Log.D("UI.MainWindow", "Version.txt read.");
-            AppSetting programVers = database.GetAppSetting(Constants.Settings.PROGRAM_VERSION);
-            AppSetting showChangelog = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG);
+            AppSetting programVers = database.GetAppSetting(Constants.Settings.PROGRAM_VERSION)!;
+            AppSetting showChangelog = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG)!;
             if (programVers == null && showChangelog != null && showChangelog.Value == Constants.Settings.SETTING_TRUE)
             {
                 Log.D("UI.MainWindow", "AppSetting not set.");
@@ -301,7 +296,7 @@ namespace Chronokeep.UI
             {
                 Log.D("UI.MainWindow", "Splitting defined values, parsing them, then checking if newer version.");
                 string[] gitSplit = gitVersion.Replace("v", "").Split('.');
-                string[] dbSplit = programVers.Value.Replace("v", "").Split('.');
+                string[] dbSplit = programVers!.Value.Replace("v", "").Split('.');
                 if (dbSplit.Length != 3 || gitSplit.Length != 3)
                 {
                     DialogBox.Show($"Expected 3 values when checking the program version. DB ${programVers.Value} - P ${gitVersion}");
@@ -334,12 +329,12 @@ namespace Chronokeep.UI
 
         public void SwitchPage(IMainPage iPage)
         {
-            CurrentPage.Closing();
+            CurrentPage?.Closing();
             CurrentPage = iPage;
             ParentSplitView.Content = CurrentPage;
         }
 
-        private void DashboardButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void DashboardButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Dashboard button clicked.");
             if (CurrentPage is DashboardPage)
@@ -349,24 +344,24 @@ namespace Chronokeep.UI
             }
             UncheckAll();
             DashboardButton.IsChecked = true;
-            SwitchPage(new DashboardPage(this, database));
+            SwitchPage(new DashboardPage(this, database!));
         }
 
-        private void TimingButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void TimingButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Timing button clicked.");
-            if (CurrentPage is TimingPage)
+            if (CurrentPage is TimingPage page)
             {
                 Log.D("UI.MainWindow", "Timing page already displayed.");
-                ((TimingPage)CurrentPage).LoadMainDisplay();
+                page.LoadMainDisplay();
                 return;
             }
             UncheckAll();
             TimingButton.IsChecked = true;
-            SwitchPage(new TimingPage(this, database));
+            SwitchPage(new TimingPage(this, database!));
         }
 
-        private void ParticipantsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void ParticipantsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Participants button clicked.");
             if (CurrentPage is ParticipantsPage)
@@ -376,10 +371,10 @@ namespace Chronokeep.UI
             }
             UncheckAll();
             ParticipantsButton.IsChecked = true;
-            SwitchPage(new ParticipantsPage(this, database));
+            SwitchPage(new ParticipantsPage(this, database!));
         }
 
-        private void ChipsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void ChipsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Chips button clicked.");
             if (CurrentPage is ChipAssignmentPage)
@@ -389,10 +384,10 @@ namespace Chronokeep.UI
             }
             UncheckAll();
             ChipsButton.IsChecked = true;
-            SwitchPage(new ChipAssignmentPage(this, database));
+            SwitchPage(new ChipAssignmentPage(this, database!));
         }
 
-        private void LocationsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void LocationsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Locations button clicked.");
             if (CurrentPage is LocationsPage)
@@ -402,9 +397,9 @@ namespace Chronokeep.UI
             }
             UncheckAll();
             LocationsButton.IsChecked = true;
-            SwitchPage(new LocationsPage(this, database));
+            SwitchPage(new LocationsPage(this, database!));
         }
-        private void DistancesButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void DistancesButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Distances button clicked.");
             if (CurrentPage is DistancesPage)
@@ -414,10 +409,10 @@ namespace Chronokeep.UI
             }
             UncheckAll();
             DistancesButton.IsChecked = true;
-            SwitchPage(new DistancesPage(this, database));
+            SwitchPage(new DistancesPage(this, database!));
         }
 
-        private void SegmentsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void SegmentsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Segments button clicked.");
             if (CurrentPage is SegmentsPage)
@@ -427,10 +422,10 @@ namespace Chronokeep.UI
             }
             UncheckAll();
             SegmentsButton.IsChecked = true;
-            SwitchPage(new SegmentsPage(this, database));
+            SwitchPage(new SegmentsPage(this, database!));
         }
 
-        private void AgeGroupsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void AgeGroupsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Age Groups button clicked.");
             if (CurrentPage is AgeGroupsPage)
@@ -440,10 +435,10 @@ namespace Chronokeep.UI
             }
             UncheckAll();
             AgeGroupsButton.IsChecked = true;
-            SwitchPage(new AgeGroupsPage(this, database));
+            SwitchPage(new AgeGroupsPage(this, database!));
         }
 
-        private void SettingsButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Settings button clicked.");
             if (CurrentPage is SettingsPage)
@@ -453,10 +448,10 @@ namespace Chronokeep.UI
             }
             UncheckAll();
             SettingsButton.IsChecked = true;
-            SwitchPage(new SettingsPage(this, database));
+            SwitchPage(new SettingsPage(this, database!));
         }
 
-        private void AboutButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void AboutButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "About button clicked.");
             if (CurrentPage is AboutPage)
@@ -466,11 +461,11 @@ namespace Chronokeep.UI
             }
             UncheckAll();
             AboutButton.IsChecked = true;
-            SwitchPage(new AboutPage(this, database));
+            SwitchPage(new AboutPage(this, database!));
         }
 
 
-        private void NavigationButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void NavigationButton_Click(object sender, RoutedEventArgs e)
         {
             ParentSplitView.IsPaneOpen = !ParentSplitView.IsPaneOpen;
         }
@@ -491,7 +486,7 @@ namespace Chronokeep.UI
 
         public bool IsRegistrationRunning()
         {
-            return (RegistrationWorker != null && RegistrationWorker.IsRunning()) && (ZConfServer != null && ZConfServer.IsRunning());
+            return (RegistrationWorker != null && RegistrationWorker.IsRunning()) && (ZConfServer != null && ZeroConf.IsRunning());
         }
 
         public bool StopRegistration()
@@ -500,10 +495,7 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Stopping zero conf.");
-                if (ZConfServer != null)
-                {
-                    ZConfServer.Stop();
-                }
+                ZConfServer?.Stop();
             }
             catch
             {
@@ -512,10 +504,7 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Stopping registration.");
-                if (RegistrationWorker != null)
-                {
-                    RegistrationWorker.Stop();
-                }
+                RegistrationWorker?.Stop();
             }
             catch
             {
@@ -530,7 +519,7 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Starting zero conf.");
-                AppSetting zconfName = database.GetAppSetting(Constants.Settings.SERVER_NAME);
+                AppSetting? zconfName = database!.GetAppSetting(Constants.Settings.SERVER_NAME);
                 ZConfServer = new ZeroConf(zconfName != null && zconfName.Value != null ? zconfName.Value : null);
                 ZConfThread = new Thread(new ThreadStart(ZConfServer.Run));
                 ZConfThread.Start();
@@ -542,7 +531,7 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Starting registration.");
-                RegistrationWorker = new RegistrationWorker(database, this);
+                RegistrationWorker = new RegistrationWorker(database!, this);
                 RegistrationThread = new Thread(new ThreadStart(RegistrationWorker.Run));
                 RegistrationThread.Start();
             }
@@ -555,13 +544,10 @@ namespace Chronokeep.UI
 
         public void UpdateRegistrationDistances()
         {
-            if (RegistrationWorker != null)
-            {
-                RegistrationWorker.UpdateDistances();
-            }
+            RegistrationWorker?.UpdateDistances();
         }
 
-        private bool StopTimingWorker()
+        private static bool StopTimingWorker()
         {
             try
             {
@@ -581,7 +567,7 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Stopping Timing Controller.");
-                if (TimingController != null) TimingController.Shutdown();
+                TimingController?.Shutdown();
             }
             catch
             {
@@ -605,7 +591,7 @@ namespace Chronokeep.UI
             {
                 return false;
             }
-            CurrentPage.UpdateView();
+            CurrentPage?.UpdateView();
             return true;
         }
 
@@ -615,7 +601,7 @@ namespace Chronokeep.UI
             {
                 if (!APIController.IsRunning())
                 {
-                    APIController = new APIController(this, database);
+                    APIController = new APIController(this, database!);
                     APIControllerThread = new Thread(new ThreadStart(APIController.Run));
                     APIControllerThread.Start();
                 }
@@ -624,7 +610,7 @@ namespace Chronokeep.UI
 
         public bool IsAPIControllerRunning()
         {
-            return APIController == null ? false : APIController.IsRunning();
+            return APIController != null && APIController.IsRunning();
         }
 
         public int APIErrors()
@@ -665,7 +651,7 @@ namespace Chronokeep.UI
                 if (!RemoteReadsController.IsRunning())
                 {
                     Log.D("UI.MainWindow", "Starting Remote Thread");
-                    RemoteController = new RemoteReadsController(this, database);
+                    RemoteController = new RemoteReadsController(this, database!);
                     RemoteThread = new Thread(new ThreadStart(RemoteController.Run));
                     RemoteThread.Start();
                 }
@@ -684,7 +670,7 @@ namespace Chronokeep.UI
             {
                 return false;
             }
-            CurrentPage.UpdateView();
+            CurrentPage?.UpdateView();
             return true;
         }
 
@@ -701,7 +687,7 @@ namespace Chronokeep.UI
         public void UpdateAnnouncerWindow()
         {
             // Let the announcer window know that it has new information.
-            Application.Current.Dispatcher.Invoke(new Action(delegate ()
+            Application.Current!.Dispatcher.Invoke(new Action(delegate ()
             {
                 announcerWindow?.UpdateView();
             }));
@@ -774,65 +760,62 @@ namespace Chronokeep.UI
 
         public void UpdateStatus()
         {
-            Event theEvent = database.GetCurrentEvent();
+            Event? theEvent = database!.GetCurrentEvent();
             Alarm.ClearAlarms();
             if (theEvent == null || theEvent.Identifier == -1)
             {
-                participantsButton.IsEnabled = false;
-                chipsButton.IsEnabled = false;
-                distancesButton.IsEnabled = false;
-                locationsButton.IsEnabled = false;
-                segmentsButton.IsEnabled = false;
-                agegroupsButton.IsEnabled = false;
-                timingButton.IsEnabled = false;
-                announcerButton.IsEnabled = false;
+                ParticipantsButton.IsEnabled = false;
+                ChipsButton.IsEnabled = false;
+                DistancesButton.IsEnabled = false;
+                LocationsButton.IsEnabled = false;
+                SegmentsButton.IsEnabled = false;
+                AgeGroupsButton.IsEnabled = false;
+                TimingButton.IsEnabled = false;
+                AnnouncerButton.IsEnabled = false;
 
-                participantsButton.Opacity = 0.2;
-                chipsButton.Opacity = 0.2;
-                distancesButton.Opacity = 0.2;
-                locationsButton.Opacity = 0.2;
-                segmentsButton.Opacity = 0.2;
-                agegroupsButton.Opacity = 0.2;
-                timingButton.Opacity = 0.2;
-                announcerButton.Opacity = 0.2;
+                ParticipantsButton.Opacity = 0.2;
+                ChipsButton.Opacity = 0.2;
+                DistancesButton.Opacity = 0.2;
+                LocationsButton.Opacity = 0.2;
+                SegmentsButton.Opacity = 0.2;
+                AgeGroupsButton.Opacity = 0.2;
+                TimingButton.Opacity = 0.2;
+                AnnouncerButton.Opacity = 0.2;
             }
             else
             {
-                participantsButton.IsEnabled = true;
-                chipsButton.IsEnabled = true;
-                distancesButton.IsEnabled = true;
-                locationsButton.IsEnabled = true;
-                segmentsButton.IsEnabled = true;
-                agegroupsButton.IsEnabled = true;
-                timingButton.IsEnabled = true;
-                announcerButton.IsEnabled = true;
+                ParticipantsButton.IsEnabled = true;
+                ChipsButton.IsEnabled = true;
+                DistancesButton.IsEnabled = true;
+                LocationsButton.IsEnabled = true;
+                SegmentsButton.IsEnabled = true;
+                AgeGroupsButton.IsEnabled = true;
+                TimingButton.IsEnabled = true;
+                AnnouncerButton.IsEnabled = true;
 
-                participantsButton.Opacity = 1.0;
-                chipsButton.Opacity = 1.0;
-                distancesButton.Opacity = 1.0;
-                locationsButton.Opacity = 1.0;
-                segmentsButton.Opacity = 1.0;
-                agegroupsButton.Opacity = 1.0;
-                timingButton.Opacity = 1.0;
-                announcerButton.Opacity = 1.0;
+                ParticipantsButton.Opacity = 1.0;
+                ChipsButton.Opacity = 1.0;
+                DistancesButton.Opacity = 1.0;
+                LocationsButton.Opacity = 1.0;
+                SegmentsButton.Opacity = 1.0;
+                AgeGroupsButton.Opacity = 1.0;
+                TimingButton.Opacity = 1.0;
+                AnnouncerButton.Opacity = 1.0;
 
                 // Pull alarms from the database.
                 Alarm.AddAlarms(database.GetAlarms(theEvent.Identifier));
             }
-            if (OperatingSystem.IsWindowsVersionAtLeast(8))
-            {
-                dashboardButton.IsActive = CurrentPage is DashboardPage;
-                timingButton.IsActive = CurrentPage is TimingPage;
-                announcerButton.IsActive = announcerWindow != null;
-                participantsButton.IsActive = CurrentPage is ParticipantsPage;
-                chipsButton.IsActive = CurrentPage is ChipAssigmentPage;
-                locationsButton.IsActive = CurrentPage is LocationsPage;
-                distancesButton.IsActive = CurrentPage is DistancesPage;
-                segmentsButton.IsActive = CurrentPage is SegmentsPage;
-                agegroupsButton.IsActive = CurrentPage is AgeGroupsPage;
-                settingsButton.IsActive = CurrentPage is SettingsPage;
-                aboutButton.IsActive = CurrentPage is AboutPage;
-            }
+            DashboardButton.IsChecked = CurrentPage is DashboardPage;
+            TimingButton.IsChecked = CurrentPage is TimingPage;
+            AnnouncerButton.IsChecked = announcerWindow != null;
+            ParticipantsButton.IsChecked = CurrentPage is ParticipantsPage;
+            ChipsButton.IsChecked = CurrentPage is ChipAssignmentPage;
+            LocationsButton.IsChecked = CurrentPage is LocationsPage;
+            DistancesButton.IsChecked = CurrentPage is DistancesPage;
+            SegmentsButton.IsChecked = CurrentPage is SegmentsPage;
+            AgeGroupsButton.IsChecked = CurrentPage is AgeGroupsPage;
+            SettingsButton.IsChecked = CurrentPage is SettingsPage;
+            AboutButton.IsChecked = CurrentPage is AboutPage;
             UpdateTimingBadge();
         }
 
@@ -843,21 +826,12 @@ namespace Chronokeep.UI
                 List<ReaderMessage> messages = GetReaderMessages();
                 messages.RemoveAll(x => x.Notified);
                 if (messages.Count > 0)
-                {
-                    TimingButtonInfoBadge.IsVisible = true;
-                    TimingButtonInfoBadge.Value = $"{messages.Count}";
-                }
+                { }
                 else
-                {
-                    TimingButtonInfoBadge.IsVisible = false;
-                    TimingButtonInfoBadge.Value = "0";
-                }
+                { }
             }
             else
-            {
-                TimingButtonInfoBadge.IsVisible = false;
-                TimingButtonInfoBadge.Value = "0";
-            }
+            { }
         }
 
         public async void ConnectTimingSystem(TimingSystem system)
@@ -895,8 +869,8 @@ namespace Chronokeep.UI
 
         public List<TimingSystem> GetConnectedSystems()
         {
-            List<TimingSystem> connected = TimingController.GetConnectedSystems();
-            List<TimingSystem> saved = database.GetTimingSystems();
+            List<TimingSystem> connected = TimingController!.GetConnectedSystems();
+            List<TimingSystem> saved = database!.GetTimingSystems();
             saved.RemoveAll(x => connected.Contains(x));
             saved.InsertRange(0, connected);
             return saved;
@@ -906,9 +880,12 @@ namespace Chronokeep.UI
         {
             Application.Current!.Dispatcher.Invoke(new Action(delegate ()
             {
-                if (!system.SystemInterface.WasShutdown())
+                if (system.SystemInterface != null)
                 {
-                    DialogBox.Show(string.Format("Reader at {0} has unexpectedly disconnected. IP Address was {1}.", system.LocationName, system.IPAddress));
+                    if (!system.SystemInterface.WasShutdown())
+                    {
+                        DialogBox.Show(string.Format("Reader at {0} has unexpectedly disconnected. IP Address was {1}.", system.LocationName, system.IPAddress));
+                    }
                 }
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
                 UpdateTiming();
@@ -933,7 +910,7 @@ namespace Chronokeep.UI
                 announcerWindow.Focus();
                 return;
             }
-            announcerWindow = new AnnouncerWindow(this, database);
+            announcerWindow = new AnnouncerWindow(this, database!);
             announcerWindow.Show();
             UpdateStatus();
         }
@@ -943,34 +920,22 @@ namespace Chronokeep.UI
             httpServer?.UpdateInformation();
         }
 
-        public void NetworkAddResults()
-        {
-        }
+        public static void NetworkAddResults() { }
 
         public void NetworkClearResults()
         {
-            if (httpServer != null)
-            {
-                httpServer.UpdateInformation();
-            }
+            httpServer?.UpdateInformation();
         }
 
         public void StartHttpServer()
         {
-            if (httpServer != null)
-            {
-                httpServer.Stop();
-                httpServer = null;
-            }
-            httpServer = new HttpServer(database, httpServerPort);
+            httpServer?.Stop();
+            httpServer = new HttpServer(database!, httpServerPort);
         }
 
         public void StopHttpServer()
         {
-            if (httpServer != null)
-            {
-                httpServer.Stop();
-            }
+            httpServer!.Stop();
             httpServer = null;
         }
 
@@ -981,7 +946,7 @@ namespace Chronokeep.UI
 
         public bool AnnouncerConnected()
         {
-            foreach (TimingSystem system in TimingController.GetConnectedSystems())
+            foreach (TimingSystem system in TimingController!.GetConnectedSystems())
             {
                 if (system.LocationID == Constants.Timing.LOCATION_ANNOUNCER)
                 {
@@ -1106,8 +1071,8 @@ namespace Chronokeep.UI
 
         public void NotifyAlarm(string Bib, string Chip)
         {
-            Event theEvent = database.GetCurrentEvent();
-            Application.Current!.Dispatcher.Invoke(new Action(delegate ()
+            Event? theEvent = database!.GetCurrentEvent();
+            Application.Current!.Dispatcher.Invoke(new Action(async delegate ()
             {
                 Alarm? alarm = null;
                 if (Bib.Length > 0)
@@ -1121,59 +1086,37 @@ namespace Chronokeep.UI
                 if (alarm != null && alarm.Enabled)
                 {
                     alarm.Enabled = false;
-                    Alarm.SaveAlarm(theEvent.Identifier, database, alarm);
+                    Alarm.SaveAlarm(theEvent!.Identifier, database, alarm);
                     string soundFile = Environment.CurrentDirectory;
                     int sound = alarm.AlarmSound;
                     // Any value not between 1-5 (inclusive both) is defined to be the default sound.
                     if (sound < 1 || sound > 5)
                     {
                         // If for some reason we can't parse the value into integer, set it to 1.
-                        if (!int.TryParse(database.GetAppSetting(Constants.Settings.ALARM_SOUND).Value, out sound))
+                        if (!int.TryParse(database.GetAppSetting(Constants.Settings.ALARM_SOUND)!.Value, out sound))
                         {
                             sound = 1;
                         }
                     }
-                    switch (sound)
+                    soundFile += sound switch
                     {
-                        case 2:
-                            soundFile += "\\Sounds\\alert-2.wav";
-                            break;
-                        case 3:
-                            soundFile += "\\Sounds\\alert-3.wav";
-                            break;
-                        case 4:
-                            soundFile += "\\Sounds\\alert-4.wav";
-                            break;
-                        case 5:
-                            soundFile += "\\Sounds\\alert-5.wav";
-                            break;
-                        case 6:
-                            soundFile += "\\Sounds\\emily-runner-here.wav";
-                            break;
-                        case 7:
-                            soundFile += "\\Sounds\\emily-runner-arrived.wav";
-                            break;
-                        case 8:
-                            soundFile += "\\Sounds\\emily-alert-runner-here.wav";
-                            break;
-                        case 9:
-                            soundFile += "\\Sounds\\michael-runner-here.wav";
-                            break;
-                        case 10:
-                            soundFile += "\\Sounds\\michael-runner-arrived.wav";
-                            break;
-                        case 11:
-                            soundFile += "\\Sounds\\michael-alert-runner-here.wav";
-                            break;
-                        default:
-                            soundFile += "\\Sounds\\alert-1.wav";
-                            break;
-                    }
-                    new SoundPlayer(soundFile).Play();
+                        2 => "\\Sounds\\alert-2.wav",
+                        3 => "\\Sounds\\alert-3.wav",
+                        4 => "\\Sounds\\alert-4.wav",
+                        5 => "\\Sounds\\alert-5.wav",
+                        6 => "\\Sounds\\emily-runner-here.wav",
+                        7 => "\\Sounds\\emily-runner-arrived.wav",
+                        8 => "\\Sounds\\emily-alert-runner-here.wav",
+                        9 => "\\Sounds\\michael-runner-here.wav",
+                        10 => "\\Sounds\\michael-runner-arrived.wav",
+                        11 => "\\Sounds\\michael-alert-runner-here.wav",
+                        _ => "\\Sounds\\alert-1.wav",
+                    };
+                    // Play the sound. -- TODO --
                 }
-                if (CurrentPage is TimingPage)
+                if (CurrentPage is TimingPage page)
                 {
-                    ((TimingPage)CurrentPage).UpdateAlarms();
+                    page.UpdateAlarms();
                 }
             }));
         }
@@ -1186,44 +1129,36 @@ namespace Chronokeep.UI
                 Message = notification,
                 SystemName = ReaderName,
                 Address = Address,
+                Severity = notification.Type switch
+                {
+                    // All of the portal errors should display a dialogbox
+                    // with information about what happened
+                    PortalError.TOO_MANY_REMOTE_API or
+                    PortalError.TOO_MANY_CONNECTIONS or
+                    PortalError.SERVER_ERROR or
+                    PortalError.DATABASE_ERROR or
+                    PortalError.INVALID_READER_TYPE or
+                    PortalError.READER_CONNECTION or
+                    PortalError.NOT_FOUND or
+                    PortalError.INVALID_SETTING or
+                    PortalError.INVALID_API_TYPE or
+                    PortalError.ALREADY_SUBSCRIBED or
+                    PortalError.ALREADY_RUNNING or
+                    PortalError.NOT_RUNNING or
+                    PortalError.NO_REMOTE_API or
+                    PortalError.STARTING_UP or
+                    PortalError.INVALID_READ or
+                    PortalError.NOT_ALLOWED or
+                    PortalNotification.UPS_DISCONNECTED or
+                    PortalNotification.UPS_ON_BATTERY or
+                    PortalNotification.UPS_LOW_BATTERY or
+                    PortalNotification.SHUTTING_DOWN or
+                    PortalNotification.BATTERY_LOW or
+                    PortalNotification.BATTERY_CRITICAL => ReaderMessage.SeverityLevel.High,
+                    PortalNotification.MAX_TEMP => ReaderMessage.SeverityLevel.Moderate,
+                    _ => ReaderMessage.SeverityLevel.Low,
+                }
             };
-            switch (notification.Type)
-            {
-                // All of the portal errors should display a dialogbox
-                // with information about what happened
-                case PortalError.TOO_MANY_REMOTE_API:
-                case PortalError.TOO_MANY_CONNECTIONS:
-                case PortalError.SERVER_ERROR:
-                case PortalError.DATABASE_ERROR:
-                case PortalError.INVALID_READER_TYPE:
-                case PortalError.READER_CONNECTION:
-                case PortalError.NOT_FOUND:
-                case PortalError.INVALID_SETTING:
-                case PortalError.INVALID_API_TYPE:
-                case PortalError.ALREADY_SUBSCRIBED:
-                case PortalError.ALREADY_RUNNING:
-                case PortalError.NOT_RUNNING:
-                case PortalError.NO_REMOTE_API:
-                case PortalError.STARTING_UP:
-                case PortalError.INVALID_READ:
-                case PortalError.NOT_ALLOWED:
-                // Only some of the Portal Notifications should display
-                // dialogboxes
-                case PortalNotification.UPS_DISCONNECTED:
-                case PortalNotification.UPS_ON_BATTERY:
-                case PortalNotification.UPS_LOW_BATTERY:
-                case PortalNotification.SHUTTING_DOWN:
-                case PortalNotification.BATTERY_LOW:
-                case PortalNotification.BATTERY_CRITICAL:
-                    msg.Severity = ReaderMessage.SeverityLevel.High;
-                    break;
-                case PortalNotification.MAX_TEMP:
-                    msg.Severity = ReaderMessage.SeverityLevel.Moderate;
-                    break;
-                default:
-                    msg.Severity = ReaderMessage.SeverityLevel.Low;
-                    break;
-            }
             AddReaderMessage(msg);
             UpdateTimingNonBlocking();
         }
@@ -1233,9 +1168,9 @@ namespace Chronokeep.UI
             Close();
         }
 
-        public void WindowFinalize(Window w)
+        public void WindowFinalize(Window? w)
         {
-            throw new NotImplementedException();
+            CurrentPage?.UpdateView();
         }
-    }// END
+    }
 }

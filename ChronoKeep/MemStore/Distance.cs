@@ -75,10 +75,10 @@ namespace Chronokeep.MemStore
             return output;
         }
 
-        public Distance GetDistance(int divId)
+        public Distance? GetDistance(int divId)
         {
             Log.D("MemStore", "GetDistance");
-            Distance output = null;
+            Distance? output = null;
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))
@@ -293,11 +293,11 @@ namespace Chronokeep.MemStore
                         }
                         foreach (TimeResult res in timingResults.Values)
                         {
-                            if (oldDistanceNameDict.TryGetValue(res.RealDistanceName, out string newDistName))
+                            if (oldDistanceNameDict.TryGetValue(res.RealDistanceName, out string? newDistName))
                             {
                                 res.RealDistanceName = newDistName;
                             }
-                            if (res.LinkedDistanceName.Length > 0 && oldDistanceNameDict.TryGetValue(res.LinkedDistanceName, out string newDistanceName))
+                            if (res.LinkedDistanceName.Length > 0 && oldDistanceNameDict.TryGetValue(res.LinkedDistanceName, out string? newDistanceName))
                             {
                                 res.LinkedDistanceName = newDistanceName;
                             }

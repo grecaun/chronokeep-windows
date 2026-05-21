@@ -8,27 +8,27 @@ namespace Chronokeep.Objects
         public int EventId { get; set; }
         public int Status { get; set; }
         public int LocationID { get; set; }
-        public string ChipNumber { get; set; }
+        public string ChipNumber { get; set; } = "";
         public long Seconds { get; set; }
         public int Milliseconds { get; set; }
         public long TimeSeconds { get; set; }
         public int TimeMilliseconds { get; set; }
         public int Antenna { get; set; }
-        public string Reader { get; set; }
-        public string Box { get; set; }
+        public string Reader { get; set; } = "";
+        public string Box { get; set; } = "";
         public int LogId { get; set; }
-        public string RSSI { get; set; }
+        public string RSSI { get; set; } = "";
         public int IsRewind { get; set; }
-        public string ReaderTime { get; set; }
+        public string ReaderTime { get; set; } = "";
         public long StartTime { get; set; }
-        public string ReadBib { get; set; }
-        public string ChipBib { get; set; }
-        public string Name { get; set; }
+        public string ReadBib { get; set; } = "";
+        public string ChipBib { get; set; } = "";
+        public string Name { get; set; } = "";
         public int Type { get; set; }
 
         // RawReads window functions
         internal DateTime Start { get; set; }
-        public string LocationName { get; set; }
+        public string LocationName { get; set; } = "";
         public string Bib {
             get
             {
@@ -475,7 +475,7 @@ namespace Chronokeep.Objects
             }
         }
 
-        public int CompareTo(ChipRead other)
+        public int CompareTo(ChipRead? other)
         {
             if (other == null) return CompareTo(other);
             return Time.CompareTo(other.Time);
@@ -493,8 +493,7 @@ namespace Chronokeep.Objects
             }
             string stringBibOne = one.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? one.ChipBib : one.ReadBib;
             string stringBibTwo = two.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? two.ChipBib : two.ReadBib;
-            int intBibOne, intBibTwo;
-            if (int.TryParse(stringBibOne, out intBibOne) && int.TryParse(stringBibTwo, out intBibTwo))
+            if (int.TryParse(stringBibOne, out int intBibOne) && int.TryParse(stringBibTwo, out int intBibTwo))
             {
                 return intBibOne.CompareTo(intBibTwo);
             }

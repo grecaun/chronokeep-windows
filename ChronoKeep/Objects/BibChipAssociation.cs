@@ -15,13 +15,12 @@ namespace Chronokeep.Objects
         public string Bib { get; set; }
         public string Chip { get; set; }
 
-        public int CompareTo(BibChipAssociation other)
+        public int CompareTo(BibChipAssociation? other)
         {
             if (other == null) return 1;
             else if (EventId == other.EventId)
             {
-                int bibOne, bibTwo;
-                if (int.TryParse(Bib, out bibOne) && int.TryParse(other.Bib, out bibTwo))
+                if (int.TryParse(Bib, out int bibOne) && int.TryParse(other.Bib, out int bibTwo))
                 {
                     return bibOne.CompareTo(bibTwo);
                 }
@@ -30,7 +29,7 @@ namespace Chronokeep.Objects
             return EventId.CompareTo(other.EventId);
         }
 
-        public bool Equals(BibChipAssociation other)
+        public bool Equals(BibChipAssociation? other)
         {
             if (other == null) return false;
             return EventId == other.EventId && Bib.Equals(other.Bib, StringComparison.OrdinalIgnoreCase);

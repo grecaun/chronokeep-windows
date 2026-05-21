@@ -17,6 +17,16 @@
     <SignAssembly>False</SignAssembly>
     <AssemblyOriginatorKeyFile>D:\ChronoKeep\ChronoKeepWindows\chronokeep-sign-key.snk</AssemblyOriginatorKeyFile>
     <SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Authors>$(Authors)</Authors>
+    <PackageId />
+    <Version />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <IsPublishable>False</IsPublishable>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <IsPublishable>False</IsPublishable>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="help\images\bootstrap-icons.css" />
@@ -124,6 +134,9 @@
     <Compile Update="UI\API\Parts\APIExpanderPart.axaml.cs">
       <DependentUpon>APIExpanderPart.axaml</DependentUpon>
     </Compile>
+    <Compile Update="UI\DownloadWindow.axaml.cs">
+      <DependentUpon>DownloadWindow.axaml</DependentUpon>
+    </Compile>
     <Compile Update="UI\ChipAssignment\Parts\TagRangePart.axaml.cs">
       <DependentUpon>TagRangePart.axaml</DependentUpon>
     </Compile>
@@ -172,14 +185,12 @@
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.0.0" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.3" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
-    <PackageReference Include="Hardware.Info" Version="101.1.1.1" />
+    <PackageReference Include="Hardware.Info" Version="110.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.18.0" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.8" />
     <PackageReference Include="Sentry" Version="6.5.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
+    <PackageReference Include="System.IO.Ports" Version="10.0.8" />
     <PackageReference Include="Twilio" Version="7.14.9" />
-    <PackageReference Include="WPF-UI" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="IO\HtmlTemplates\js\*" />

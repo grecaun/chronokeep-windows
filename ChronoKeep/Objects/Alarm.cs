@@ -193,14 +193,14 @@ namespace Chronokeep.Objects
             return output;
         }
 
-        public static Alarm GetAlarmByBib(string bib)
+        public static Alarm? GetAlarmByBib(string bib)
         {
-            Alarm output = null;
+            Alarm? output = null;
             if (ListMtx.TryEnter(3000))
             {
                 try
                 {
-                    if (bibAlarms.TryGetValue(bib, out Alarm alarm))
+                    if (bibAlarms.TryGetValue(bib, out Alarm? alarm))
                     {
                         output = alarm;
                     }
@@ -213,14 +213,14 @@ namespace Chronokeep.Objects
             return output;
         }
 
-        public static Alarm GetAlarmByChip(string chip)
+        public static Alarm? GetAlarmByChip(string chip)
         {
-            Alarm output = null;
+            Alarm? output = null;
             if (ListMtx.TryEnter(3000))
             {
                 try
                 {
-                    if (chipAlarms.TryGetValue(chip, out Alarm alarm))
+                    if (chipAlarms.TryGetValue(chip, out Alarm? alarm))
                     {
                         output = alarm;
                     }
@@ -233,7 +233,7 @@ namespace Chronokeep.Objects
             return output;
         }
 
-        public int CompareTo(Alarm other)
+        public int CompareTo(Alarm? other)
         {
             if (other == null) return 1;
             if (this.Bib == other.Bib)
@@ -243,7 +243,7 @@ namespace Chronokeep.Objects
             return this.Bib.CompareTo(other.Bib);
         }
 
-        public bool Equals(Alarm other)
+        public bool Equals(Alarm? other)
         {
             if (other == null) return false;
             return this.Identifier == other.Identifier;

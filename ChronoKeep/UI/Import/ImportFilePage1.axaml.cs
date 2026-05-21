@@ -1,8 +1,9 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.IO;
+using Chronokeep.UI.Parts;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.Import;
 
@@ -16,18 +17,18 @@ public partial class ImportFilePage1 : UserControl
         this.importer = importer;
         for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
         {
-            headerListBox.Items.Add(new HeaderListBoxItem(importer.Data.Headers[i], i));
+            headerListBox.Items.Add(new HeaderPart(importer.Data.Headers[i], i));
         }
     }
 
     internal List<string> RequiredNotFound()
     {
         Log.D("UI.ImportFilePage1", "Checking for required fields.");
-        List<string> output = null;
+        List<string> output = [];
         bool first = false, last = false;
-        foreach (ListBoxItem item in headerListBox.Items)
+        foreach (HeaderPart item in headerListBox.Items.Cast<HeaderPart>())
         {
-            int val = ((HeaderListBoxItem)item).HeaderBox.SelectedIndex;
+            int val = item.HeaderBox.SelectedIndex;
             if (val == ImportFileWindow.FIRST)
             {
                 first = true;
@@ -50,14 +51,14 @@ public partial class ImportFilePage1 : UserControl
         int[] check = new int[ImportFileWindow.human_fields.Length];
         bool repeat = false;
         List<string> output = [];
-        foreach (ListBoxItem item in headerListBox.Items)
+        foreach (HeaderPart item in headerListBox.Items.Cast<HeaderPart>())
         {
-            int val = ((HeaderListBoxItem)item).HeaderBox.SelectedIndex;
+            int val = item.HeaderBox.SelectedIndex;
             if (val > 0)
             {
                 if (check[val] > 0)
                 {
-                    output.Add(((HeaderListBoxItem)item).HeaderBox.SelectedItem.ToString());
+                    output.Add(item.HeaderBox.SelectedItem!.ToString()!);
                     repeat = true;
                 }
                 else
@@ -66,13 +67,16 @@ public partial class ImportFilePage1 : UserControl
                 }
             }
         }
-        return repeat == true ? output : null;
+        return repeat == true ? output : [];
     }
 
-    internal HeaderListBoxItem[] GetListBoxItems()
+    internal HeaderPart[] GetListBoxItems()
     {
-        HeaderListBoxItem[] output = new HeaderListBoxItem[headerListBox.Items.Count];
-        headerListBox.Items.CopyTo(output, 0);
+        HeaderPart[] output = new HeaderPart[headerListBox.Items.Count];
+        for (int i=0; i<headerListBox.Items.Count; i++)
+        {
+            output[i] = (HeaderPart)headerListBox.Items[i]!;
+        }
         return output;
     }
 
@@ -85,7 +89,7 @@ public partial class ImportFilePage1 : UserControl
         headerListBox.Items.Clear();
         for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
         {
-            headerListBox.Items.Add(new HeaderListBoxItem(importer.Data.Headers[i], i));
+            headerListBox.Items.Add(new HeaderPart(importer.Data.Headers[i], i));
         }
     }
 }

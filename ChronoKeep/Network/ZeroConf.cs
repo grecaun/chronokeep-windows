@@ -9,13 +9,13 @@ namespace Chronokeep.Network
     class ZeroConf
     {
         private bool keepAlive = true;
-        private UdpClient udpClient;
+        private UdpClient? udpClient;
         private string servername;
-        public static string serverid;
+        public static string? serverid;
 
         private static bool running = false;
 
-        public ZeroConf(string name)
+        public ZeroConf(string? name)
         {
             char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".ToCharArray();
             char[] serverid_chars = new char[10];
@@ -71,16 +71,10 @@ namespace Chronokeep.Network
         {
             Log.D("Network.ZeroConf", "Zero Conf is instructed to stop.");
             keepAlive = false;
-            if (udpClient != null)
-            {
-                udpClient.Close();
-            }
+            udpClient?.Close();
         }
 
-        public bool IsRunning()
-        {
-            return running;
-        }
+        public static bool IsRunning() => running;
 
         public void SetName(string name)
         {

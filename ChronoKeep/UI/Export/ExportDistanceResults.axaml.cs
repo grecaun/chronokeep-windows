@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.IO;
@@ -142,19 +143,18 @@ public partial class ExportDistanceResults : Window
         return noOpen;
     }
 
-    private void SaveAllBoston()
+    private async void SaveAllBoston()
     {
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
-            FileName = string.Format("{0} {1} Boston.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog() == true)
+            FileTypeChoices = [Utils.ExcelType],
+            SuggestedFileName = string.Format("{0} {1} Boston.{2}", theEvent!.YearCode, theEvent.Name, "xlsx"),
+        });
+        if (file is not null)
         {
-            string extension = Path.GetExtension(saveFileDialog.FileName);
-            string fileName = Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
-            string filePath = Path.GetDirectoryName(saveFileDialog.FileName);
+            string extension = Path.GetExtension(file.Name);
+            string fileName = Path.GetFileNameWithoutExtension(file.Name);
+            string filePath = Path.GetDirectoryName(file.Name)!;
             foreach (Distance distance in distanceDictionary!.Values)
             {
                 SaveBostonInternal(
@@ -167,19 +167,18 @@ public partial class ExportDistanceResults : Window
         }
     }
 
-    private void SaveAllUltraSignup()
+    private async void SaveAllUltraSignup()
     {
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "CSV (*.csv)|*.csv",
-            FileName = string.Format("{0} {1} Ultrasignup.{2}", theEvent.YearCode, theEvent.Name, "csv"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog() == true)
+            FileTypeChoices = [Utils.CSVType],
+            SuggestedFileName = string.Format("{0} {1} Ultrasignup.{2}", theEvent!.YearCode, theEvent.Name, "csv"),
+        });
+        if (file is not null)
         {
-            string extension = Path.GetExtension(saveFileDialog.FileName);
-            string fileName = Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
-            string filePath = Path.GetDirectoryName(saveFileDialog.FileName);
+            string extension = Path.GetExtension(file.Name);
+            string fileName = Path.GetFileNameWithoutExtension(file.Name);
+            string filePath = Path.GetDirectoryName(file.Name)!;
             foreach (Distance distance in distanceDictionary!.Values)
             {
                 SaveUltraSignupInternal(
@@ -191,19 +190,18 @@ public partial class ExportDistanceResults : Window
         }
     }
 
-    private void SaveAllRunsignup()
+    private async void SaveAllRunsignup()
     {
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "CSV (*.csv)|*.csv",
-            FileName = string.Format("{0} {1} Runsignup.{2}", theEvent.YearCode, theEvent.Name, "csv"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog() == true)
+            FileTypeChoices = [Utils.CSVType],
+            SuggestedFileName = string.Format("{0} {1} Runsignup.{2}", theEvent!.YearCode, theEvent.Name, "csv"),
+        });
+        if (file is not null)
         {
-            string extension = Path.GetExtension(saveFileDialog.FileName);
-            string fileName = Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
-            string filePath = Path.GetDirectoryName(saveFileDialog.FileName);
+            string extension = Path.GetExtension(file.Name);
+            string fileName = Path.GetFileNameWithoutExtension(file.Name);
+            string filePath = Path.GetDirectoryName(file.Name)!;
             foreach (Distance distance in distanceDictionary!.Values)
             {
                 SaveRunsignupInternal(
@@ -215,17 +213,16 @@ public partial class ExportDistanceResults : Window
         }
     }
 
-    private void SaveAbbot(string distance)
+    private async void SaveAbbot(string distance)
     {
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
-            FileName = string.Format("{0} {1} {2} AbbotWMM.{3}", theEvent.YearCode, theEvent.Name, distance, "xlsx"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog() == true)
+            FileTypeChoices = [Utils.ExcelType],
+            SuggestedFileName = string.Format("{0} {1} {2} AbbotWMM.{3}", theEvent!.YearCode, theEvent.Name, distance, "xlsx"),
+        });
+        if (file is not null)
         {
-            SaveAbbotInternal(distance, saveFileDialog.FileName, Path.GetExtension(saveFileDialog.FileName));
+            SaveAbbotInternal(distance, file.Name, Path.GetExtension(file.Name));
             DialogBox.Show("File saved.");
         }
     }
@@ -234,17 +231,17 @@ public partial class ExportDistanceResults : Window
         string[] headers =
         [
             "name_prefix",  // leave empty
-                "name_suffix",  // leave empty
-                "first_name",
-                "last_name",
-                "email",        // leave empty
-                "start_num",    // bib
-                "date_of_birth",// DD/MM/YYYY or MM/DD/YYYY
-                "nationality",  // IOC Code, ISO-3 CODE or IAAF Code
-                "gender",       // M or F
-                "finish_time",  // Chip time
-                "place",        // overall
-                "place_no_sex"  // gender place
+            "name_suffix",  // leave empty
+            "first_name",
+            "last_name",
+            "email",        // leave empty
+            "start_num",    // bib
+            "date_of_birth",// DD/MM/YYYY or MM/DD/YYYY
+            "nationality",  // IOC Code, ISO-3 CODE or IAAF Code
+            "gender",       // M or F
+            "finish_time",  // Chip time
+            "place",        // overall
+            "place_no_sex"  // gender place
         ];
         List<object[]> data = [];
         List<Participant> participants = database.GetParticipants(theEvent!.Identifier);
@@ -361,17 +358,17 @@ public partial class ExportDistanceResults : Window
                 data.Add(
                 [
                     "",
-                        "",
-                        result.Last,
-                        result.First,
-                        "",
-                        result.Bib,
-                        oPart.Birthdate,
-                        country,
-                        result.Gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "M" : result.Gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "F" : "",
-                        result.ChipTime.Substring(0, result.ChipTime.Length > 4 ? result.ChipTime.Length -4 : 0),
-                        result.PlaceStr,
-                        result.GenderPlaceStr
+                    "",
+                    result.Last,
+                    result.First,
+                    "",
+                    result.Bib,
+                    oPart.Birthdate,
+                    country,
+                    result.Gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "M" : result.Gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "F" : "",
+                    result.ChipTime[..(result.ChipTime.Length > 4 ? result.ChipTime.Length -4 : 0)],
+                    result.PlaceStr,
+                    result.GenderPlaceStr
                 ]);
             }
         }
@@ -398,17 +395,16 @@ public partial class ExportDistanceResults : Window
         exporter.ExportData(fileName);
     }
 
-    private void SaveBoston(string distance)
+    private async void SaveBoston(string distance)
     {
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
-            FileName = string.Format("{0} {1} {2} Boston.{3}", theEvent.YearCode, theEvent.Name, distance, "xlsx"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog() == true)
+            FileTypeChoices = [Utils.ExcelType],
+            SuggestedFileName = string.Format("{0} {1} {2} Boston.{3}", theEvent!.YearCode, theEvent.Name, distance, "xlsx"),
+        });
+        if (file is not null)
         {
-            SaveBostonInternal(distance, saveFileDialog.FileName, Path.GetExtension(saveFileDialog.FileName));
+            SaveBostonInternal(distance, file.Name, Path.GetExtension(file.Name));
             DialogBox.Show("File saved.");
         }
     }
@@ -440,36 +436,36 @@ public partial class ExportDistanceResults : Window
         List<string> tmp =
         [
             theEvent.Date,         // event date
-                "", "", "", "", "", "", "", "", ""
+            "", "", "", "", "", "", "", "", ""
         ];
         for (int i = 0; i < segments.Count; i++)
         {
             tmp.Add("");
         }
-        data.Add(tmp.ToArray());
+        data.Add([.. tmp]);
         tmp =
         [
             "INSERT EVENT CERTIFICATION HERE",         // event certification number
-                "", "", "", "", "", "", "", "", ""
+            "", "", "", "", "", "", "", "", ""
         ];
         for (int i = 0; i < segments.Count; i++)
         {
             tmp.Add("");
         }
-        data.Add(tmp.ToArray());
+        data.Add([.. tmp]);
         // actual header
         tmp =
         [
             "Last Name",
-                "First Name",
-                "City",
-                "State/Province",
-                "Gender",
-                "Date of Birth",
-                "Age",
-                "Clock Time",
-                "Chip/Net Time",
-                "Wheelchair"
+            "First Name",
+            "City",
+            "State/Province",
+            "Gender",
+            "Date of Birth",
+            "Age",
+            "Clock Time",
+            "Chip/Net Time",
+            "Wheelchair"
         ];
         // Get segments for header.
         Dictionary<int, int> segmentsHeaderPos = [];
@@ -479,7 +475,7 @@ public partial class ExportDistanceResults : Window
             segmentsHeaderPos[seg.Identifier] = data[0].Length;
             tmp.Add(string.Format("{0} {1}", seg.CumulativeDistance, Constants.Distances.DistanceString(seg.DistanceUnit)));
         }
-        data.Add(tmp.ToArray());
+        data.Add([.. tmp]);
         List<Participant> participants = database.GetParticipants(theEvent.Identifier);
         Dictionary<string, Participant> participantDictionary = [];
         foreach (Participant person in participants)
@@ -546,17 +542,16 @@ public partial class ExportDistanceResults : Window
         exporter.ExportData(fileName);
     }
 
-    private void SaveUltraSignup(string distance)
+    private async void SaveUltraSignup(string distance)
     {
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "CSV (*.csv)|*.csv",
-            FileName = string.Format("{0} {1} {2} Ultrasignup.{3}", theEvent.YearCode, theEvent.Name, distance, "csv"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog() == true)
+            FileTypeChoices = [Utils.CSVType],
+            SuggestedFileName = string.Format("{0} {1} {2} Ultrasignup.{3}", theEvent!.YearCode, theEvent.Name, distance, "csv"),
+        });
+        if (file is not null)
         {
-            string filename = saveFileDialog.FileName;
+            string filename = file.Name;
             string[] fileSplit = filename.Split('.');
             if (fileSplit.Length != 2)
             {
@@ -572,17 +567,16 @@ public partial class ExportDistanceResults : Window
         }
     }
 
-    private void SaveRunsignup(string distance)
+    private async void SaveRunsignup(string distance)
     {
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "CSV (*.csv)|*.csv",
-            FileName = string.Format("{0} {1} {2} Runsignup.{3}", theEvent.YearCode, theEvent.Name, distance, "csv"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog() == true)
+            FileTypeChoices = [Utils.CSVType],
+            SuggestedFileName = string.Format("{0} {1} {2} Runsignup.{3}", theEvent!.YearCode, theEvent.Name, distance, "csv"),
+        });
+        if (file is not null)
         {
-            string filename = saveFileDialog.FileName;
+            string filename = file.Name;
             string[] fileSplit = filename.Split('.');
             if (fileSplit.Length != 2)
             {

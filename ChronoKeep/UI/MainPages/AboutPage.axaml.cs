@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace Chronokeep.UI.MainPages;
 
-public partial class AboutPage : UserControl
+public partial class AboutPage : UserControl, IMainPage
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;

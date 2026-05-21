@@ -6,12 +6,12 @@ namespace Chronokeep.UI.Parts;
 public partial class BibChipHeaderPart : UserControl
 {
     public int Index { get; set; }
-    public static string[] human_fields =
-    {
+    public static readonly string[] human_fields =
+    [
         "",
         "Bib",
         "Chip"
-    };
+    ];
 
     public BibChipHeaderPart(string s, int ix)
     {

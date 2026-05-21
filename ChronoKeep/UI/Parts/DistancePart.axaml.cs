@@ -289,7 +289,7 @@ public partial class DistancePart : UserControl
         {
             theDistance.Wave = wave;
         }
-        string[] firstparts = StartOffset.Text.Replace('_', '0').Split(':');
+        string[] firstparts = StartOffset.Text!.Replace('_', '0').Split(':');
         string[] secondparts = firstparts[2].Split('.');
         try
         {

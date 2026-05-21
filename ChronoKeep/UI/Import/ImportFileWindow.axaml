@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.Import.ImportFileWindow"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Topmost="True"
         Title="Import File"
@@ -30,27 +29,39 @@
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="0" VerticalAlignment="Center">
             <ComboBox DockPanel.Dock="Left"
-                      x:Name="SheetsBox"
+                      Name="SheetsBox"
                       SelectionChanged="SheetsBox_SelectionChanged"
                       Height="35"
                       Width="250"
                       TabIndex="1"
                       Margin="10,10,5,5"
                       VerticalAlignment="Center"
-                      HorizontalAlignment="Stretch"/>
+                      HorizontalAlignment="Stretch"
+                      VerticalContentAlignment="Center"
+                      />
             <Button DockPanel.Dock="Right"
-                    x:Name="Cancel"
+                    Name="Cancel"
                     Content="Cancel"
                     Click="Cancel_Click"
-                    TabIndex="501"/>
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Height="35"
+                    FontSize="16"
+                    Margin="10"
+                    />
             <Button DockPanel.Dock="Right"
-                    x:Name="Done"
+                    Name="Done"
                     Content="Next"
                     Click="Done_Click"
-                    TabIndex="500"/>
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Height="35"
+                    FontSize="16"
+                    Margin="10"
+                    />
         </DockPanel>
         <UserControl Grid.Row="1"
-                     x:Name="Frame"
+                     Name="Frame"
                      IsTabStop="False"
                      Background="Black"
                      CornerRadius="8"

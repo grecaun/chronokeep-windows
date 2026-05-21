@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
-using Chronokeep.MemStore;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing;
@@ -22,13 +21,13 @@ namespace Chronokeep.UI;
 
 public partial class MinWindow : Window, IMainWindow
 {
-    private readonly MemStore.MemStore database;
-    private readonly IMainPage page;
+    private readonly MemStore.MemStore? database;
+    private readonly IMainPage? page;
     private readonly string dbName = "Chronokeep.sqlite";
 
     // Timing objects.
-    private Thread TimingControllerThread;
-    private readonly TimingController TimingController;
+    private Thread? TimingControllerThread;
+    private readonly TimingController? TimingController;
 
     private readonly List<Window> openWindows = [];
 
@@ -92,7 +91,7 @@ public partial class MinWindow : Window, IMainWindow
         {
             return;
         }
-        NewEventWindow newEventWindow = NewEventWindow.NewWindow(this, database);
+        NewEventWindow newEventWindow = NewEventWindow.NewWindow(this, database!);
         if (newEventWindow != null)
         {
             this.AddWindow(newEventWindow);
@@ -107,7 +106,7 @@ public partial class MinWindow : Window, IMainWindow
         {
             return;
         }
-        ChangeEventWindow changeEventWindow = ChangeEventWindow.NewWindow(this, database);
+        ChangeEventWindow changeEventWindow = ChangeEventWindow.NewWindow(this, database!);
         if (changeEventWindow != null)
         {
             this.AddWindow(changeEventWindow);
@@ -130,7 +129,7 @@ public partial class MinWindow : Window, IMainWindow
                     switch (clickType)
                     {
                         case EventClickType.NewEvent:
-                            NewEventWindow newEventWindow = NewEventWindow.NewWindow(this, database);
+                            NewEventWindow newEventWindow = NewEventWindow.NewWindow(this, database!);
                             if (newEventWindow != null)
                             {
                                 this.AddWindow(newEventWindow);
@@ -138,7 +137,7 @@ public partial class MinWindow : Window, IMainWindow
                             }
                             break;
                         case EventClickType.ChangeEvent:
-                            ChangeEventWindow changeEventWindow = ChangeEventWindow.NewWindow(this, database);
+                            ChangeEventWindow changeEventWindow = ChangeEventWindow.NewWindow(this, database!);
                             if (changeEventWindow != null)
                             {
                                 this.AddWindow(changeEventWindow);
@@ -179,7 +178,7 @@ public partial class MinWindow : Window, IMainWindow
         {
             return;
         }
-        if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).Value == Constants.Settings.SETTING_FALSE &&
+        if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT)!.Value == Constants.Settings.SETTING_FALSE &&
             (BackgroundProcessesRunning()))
         {
             bool AllowClose = false;
@@ -232,9 +231,9 @@ public partial class MinWindow : Window, IMainWindow
         return true;
     }
 
-    public void WindowFinalize(Window w)
+    public void WindowFinalize(Window? w)
     {
-        page.UpdateView();
+        page?.UpdateView();
     }
 
     public void AddWindow(Window w)
@@ -246,14 +245,14 @@ public partial class MinWindow : Window, IMainWindow
     {
         await Task.Run(() =>
         {
-            TimingController.ConnectTimingSystem(system);
+            TimingController?.ConnectTimingSystem(system);
         });
         UpdateTiming();
         await Task.Run(() =>
         {
             if (!TimingController.IsRunning())
             {
-                TimingControllerThread = new Thread(new ThreadStart(TimingController.Run));
+                TimingControllerThread = new Thread(new ThreadStart(TimingController!.Run));
                 TimingControllerThread.Start();
             }
         });
@@ -263,20 +262,20 @@ public partial class MinWindow : Window, IMainWindow
     {
         await Task.Run(() =>
         {
-            TimingController.DisconnectTimingSystem(system);
+            TimingController!.DisconnectTimingSystem(system);
         });
         UpdateTiming();
     }
 
     public void ShutdownTimingController()
     {
-        TimingController.Shutdown();
+        TimingController?.Shutdown();
     }
 
     public List<TimingSystem> GetConnectedSystems()
     {
-        List<TimingSystem> connected = TimingController.GetConnectedSystems();
-        List<TimingSystem> saved = database.GetTimingSystems();
+        List<TimingSystem> connected = TimingController!.GetConnectedSystems();
+        List<TimingSystem> saved = database!.GetTimingSystems();
         saved.RemoveAll(x => connected.Contains(x));
         saved.InsertRange(0, connected);
         return saved;
@@ -300,7 +299,7 @@ public partial class MinWindow : Window, IMainWindow
     private void Window_Loaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         // Check for current theme color and apply it.
-        AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
+        AppSetting themeColor = database!.GetAppSetting(Constants.Settings.CURRENT_THEME)!;
         string theme = "light";
         bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
         if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
@@ -398,10 +397,10 @@ public partial class MinWindow : Window, IMainWindow
     {
         Application.Current!.Dispatcher.Invoke(new Action(delegate ()
         {
-            if (page is MinTimingPage)
+            if (page is MinTimingPage tPage)
             {
-                page.UpdateView();
-                ((MinTimingPage)page).NewMessage();
+                tPage.UpdateView();
+                tPage.NewMessage();
             }
         }));
     }
@@ -410,10 +409,10 @@ public partial class MinWindow : Window, IMainWindow
     {
         Application.Current!.Dispatcher.Invoke(new Action(delegate ()
         {
-            if (page is MinTimingPage)
+            if (page is MinTimingPage tPage)
             {
-                page.UpdateView();
-                ((MinTimingPage)page).NewMessage();
+                tPage.UpdateView();
+                tPage.NewMessage();
             }
         }));
     }

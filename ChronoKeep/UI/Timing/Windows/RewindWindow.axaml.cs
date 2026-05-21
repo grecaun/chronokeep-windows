@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Objects;
 using Chronokeep.Timing.Interfaces;
 using Chronokeep.UI.Parts;
@@ -19,9 +20,9 @@ public partial class RewindWindow : Window
         this.SizeToContent = SizeToContent.Height;
         this.Width = 400;
         this.system = system;
-        DateTime dateStr = DateTime.Now;
-        FromDate.SelectedDate = dateStr;
-        ToDate.SelectedDate = dateStr;
+        String dateStr = DateTime.Now.ToString("MM/dd/yyyy");
+        FromDate.Text = dateStr;
+        ToDate.Text = dateStr;
         FromTime.Text = "00:00:00";
         ToTime.Text = "23:59:59";
         if (system.Type == Constants.Readers.SYSTEM_IPICO || system.Type == Constants.Readers.SYSTEM_IPICO_LITE)
@@ -38,40 +39,40 @@ public partial class RewindWindow : Window
 
     private void Window_Closing(object sender, WindowClosingEventArgs e) { }
 
-    private void SetYesterday_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SetYesterday_Click(object sender, RoutedEventArgs e)
     {
-        DateTime dateStr = DateTime.Now.AddDays(-1);
-        FromDate.SelectedDate = dateStr;
-        ToDate.SelectedDate = dateStr;
+        string dateStr = DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy");
+        FromDate.Text = dateStr;
+        ToDate.Text = dateStr;
         FromTime.Text = "00:00:00";
         ToTime.Text = "23:59:59";
     }
 
-    private void SetToday_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SetToday_Click(object sender, RoutedEventArgs e)
     {
-        DateTime dateStr = DateTime.Now;
-        FromDate.SelectedDate = dateStr;
-        ToDate.SelectedDate = dateStr;
+        string dateStr = DateTime.Now.ToString("MM/dd/yyyy");
+        FromDate.Text = dateStr;
+        ToDate.Text = dateStr;
         FromTime.Text = "00:00:00";
         ToTime.Text = "23:59:59";
     }
 
-    private void SetTomorrow_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SetTomorrow_Click(object sender, RoutedEventArgs e)
     {
-        DateTime dateStr = DateTime.Now.AddDays(1);
-        FromDate.SelectedDate = dateStr;
-        ToDate.SelectedDate = dateStr;
+        string dateStr = DateTime.Now.AddDays(1).ToString("MM/dd/yyyy");
+        FromDate.Text = dateStr;
+        ToDate.Text = dateStr;
         FromTime.Text = "00:00:00";
         ToTime.Text = "23:59:59";
     }
 
-    private void Rewind_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Rewind_Click(object sender, RoutedEventArgs e)
     {
-        if (!DateTime.TryParse(string.Format("{0} {1}", FromDate.SelectedDate, FromTime.Text!.Replace('_', '0')), out DateTime from))
+        if (!DateTime.TryParse(string.Format("{0} {1}", FromDate.Text!, FromTime.Text!.Replace('_', '0')), out DateTime from))
         {
             from = DateTime.Now;
         }
-        if (!DateTime.TryParse(string.Format("{0} {1}", ToDate.SelectedDate, ToTime.Text!.Replace('_', '0')), out DateTime to))
+        if (!DateTime.TryParse(string.Format("{0} {1}", ToDate.Text!, ToTime.Text!.Replace('_', '0')), out DateTime to))
         {
             to = DateTime.Now;
         }
@@ -104,7 +105,7 @@ public partial class RewindWindow : Window
         Close();
     }
 
-    private void Done_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Done_Click(object sender, RoutedEventArgs e)
     {
         Close();
     }

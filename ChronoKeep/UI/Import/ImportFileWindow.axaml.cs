@@ -8,6 +8,10 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 using static Chronokeep.UI.Import.ImportFilePage2Alt;
 
 namespace Chronokeep.UI.Import;
@@ -15,7 +19,7 @@ namespace Chronokeep.UI.Import;
 public partial class ImportFileWindow : Window
 {
     private readonly IDataImporter importer;
-    private readonly IMainWindow window = null;
+    private readonly IMainWindow? window = null;
     private readonly IDBInterface database;
     private readonly bool init = true;
     internal static readonly string[] human_fields = [
@@ -73,61 +77,30 @@ public partial class ImportFileWindow : Window
     internal static readonly int STREET = 24;
     internal static readonly int STREET2 = 25;
     internal static readonly int ZIP = 26;
-    private Page page = null;
-    private int[] keys;
+    private UserControl? page = null;
+    private int[] keys = [];
 
     private bool no_distance = false;
 
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
 
     /**
      * VERIFICATION VARIABLES
      */
-    private List<Participant> existingParticipants;
-    private List<Participant> importParticipants;
+    private List<Participant> existingParticipants = [];
+    private List<Participant> importParticipants = [];
     private readonly List<Participant> updatedParticipants = [];
     private readonly List<Participant> existingToRemoveParticipants = [];
 
-    public ImportFileWindow()
+    public ImportFileWindow(IMainWindow? window, IDataImporter importer, IDBInterface database)
     {
         InitializeComponent();
         this.importer = importer;
         this.window = window;
         this.database = database;
-        this.theEvent = database.GetCurrentEvent();
-        Header.Height = new GridLength(55);
-        HeaderGrid.ColumnDefinitions.Add(new() { Width = new GridLength(2, GridUnitType.Star) });
-        HeaderGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
-        HeaderGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
-        HeaderGrid.Children.Clear();
-        HeaderGrid.Children.Add(Done);
-        Done.HorizontalAlignment = HorizontalAlignment.Stretch;
-        Done.VerticalAlignment = VerticalAlignment.Center;
-        Done.Width = Double.NaN;
-        Done.Height = 35;
-        Done.FontSize = 16;
-        Done.Margin = new Thickness(10, 10, 10, 10);
-        Grid.SetColumn(Done, 1);
-        HeaderGrid.Children.Add(Cancel);
-        Grid.SetColumn(Cancel, 2);
-        Cancel.HorizontalAlignment = HorizontalAlignment.Stretch;
-        Cancel.VerticalAlignment = VerticalAlignment.Center;
-        Cancel.Width = Double.NaN;
-        Cancel.Height = 35;
-        Cancel.FontSize = 16;
-        Cancel.Margin = new Thickness(10, 10, 10, 10);
+        theEvent = database.GetCurrentEvent();
         if (importer.Data.Type == ImportData.FileType.EXCEL)
         {
-            HeaderGrid.Children.Add(SheetsBox);
-            Grid.SetColumn(SheetsBox, 0);
-            SheetsBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            SheetsBox.VerticalAlignment = VerticalAlignment.Center;
-            SheetsBox.Width = Double.NaN;
-            SheetsBox.Height = 35;
-            SheetsBox.FontSize = 16;
-            SheetsBox.VerticalContentAlignment = VerticalAlignment.Center;
-            SheetsBox.Margin = new Thickness(10, 10, 10, 10);
-            SheetsBox.Visibility = Visibility.Visible;
             SheetsBox.ItemsSource = ((ExcelImporter)importer).SheetNames;
             SheetsBox.SelectedIndex = 0;
             init = false;
@@ -141,7 +114,7 @@ public partial class ImportFileWindow : Window
         return new ImportFileWindow(window, importer, database);
     }
 
-    private void StartImport(HeaderListBoxItem[] headerListBoxItems)
+    private void StartImport(HeaderPart[] headerListBoxItems)
     {
         importer.FetchData();
         keys = new int[human_fields.Length + 1];
@@ -149,7 +122,7 @@ public partial class ImportFileWindow : Window
         {
             keys[i] = 0;
         }
-        foreach (HeaderListBoxItem item in headerListBoxItems)
+        foreach (HeaderPart item in headerListBoxItems)
         {
             Log.D("ImportFileWindow", "Header is " + item.HeaderLabel.Text);
             if (item.HeaderBox.SelectedIndex != 0)
@@ -167,17 +140,16 @@ public partial class ImportFileWindow : Window
                 "",
                 ];
         }
-        Event theEvent = database.GetCurrentEvent();
+        Event theEvent = database.GetCurrentEvent()!;
         if (theEvent == null || theEvent.Identifier < 0)
         {
             Log.E("IO.ImportFileWindow", "No event selected.");
             this.Close();
         }
-        List<Distance> distancesFromDatabase = database.GetDistances(theEvent.Identifier);
+        List<Distance> distancesFromDatabase = database.GetDistances(theEvent!.Identifier);
         page = new ImportFilePage2Alt(distancesFromFile, distancesFromDatabase, no_distance);
         Frame.Content = page;
-        SheetsBox.Visibility = Visibility.Collapsed;
-        eventLabel.Width = 460;
+        SheetsBox.IsVisible = false;
         Done.IsEnabled = true;
         Cancel.IsEnabled = true;
     }
@@ -185,15 +157,15 @@ public partial class ImportFileWindow : Window
     private async void ImportWork(List<ImportDistance> fileDistances)
     {
         // Make sure Age Groups are set properly.
-        Dictionary<(int, int), AgeGroup> AgeGroups = new();
-        Dictionary<int, AgeGroup> LastAgeGroup = new();
-        foreach (AgeGroup g in database.GetAgeGroups(theEvent.Identifier))
+        Dictionary<(int, int), AgeGroup> AgeGroups = [];
+        Dictionary<int, AgeGroup> LastAgeGroup = [];
+        foreach (AgeGroup g in database.GetAgeGroups(theEvent!.Identifier))
         {
             for (int i = g.StartAge; i <= g.EndAge; i++)
             {
                 AgeGroups[(g.DistanceId, i)] = g;
             }
-            if (!LastAgeGroup.TryGetValue(g.DistanceId, out AgeGroup group) || group.StartAge < g.StartAge)
+            if (!LastAgeGroup.TryGetValue(g.DistanceId, out AgeGroup? group) || group.StartAge < g.StartAge)
             {
                 group = g;
                 LastAgeGroup[g.DistanceId] = group;
@@ -214,8 +186,8 @@ public partial class ImportFileWindow : Window
                 divHashId[d.Identifier] = d;
             }
             bool BackYardUltra = Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType;
-            Distance theDistance;
-            Distance backyardDistance = null;
+            Distance? theDistance;
+            Distance? backyardDistance = null;
             // Ensure we don't add more distances for backyard ultra events.
             if (!BackYardUltra)
             {
@@ -225,7 +197,7 @@ public partial class ImportFileWindow : Window
                     string nameFromFile = id.NameFromFile.ToLower();
                     if (id.DistanceId == -1)
                     {
-                        if (divHashName.TryGetValue(nameFromFile, out Distance dist))
+                        if (divHashName.TryGetValue(nameFromFile, out Distance? dist))
                         {
                             theDistance = dist;
                         }
@@ -252,7 +224,7 @@ public partial class ImportFileWindow : Window
                 }
                 if (newDistances)
                 {
-                    window.UpdateRegistrationDistances();
+                    window?.UpdateRegistrationDistances();
                 }
             }
             else
@@ -266,7 +238,7 @@ public partial class ImportFileWindow : Window
                     backyardDistance = new("Backyard", theEvent.Identifier);
                     database.AddDistance(backyardDistance);
                     backyardDistance.Identifier = database.GetDistanceID(backyardDistance);
-                    window.UpdateRegistrationDistances();
+                    window?.UpdateRegistrationDistances();
                 }
             }
             int numEntries = data.Data.Count;
@@ -280,7 +252,7 @@ public partial class ImportFileWindow : Window
                 {
                     string distName = data.Data[counter][keys[DISTANCE]].ToLower();
                     // Always set distance to our backyard distance if we're importing for a backyard ultra event. Otherwise figure out the proper distance.
-                    thisDiv = BackYardUltra ? backyardDistance : divHashName[distName];
+                    thisDiv = BackYardUltra ? backyardDistance! : divHashName[distName];
                 }
                 string birthday = "";
                 int age = -1;
@@ -327,7 +299,7 @@ public partial class ImportFileWindow : Window
                     data.Data[counter][keys[PARENT]], // parent
                     data.Data[counter][keys[COUNTRY]], // country
                     data.Data[counter][keys[STREET2]],  // street2
-                    data.Data[counter][keys[GENDER]] != null ? data.Data[counter][keys[GENDER]] : "",  // gender
+                    data.Data[counter][keys[GENDER]] ?? "",  // gender
                     data.Data[counter][keys[EMERGENCYNAME]], // Emergency Name
                     data.Data[counter][keys[EMERGENCYPHONE]]  // Emergency Phone
                     );
@@ -338,12 +310,12 @@ public partial class ImportFileWindow : Window
                     output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
                     output.EventSpecific.AgeGroupName = "";
                 }
-                else if (AgeGroups.TryGetValue((agDivId, age), out AgeGroup group))
+                else if (AgeGroups.TryGetValue((agDivId, age), out AgeGroup? group))
                 {
                     output.EventSpecific.AgeGroupId = group.GroupId;
                     output.EventSpecific.AgeGroupName = group.PrettyName();
                 }
-                else if (LastAgeGroup.TryGetValue(agDivId, out AgeGroup lGroup))
+                else if (LastAgeGroup.TryGetValue(agDivId, out AgeGroup? lGroup))
                 {
                     output.EventSpecific.AgeGroupId = lGroup.GroupId;
                     output.EventSpecific.AgeGroupName = lGroup.PrettyName();
@@ -461,7 +433,7 @@ public partial class ImportFileWindow : Window
             {
                 import.FormatData();
                 // this is checking for bib repeats, so check if we're actually checking a specified bib
-                if (import.Bib.Length > 0 && ExistingParticipantsDict.TryGetValue(import.Bib, out Participant part))
+                if (import.Bib.Length > 0 && ExistingParticipantsDict.TryGetValue(import.Bib, out Participant? part))
                 {
                     part.FormatData();
                     if (!part.Is(import))
@@ -480,7 +452,7 @@ public partial class ImportFileWindow : Window
                             import.Birthdate,
                             ExistingParticipantsDict[import.Bib].Birthdate
                             ));
-                        if (!BibConflictsDict.TryGetValue(import.Bib, out HashSet<Participant> bibConflictSet))
+                        if (!BibConflictsDict.TryGetValue(import.Bib, out HashSet<Participant>? bibConflictSet))
                         {
                             bibConflictSet = [];
                             BibConflictsDict[import.Bib] = bibConflictSet;
@@ -498,7 +470,7 @@ public partial class ImportFileWindow : Window
         // if we have multiples to mess around with display the page
         if (conflicts.Count > 0)
         {
-            page = new ImportFilePageConflicts(conflicts, theEvent);
+            page = new ImportFilePageConflicts(conflicts, theEvent!);
             Frame.Content = page;
             Done.IsEnabled = true;
             Cancel.IsEnabled = true;
@@ -538,9 +510,9 @@ public partial class ImportFileWindow : Window
             database.AddParticipants(importParticipants);
         });
         Log.D("ImportFileWindow", "All done with the import.");
-        database.ResetTimingResultsEvent(theEvent.Identifier);
-        window.NetworkClearResults();
-        window.NotifyTimingWorker();
+        database.ResetTimingResultsEvent(theEvent!.Identifier);
+        window?.NetworkClearResults();
+        window?.NotifyTimingWorker();
         this.Close();
     }
 
@@ -686,14 +658,14 @@ public partial class ImportFileWindow : Window
 
     private void Window_Closing(object? sender, WindowClosingEventArgs e)
     {
-        if (window != null) window.WindowFinalize(this);
+        window?.WindowFinalize(this);
         importer.Finish();
     }
 
     private void SheetsBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (init) { return; }
-        int selection = ((ComboBox)sender).SelectedIndex;
+        int selection = ((ComboBox)sender!).SelectedIndex;
         Log.D("ImportFileWindow", "You've selected number " + selection);
         if (page != null && page is ImportFilePage1 page1)
         {
@@ -715,7 +687,7 @@ public partial class ImportFileWindow : Window
                 StringBuilder sb = new("Repeats for the following headers were found:");
                 foreach (string s in repeats)
                 {
-                    sb.Append("\n");
+                    sb.Append('\n');
                     sb.Append(s);
                 }
                 DialogBox.Show(sb.ToString());
@@ -725,7 +697,7 @@ public partial class ImportFileWindow : Window
                 StringBuilder sb = new("Required fields not found:");
                 foreach (string s in requiredNotFound)
                 {
-                    sb.Append("\n");
+                    sb.Append('\n');
                     sb.Append(s);
                 }
                 DialogBox.Show(sb.ToString());

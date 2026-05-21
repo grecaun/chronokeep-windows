@@ -23,11 +23,11 @@ public partial class WavePart : UserControl
         else
         {
             PlusWave = false;
-            startSeconds = startSeconds * -1;
+            startSeconds *= -1;
         }
         if (startMilliseconds < 0)
         {
-            startMilliseconds = startMilliseconds * -1;
+            startMilliseconds *= -1;
         }
         StartOffset.Text = string.Format(TimeFormat, startSeconds / 3600,
             (startSeconds % 3600) / 60, startSeconds % 60,

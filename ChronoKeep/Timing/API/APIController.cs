@@ -24,7 +24,7 @@ namespace Chronokeep.Timing.API
 
         private static readonly int SleepSeconds = 30;
 
-        public static async Task<AddResultsResponse?> DeleteResults(APIObject api, string slug, string year, string distance)
+        public static async Task<AddResultsResponse?> DeleteResults(APIObject api, string slug, string year, string? distance)
         {
             AddResultsResponse? response = null;
             try

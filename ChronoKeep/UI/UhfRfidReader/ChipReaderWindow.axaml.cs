@@ -5,7 +5,6 @@ using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
-using Chronokeep.UI.RfidReader;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -33,11 +32,7 @@ public partial class ChipReaderWindow : Window
         reader = new NewReader(this);
         this.window = window;
         this.database = database;
-        Event theEvent = database.GetCurrentEvent();
-        if (theEvent == null)
-        {
-            throw new Exception("no event set");
-        }
+        Event theEvent = database.GetCurrentEvent() ?? throw new Exception("no event set");
         eventId = theEvent.Identifier;
         EventNameHolder.IsVisible = true;
         eventName.Text = theEvent.Name;
@@ -73,11 +68,8 @@ public partial class ChipReaderWindow : Window
     {
         serial?.Disconnect();
         chipInfo.Add(new RFIDSerial.Info { DecNumber = -1 });
-        reader.Kill();
-        if (readingThread != null)
-        {
-            readingThread.Join(TimeSpan.FromSeconds(1));
-        }
+        reader?.Kill();
+        readingThread?.Join(TimeSpan.FromSeconds(1));
         readingThread = null;
     }
 
@@ -89,8 +81,8 @@ public partial class ChipReaderWindow : Window
             chipInfo.Add(read);
             if (personWindow != null)
             {
-                string chip = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE).Value.Equals(Constants.Settings.CHIP_TYPE_DEC) ? read.DecNumber.ToString() : read.HexNumber;
-                Participant person = database.GetParticipantChip(eventId, chip);
+                string chip = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE)!.Value.Equals(Constants.Settings.CHIP_TYPE_DEC) ? read.DecNumber.ToString() : read.HexNumber;
+                Participant person = database.GetParticipantChip(eventId, chip)!;
                 personWindow.UpdateInfo(person, chip);
             }
         }));
@@ -165,10 +157,7 @@ public partial class ChipReaderWindow : Window
             {
                 DialogBox.Show("Something went wrong during disconnect.");
             }
-            if (personWindow != null)
-            {
-                personWindow.Close();
-            }
+            personWindow?.Close();
         }
     }
 
@@ -176,8 +165,8 @@ public partial class ChipReaderWindow : Window
     {
         if (personWindow == null)
         {
-            Event thisEvent = database.GetEvent(eventId);
-            personWindow = new ChipPersonWindow(this, thisEvent.Date);
+            Event thisEvent = database.GetEvent(eventId)!;
+            personWindow = new ChipPersonWindow(this, thisEvent!.Date);
             personWindow.Show();
             beautyBtn.Content = "Close Info Window";
         }

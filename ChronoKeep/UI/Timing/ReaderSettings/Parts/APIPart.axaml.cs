@@ -31,18 +31,12 @@ public partial class APIPart : UserControl
     {
         this.api = api;
         nameBox.Text = api.Nickname;
-        switch (api.Kind)
+        kindBox.SelectedIndex = api.Kind switch
         {
-            case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE:
-                kindBox.SelectedIndex = 0;
-                break;
-            case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF:
-                kindBox.SelectedIndex = 1;
-                break;
-            default:
-                kindBox.SelectedIndex = 0;
-                break;
-        }
+            PortalAPI.API_TYPE_CHRONOKEEP_REMOTE => 0,
+            PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF => 1,
+            _ => 0,
+        };
         tokenBox.Text = api.Token;
         uriBox.Text = api.Uri;
         PrivateUpdateURI();

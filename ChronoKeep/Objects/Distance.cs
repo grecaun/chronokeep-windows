@@ -4,7 +4,7 @@ namespace Chronokeep.Objects
 {
     public class Distance : IEquatable<Distance>, IComparable<Distance>
     {
-        private string name, certification = "";
+        private string name = "", certification = "";
         private int identifier, eventIdentifier;
         private double distance;
         private int distance_unit = Constants.Distances.MILES, finish_location = Constants.Timing.LOCATION_FINISH,
@@ -81,7 +81,7 @@ namespace Chronokeep.Objects
         public bool Upload { get => upload; set => upload = value; }
         public string Certification { get => certification; set => certification = value; }
 
-        public int CompareTo(Distance other)
+        public int CompareTo(Distance? other)
         {
             if (other == null) return 1;
             if (EventIdentifier == other.EventIdentifier)
@@ -91,7 +91,7 @@ namespace Chronokeep.Objects
             return EventIdentifier.CompareTo(other.EventIdentifier);
         }
 
-        public bool Equals(Distance other)
+        public bool Equals(Distance? other)
         {
             if (other == null) return false;
             return EventIdentifier == other.EventIdentifier && Identifier == other.Identifier;

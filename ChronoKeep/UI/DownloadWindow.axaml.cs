@@ -1,5 +1,9 @@
-﻿using Chronokeep.Helpers;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
+using Chronokeep.UI.Parts;
+using Chronokeep.Updates;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -7,14 +11,13 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using Wpf.Ui.Controls;
 
-namespace Chronokeep.Updates
+namespace Chronokeep.UI
 {
     /// <summary>
     /// Interaction logic for DownloadWindow.xaml
     /// </summary>
-    public partial class DownloadWindow : FluentWindow
+    public partial class DownloadWindow : Window
     {
         private readonly string uri;
         private readonly string download_uri;
@@ -23,14 +26,14 @@ namespace Chronokeep.Updates
         private readonly string appName = "Chronokeep";
         private readonly string dbName = "Chronokeep.sqlite";
 
-        private CancellationTokenSource cancellationToken = null;
+        private CancellationTokenSource? cancellationToken = null;
 
         private readonly IMainWindow mWindow;
 
-        public DownloadWindow(GithubRelease r, Version v, IMainWindow mWindow)
+        public DownloadWindow(GithubRelease r, Updates.Version v, IMainWindow mWindow)
         {
             InitializeComponent();
-            DownloadProgress.Visibility = Visibility.Collapsed;
+            DownloadProgress.IsVisible = false;
             this.version = v.ToString();
             download_uri = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\chronokeep-setup-{version}.exe";
             Log.D("Updates.Check", string.Format("Download URL - {0}", r.Assets[0].BrowserDownloadURL));
@@ -64,71 +67,67 @@ namespace Chronokeep.Updates
                 throw new Exception($"The request returned with HTTP status code{response.StatusCode}");
             }
 
-            long total = response.Content.Headers.ContentLength.HasValue ? response.Content.Headers.ContentLength.Value : -1L;
+            long total = response.Content.Headers.ContentLength ?? -1L;
             bool canReportProgress = total != -1 && progress != null;
 
-            using (var stream = await response.Content.ReadAsStreamAsync())
+            using var stream = await response.Content.ReadAsStreamAsync(token);
+            long totalRead = 0L;
+            byte[] buffer = new byte[8192];
+            bool isMoreToRead = true;
+            double lastReport = 0L;
+            do
             {
-                long totalRead = 0L;
-                byte[] buffer = new byte[8192];
-                bool isMoreToRead = true;
-                double lastReport = 0L;
-                do
+                token.ThrowIfCancellationRequested();
+                var read = await stream.ReadAsync(buffer, token);
+                if (read == 0)
                 {
-                    token.ThrowIfCancellationRequested();
-                    var read = await stream.ReadAsync(buffer, 0, buffer.Length, token);
-                    if (read == 0)
+                    isMoreToRead = false;
+                }
+                else
+                {
+                    await destination.WriteAsync(buffer.AsMemory(0, read), token);
+                    totalRead += read;
+                    double report = Math.Truncate((totalRead * 1d) / (total * 1d) * 1000) / 10;
+                    if (canReportProgress && ((report > lastReport + 0.5) || report == 100))
                     {
-                        isMoreToRead = false;
+                        progress!.Report(report);
+                        lastReport = report;
                     }
-                    else
-                    {
-                        await destination.WriteAsync(buffer, 0, read, token);
-                        totalRead += read;
-                        double report = Math.Truncate((totalRead * 1d) / (total * 1d) * 1000) / 10;
-                        if (canReportProgress && ((report > lastReport + 0.5) || report == 100))
-                        {
-                            progress.Report(report);
-                            lastReport = report;
-                        }
-                    }
-                } while (isMoreToRead);
-            }
+                }
+            } while (isMoreToRead);
 
         }
 
         private async void InstallButton_Click(object sender, RoutedEventArgs e)
         {
-            if (((string)InstallButton.Content).Equals("Download", StringComparison.OrdinalIgnoreCase))
+            if (((string)InstallButton.Content!).Equals("Download", StringComparison.OrdinalIgnoreCase))
             {
                 Log.D("Updates.DownloadWindow", $"Download clicked. Downloading to {download_uri}");
-                DownloadProgress.Visibility = Visibility.Visible;
+                DownloadProgress.IsVisible = true;
                 DownloadLabel.Text = $"Downloading {version}";
                 InstallButton.Content = "Install";
                 InstallButton.IsEnabled = false;
                 BackupDatabaseButton.IsEnabled = false;
-                BackupDatabaseButton.Visibility = Visibility.Visible;
+                BackupDatabaseButton.IsVisible = true;
                 using (var client = GetHttpClient())
                 {
-                    using (var file = new FileStream(download_uri, FileMode.Create))
+                    using var file = new FileStream(download_uri, FileMode.Create);
+                    var progress = new Progress<double>();
+                    progress.ProgressChanged += (s, value) =>
                     {
-                        var progress = new Progress<double>();
-                        progress.ProgressChanged += (s, value) =>
-                        {
-                            Log.D("Updates.Check", $"Download at {value}%");
-                            DownloadProgress.Value = value;
-                        };
-                        cancellationToken = new CancellationTokenSource();
-                        try
-                        {
-                            await DownloadFileAsync(client, file, uri, progress, cancellationToken.Token);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.E("Updates.Check", $"Error downloading update. {ex.Message}");
-                            DialogBox.Show("Unable to download update.");
-                            Close();
-                        }
+                        Log.D("Updates.Check", $"Download at {value}%");
+                        DownloadProgress.Value = value;
+                    };
+                    cancellationToken = new CancellationTokenSource();
+                    try
+                    {
+                        await DownloadFileAsync(client, file, uri, progress, cancellationToken.Token);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.E("Updates.Check", $"Error downloading update. {ex.Message}");
+                        DialogBox.Show("Unable to download update.");
+                        Close();
                     }
                 }
                 InstallButton.IsEnabled = true;
@@ -137,7 +136,7 @@ namespace Chronokeep.Updates
             else if (((string)InstallButton.Content).Equals("Install", StringComparison.OrdinalIgnoreCase))
             {
                 Log.D("Updates.DownloadWindow", "Install clicked.");
-                using Process install = new Process();
+                using Process install = new();
                 install.StartInfo.FileName = download_uri;
                 install.Start();
                 Close();
@@ -152,20 +151,20 @@ namespace Chronokeep.Updates
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Updates.DownloadWindow", "Cancel clicked.");
-            this.Close();
+            Close();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, WindowClosingEventArgs e)
         {
-            if (cancellationToken != null) cancellationToken.Cancel();
+            cancellationToken?.Cancel();
         }
 
         private void BackupDatabaseButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Updates.DownloadWindow", "Backup Database clicked.");
-            UpdatePanel.Visibility = Visibility.Collapsed;
-            BackupDatabaseButton.Visibility = Visibility.Collapsed;
-            BackupPanel.Visibility = Visibility.Visible;
+            UpdatePanel.IsVisible = false;
+            BackupDatabaseButton.IsVisible = false;
+            BackupPanel.IsVisible = true;
             backupBlock.Text = $"{backupBlock.Text}\nChecking for old database files.";
             string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), appName);
             string path = Path.Combine(dirPath, dbName);
@@ -174,7 +173,7 @@ namespace Chronokeep.Updates
             {
                 if (File.Exists(path))
                 {
-                    string backup = System.IO.Path.Combine(dirPath, $"Chronokeep-{DateTime.Now.ToString("yyyy-MM-dd")}-backup.sqlite");
+                    string backup = Path.Combine(dirPath, $"Chronokeep-{DateTime.Now:yyyy-MM-dd}-backup.sqlite");
                     try
                     {
                         backupBlock.Text = $"{backupBlock.Text}\nBacking up database.";

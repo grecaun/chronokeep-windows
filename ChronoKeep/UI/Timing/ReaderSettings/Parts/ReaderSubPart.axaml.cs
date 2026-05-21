@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Chronokeep.Helpers;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Timing.Interfaces;
@@ -91,21 +93,13 @@ public partial class ReaderSubPart : UserControl
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Updating reader " + reader.Id);
         this.reader = reader;
         this.nameBox.Text = reader.Name;
-        switch (reader.Kind)
+        this.kindBox.SelectedIndex = reader.Kind switch
         {
-            case PortalReader.READER_KIND_ZEBRA:
-                this.kindBox.SelectedIndex = 0;
-                break;
-            /*case PortalReader.READER_KIND_IMPINJ:
-                this.kindBox.SelectedIndex = 1;
-                break;
-            case PortalReader.READER_KIND_RFID:
-                this.kindBox.SelectedIndex = 2;
-                break;//*/
-            default:
-                this.kindBox.SelectedIndex = -1;
-                break;
-        }
+            PortalReader.READER_KIND_ZEBRA => 0,
+            PortalReader.READER_KIND_IMPINJ => 1,
+            PortalReader.READER_KIND_RFID => 2,
+            _ => -1,
+        };
         this.ipBox.Text = reader.IPAddress;
         this.portBox.Text = reader.Port.ToString();
         autoConnectSwitch.IsChecked = reader.AutoConnect;
@@ -132,7 +126,7 @@ public partial class ReaderSubPart : UserControl
         }
     }
 
-    private void ConnectReader(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void ConnectReader(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Connecting/disconnecting reader " + reader.Id);
         if (reader.Connected)
@@ -166,26 +160,26 @@ public partial class ReaderSubPart : UserControl
         }
     }
 
-    private void IPValidation(object? sender, Avalonia.Input.TextInputEventArgs e)
+    private void IPValidation(object? sender, TextInputEventArgs e)
     {
-        e.Handled = AllowedChars().IsMatch(e.Text);
+        e.Handled = AllowedChars().IsMatch(e.Text!);
     }
 
-    private void NumberValidation(object? sender, Avalonia.Input.TextInputEventArgs e)
+    private void NumberValidation(object? sender, TextInputEventArgs e)
     {
-        e.Handled = AllowedNums().IsMatch(e.Text);
+        e.Handled = AllowedNums().IsMatch(e.Text!);
     }
 
-    private void DeleteReader(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void DeleteReader(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Deleting reader " + reader.Id);
         readerInterface.SendRemoveReader(reader);
     }
 
-    private void SaveReader(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SaveReader(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Saving reader " + reader.Id);
-        reader.Name = nameBox.Text.Trim();
+        reader.Name = nameBox.Text!.Trim();
         switch (kindBox.SelectedIndex)
         {
             case 0:
@@ -201,7 +195,7 @@ public partial class ReaderSubPart : UserControl
                 DialogBox.Show("Unknown kind specified. Unable to save.");
                 return;
         }
-        if (!IPPattern().IsMatch(ipBox.Text.Trim()))
+        if (!IPPattern().IsMatch(ipBox.Text!.Trim()))
         {
             reader.IPAddress = "";
         }
@@ -209,8 +203,7 @@ public partial class ReaderSubPart : UserControl
         {
             reader.IPAddress = ipBox.Text.Trim();
         }
-        uint portNo = 0;
-        uint.TryParse(portBox.Text.Trim(), out portNo);
+        _ = uint.TryParse(portBox.Text!.Trim(), out uint portNo);
         if (portNo > 65535)
         {
             portNo = 0;

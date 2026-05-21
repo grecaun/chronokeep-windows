@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -6,7 +7,7 @@ using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
-using static Chronokeep.UI.Timing.ClockControl;
+using System.Linq;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -57,7 +58,7 @@ public partial class ClockControl : Window
         clockListView.Items.Clear();
         foreach (Chronoclock clock in ClockDict.Values)
         {
-            clockListView.Items.Add(new ClockPart(clock, this, database.GetCurrentEvent()));
+            clockListView.Items.Add(new ClockPart(clock, this, database.GetCurrentEvent()!));
         }
     }
 
@@ -69,11 +70,11 @@ public partial class ClockControl : Window
         CurrentTimeLabel.IsVisible = true;
     }
 
-    private void Window_Closed(object? sender, System.EventArgs e)
+    private void Window_Closed(object? sender, EventArgs e)
     {
         Log.D("UI.Timing.ClockControl", "Window is closed.");
         theOne = null;
-        foreach (ClockPart? clItem in clockListView.Items)
+        foreach (ClockPart? clItem in clockListView.Items.Cast<ClockPart?>())
         {
             Chronoclock clock = clItem!.GetUpdatedClock();
             database.UpdateClock(clock);
@@ -81,13 +82,13 @@ public partial class ClockControl : Window
         window.WindowFinalize(this);
     }
 
-    private void Close_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Close_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.Timing.ClockControl", "Close button clicked.");
         Close();
     }
 
-    private void AddButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void AddButton_Click(object? sender, RoutedEventArgs e)
     {
         Chronoclock newClock = new()
         {

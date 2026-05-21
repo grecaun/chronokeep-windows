@@ -11,10 +11,10 @@ namespace Chronokeep.MemStore
          * AppSetting Functions
          */
 
-        public AppSetting GetAppSetting(string name)
+        public AppSetting? GetAppSetting(string name)
         {
             Log.D("MemStore", "GetAppSetting");
-            AppSetting output = null;
+            AppSetting? output = null;
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))

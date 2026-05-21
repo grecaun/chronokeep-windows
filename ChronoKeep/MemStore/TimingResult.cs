@@ -23,14 +23,14 @@ namespace Chronokeep.MemStore
                     try
                     {
                         string bib = "";
-                        if (participants.TryGetValue(tr.EventSpecificId, out Participant p))
+                        if (participants.TryGetValue(tr.EventSpecificId, out Participant? p))
                         {
                             bib = p.Bib;
                             tr.SetParticipant(p);
-                            if (distances.TryGetValue(p.EventSpecific.DistanceIdentifier, out Distance distance))
+                            if (distances.TryGetValue(p.EventSpecific.DistanceIdentifier, out Distance? distance))
                             {
                                 tr.SetResultType(distance.Type);
-                                if (distance.LinkedDistance != Constants.Timing.DISTANCE_NO_LINKED_ID && distances.TryGetValue(distance.LinkedDistance, out Distance linked))
+                                if (distance.LinkedDistance != Constants.Timing.DISTANCE_NO_LINKED_ID && distances.TryGetValue(distance.LinkedDistance, out Distance? linked))
                                 {
                                     tr.SetLinkedDistanceName(linked.Name);
                                 }
@@ -40,7 +40,7 @@ namespace Chronokeep.MemStore
                         {
                             tr.SetBlankParticipant();
                         }
-                        if (chipReads.TryGetValue(tr.ReadId, out ChipRead chipRead))
+                        if (chipReads.TryGetValue(tr.ReadId, out ChipRead? chipRead))
                         {
                             if (bib.Length < 1)
                             {
@@ -56,7 +56,7 @@ namespace Chronokeep.MemStore
                             locations,
                             segments,
                             distanceNameDict,
-                            theEvent
+                            theEvent!
                             );
                         timingResults[(tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId)] = tr;
                     }
@@ -86,14 +86,14 @@ namespace Chronokeep.MemStore
                         foreach (TimeResult tr in results)
                         {
                             string bib = "";
-                            if (participants.TryGetValue(tr.EventSpecificId, out Participant p))
+                            if (participants.TryGetValue(tr.EventSpecificId, out Participant? p))
                             {
                                 bib = p.Bib;
                                 tr.SetParticipant(p);
-                                if (distances.TryGetValue(p.EventSpecific.DistanceIdentifier, out Distance distance))
+                                if (distances.TryGetValue(p.EventSpecific.DistanceIdentifier, out Distance? distance))
                                 {
                                     tr.SetResultType(distance.Type);
-                                    if (distance.LinkedDistance != Constants.Timing.DISTANCE_NO_LINKED_ID && distances.TryGetValue(distance.LinkedDistance, out Distance linked))
+                                    if (distance.LinkedDistance != Constants.Timing.DISTANCE_NO_LINKED_ID && distances.TryGetValue(distance.LinkedDistance, out Distance? linked))
                                     {
                                         tr.SetLinkedDistanceName(linked.Name);
                                     }
@@ -103,7 +103,7 @@ namespace Chronokeep.MemStore
                             {
                                 tr.SetBlankParticipant();
                             }
-                            if (chipReads.TryGetValue(tr.ReadId, out ChipRead chipRead))
+                            if (chipReads.TryGetValue(tr.ReadId, out ChipRead? chipRead))
                             {
                                 if (bib.Length < 1)
                                 {
@@ -119,7 +119,7 @@ namespace Chronokeep.MemStore
                                 locations,
                                 segments,
                                 distanceNameDict,
-                                theEvent
+                                theEvent!
                                 );
                             timingResults[(tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId)] = tr;
                         }
@@ -193,7 +193,7 @@ namespace Chronokeep.MemStore
                             Dictionary<int, TimeResult> trDict = new();
                             foreach (TimeResult tr in timingResults.Values)
                             {
-                                if (trDict.TryGetValue(tr.EventSpecificId, out TimeResult result))
+                                if (trDict.TryGetValue(tr.EventSpecificId, out TimeResult? result))
                                 {
                                     if (result.Seconds < tr.Seconds || (result.Seconds == tr.Seconds && result.Milliseconds < tr.Milliseconds))
                                     {

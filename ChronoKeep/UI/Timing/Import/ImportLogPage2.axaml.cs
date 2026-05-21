@@ -3,6 +3,7 @@ using Chronokeep.Helpers;
 using Chronokeep.IO;
 using Chronokeep.UI.Parts;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Chronokeep.UI.Timing.Import;
@@ -30,13 +31,13 @@ public partial class ImportLogPage2 : UserControl
         }
     }
 
-    internal List<string>? RepeatHeaders()
+    internal List<string> RepeatHeaders()
     {
         Log.D("UI.Timing.ImportLog", "Checking for repeat headers in user selection.");
         int[] check = new int[human_fields.Length];
         bool repeat = false;
         List<string> output = [];
-        foreach (LogPart? item in itemListBox.Items)
+        foreach (LogPart? item in itemListBox.Items.Cast<LogPart?>())
         {
             int val = item!.HeaderBox.SelectedIndex;
             if (val > 0)
@@ -52,7 +53,7 @@ public partial class ImportLogPage2 : UserControl
                 }
             }
         }
-        return repeat == true ? output : null;
+        return repeat == true ? output : [];
     }
 
     private void CancelButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -77,7 +78,7 @@ public partial class ImportLogPage2 : UserControl
             return;
         }
         int chip = 0, time = 0;
-        foreach (LogPart? item in itemListBox.Items)
+        foreach (LogPart? item in itemListBox.Items.Cast<LogPart?>())
         {
             if (CHIP == item!.HeaderBox.SelectedIndex)
             {

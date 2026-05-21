@@ -3,11 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Chronokeep.Constants;
-using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
-using Chronokeep.UI.MainPages;
 using Chronokeep.UI.Timing.Windows;
 using System;
 using System.Collections.Generic;
@@ -35,7 +33,7 @@ public partial class ReaderPart : UserControl
         this.parent = parent;
         this.locations = locations;
         reader = sys;
-        ComboBoxItem? current = null, selected = null;
+        ComboBoxItem? current, selected = null;
         foreach (string SYSTEM_IDVAL in Readers.SYSTEM_NAMES.Keys)
         {
             current = new ComboBoxItem()
@@ -59,7 +57,7 @@ public partial class ReaderPart : UserControl
         }
         ReaderIP.Text = reader.IPAddress;
         ReaderPort.Text = reader.Port.ToString();
-        current = null; selected = null;
+        selected = null;
         foreach (TimingLocation loc in this.locations)
         {
             current = new ComboBoxItem()
@@ -150,8 +148,7 @@ public partial class ReaderPart : UserControl
             reader.IPAddress = ReaderIP.Text.Trim();
         }
         // Check if Port is valid.
-        int portNo = -1;
-        int.TryParse(ReaderPort.Text!.Trim(), out portNo);
+        _ = int.TryParse(ReaderPort.Text!.Trim(), out int portNo);
         if (portNo > 65535)
         {
             portNo = -1;
@@ -278,10 +275,10 @@ public partial class ReaderPart : UserControl
         }
     }
 
-    internal void UpdateSystemType(string type, IDBInterface database)
+    internal void UpdateSystemType(string type)
     {
         reader.UpdateSystemType(type);
-        this.ReaderPort.Text = reader.Port.ToString();
+        ReaderPort.Text = reader.Port.ToString();
     }
 
     private void ReaderType_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -376,8 +373,7 @@ public partial class ReaderPart : UserControl
         }
         reader.IPAddress = ReaderIP.Text.Trim();
         // Check if Port is valid.
-        int portNo = -1;
-        int.TryParse(ReaderPort.Text!.Trim(), out portNo);
+        _ = int.TryParse(ReaderPort.Text!.Trim(), out int portNo);
         if (portNo < 0 || portNo > 65535)
         {
             DialogBox.Show("Port given not valid.");

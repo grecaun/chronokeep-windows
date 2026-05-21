@@ -16,8 +16,8 @@ public partial class ImportLogPage1 : UserControl
         InitializeComponent();
         this.parent = parent;
         TypeHolder.Items.Clear();
-        ComboBoxItem current, selected = null, custom = null;
-        foreach (LogImporter.Type type in Enum.GetValues(typeof(LogImporter.Type)))
+        ComboBoxItem? current, selected = null, custom = null;
+        foreach (LogImporter.Type type in Enum.GetValues<LogImporter.Type>())
         {
             current = new ComboBoxItem()
             {
@@ -34,10 +34,7 @@ public partial class ImportLogPage1 : UserControl
                 custom = current;
             }
         }
-        if (selected == null)
-        {
-            selected = custom;
-        }
+        selected ??= custom;
         TypeHolder.SelectedItem = selected;
         UpdateLocations(locations);
     }

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.IO;
@@ -10,7 +11,9 @@ using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Chronokeep.UI.Export;
 
@@ -18,7 +21,7 @@ public partial class ExportResults : Window
 {
     private readonly IMainWindow window;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
 
     private readonly bool noOpen = false;
 
@@ -109,25 +112,24 @@ public partial class ExportResults : Window
         window?.WindowFinalize(this);
     }
 
-    private void Done_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async Task Done_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Export.ExportResults", "Done clicked.");
         List<string> headersToOutput = [];
         Dictionary<string, int> headerIndex = [];
-        foreach (Parts.HeaderPart? headerBox in headersList.Items)
+        foreach (Parts.HeaderPart headerBox in headersList.Items.Cast<Parts.HeaderPart>())
         {
-            if (headerBox!.Include.IsChecked == true)
+            if (headerBox.Include.IsChecked == true)
             {
                 headersToOutput.Add(headerBox.NameValue);
             }
         }
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
-            FileName = string.Format("{0} {1} Results.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog() == true)
+            FileTypeChoices = [Utils.ExcelType],
+            SuggestedFileName = string.Format("{0} {1} Results.{2}", theEvent!.YearCode, theEvent.Name, "xlsx"),
+        });
+        if (file is not null)
         {
             // write to file
             List<Participant> participants = database.GetParticipants(theEvent.Identifier);
@@ -520,7 +522,7 @@ public partial class ExportResults : Window
                 }
             }
             IDataExporter exporter;
-            string extension = Path.GetExtension(saveFileDialog.FileName);
+            string extension = Path.GetExtension(file.Name);
             Log.D("UI.Export.ExportResults", string.Format("Extension is '{0}'", extension));
             if (extension.Contains("xls", StringComparison.CurrentCulture))
             {
@@ -542,7 +544,7 @@ public partial class ExportResults : Window
             exporter.SetData(headers, data);
             try
             {
-                exporter.ExportData(saveFileDialog.FileName);
+                exporter.ExportData(file.Name);
                 DialogBox.Show("File saved.");
             }
             catch (Exception ex)

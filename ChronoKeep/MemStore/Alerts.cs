@@ -43,7 +43,7 @@ namespace Chronokeep.MemStore
         public List<int> GetEmailAlerts(int eventId)
         {
             Log.D("MemStore", "GetEmailAlerts");
-            List<int> output = new();
+            List<int> output = [];
             try
             {
                 if (memStoreLock.TryEnter(lockTimeout))

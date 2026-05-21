@@ -55,23 +55,24 @@ namespace Chronokeep.Objects
             return Name;
         }
 
-        public int CompareTo(AgeGroup other)
+        public int CompareTo(AgeGroup? other)
         {
             if (other == null) return 1;
-            if (this.event_id != other.event_id)
+            if (event_id != other.event_id)
             {
-                return this.event_id.CompareTo(other.event_id);
+                return event_id.CompareTo(other.event_id);
             }
-            if (this.distance_id != other.distance_id)
+            if (distance_id != other.distance_id)
             {
-                return this.distance_id.CompareTo(other.distance_id);
+                return distance_id.CompareTo(other.distance_id);
             }
-            return this.start_age.CompareTo(other.start_age);
+            return start_age.CompareTo(other.start_age);
         }
 
-        public bool Equals(AgeGroup that)
+        public bool Equals(AgeGroup? that)
         {
-            return this.event_id == that.event_id && this.distance_id == that.distance_id && this.start_age == that.start_age && this.end_age == that.start_age;
+            if (that == null) return false;
+            return event_id == that.event_id && distance_id == that.distance_id && start_age == that.start_age && end_age == that.start_age;
         }
     }
 }

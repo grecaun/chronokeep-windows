@@ -28,7 +28,7 @@ namespace Chronokeep.MemStore
                             start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
                         }
                         read.Start = start;
-                        if (chipToBibAssociations.TryGetValue(read.ChipNumber, out BibChipAssociation ba))
+                        if (chipToBibAssociations.TryGetValue(read.ChipNumber, out BibChipAssociation? ba))
                         {
                             read.ChipBib = ba.Bib;
                         }
@@ -37,7 +37,7 @@ namespace Chronokeep.MemStore
                             read.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
                         }
                         read.ReadBib ??= Constants.Timing.CHIPREAD_DUMMYBIB;
-                        if (locations.TryGetValue(read.LocationID, out TimingLocation loc))
+                        if (locations.TryGetValue(read.LocationID, out TimingLocation? loc))
                         {
                             read.LocationName = loc.Name;
                         }
@@ -53,7 +53,7 @@ namespace Chronokeep.MemStore
                                 partDictionary[part.Bib] = part;
                             }
                         }
-                        if (partDictionary.TryGetValue(read.Bib, out Participant p))
+                        if (partDictionary.TryGetValue(read.Bib, out Participant? p))
                         {
                             read.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
                         }
@@ -107,7 +107,7 @@ namespace Chronokeep.MemStore
                         foreach (ChipRead read in newReads)
                         {
                             read.Start = start;
-                            if (chipToBibAssociations.TryGetValue(read.ChipNumber, out BibChipAssociation ba))
+                            if (chipToBibAssociations.TryGetValue(read.ChipNumber, out BibChipAssociation? ba))
                             {
                                 read.ChipBib = ba.Bib;
                             }
@@ -116,7 +116,7 @@ namespace Chronokeep.MemStore
                                 read.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
                             }
                             read.ReadBib ??= Constants.Timing.CHIPREAD_DUMMYBIB;
-                            if (locations.TryGetValue(read.LocationID, out TimingLocation loc))
+                            if (locations.TryGetValue(read.LocationID, out TimingLocation? loc))
                             {
                                 read.LocationName = loc.Name;
                             }
@@ -124,7 +124,7 @@ namespace Chronokeep.MemStore
                             {
                                 read.LocationName = "";
                             }
-                            if (partDictionary.TryGetValue(read.Bib, out Participant p))
+                            if (partDictionary.TryGetValue(read.Bib, out Participant? p))
                             {
                                 read.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
                             }
@@ -399,7 +399,7 @@ namespace Chronokeep.MemStore
                 {
                     try
                     {
-                        if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
+                        if (chipReads.TryGetValue(read.ReadId, out ChipRead? known))
                         {
                             known.Status = read.Status;
                         }
@@ -429,7 +429,7 @@ namespace Chronokeep.MemStore
                     {
                         foreach (ChipRead read in reads)
                         {
-                            if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
+                            if (chipReads.TryGetValue(read.ReadId, out ChipRead? known))
                             {
                                 known.Status = read.Status;
                             }
@@ -458,7 +458,7 @@ namespace Chronokeep.MemStore
                 {
                     try
                     {
-                        if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
+                        if (chipReads.TryGetValue(read.ReadId, out ChipRead? known))
                         {
                             known.Status = read.Status;
                             known.TimeSeconds = read.TimeSeconds;
@@ -490,7 +490,7 @@ namespace Chronokeep.MemStore
                     {
                         foreach (ChipRead read in reads)
                         {
-                            if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
+                            if (chipReads.TryGetValue(read.ReadId, out ChipRead? known))
                             {
                                 known.Status = read.Status;
                                 known.TimeSeconds = read.TimeSeconds;
