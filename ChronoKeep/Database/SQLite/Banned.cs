@@ -13,7 +13,7 @@ namespace Chronokeep.Database.SQLite
             List<string> output = [];
             while (reader.Read())
             {
-                output.Add(reader["banned_phone"].ToString());
+                output.Add(reader["banned_phone"].ToString()!);
             }
             reader.Close();
             return output;
@@ -29,17 +29,15 @@ namespace Chronokeep.Database.SQLite
 
         public static void AddBannedPhones(List<string> phones, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO sms_ban_list (banned_phone) VALUES (@phone);";
+            foreach (string phone in phones)
             {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO sms_ban_list (banned_phone) VALUES (@phone);";
-                foreach (string phone in phones)
-                {
-                    command.Parameters.Add(new("@phone", phone));
-                    command.ExecuteNonQuery();
-                }
-                transaction.Commit();
+                command.Parameters.Add(new("@phone", phone));
+                command.ExecuteNonQuery();
             }
+            transaction.Commit();
         }
 
         public static void RemoveBannedPhone(string phone, SQLiteConnection connection)
@@ -52,17 +50,15 @@ namespace Chronokeep.Database.SQLite
 
         public static void RemoveBannedPhones(List<string> phones, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM sms_ban_list WHERE banned_phone=@phone;";
+            foreach (string phone in phones)
             {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM sms_ban_list WHERE banned_phone=@phone;";
-                foreach (string phone in phones)
-                {
-                    command.Parameters.Add(new("@phone", phone));
-                    command.ExecuteNonQuery();
-                }
-                transaction.Commit();
+                command.Parameters.Add(new("@phone", phone));
+                command.ExecuteNonQuery();
             }
+            transaction.Commit();
         }
 
         public static void ClearBannedPhones(SQLiteConnection connection)
@@ -80,7 +76,7 @@ namespace Chronokeep.Database.SQLite
             List<string> output = [];
             while (reader.Read())
             {
-                output.Add(reader["banned_email"].ToString());
+                output.Add(reader["banned_email"].ToString()!);
             }
             reader.Close();
             return output;
@@ -96,17 +92,15 @@ namespace Chronokeep.Database.SQLite
 
         public static void AddBannedEmails(List<string> emails, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO email_ban_list (banned_email) VALUES (@email);";
+            foreach (string email in emails)
             {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO email_ban_list (banned_email) VALUES (@email);";
-                foreach (string email in emails)
-                {
-                    command.Parameters.Add(new("@email", email));
-                    command.ExecuteNonQuery();
-                }
-                transaction.Commit();
+                command.Parameters.Add(new("@email", email));
+                command.ExecuteNonQuery();
             }
+            transaction.Commit();
         }
 
         public static void RemoveBannedEmail(string email, SQLiteConnection connection)
@@ -119,17 +113,15 @@ namespace Chronokeep.Database.SQLite
 
         public static void RemoveBannedEmails(List<string> emails, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM email_ban_list WHERE banned_email=@email;";
+            foreach (string email in emails)
             {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM email_ban_list WHERE banned_email=@email;";
-                foreach (string email in emails)
-                {
-                    command.Parameters.Add(new("@email", email));
-                    command.ExecuteNonQuery();
-                }
-                transaction.Commit();
+                command.Parameters.Add(new("@email", email));
+                command.ExecuteNonQuery();
             }
+            transaction.Commit();
         }
 
         public static void ClearBannedEmails(SQLiteConnection connection)

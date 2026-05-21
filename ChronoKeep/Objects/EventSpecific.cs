@@ -8,7 +8,7 @@
             ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
             version = 0,
             uploaded_version = -1;
-        private string comments, distanceName, owes, other, ageGroupName = "", bib, apparel, division = "";
+        private string comments = "", distanceName = "", owes = "", other = "", ageGroupName = "", bib = "", apparel = "", division = "";
         private bool anonymous, sms_enabled;
 
         public EventSpecific() { }

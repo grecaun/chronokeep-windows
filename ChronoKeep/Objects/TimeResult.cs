@@ -14,8 +14,8 @@ namespace Chronokeep.Objects
             ageGroupId, chipMilliseconds, status, uploaded, type, milliseconds,
             divisionPlace;
         private long chipSeconds, seconds;
-        private string time, locationName, segmentName, firstName, lastName, bib,
-            distanceName = "", unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday,
+        private string time = "", locationName = "", segmentName = "", firstName = "", lastName = "", bib = "",
+            distanceName = "", unknownId = "", chipTime = "", gender = "", ageGroupName = "", splitTime = "", birthday = "",
             linked_distance_name = "", chip = "", participantId = "", division = "";
         private bool anonymous;
         DateTime systemTime;
@@ -119,7 +119,7 @@ namespace Chronokeep.Objects
                 else if (Constants.Timing.SEGMENT_START != this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && segments.TryGetValue(this.segmentId, out Segment? oSeg)
+                        && segments!.TryGetValue(this.segmentId, out Segment? oSeg)
                         && oSeg.CumulativeDistance > 0)
                     {
                         segmentName = string.Format("{2:0.##} {3} - {0}{1}",
@@ -639,8 +639,7 @@ namespace Chronokeep.Objects
             {
                 return one.systemTime.CompareTo(two.systemTime);
             }
-            int bibOne, bibTwo;
-            if (int.TryParse(one.Bib, out bibOne) && int.TryParse(two.Bib, out bibTwo))
+            if (int.TryParse(one.Bib, out int bibOne) && int.TryParse(two.Bib, out int bibTwo))
             {
                 return bibOne.CompareTo(bibTwo);
             }
@@ -859,9 +858,11 @@ namespace Chronokeep.Objects
                 Log.D("Objects.TimeResult", "sms: '" + sms + "' phone: " + phone);
                 var messageOptions = new CreateMessageOptions(
                     new Twilio.Types.PhoneNumber(phone)
-                    );
-                messageOptions.From = new Twilio.Types.PhoneNumber(Constants.GlobalVars.TwilioCredentials.PhoneNumber);
-                messageOptions.Body = sms;
+                    )
+                {
+                    From = new Twilio.Types.PhoneNumber(Constants.GlobalVars.TwilioCredentials.PhoneNumber),
+                    Body = sms
+                };
                 var message = MessageResource.Create(messageOptions);
                 if (message.ErrorMessage != null)
                 {

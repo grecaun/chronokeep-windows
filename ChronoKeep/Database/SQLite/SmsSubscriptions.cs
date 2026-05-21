@@ -18,10 +18,10 @@ namespace Chronokeep.Database.SQLite
             {
                 output.Add(new()
                 {
-                    Bib = reader["bib"].ToString(),
-                    First = reader["first"].ToString(),
-                    Last = reader["last"].ToString(),
-                    Phone = reader["phone"].ToString(),
+                    Bib = reader["bib"].ToString()!,
+                    First = reader["first"].ToString()!,
+                    Last = reader["last"].ToString()!,
+                    Phone = reader["phone"].ToString()!,
                 });
             }
             reader.Close();

@@ -10,7 +10,7 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public const string READ_IDENT_TYPE_BIB    = "bib";
 
         [JsonPropertyName("identifier")]
-        public string Identifier { get; set; }
+        public string Identifier { get; set; } = "";
         [JsonPropertyName("seconds")]
         public long Seconds { get; set; }
         [JsonPropertyName("milliseconds")]
@@ -22,12 +22,12 @@ namespace Chronokeep.Objects.ChronokeepPortal
         [JsonPropertyName("antenna")]
         public int Antenna { get; set; }
         [JsonPropertyName("reader")]
-        public string Reader { get; set; }
+        public string Reader { get; set; } = "";
         [JsonPropertyName("rssi")]
-        public string RSSI { get; set; }
+        public string RSSI { get; set; } = "";
         [JsonPropertyName("ident_type")]
-        public string IdentType { get; set; }
+        public string IdentType { get; set; } = "";
         [JsonPropertyName("type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = "";
     }
 }

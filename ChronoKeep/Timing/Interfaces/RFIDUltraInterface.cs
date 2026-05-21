@@ -18,7 +18,7 @@ namespace Chronokeep.Timing.Interfaces
 {
     public partial class RFIDUltraInterface(IDBInterface database, int locationId, IMainWindow window) : ITimingSystemInterface
     {
-        private readonly Event theEvent = database.GetCurrentEvent();
+        private readonly Event theEvent = database.GetCurrentEvent()!;
         private readonly StringBuilder buffer = new();
         private RFIDSettings? settingsWindow = null;
         Socket? sock;
@@ -126,7 +126,7 @@ namespace Chronokeep.Timing.Interfaces
                     double voltVal = 0;
                     try
                     {
-                        voltVal = Double.Parse(message.Substring(2));
+                        voltVal = Double.Parse(message[2..]);
                     }
                     catch
                     {
@@ -152,12 +152,9 @@ namespace Chronokeep.Timing.Interfaces
                 else if (Settinginfo().IsMatch(message))
                 {
                     Log.D("Timing.Interfaces.RFIDUltraInterface", "It's a setting information message. " + message);
-                    if (settingsHolder == null)
-                    {
-                        settingsHolder = new();
-                    }
+                    settingsHolder ??= new();
                     char settingID = message[1];
-                    string subMsg = message.Substring(2, message.Length - 3);
+                    string subMsg = message[2..^1];
                     int tmp = -1;
                     switch (settingID)
                     {
@@ -170,36 +167,22 @@ namespace Chronokeep.Timing.Interfaces
                             break;
                         case RFIDUltraCodes.ChipOutType:
                             Log.D("Timing.Interfaces.RFIDUltraInterface", "Chip out type: " + message[2]);
-                            switch (message[2])
+                            settingsHolder.ChipType = message[2] switch
                             {
-                                case '0':
-                                    settingsHolder.ChipType = RFIDSettingsHolder.ChipTypeEnum.DEC;
-                                    break;
-                                case '1':
-                                    settingsHolder.ChipType = RFIDSettingsHolder.ChipTypeEnum.HEX;
-                                    break;
-                                default:
-                                    settingsHolder.ChipType = RFIDSettingsHolder.ChipTypeEnum.UNKNOWN;
-                                    break;
-                            }
+                                '0' => RFIDSettingsHolder.ChipTypeEnum.DEC,
+                                '1' => RFIDSettingsHolder.ChipTypeEnum.HEX,
+                                _ => RFIDSettingsHolder.ChipTypeEnum.UNKNOWN,
+                            };
                             break;
                         case RFIDUltraCodes.GatingMode:
                             Log.D("Timing.Interfaces.RFIDUltraInterface", "Gating Mode: " + message[2]);
-                            switch (message[2])
+                            settingsHolder.GatingMode = message[2] switch
                             {
-                                case '0':
-                                    settingsHolder.GatingMode = RFIDSettingsHolder.GatingModeEnum.PER_READER;
-                                    break;
-                                case '1':
-                                    settingsHolder.GatingMode = RFIDSettingsHolder.GatingModeEnum.PER_BOX;
-                                    break;
-                                case '2':
-                                    settingsHolder.GatingMode = RFIDSettingsHolder.GatingModeEnum.FIRST_TIME_SEEN;
-                                    break;
-                                default:
-                                    settingsHolder.GatingMode = RFIDSettingsHolder.GatingModeEnum.UNKNOWN;
-                                    break;
-                            }
+                                '0' => RFIDSettingsHolder.GatingModeEnum.PER_READER,
+                                '1' => RFIDSettingsHolder.GatingModeEnum.PER_BOX,
+                                '2' => RFIDSettingsHolder.GatingModeEnum.FIRST_TIME_SEEN,
+                                _ => RFIDSettingsHolder.GatingModeEnum.UNKNOWN,
+                            };
                             break;
                         case RFIDUltraCodes.GatingInterval:
                             Log.D("Timing.Interfaces.RFIDUltraInterface", "Gating Interval: " + subMsg);
@@ -210,51 +193,31 @@ namespace Chronokeep.Timing.Interfaces
                             break;
                         case RFIDUltraCodes.WhenBeep:
                             Log.D("Timing.Interfaces.RFIDUltraInterface", "When beep: " + message[2]);
-                            switch (message[2])
+                            settingsHolder.Beep = message[2] switch
                             {
-                                case '0':
-                                    settingsHolder.Beep = RFIDSettingsHolder.BeepEnum.ALWAYS;
-                                    break;
-                                case '1':
-                                    settingsHolder.Beep = RFIDSettingsHolder.BeepEnum.ONLY_FIRST_SEEN;
-                                    break;
-                                default:
-                                    settingsHolder.Beep = RFIDSettingsHolder.BeepEnum.UNKNOWN;
-                                    break;
-                            }
+                                '0' => RFIDSettingsHolder.BeepEnum.ALWAYS,
+                                '1' => RFIDSettingsHolder.BeepEnum.ONLY_FIRST_SEEN,
+                                _ => RFIDSettingsHolder.BeepEnum.UNKNOWN,
+                            };
                             break;
                         case RFIDUltraCodes.BeeperVolume:
                             Log.D("Timing.Interfaces.RFIDUltraInterface", "Beeper volume: " + message[2]);
-                            switch (message[2])
+                            settingsHolder.BeepVolume = message[2] switch
                             {
-                                case '0':
-                                    settingsHolder.BeepVolume = RFIDSettingsHolder.BeepVolumeEnum.OFF;
-                                    break;
-                                case '1':
-                                    settingsHolder.BeepVolume = RFIDSettingsHolder.BeepVolumeEnum.SOFT;
-                                    break;
-                                case '2':
-                                    settingsHolder.BeepVolume = RFIDSettingsHolder.BeepVolumeEnum.LOUD;
-                                    break;
-                                default:
-                                    settingsHolder.BeepVolume = RFIDSettingsHolder.BeepVolumeEnum.UNKNOWN;
-                                    break;
-                            }
+                                '0' => RFIDSettingsHolder.BeepVolumeEnum.OFF,
+                                '1' => RFIDSettingsHolder.BeepVolumeEnum.SOFT,
+                                '2' => RFIDSettingsHolder.BeepVolumeEnum.LOUD,
+                                _ => RFIDSettingsHolder.BeepVolumeEnum.UNKNOWN,
+                            };
                             break;
                         case RFIDUltraCodes.AutoSetGPS:
                             Log.D("Timing.Interfaces.RFIDUltraInterface", "Auto set gps: " + message[2]);
-                            switch (message[2])
+                            settingsHolder.SetFromGPS = message[2] switch
                             {
-                                case '0':
-                                    settingsHolder.SetFromGPS = RFIDSettingsHolder.GPSEnum.DONT_SET;
-                                    break;
-                                case '1':
-                                    settingsHolder.SetFromGPS = RFIDSettingsHolder.GPSEnum.SET;
-                                    break;
-                                default:
-                                    settingsHolder.SetFromGPS = RFIDSettingsHolder.GPSEnum.UNKNOWN;
-                                    break;
-                            }
+                                '0' => RFIDSettingsHolder.GPSEnum.DONT_SET,
+                                '1' => RFIDSettingsHolder.GPSEnum.SET,
+                                _ => RFIDSettingsHolder.GPSEnum.UNKNOWN,
+                            };
                             break;
                         case RFIDUltraCodes.TimeZone:
                             Log.D("Timing.Interfaces.RFIDUltraInterface", "Timezone: " + subMsg);
@@ -271,11 +234,8 @@ namespace Chronokeep.Timing.Interfaces
                 // If "u[...]" setting changed
                 else if (Settingconfirmation().IsMatch(message))
                 {
-                    Log.D("Timing.Interfaces.RFIDUltraInterface", "It's a settings confirmation message. " + message + BitConverter.ToString(message.Select(c => (byte)c).ToArray()));
-                    if (settingsHolder == null)
-                    {
-                        settingsHolder = new();
-                    }
+                    Log.D("Timing.Interfaces.RFIDUltraInterface", "It's a settings confirmation message. " + message + BitConverter.ToString([.. message.Select(c => (byte)c)]));
+                    settingsHolder ??= new();
                     char settingID = message[1];
                     switch (settingID)
                     {
@@ -359,10 +319,7 @@ namespace Chronokeep.Timing.Interfaces
                 else if (Status().IsMatch(message))
                 {
                     Log.D("Timing.Interfaces.RFIDUltraInterface", "It's a status message.");
-                    if (settingsHolder == null)
-                    {
-                        settingsHolder = new();
-                    }
+                    settingsHolder ??= new();
                     Match match = Status().Match(message);
                     if (!output.TryGetValue(MessageType.STATUS, out List<string>? statusList))
                     {
@@ -564,7 +521,7 @@ namespace Chronokeep.Timing.Interfaces
          */
         public void SetAntennaStatus(int readerNo, int antennaNo, char status)
         {
-            char code = (char)0x00;
+            char code;
             if (readerNo == 1)
             {
                 switch (antennaNo)
@@ -912,10 +869,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void CloseSettings()
         {
-            if (settingsWindow != null)
-            {
-                settingsWindow.CloseWindow();
-            }
+            settingsWindow?.CloseWindow();
         }
 
         public bool WasShutdown()

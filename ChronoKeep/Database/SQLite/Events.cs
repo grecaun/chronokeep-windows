@@ -45,29 +45,27 @@ namespace Chronokeep.Database.SQLite
 
         internal static void RemoveEvent(int identifier, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
-            {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "DELETE FROM sms_subscriptions WHERE event_id=@event;" +
-                    "DELETE FROM email_alert WHERE event_id=@event;" +
-                    "DELETE FROM sms_alert WHERE event_id=@event;" +
-                    "DELETE FROM remote_readers WHERE event_id=@event;" +
-                    "DELETE FROM alarms WHERE event_id=@event;" +
-                    "DELETE FROM time_results WHERE event_id=@event;" +
-                    "DELETE FROM bib_chip_assoc WHERE event_id=@event;" +
-                    "DELETE FROM segments WHERE event_id=@event;" +
-                    "DELETE FROM chipreads WHERE event_id=@event;" +
-                    "DELETE FROM age_groups WHERE event_id=@event;" +
-                    "DELETE FROM distances WHERE event_id=@event;" +
-                    "DELETE FROM timing_locations WHERE event_id=@event;" +
-                    "DELETE FROM eventspecific WHERE event_id=@event;" +
-                    "DELETE FROM events WHERE event_id=@event;";
-                command.Parameters.AddRange([
-                    new("@event", identifier) ]);
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "DELETE FROM sms_subscriptions WHERE event_id=@event;" +
+                "DELETE FROM email_alert WHERE event_id=@event;" +
+                "DELETE FROM sms_alert WHERE event_id=@event;" +
+                "DELETE FROM remote_readers WHERE event_id=@event;" +
+                "DELETE FROM alarms WHERE event_id=@event;" +
+                "DELETE FROM time_results WHERE event_id=@event;" +
+                "DELETE FROM bib_chip_assoc WHERE event_id=@event;" +
+                "DELETE FROM segments WHERE event_id=@event;" +
+                "DELETE FROM chipreads WHERE event_id=@event;" +
+                "DELETE FROM age_groups WHERE event_id=@event;" +
+                "DELETE FROM distances WHERE event_id=@event;" +
+                "DELETE FROM timing_locations WHERE event_id=@event;" +
+                "DELETE FROM eventspecific WHERE event_id=@event;" +
+                "DELETE FROM events WHERE event_id=@event;";
+            command.Parameters.AddRange([
+                new("@event", identifier) ]);
+            command.ExecuteNonQuery();
+            transaction.Commit();
         }
 
         internal static void UpdateEvent(Event anEvent, SQLiteConnection connection)
@@ -132,13 +130,13 @@ namespace Chronokeep.Database.SQLite
             while (reader.Read())
             {
                 output.Add(new(Convert.ToInt32(reader["event_id"]),
-                    reader["event_name"].ToString(),
-                    reader["event_date"].ToString(),
+                    reader["event_name"].ToString()!,
+                    reader["event_date"].ToString()!,
                     Convert.ToInt32(reader["event_common_age_groups"]),
                     Convert.ToInt32(reader["event_common_start_finish"]),
                     Convert.ToInt32(reader["event_distance_specific_segments"]),
                     Convert.ToInt32(reader["event_rank_by_gun"]),
-                    reader["event_yearcode"].ToString(),
+                    reader["event_yearcode"].ToString()!,
                     Convert.ToInt32(reader["event_finish_max_occurances"]),
                     Convert.ToInt32(reader["event_finish_ignore_within"]),
                     Convert.ToInt32(reader["event_start_window"]),
@@ -146,7 +144,7 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["event_start_time_milliseconds"]),
                     Convert.ToInt32(reader["event_type"]),
                     Convert.ToInt32(reader["api_id"]),
-                    reader["api_event_id"].ToString(),
+                    reader["api_event_id"].ToString()!,
                     Convert.ToInt32(reader["event_display_placements"]),
                     Convert.ToInt32(reader["event_age_groups_as_divisions"]),
                     Convert.ToInt32(reader["event_days_allowed"]),
@@ -177,7 +175,7 @@ namespace Chronokeep.Database.SQLite
             return output;
         }
 
-        internal static Event GetEvent(int id, SQLiteConnection connection)
+        internal static Event? GetEvent(int id, SQLiteConnection connection)
         {
             if (id < 0)
             {
@@ -187,17 +185,17 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "SELECT * FROM events WHERE event_id=@id";
             command.Parameters.Add(new("@id", id));
             SQLiteDataReader reader = command.ExecuteReader();
-            Event output = null;
+            Event? output = null;
             if (reader.Read())
             {
                 output = new(Convert.ToInt32(reader["event_id"]),
-                    reader["event_name"].ToString(),
-                    reader["event_date"].ToString(),
+                    reader["event_name"].ToString()!,
+                    reader["event_date"].ToString()!,
                     Convert.ToInt32(reader["event_common_age_groups"]),
                     Convert.ToInt32(reader["event_common_start_finish"]),
                     Convert.ToInt32(reader["event_distance_specific_segments"]),
                     Convert.ToInt32(reader["event_rank_by_gun"]),
-                    reader["event_yearcode"].ToString(),
+                    reader["event_yearcode"].ToString()!,
                     Convert.ToInt32(reader["event_finish_max_occurances"]),
                     Convert.ToInt32(reader["event_finish_ignore_within"]),
                     Convert.ToInt32(reader["event_start_window"]),
@@ -205,7 +203,7 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["event_start_time_milliseconds"]),
                     Convert.ToInt32(reader["event_type"]),
                     Convert.ToInt32(reader["api_id"]),
-                    reader["api_event_id"].ToString(),
+                    reader["api_event_id"].ToString()!,
                     Convert.ToInt32(reader["event_display_placements"]),
                     Convert.ToInt32(reader["event_age_groups_as_divisions"]),
                     Convert.ToInt32(reader["event_days_allowed"]),

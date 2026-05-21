@@ -23,8 +23,8 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public const string NOT_ALLOWED           = "NOT_ALLOWED";
 
         [JsonPropertyName("error_type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = "";
         [JsonPropertyName("message")]
-        public string Message { get; set; }
+        public string Message { get; set; } = "";
     }
 }

@@ -43,7 +43,7 @@ namespace Chronokeep.Timing.Remote
             return output;
         }
 
-        public void Shutdown()
+        public static void Shutdown()
         {
             if (remRLock.TryEnter(6000))
             {
@@ -101,7 +101,7 @@ namespace Chronokeep.Timing.Remote
                         if (UpdateReaders)
                         {
                             Log.D("API.RemoteReadsController", "Updating readers.");
-                            var theEvent = database.GetCurrentEvent();
+                            var theEvent = database.GetCurrentEvent()!;
                             readers = database.GetRemoteReaders(theEvent.Identifier);
                             apiDictionary.Clear();
                             foreach (APIObject api in database.GetAllAPI())
@@ -133,7 +133,7 @@ namespace Chronokeep.Timing.Remote
                         announcer_notify = true;
                     }
                     // make sure we know how to check the api
-                    if (apiDictionary.TryGetValue(reader.APIIDentifier, out APIObject api))
+                    if (apiDictionary.TryGetValue(reader.APIIDentifier, out APIObject? api))
                     {
                         // reset start to the start of the day each loop
                         DateTime dateTime = new(now.Year, now.Month, now.Day, 0, 0, 0);

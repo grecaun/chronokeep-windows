@@ -6,9 +6,9 @@ namespace Chronokeep.Database.SQLite
 {
     class Settings
     {
-        internal static AppSetting GetAppSetting(string name, SQLiteConnection connection)
+        internal static AppSetting? GetAppSetting(string name, SQLiteConnection connection)
         {
-            AppSetting output = null;
+            AppSetting? output = null;
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM settings WHERE setting=@name";
             command.Parameters.Add(new SQLiteParameter("@name", name));
@@ -17,8 +17,8 @@ namespace Chronokeep.Database.SQLite
             {
                 output = new AppSetting
                 {
-                    Name = Convert.ToString(reader["setting"]),
-                    Value = Convert.ToString(reader["value"])
+                    Name = Convert.ToString(reader["setting"])!,
+                    Value = Convert.ToString(reader["value"])!
                 };
             }
             reader.Close();
@@ -27,17 +27,15 @@ namespace Chronokeep.Database.SQLite
 
         internal static void SetAppSetting(AppSetting setting, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
-            {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO settings (setting, value)" +
-                    " VALUES (@name,@value)";
-                command.Parameters.AddRange(new SQLiteParameter[] {
-                new SQLiteParameter("@name", setting.Name),
-                new SQLiteParameter("@value", setting.Value) });
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO settings (setting, value)" +
+                " VALUES (@name,@value)";
+            command.Parameters.AddRange([
+            new SQLiteParameter("@name", setting.Name),
+                new SQLiteParameter("@value", setting.Value) ]);
+            command.ExecuteNonQuery();
+            transaction.Commit();
         }
     }
 }

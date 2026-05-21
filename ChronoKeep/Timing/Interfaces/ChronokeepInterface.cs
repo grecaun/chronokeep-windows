@@ -21,7 +21,7 @@ namespace Chronokeep.Timing.Interfaces
 {
     public partial class ChronokeepInterface(IDBInterface database, int locationId, IMainWindow window) : ITimingSystemInterface
     {
-        private readonly Event theEvent = database.GetCurrentEvent();
+        private readonly Event theEvent = database.GetCurrentEvent()!;
         private readonly StringBuilder buffer = new();
         private Socket? sock;
         private bool wasShutdown = false;
@@ -43,43 +43,41 @@ namespace Chronokeep.Timing.Interfaces
             try
             {
                 Log.D("Timing.Interfaces.ChronokeepInterface", "Attempting to get port from server.");
-                using (UdpClient client = new(AddressFamily.InterNetwork))
+                using UdpClient client = new(AddressFamily.InterNetwork);
+                byte[] msg = Encoding.Default.GetBytes(Constants.Network.CHRONOKEEP_ZCONF_CONNECT_MSG);
+                IPEndPoint endPoint = new(IPAddress.Parse(IP_Address), Constants.Network.CHRONOKEEP_ZCONF_PORT);
+                client.Send(msg, msg.Length, endPoint);
+                client.Client.ReceiveTimeout = Constants.Readers.TIMEOUT;
+                byte[] data = client.Receive(ref endPoint);
+                string response = Encoding.Default.GetString(data);
+                Match match = ZeroConf().Match(response);
+                if (match.Success)
                 {
-                    byte[] msg = Encoding.Default.GetBytes(Constants.Network.CHRONOKEEP_ZCONF_CONNECT_MSG);
-                    IPEndPoint endPoint = new(IPAddress.Parse(IP_Address), Constants.Network.CHRONOKEEP_ZCONF_PORT);
-                    client.Send(msg, msg.Length, endPoint);
-                    client.Client.ReceiveTimeout = Constants.Readers.TIMEOUT;
-                    byte[] data = client.Receive(ref endPoint);
-                    string response = Encoding.Default.GetString(data);
-                    Match match = ZeroConf().Match(response);
-                    if (match.Success)
+                    Log.D("Timing.Interfaces.ChronokeepInterface", "Successfully received message from reader. Name is "
+                        + match.Groups["PORTAL_NAME"].Value
+                        + ". Id is "
+                        + match.Groups["PORTAL_ID"].Value
+                        + ". Port is "
+                        + match.Groups["PORTAL_PORT"].Value
+                        );
+                    int port = Constants.Network.CHRONOKEEP_ZCONF_PORT;
+                    reader_name = match.Groups["PORTAL_NAME"].Value;
+                    if (!int.TryParse(match.Groups["PORTAL_PORT"].Value, out port))
                     {
-                        Log.D("Timing.Interfaces.ChronokeepInterface", "Successfully received message from reader. Name is "
-                            + match.Groups["PORTAL_NAME"].Value
-                            + ". Id is "
-                            + match.Groups["PORTAL_ID"].Value
-                            + ". Port is "
-                            + match.Groups["PORTAL_PORT"].Value
-                            );
-                        int port = Constants.Network.CHRONOKEEP_ZCONF_PORT;
-                        reader_name = match.Groups["PORTAL_NAME"].Value;
-                        if (!int.TryParse(match.Groups["PORTAL_PORT"].Value, out port))
-                        {
-                            Log.E("Timing.Interfaces.ChronokeepInterface", "Error parsing port.");
-                            return null;
-                        }
-                        sock.Connect(IP_Address, port);
-                        SendMessage(JsonSerializer.Serialize(new ConnectRequest()
-                        {
-                            Reads = true,
-                        }));
-                        output.Add(sock);
-                    }
-                    else
-                    {
-                        Log.E("Timing.Interfaces.ChronokeepInterface", "Unable to parse message from server. Unknown value. '" + response + "'");
+                        Log.E("Timing.Interfaces.ChronokeepInterface", "Error parsing port.");
                         return null;
                     }
+                    sock.Connect(IP_Address, port);
+                    SendMessage(JsonSerializer.Serialize(new ConnectRequest()
+                    {
+                        Reads = true,
+                    }));
+                    output.Add(sock);
+                }
+                else
+                {
+                    Log.E("Timing.Interfaces.ChronokeepInterface", "Unable to parse message from server. Unknown value. '" + response + "'");
+                    return null;
                 }
             }
             catch
@@ -128,15 +126,11 @@ namespace Chronokeep.Timing.Interfaces
                             try
                             {
                                 ReadersResponse readRes = JsonSerializer.Deserialize<ReadersResponse>(message)!;
-                                if (settingsWindow != null)
-                                {
-                                    settingsWindow.UpdateView(new()
-                                        {
-                                            Readers = readRes.List,
-                                            Changes = [PortalSettingsHolder.ChangeType.READERS]
-                                        }
-                                        );
-                                }
+                                settingsWindow?.UpdateView(new()
+                                    {
+                                        Readers = readRes.List,
+                                        Changes = [PortalSettingsHolder.ChangeType.READERS]
+                                    });
                                 int oneReadingCount = 0;
                                 foreach (PortalReader reader in readRes.List)
                                 {
@@ -187,9 +181,7 @@ namespace Chronokeep.Timing.Interfaces
                             try
                             {
                                 ReaderAntennasResponse antRes = JsonSerializer.Deserialize<ReaderAntennasResponse>(message)!;
-                                if (settingsWindow != null)
-                                {
-                                    settingsWindow.UpdateView(new()
+                                settingsWindow?.UpdateView(new()
                                     {
                                         Antennas = new()
                                         {
@@ -197,9 +189,7 @@ namespace Chronokeep.Timing.Interfaces
                                             Antennas = antRes.Antennas,
                                         },
                                         Changes = [PortalSettingsHolder.ChangeType.ANTENNAS]
-                                    }
-                                    );
-                                }
+                                    });
                             }
                             catch (Exception e)
                             {
@@ -338,15 +328,11 @@ namespace Chronokeep.Timing.Interfaces
                             try
                             {
                                 ApiListResponse apiList = JsonSerializer.Deserialize<ApiListResponse>(message)!;
-                                if (settingsWindow != null)
-                                {
-                                    settingsWindow.UpdateView(new()
-                                        {
-                                            APIs = apiList.List,
-                                            Changes = [PortalSettingsHolder.ChangeType.APIS]
-                                        }
-                                        );
-                                }
+                                settingsWindow?.UpdateView(new()
+                                    {
+                                        APIs = apiList.List,
+                                        Changes = [PortalSettingsHolder.ChangeType.APIS]
+                                    });
                                 if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string>? settingList))
                                 {
                                     settingList = [];
@@ -970,10 +956,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void CloseSettings()
         {
-            if (settingsWindow != null)
-            {
-                settingsWindow.CloseWindow();
-            }
+            settingsWindow?.CloseWindow();
         }
 
         public void SettingsWindowFinalize()

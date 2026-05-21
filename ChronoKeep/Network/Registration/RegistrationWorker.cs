@@ -21,7 +21,7 @@ namespace Chronokeep.Network.Registration
 
         private readonly Lock threadLock = new();
 
-        private Socket server;
+        private Socket? server;
         private bool updateDistanceDictionary = true;
         private readonly List<Socket> clients = [];
         private readonly List<Socket> readList = [];
@@ -82,7 +82,7 @@ namespace Chronokeep.Network.Registration
         public void Run()
         {
             Log.D("Network.Registration.RegistrationWorker", "Starting Registration thread.");
-            Event theEvent = database.GetCurrentEvent();
+            Event theEvent = database.GetCurrentEvent()!;
             if (theEvent == null || theEvent.Identifier < 1)
             {
                 return;
@@ -177,12 +177,12 @@ namespace Chronokeep.Network.Registration
                                     string message = m.Value;
                                     try
                                     {
-                                        Request res = JsonSerializer.Deserialize<Request>(message);
+                                        Request res = JsonSerializer.Deserialize<Request>(message)!;
                                         switch (res.Command)
                                         {
                                             case Request.CONNECT:
                                                 Log.D("Network.Registration.RegistrationWorker", "Received connect message.");
-                                                AppSetting nameSetting = database.GetAppSetting(Constants.Settings.SERVER_NAME);
+                                                AppSetting nameSetting = database.GetAppSetting(Constants.Settings.SERVER_NAME)!;
                                                 string nameString = nameSetting != null && nameSetting.Value != null ? nameSetting.Value : Constants.Network.DEFAULT_CHRONOKEEP_SERVER_NAME;
                                                 SendMessage(sock, JsonSerializer.Serialize(new ConnectionSuccessfulResponse
                                                 {
@@ -203,8 +203,8 @@ namespace Chronokeep.Network.Registration
                                                 Log.D("Network.Registration.RegistrationWorker", "Received add participant message.");
                                                 try
                                                 {
-                                                    ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message);
-                                                    if (distanceDictionary.TryGetValue(addReq.Participant.Distance, out Distance oDist))
+                                                    ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message)!;
+                                                    if (distanceDictionary.TryGetValue(addReq.Participant.Distance, out Distance? oDist))
                                                     {
                                                         Objects.Participant newPart = new(
                                                             addReq.Participant.FirstName,
@@ -265,12 +265,12 @@ namespace Chronokeep.Network.Registration
                                                 Log.D("Network.Registration.RegistrationWorker", "Received update participant message.");
                                                 try
                                                 {
-                                                    ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message);
+                                                    ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message)!;
                                                     if (!int.TryParse(addReq.Participant.Id, out int eventSpecId))
                                                     {
                                                         eventSpecId = -1;
                                                     }
-                                                    Objects.Participant updatedPart = database.GetParticipantEventSpecific(theEvent.Identifier, eventSpecId);
+                                                    Objects.Participant updatedPart = database.GetParticipantEventSpecific(theEvent.Identifier, eventSpecId)!;
                                                     if (updatedPart == null || !updatedPart.IsSimilar(addReq.Participant))
                                                     {
                                                         SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
@@ -278,7 +278,7 @@ namespace Chronokeep.Network.Registration
                                                             Error = RegistrationError.PARTICIPANT_NOT_FOUND
                                                         }));
                                                     }
-                                                    else if (!distanceDictionary.TryGetValue(addReq.Participant.Distance, out Distance tDist))
+                                                    else if (!distanceDictionary.TryGetValue(addReq.Participant.Distance, out Distance? tDist))
                                                     {
                                                         SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
                                                         {
@@ -315,7 +315,7 @@ namespace Chronokeep.Network.Registration
                                                 Log.D("Network.Registration.RegistrationWorker", "Received add/update participant message.");
                                                 try
                                                 {
-                                                    ModifyMultipleParticipants addReq = JsonSerializer.Deserialize<ModifyMultipleParticipants>(message);
+                                                    ModifyMultipleParticipants addReq = JsonSerializer.Deserialize<ModifyMultipleParticipants>(message)!;
                                                     List<Objects.Participant> newParts = [];
                                                     List<Objects.Participant> updParts = [];
                                                     Dictionary<(string, string, string, string), Objects.Participant> partDictionary = [];
@@ -328,7 +328,7 @@ namespace Chronokeep.Network.Registration
                                                     foreach (Objects.Registration.Participant part in addReq.Participants)
                                                     {
                                                         Log.D("Network.Registration.RegistrationWorker", "Participant ID: " + part.Id);
-                                                        if (distanceDictionary.TryGetValue(part.Distance, out Distance distance))
+                                                        if (distanceDictionary.TryGetValue(part.Distance, out Distance? distance))
                                                         {
                                                             if (part.Id.Length < 1)
                                                             {
@@ -371,7 +371,7 @@ namespace Chronokeep.Network.Registration
                                                             }
                                                             else if (part.Bib.Length > 0)
                                                             {
-                                                                if (partESDict.TryGetValue(part.Id, out Objects.Participant updatedPart) && updatedPart != null && updatedPart.IsSimilar(part))
+                                                                if (partESDict.TryGetValue(part.Id, out Objects.Participant? updatedPart) && updatedPart != null && updatedPart.IsSimilar(part))
                                                                 {
                                                                     Log.D("Network.Registration.RegistrationWorker", "Updated Part - Bib: " + part.Bib);
                                                                     updatedPart.Update(
@@ -386,7 +386,7 @@ namespace Chronokeep.Network.Registration
                                                                         );
                                                                     updParts.Add(updatedPart);
                                                                 }
-                                                                else if (partDictionary.TryGetValue((part.FirstName, part.LastName, part.Birthdate, part.Distance), out Objects.Participant oldTwo))
+                                                                else if (partDictionary.TryGetValue((part.FirstName, part.LastName, part.Birthdate, part.Distance), out Objects.Participant? oldTwo))
                                                                 {
                                                                     Log.D("Network.Registration.RegistrationWorker", "Updated Part2 - Bib: " + part.Bib);
                                                                     oldTwo.Update(

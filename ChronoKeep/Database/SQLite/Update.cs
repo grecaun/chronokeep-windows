@@ -1,6 +1,5 @@
 ﻿using Chronokeep.Helpers;
 using Chronokeep.Objects;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -18,7 +17,7 @@ namespace Chronokeep.Database.SQLite
             throw new InvalidDatabaseVersion(dbVersion, maxVersion);
         }
 
-        internal static void UpdateDatabase(int oldversion, int newversion, string connectionInfo)
+        internal static void UpdateDatabase(int oldversion, string connectionInfo)
         {
             SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -746,14 +745,14 @@ namespace Chronokeep.Database.SQLite
                                 Convert.ToInt64(reader["read_seconds"]),
                                 Convert.ToInt32(reader["read_milliseconds"]),
                                 Convert.ToInt32(reader["read_antenna"]),
-                                reader["read_rssi"].ToString(),
+                                reader["read_rssi"].ToString()!,
                                 Convert.ToInt32(reader["read_isrewind"]),
-                                reader["read_reader"].ToString(),
-                                reader["read_box"].ToString(),
-                                reader["read_readertime"].ToString(),
+                                reader["read_reader"].ToString()!,
+                                reader["read_box"].ToString()!,
+                                reader["read_readertime"].ToString()!,
                                 Convert.ToInt32(reader["read_starttime"]),
                                 Convert.ToInt32(reader["read_logindex"]),
-                                DateTime.ParseExact(reader["read_time"].ToString(), "yyyy-MM-dd HH:mm:ss.fff", null),
+                                DateTime.ParseExact(reader["read_time"].ToString()!, "yyyy-MM-dd HH:mm:ss.fff", null),
                                 Convert.ToInt32(reader["read_bib"]),
                                 Convert.ToInt32(reader["read_type"])
                                 ));
@@ -1076,7 +1075,7 @@ namespace Chronokeep.Database.SQLite
                         while (reader.Read())
                         {
                             distances.Add(new(Convert.ToInt32(reader["distance_id"]),
-                                reader["distance_name"].ToString(),
+                                reader["distance_name"].ToString()!,
                                 Convert.ToInt32(reader["event_id"]),
                                 Convert.ToDouble(reader["distance_distance"]),
                                 Convert.ToInt32(reader["distance_distance_unit"]),
@@ -1114,25 +1113,25 @@ namespace Chronokeep.Database.SQLite
                         {
                             people.Add(new(
                                 Convert.ToInt32(reader["participant_id"]),
-                                reader["participant_first"].ToString(),
-                                reader["participant_last"].ToString(),
-                                reader["participant_street"].ToString(),
-                                reader["participant_city"].ToString(),
-                                reader["participant_state"].ToString(),
-                                reader["participant_zip"].ToString(),
-                                reader["participant_birthday"].ToString(),
+                                reader["participant_first"].ToString()!,
+                                reader["participant_last"].ToString()!,
+                                reader["participant_street"].ToString()!,
+                                reader["participant_city"].ToString()!,
+                                reader["participant_state"].ToString()!,
+                                reader["participant_zip"].ToString()!,
+                                reader["participant_birthday"].ToString()!,
                                 new(
                                     Convert.ToInt32(reader["eventspecific_id"]),
                                     Convert.ToInt32(reader["event_id"]),
                                     Convert.ToInt32(reader["distance_id"]),
-                                    reader["distance_name"].ToString(),
-                                    reader["eventspecific_bib"].ToString(),
+                                    reader["distance_name"].ToString()!,
+                                    reader["eventspecific_bib"].ToString()!,
                                     Convert.ToInt32(reader["eventspecific_checkedin"]),
-                                    reader["eventspecific_comments"].ToString(),
-                                    reader["eventspecific_owes"].ToString(),
-                                    reader["eventspecific_other"].ToString(),
+                                    reader["eventspecific_comments"].ToString()!,
+                                    reader["eventspecific_owes"].ToString()!,
+                                    reader["eventspecific_other"].ToString()!,
                                     Convert.ToInt32(reader["eventspecific_status"]),
-                                    reader["eventspecific_age_group_name"].ToString(),
+                                    reader["eventspecific_age_group_name"].ToString()!,
                                     Convert.ToInt32(reader["eventspecific_age_group_id"]),
                                     false,
                                     false,
@@ -1141,21 +1140,21 @@ namespace Chronokeep.Database.SQLite
                                     Constants.Timing.EVENTSPECIFIC_DEFAULT_VERSION,
                                     Constants.Timing.EVENTSPECIFIC_DEFAULT_UPLOADED_VERSION
                                     ),
-                                reader["participant_email"].ToString(),
+                                reader["participant_email"].ToString()!,
                                 "",
-                                reader["participant_mobile"].ToString(),
-                                reader["participant_parent"].ToString(),
-                                reader["participant_country"].ToString(),
-                                reader["participant_street2"].ToString(),
-                                reader["participant_gender"].ToString(),
-                                reader["emergencycontact_name"].ToString(),
-                                reader["emergencycontact_phone"].ToString()
+                                reader["participant_mobile"].ToString()!,
+                                reader["participant_parent"].ToString()!,
+                                reader["participant_country"].ToString()!,
+                                reader["participant_street2"].ToString()!,
+                                reader["participant_gender"].ToString()!,
+                                reader["emergencycontact_name"].ToString()!,
+                                reader["emergencycontact_phone"].ToString()!
                                 ));
                         }
                         // Go through each participant and update their division/distance.
                         foreach (Participant p in people)
                         {
-                            if (distDict.TryGetValue((p.EventSpecific.DistanceName + " Early Created", p.EventSpecific.DistanceIdentifier), out Distance di))
+                            if (distDict.TryGetValue((p.EventSpecific.DistanceName + " Early Created", p.EventSpecific.DistanceIdentifier), out Distance? di))
                             {
                                 p.EventSpecific.DistanceIdentifier = di.Identifier;
                                 Participants.V44UpdateParticipant(p, connection);

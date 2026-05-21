@@ -11,7 +11,7 @@ namespace Chronokeep.Objects.Registration
         public const string CONNECTION_SUCCESSFUL = "registration_connection_successful";
 
         [JsonPropertyName("command")]
-        public string Command { get; set; }
+        public string Command { get; set; } = "";
     }
 
     public class ConnectionSuccessfulResponse : Response
@@ -22,9 +22,9 @@ namespace Chronokeep.Objects.Registration
         }
 
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         [JsonPropertyName("kind")]
-        public string Type { get; set; }
+        public string Type { get; set; } = "";
         [JsonPropertyName("version")]
         public int Version { get; set; }
     }
@@ -37,9 +37,9 @@ namespace Chronokeep.Objects.Registration
         }
 
         [JsonPropertyName("participants")]
-        public List<Participant> Participants { get; set; }
+        public List<Participant> Participants { get; set; } = [];
         [JsonPropertyName("distances")]
-        public List<string> Distances { get; set; }
+        public List<string> Distances { get; set; } = [];
     }
 
     public class ErrorResponse : Response
@@ -50,7 +50,7 @@ namespace Chronokeep.Objects.Registration
         }
 
         [JsonPropertyName("error")]
-        public string Error { get; set; }
+        public string Error { get; set; } = "";
     }
 
     public class DisconnectResponse : Response

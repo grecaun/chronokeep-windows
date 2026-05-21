@@ -26,48 +26,42 @@ namespace Chronokeep.Database.SQLite
 
         internal static void UpdateTimingSystem(TimingSystem system, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
-            {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "UPDATE timing_systems SET ts_ip=@ip, ts_port=@port, ts_location=@location, ts_type=@type WHERE ts_identifier=@id;";
-                command.Parameters.AddRange(
-                [
-                    new("@ip", system.IPAddress),
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE timing_systems SET ts_ip=@ip, ts_port=@port, ts_location=@location, ts_type=@type WHERE ts_identifier=@id;";
+            command.Parameters.AddRange(
+            [
+                new("@ip", system.IPAddress),
                     new("@port", system.Port),
                     new("@location", system.LocationID),
                     new("@type", system.Type),
                     new("@id", system.SystemIdentifier)
-                ]);
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
+            ]);
+            command.ExecuteNonQuery();
+            transaction.Commit();
         }
 
         internal static void SetTimingSystems(List<TimingSystem> systems, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM timing_systems;";
+            command.ExecuteNonQuery();
+            foreach (TimingSystem sys in systems)
             {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM timing_systems;";
-                command.ExecuteNonQuery();
-                foreach (TimingSystem sys in systems)
-                {
-                    AddTimingSystem(sys, connection);
-                }
-                transaction.Commit();
+                AddTimingSystem(sys, connection);
             }
+            transaction.Commit();
         }
 
         internal static void RemoveTimingSystem(int systemId, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
-            {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM timing_systems WHERE ts_identifier=@id;";
-                command.Parameters.Add(new("@id", systemId));
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM timing_systems WHERE ts_identifier=@id;";
+            command.Parameters.Add(new("@id", systemId));
+            command.ExecuteNonQuery();
+            transaction.Commit();
         }
 
         internal static List<TimingSystem> GetTimingSystems(SQLiteConnection connection)
@@ -78,8 +72,13 @@ namespace Chronokeep.Database.SQLite
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new(Convert.ToInt32(reader["ts_identifier"]), reader["ts_ip"].ToString(),
-                    Convert.ToInt32(reader["ts_port"]), Convert.ToInt32(reader["ts_location"]), reader["ts_type"].ToString()));
+                output.Add(new(
+                    Convert.ToInt32(reader["ts_identifier"]),
+                    reader["ts_ip"].ToString()!,
+                    Convert.ToInt32(reader["ts_port"]),
+                    Convert.ToInt32(reader["ts_location"]),
+                    reader["ts_type"].ToString()!
+                    ));
             }
             reader.Close();
             return output;

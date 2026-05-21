@@ -65,7 +65,7 @@ namespace Chronokeep.Timing.API
                 }
             }
             string unique_pad = "";
-            AppSetting uniqueID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
+            AppSetting uniqueID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER)!;
             if (uniqueID != null)
             {
                 unique_pad = uniqueID.Value;
@@ -92,7 +92,7 @@ namespace Chronokeep.Timing.API
             }
             int total = 0;
             int loops = results.Count / Constants.Timing.API_LOOP_COUNT;
-            AddResultsResponse response;
+            AddResultsResponse? response;
             bool loop_error = false;
             for (int i = 0; i < loops; i += 1)
             {
@@ -127,7 +127,6 @@ namespace Chronokeep.Timing.API
                 {
                     // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
                     Log.D("API.APIController", "Unable to handle API response. Loop " + i);
-                    response = null;
                     loop_error = true;
                     if (controller != null)
                     {
@@ -360,7 +359,7 @@ namespace Chronokeep.Timing.API
             while (true)
             {
                 // Start upload of data to API.
-                Event theEvent = database.GetCurrentEvent();
+                Event theEvent = database.GetCurrentEvent()!;
                 // Get API to upload. Exit if not found
                 if (theEvent.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
                 {
@@ -373,7 +372,7 @@ namespace Chronokeep.Timing.API
                 APIObject api;
                 try
                 {
-                    api = database.GetAPI(theEvent.API_ID);
+                    api = database.GetAPI(theEvent.API_ID)!;
                 }
                 catch
                 {
@@ -430,7 +429,7 @@ namespace Chronokeep.Timing.API
                         }
                     }
                     string unique_pad = "";
-                    AppSetting uniqueID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
+                    AppSetting uniqueID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER)!;
                     if (uniqueID != null)
                     {
                         unique_pad = uniqueID.Value;

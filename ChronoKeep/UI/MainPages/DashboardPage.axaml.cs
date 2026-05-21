@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -10,6 +11,7 @@ using Chronokeep.UI.Parts;
 using Chronokeep.UI.UhfRfidReader;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Threading.Tasks;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -146,7 +148,7 @@ public partial class DashboardPage : UserControl, IMainPage
                 "There are processes running in the background. Do you wish to stop these and continue?",
                 "Yes",
                 "No",
-                () =>
+                async () =>
                 {
                     mWindow.StopBackgroundProcesses();
                     switch (clickType)
@@ -156,14 +158,18 @@ public partial class DashboardPage : UserControl, IMainPage
                             if (newEventWindow != null)
                             {
                                 mWindow.AddWindow(newEventWindow);
-                                newEventWindow.ShowDialog((Window)mWindow);
+                                _ = newEventWindow.ShowDialog((Window)mWindow);
                             }
                             break;
                         case EventClickType.ImportEvent:
-                            OpenFileDialog openFileDialog = new() { Filter = "SQLite Database Files (*.sqlite)|*.sqlite;|All files|*" };
-                            if (openFileDialog.ShowDialog((Window)mWindow) == true)
+                            var files = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                             {
-                                SQLiteInterface savedDatabase = new(openFileDialog.FileName);
+                                FileTypeFilter = [Utils.SQLiteType, FilePickerFileTypes.All],
+                                AllowMultiple = false,
+                            });
+                            if (files.Count > 0)
+                            {
+                                SQLiteInterface savedDatabase = new(files[0].Name);
                                 savedDatabase.Initialize();
                                 List<Event> events = savedDatabase.GetEvents();
                                 int lastID = -1;
@@ -185,7 +191,7 @@ public partial class DashboardPage : UserControl, IMainPage
                             if (changeEventWindow != null)
                             {
                                 mWindow.AddWindow(changeEventWindow);
-                                changeEventWindow.ShowDialog((Window)mWindow);
+                                _ = changeEventWindow.ShowDialog((Window)mWindow);
                             }
                             break;
                         case EventClickType.DeleteEvent:
@@ -462,7 +468,7 @@ public partial class DashboardPage : UserControl, IMainPage
                     && segmentIDTranslator.TryGetValue(item.SegmentId, out int tSegId) && eventspecificIDTranslation.TryGetValue(item.EventSpecificId, out int tESId))
                 {
                     item.ReadId = tReadId;
-                    item.LocationId = tSegId;
+                    item.LocationId = tLocId;
                     item.SegmentId = tSegId;
                     item.EventSpecificId = tESId;
                     results.Add(item);
@@ -473,7 +479,7 @@ public partial class DashboardPage : UserControl, IMainPage
         return newEvent.Identifier;
     }
 
-    public void UpdateDatabase() { }
+    public static void UpdateDatabase() { }
 
     public void Keyboard_Ctrl_A() { }
 
@@ -483,7 +489,7 @@ public partial class DashboardPage : UserControl, IMainPage
 
     public void Closing()
     {
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }
@@ -519,47 +525,50 @@ public partial class DashboardPage : UserControl, IMainPage
         }
     }
 
-    private void SaveEvent_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void SaveEvent_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.DashboardPage", "Saving event.");
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "SQLite Database File (*.sqlite)|*.sqlite",
-            FileName = string.Format("{0} {1}.{2}", theEvent.YearCode, theEvent.Name, "sqlite"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog((Window)mWindow) == true)
+            FileTypeChoices = [Utils.SQLiteType],
+            SuggestedFileName = string.Format("{0} {1}.{2}", theEvent!.YearCode, theEvent.Name, "sqlite"),
+        });
+        if (file is not null)
         {
             Log.D("UI.DashboardPage", "Creating database file.");
             try
             {
-                SQLiteConnection.CreateFile(saveFileDialog.FileName);
+                SQLiteConnection.CreateFile(file.Name);
             }
             catch
             {
                 DialogBox.Show("Unable to save to file");
                 return;
             }
-            SQLiteInterface savedDatabase = new(saveFileDialog.FileName);
+            SQLiteInterface savedDatabase = new(file.Name);
             savedDatabase.Initialize();
-            Event theEvent = database.GetCurrentEvent();
+            Event theEvent = database.GetCurrentEvent()!;
             SaveEvent(theEvent, database, savedDatabase);
             Log.D("UI.DashboardPage", "Done saving file.");
             DialogBox.Show("Event saved successfully.");
         }
     }
 
-    private void ImportEvent_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void ImportEvent_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.DashboardPage", "Import event clicked.");
         if (CancelEventChangeAsync(EventClickType.ImportEvent))
         {
             return;
         }
-        OpenFileDialog openFileDialog = new() { Filter = "SQLite Database Files (*.sqlite)|*.sqlite;|All files|*" };
-        if (openFileDialog.ShowDialog((Window)mWindow) == true)
+        var files = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            SQLiteInterface savedDatabase = new(openFileDialog.FileName);
+            FileTypeFilter = [Utils.SQLiteType, FilePickerFileTypes.All],
+            AllowMultiple = false,
+        });
+        if (files.Count > 0)
+        {
+            SQLiteInterface savedDatabase = new(files[0].Name);
             savedDatabase.Initialize();
             List<Event> events = savedDatabase.GetEvents();
             int lastID = -1;
@@ -687,7 +696,7 @@ public partial class DashboardPage : UserControl, IMainPage
             }
             Log.D("UI.DashboardPage", "Updating database.");
             // Check if we've changed the segment option
-            Event oldEvent = database.GetCurrentEvent();
+            Event oldEvent = database.GetCurrentEvent()!;
             if (oldEvent.DistanceSpecificSegments != theEvent.DistanceSpecificSegments)
             {
                 Log.D("UI.DashboardPage", "Distance Specific Segments value has changed.");

@@ -58,12 +58,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<GetEventsResponse>(json);
+                    var result = JsonSerializer.Deserialize<GetEventsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -100,12 +100,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<GetEventResponse>(json);
+                    var result = JsonSerializer.Deserialize<GetEventResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -142,12 +142,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<GetEventYearsResponse>(json);
+                    var result = JsonSerializer.Deserialize<GetEventYearsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -185,12 +185,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<EventYearResponse>(json);
+                    var result = JsonSerializer.Deserialize<EventYearResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -227,12 +227,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<ModifyEventResponse>(json);
+                    var result = JsonSerializer.Deserialize<ModifyEventResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -269,12 +269,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<ModifyEventResponse>(json);
+                    var result = JsonSerializer.Deserialize<ModifyEventResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -312,12 +312,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<EventYearResponse>(json);
+                    var result = JsonSerializer.Deserialize<EventYearResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -355,12 +355,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<EventYearResponse>(json);
+                    var result = JsonSerializer.Deserialize<EventYearResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -399,12 +399,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -442,12 +442,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -486,12 +486,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -530,12 +530,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -573,12 +573,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -616,12 +616,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<GetBibChipsResponse>(json);
+                    var result = JsonSerializer.Deserialize<GetBibChipsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -660,12 +660,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -703,12 +703,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                    var result = JsonSerializer.Deserialize<AddResultsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -748,12 +748,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<GetParticipantsResponse>(json);
+                    var result = JsonSerializer.Deserialize<GetParticipantsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -781,12 +781,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<GetBannedPhonesResponse>(json);
+                    var result = JsonSerializer.Deserialize<GetBannedPhonesResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -822,7 +822,7 @@ namespace Chronokeep.Network.API
                         "application/json"
                         )
                 };
-                HttpResponseMessage response = await client.SendAsync(request);
+                HttpResponseMessage response = await client.SendAsync(request)!;
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
@@ -830,7 +830,7 @@ namespace Chronokeep.Network.API
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -866,7 +866,7 @@ namespace Chronokeep.Network.API
                         "application/json"
                         )
                 };
-                HttpResponseMessage response = await client.SendAsync(request);
+                HttpResponseMessage response = await client.SendAsync(request)!;
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
@@ -874,7 +874,7 @@ namespace Chronokeep.Network.API
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -902,12 +902,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<GetBannedEmailsResponse>(json);
+                    var result = JsonSerializer.Deserialize<GetBannedEmailsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -938,7 +938,7 @@ namespace Chronokeep.Network.API
                         "application/json"
                         )
                 };
-                HttpResponseMessage response = await client.SendAsync(request);
+                HttpResponseMessage response = await client.SendAsync(request)!;
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
@@ -946,7 +946,7 @@ namespace Chronokeep.Network.API
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -985,7 +985,7 @@ namespace Chronokeep.Network.API
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -1023,12 +1023,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<AddSegmentsResponse>(json);
+                    var result = JsonSerializer.Deserialize<AddSegmentsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 throw new APIException(errresult.Message);
             }
             catch (Exception ex)
@@ -1064,12 +1064,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<DeleteSegmentsResponse>(json);
+                    var result = JsonSerializer.Deserialize<DeleteSegmentsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 throw new APIException(errresult.Message);
             }
             catch (Exception ex)
@@ -1106,12 +1106,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<GetDistancesResponse>(json);
+                    var result = JsonSerializer.Deserialize<GetDistancesResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 throw new APIException(errresult.Message);
             }
             catch (Exception ex)
@@ -1147,12 +1147,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<DeleteDistancesResponse>(json);
+                    var result = JsonSerializer.Deserialize<DeleteDistancesResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 throw new APIException(errresult.Message);
             }
             catch (Exception ex)
@@ -1188,12 +1188,12 @@ namespace Chronokeep.Network.API
                 {
                     Log.D("Network.API.APIHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<GetSmsSubscriptionsResponse>(json);
+                    var result = JsonSerializer.Deserialize<GetSmsSubscriptionsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.API.APIHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 throw new APIException(errresult.Message);
             }
             catch (Exception ex)

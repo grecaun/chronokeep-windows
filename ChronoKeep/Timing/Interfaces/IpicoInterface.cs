@@ -14,12 +14,12 @@ namespace Chronokeep.Timing.Interfaces
 {
     partial class IpicoInterface(IDBInterface database, int locationId, string type, IMainWindow window) : ITimingSystemInterface
     {
-        private readonly Event theEvent = database.GetCurrentEvent();
+        private readonly Event theEvent = database.GetCurrentEvent()!;
         private readonly Dictionary<Socket, StringBuilder> bufferDict = [];
-        private Socket controlSocket;
-        private Socket streamSocket;
-        private Socket rewindSocket;
-        private string ipadd;
+        private Socket? controlSocket;
+        private Socket? streamSocket;
+        private Socket? rewindSocket;
+        private string ipadd = "";
 
 
         // private static readonly Regex voltage/connected/chipread/settinginfo/settingconfirmation/time/status/msg
@@ -30,7 +30,7 @@ namespace Chronokeep.Timing.Interfaces
         [GeneratedRegex(@"^[^\n]+\n")]
         private static partial Regex Msg();
 
-        public List<Socket> Connect(string IpAddress, int Port)
+        public List<Socket>? Connect(string IpAddress, int Port)
         {
             this.ipadd = IpAddress;
             List<Socket> output = [];
@@ -101,7 +101,7 @@ namespace Chronokeep.Timing.Interfaces
             {
                 return output;
             }
-            if (!bufferDict.TryGetValue(sock, out StringBuilder buff))
+            if (!bufferDict.TryGetValue(sock, out StringBuilder? buff))
             {
                 buff = new();
                 bufferDict[sock] = buff;
@@ -134,7 +134,7 @@ namespace Chronokeep.Timing.Interfaces
                     {
                         Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- chipread found");
                         DateTime time = DateTime.ParseExact(message.Substring(20, 12), "yyMMddHHmmss", CultureInfo.InvariantCulture);
-                        int.TryParse(message.Substring(32, 2), NumberStyles.HexNumber, null, out int milliseconds);
+                        int.TryParse(message.AsSpan(32, 2), NumberStyles.HexNumber, null, out int milliseconds);
                         milliseconds *= 10;
                         time = time.AddMilliseconds(milliseconds);
                         ChipRead chipRead = new(
@@ -150,7 +150,7 @@ namespace Chronokeep.Timing.Interfaces
                             chipRead.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
                         }
                         chipReads.Add(chipRead);
-                        output[MessageType.CHIPREAD] = null;
+                        output[MessageType.CHIPREAD] = [];
                     }
                 }
                 // Time is as follows:
@@ -235,7 +235,7 @@ namespace Chronokeep.Timing.Interfaces
             }
             finally
             {
-                if (rewindSocket != null && bufferDict.TryGetValue(rewindSocket, out StringBuilder oBuff))
+                if (rewindSocket != null && bufferDict.TryGetValue(rewindSocket, out StringBuilder? oBuff))
                 {
                     oBuff.Clear();
                 }
@@ -287,7 +287,7 @@ namespace Chronokeep.Timing.Interfaces
         public void SendMessage(string msg)
         {
             Log.D("Timing.Interfaces.IpicoInterface", "Sending message '" + msg + "'");
-            controlSocket.Send(Encoding.ASCII.GetBytes(msg + "\n"));
+            controlSocket?.Send(Encoding.ASCII.GetBytes(msg + "\n"));
         }
 
         public bool SettingsEditable()

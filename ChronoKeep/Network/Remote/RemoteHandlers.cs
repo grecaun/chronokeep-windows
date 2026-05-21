@@ -33,12 +33,12 @@ namespace Chronokeep.Network.Remote
                 {
                     Log.D("Network.Remote.RemoteHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<GetReadersResponse>(json);
+                    var result = JsonSerializer.Deserialize<GetReadersResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.Remote.RemoteHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -77,12 +77,12 @@ namespace Chronokeep.Network.Remote
                 {
                     Log.D("Network.Remote.RemoteHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<GetReadsResponse>(json);
+                    var result = JsonSerializer.Deserialize<GetReadsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.Remote.RemoteHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)
@@ -121,12 +121,12 @@ namespace Chronokeep.Network.Remote
                 {
                     Log.D("Network.Remote.RemoteHandlers", "Status code ok.");
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<DeleteReadsResponse>(json);
+                    var result = JsonSerializer.Deserialize<DeleteReadsResponse>(json)!;
                     return result;
                 }
                 Log.D("Network.Remote.RemoteHandlers", "Status code not ok.");
                 var errjson = await response.Content.ReadAsStringAsync();
-                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson)!;
                 content = errresult.Message;
             }
             catch (Exception ex)

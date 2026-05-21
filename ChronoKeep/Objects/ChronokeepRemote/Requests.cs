@@ -8,7 +8,7 @@ namespace Chronokeep.Objects.ChronokeepRemote
     public class GetReadsRequest
     {
         [JsonPropertyName("reader")]
-        public string ReaderName { get; set; }
+        public string ReaderName { get; set; } = "";
         [JsonPropertyName("start")]
         public long Start { get; set; }
         [JsonPropertyName("end")]
@@ -18,7 +18,7 @@ namespace Chronokeep.Objects.ChronokeepRemote
     public class DeleteReadsRequest
     {
         [JsonPropertyName("reader")]
-        public string ReaderName { get; set; }
+        public string ReaderName { get; set; } = "";
         [JsonPropertyName("start")]
         public long Start { get; set; }
         [JsonPropertyName("end")]

@@ -90,17 +90,15 @@ namespace Chronokeep.Database.SQLite
         internal static void DeleteChipReads(List<ChipRead> reads, SQLiteConnection connection)
         {
             if (reads.Count < 1) return;
-            using (var transaction = connection.BeginTransaction())
+            using var transaction = connection.BeginTransaction();
+            foreach (ChipRead read in reads)
             {
-                foreach (ChipRead read in reads)
-                {
-                    SQLiteCommand command = connection.CreateCommand();
-                    command.CommandText = "DELETE FROM chipreads WHERE read_id=@read;";
-                    command.Parameters.Add(new("@read", read.ReadId));
-                    command.ExecuteNonQuery();
-                }
-                transaction.Commit();
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "DELETE FROM chipreads WHERE read_id=@read;";
+                command.Parameters.Add(new("@read", read.ReadId));
+                command.ExecuteNonQuery();
             }
+            transaction.Commit();
         }
 
         internal static List<ChipRead> GetChipReadsSafemode(int eventId, SQLiteConnection connection)
@@ -117,20 +115,20 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["event_id"]),
                     Convert.ToInt32(reader["read_status"]),
                     Convert.ToInt32(reader["location_id"]),
-                    reader["read_chipnumber"] != DBNull.Value ? reader["read_chipnumber"].ToString() : Constants.Timing.CHIPREAD_DUMMYCHIP,
+                    reader["read_chipnumber"] != DBNull.Value ? reader["read_chipnumber"].ToString()! : Constants.Timing.CHIPREAD_DUMMYCHIP,
                     Convert.ToInt64(reader["read_seconds"]),
                     Convert.ToInt32(reader["read_milliseconds"]),
                     Convert.ToInt32(reader["read_antenna"]),
-                    reader["read_rssi"].ToString(),
+                    reader["read_rssi"].ToString()!,
                     Convert.ToInt32(reader["read_isrewind"]),
-                    reader["read_reader"].ToString(),
-                    reader["read_box"].ToString(),
-                    reader["read_readertime"].ToString(),
+                    reader["read_reader"].ToString()!,
+                    reader["read_box"].ToString()!,
+                    reader["read_readertime"].ToString()!,
                     Convert.ToInt32(reader["read_starttime"]),
                     Convert.ToInt32(reader["read_logindex"]),
                     Convert.ToInt64(reader["read_time_seconds"]),
                     Convert.ToInt32(reader["read_time_milliseconds"]),
-                    reader["read_bib"] != DBNull.Value ? reader["read_bib"].ToString() : Constants.Timing.CHIPREAD_DUMMYBIB,
+                    reader["read_bib"] != DBNull.Value ? reader["read_bib"].ToString()! : Constants.Timing.CHIPREAD_DUMMYBIB,
                     Convert.ToInt32(reader["read_type"]),
                     Constants.Timing.CHIPREAD_DUMMYBIB,
                     "",
@@ -159,8 +157,7 @@ namespace Chronokeep.Database.SQLite
                 "WHERE c.event_id=@event;";
             command.Parameters.Add(new("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            Event Event = new() { Identifier = eventId, FinishMaxOccurrences = 1, FinishIgnoreWithin = 0 };
-            List<ChipRead> output = GetChipReadsWorker(reader, Event, connection);
+            List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);
             return output;
         }
 
@@ -264,7 +261,7 @@ namespace Chronokeep.Database.SQLite
             }
             List<ChipRead> output = [];
             Dictionary<string, Participant> partDictionary = [];
-            foreach (Participant p in Participants.GetParticipants(theEvent.Identifier, connection))
+            foreach (Participant p in Participants.GetParticipants(theEvent!.Identifier, connection))
             {
                 if (p.Bib.Length > 0)
                 {
@@ -274,15 +271,15 @@ namespace Chronokeep.Database.SQLite
             while (reader.Read())
             {
                 int locationId = Convert.ToInt32(reader["location_id"]);
-                string locationName = locDict.TryGetValue(locationId, out string locNa) ? locNa : "";
-                string read_bib = reader["read_bib"] != DBNull.Value ? reader["read_bib"].ToString() : Constants.Timing.CHIPREAD_DUMMYBIB;
-                string bib = reader["bib"] != DBNull.Value ? reader["bib"].ToString() : Constants.Timing.CHIPREAD_DUMMYBIB;
-                Participant part = null;
-                if (bib.Length > 0 && bib != Constants.Timing.CHIPREAD_DUMMYBIB && partDictionary.TryGetValue(bib, out Participant bibPart))
+                string locationName = locDict.TryGetValue(locationId, out string? locNa) ? locNa : "";
+                string read_bib = reader["read_bib"] != DBNull.Value ? reader["read_bib"].ToString()! : Constants.Timing.CHIPREAD_DUMMYBIB;
+                string bib = reader["bib"] != DBNull.Value ? reader["bib"].ToString()! : Constants.Timing.CHIPREAD_DUMMYBIB;
+                Participant? part = null;
+                if (bib.Length > 0 && bib != Constants.Timing.CHIPREAD_DUMMYBIB && partDictionary.TryGetValue(bib, out Participant? bibPart))
                 {
                     part = bibPart;
                 }
-                else if (read_bib.Length > 0 && read_bib != Constants.Timing.CHIPREAD_DUMMYBIB && partDictionary.TryGetValue(read_bib, out Participant readBibPart))
+                else if (read_bib.Length > 0 && read_bib != Constants.Timing.CHIPREAD_DUMMYBIB && partDictionary.TryGetValue(read_bib, out Participant? readBibPart))
                 {
                     part = readBibPart;
                 }
@@ -303,15 +300,15 @@ namespace Chronokeep.Database.SQLite
                     event_id,
                     read_status,
                     locationId,
-                    reader["read_chipnumber"] != DBNull.Value ? reader["read_chipnumber"].ToString() : Constants.Timing.CHIPREAD_DUMMYCHIP,
+                    reader["read_chipnumber"] != DBNull.Value ? reader["read_chipnumber"].ToString()! : Constants.Timing.CHIPREAD_DUMMYCHIP,
                     read_seconds,
                     read_milliseconds,
                     read_antenna,
-                    reader["read_rssi"].ToString(),
+                    reader["read_rssi"].ToString()!,
                     read_isrewind,
-                    reader["read_reader"].ToString(),
-                    reader["read_box"].ToString(),
-                    reader["read_readertime"].ToString(),
+                    reader["read_reader"].ToString()!,
+                    reader["read_box"].ToString()!,
+                    reader["read_readertime"].ToString()!,
                     read_starttime,
                     read_logindex,
                     read_time_seconds,

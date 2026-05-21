@@ -13,40 +13,40 @@ namespace Chronokeep.Objects.ChronoKeepAPI
     public class GetEventsResponse
     {
         [JsonPropertyName("events")]
-        public List<APIEvent> Events { get; set; }
+        public List<APIEvent> Events { get; set; } = [];
     }
 
     public class GetEventResponse
     {
         [JsonPropertyName("event")]
-        public APIEvent Event { get; set; }
+        public APIEvent Event { get; set; } = new();
         [JsonPropertyName("event_years")]
-        public List<APIEventYear> EventYears { get; set; }
+        public List<APIEventYear> EventYears { get; set; } = [];
         [JsonPropertyName("year")]
-        public APIEventYear Year { get; set; }
+        public APIEventYear Year { get; set; } = new();
         [JsonPropertyName("participants")]
-        public List<APIPerson> Participants { get; set; }
+        public List<APIPerson> Participants { get; set; } = [];
     }
 
     public class ModifyEventResponse
     {
         [JsonPropertyName("event")]
-        public APIEvent Event { get; set; }
+        public APIEvent Event { get; set; } = new();
     }
 
     // Event Year specific responses.
     public class GetEventYearsResponse
     {
         [JsonPropertyName("years")]
-        public List<APIEventYear> EventYears { get; set; }
+        public List<APIEventYear> EventYears { get; set; } = [];
     }
 
     public class EventYearResponse
     {
         [JsonPropertyName("event")]
-        public APIEvent Event { get; set; }
+        public APIEvent Event { get; set; } = new();
         [JsonPropertyName("event_year")]
-        public APIEventYear EventYear { get; set; }
+        public APIEventYear EventYear { get; set; } = new();
     }
 
     // Results specific responses.
@@ -60,57 +60,57 @@ namespace Chronokeep.Objects.ChronoKeepAPI
     public class ErrorResponse
     {
         [JsonPropertyName("message")]
-        public string Message { get; set; }
+        public string Message { get; set; } = "";
     }
 
     // Banned emails/phone number responses
     public class GetBannedPhonesResponse
     {
         [JsonPropertyName("phones")]
-        public List<string> Phones { get; set; }
+        public List<string> Phones { get; set; } = [];
     }
 
     public class GetBannedEmailsResponse
     {
         [JsonPropertyName("emails")]
-        public List<string> Emails { get; set; }
+        public List<string> Emails { get; set; } = [];
     }
 
     // Participants responses
     public class GetParticipantsResponse
     {
         [JsonPropertyName("event")]
-        public APIEvent Event { get; set; }
+        public APIEvent Event { get; set; } = new();
         [JsonPropertyName("year")]
-        public APIEventYear Year { get; set; }
+        public APIEventYear Year { get; set; } = new();
         [JsonPropertyName("participants")]
-        public List<APIPerson> Participants { get; set; }
+        public List<APIPerson> Participants { get; set; } = [];
     }
 
     // BibChips responses
     public class GetBibChipsResponse
     {
         [JsonPropertyName("bib_chips")]
-        public List<BibChip> BibChips { get; set; }
+        public List<BibChip> BibChips { get; set; } = [];
     }
 
     // SMS Subscription responses
     public class GetSmsSubscriptionsResponse
     {
         [JsonPropertyName("subscriptions")]
-        public List<APISmsSubscription> Subscriptions { get; set; }
+        public List<APISmsSubscription> Subscriptions { get; set; } = [];
     }
 
     // Segment responses
     public class GetSegmentsResponse
     {
         [JsonPropertyName("segments")]
-        public List<APISegment> Segments { get; set; }
+        public List<APISegment> Segments { get; set; } = [];
     }
     public class AddSegmentsResponse
     {
         [JsonPropertyName("segments")]
-        public List<APISegment> Segments { get; set; }
+        public List<APISegment> Segments { get; set; } = [];
     }
     public class DeleteSegmentsResponse
     {
@@ -122,7 +122,7 @@ namespace Chronokeep.Objects.ChronoKeepAPI
     public class GetDistancesResponse
     {
         [JsonPropertyName("distances")]
-        public List<APIDistance> Distances { get; set; }
+        public List<APIDistance> Distances { get; set; } = [];
     }
     public class DeleteDistancesResponse
     {

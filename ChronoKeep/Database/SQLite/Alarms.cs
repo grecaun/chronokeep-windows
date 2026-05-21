@@ -67,8 +67,8 @@ namespace Chronokeep.Database.SQLite
             {
                 output.Add(new Alarm(
                     Convert.ToInt32(reader["alarm_id"]),
-                    reader["alarm_bib"].ToString(),
-                    reader["alarm_chip"].ToString(),
+                    reader["alarm_bib"].ToString()!,
+                    reader["alarm_chip"].ToString()!,
                     Convert.ToInt32(reader["alarm_enabled"]) == 1,
                     Convert.ToInt32(reader["alarm_sound"])
                     ));
@@ -79,30 +79,26 @@ namespace Chronokeep.Database.SQLite
 
         internal static void DeleteAlarms(int eventId, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
-            {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM alarms WHERE event_id=@eventId;";
-                command.Parameters.AddRange([
-                    new("@eventId", eventId)
-                ]);
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM alarms WHERE event_id=@eventId;";
+            command.Parameters.AddRange([
+                new("@eventId", eventId)
+            ]);
+            command.ExecuteNonQuery();
+            transaction.Commit();
         }
 
         internal static void DeleteAlarm(Alarm alarm, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
-            {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM alarms WHERE alarm_id=@alarmId;";
-                command.Parameters.AddRange([
-                    new("@alarmId", alarm.Identifier)
-                ]);
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM alarms WHERE alarm_id=@alarmId;";
+            command.Parameters.AddRange([
+                new("@alarmId", alarm.Identifier)
+            ]);
+            command.ExecuteNonQuery();
+            transaction.Commit();
         }
     }
 }

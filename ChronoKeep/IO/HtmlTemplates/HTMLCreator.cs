@@ -19,7 +19,7 @@ namespace Chronokeep.IO.HtmlTemplates
             resultList.Sort(TimeResult.CompareByDistancePlace);
             foreach (TimeResult result in resultList)
             {
-                if (!distanceResults.TryGetValue(result.DistanceName, out List<TimeResult> distResList))
+                if (!distanceResults.TryGetValue(result.DistanceName, out List<TimeResult>? distResList))
                 {
                     distResList = [];
                     distanceResults[result.DistanceName] = distResList;
@@ -34,8 +34,8 @@ namespace Chronokeep.IO.HtmlTemplates
     {
         private readonly Event theEvent;
         private readonly List<TimeResult> resultList;
-        private readonly TimeResult finish;
-        private readonly TimeResult start;
+        private readonly TimeResult? finish;
+        private readonly TimeResult? start;
         private readonly string rankingGender = "";
 
         public HtmlParticipantTemplate(
@@ -98,7 +98,7 @@ namespace Chronokeep.IO.HtmlTemplates
             TimeResult result,
             string email,
             bool singleDist,
-            APIObject api)
+            APIObject? api)
         {
             eventName = string.Format("{0} {1}", theEvent.Year, theEvent.Name);
             distanceName = "";

@@ -35,9 +35,34 @@ namespace Chronokeep.Helpers
 
         public enum FileType { CSV, EXCEL }
 
-        public static FilePickerFileType ExcelType { get; } = new("Excel File")
+        public static FilePickerFileType ExcelType { get; } = new("Excel Files")
         {
             Patterns = ["*.xlsx", "*.xls", "*.csv"],
+        };
+
+        public static FilePickerFileType LogType { get; } = new("Log Files")
+        {
+            Patterns = ["*.csv", "*.txt", "*.log"],
+        };
+
+        public static FilePickerFileType CSVType { get; } = new("CSV Files")
+        {
+            Patterns = ["*.csv"],
+        };
+
+        public static FilePickerFileType HTMLType { get; } = new("HTML Files")
+        {
+            Patterns = ["*.htm", "*.html"],
+        };
+
+        public static FilePickerFileType PDFType { get; } = new("PDF Files")
+        {
+            Patterns = ["*.pdf"],
+        };
+
+        public static FilePickerFileType SQLiteType { get; } = new("SQLite Database Files")
+        {
+            Patterns = ["*.sqlite"],
         };
     }
 }

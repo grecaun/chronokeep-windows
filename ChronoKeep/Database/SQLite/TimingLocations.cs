@@ -57,8 +57,13 @@ namespace Chronokeep.Database.SQLite
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new(Convert.ToInt32(reader["location_id"]), Convert.ToInt32(reader["event_id"]),
-                    reader["location_name"].ToString(), Convert.ToInt32(reader["location_max_occurances"]), Convert.ToInt32(reader["location_ignore_within"])));
+                output.Add(new(
+                    Convert.ToInt32(reader["location_id"]),
+                    Convert.ToInt32(reader["event_id"]),
+                    reader["location_name"].ToString()!,
+                    Convert.ToInt32(reader["location_max_occurances"]),
+                    Convert.ToInt32(reader["location_ignore_within"])
+                    ));
             }
             reader.Close();
             return output;

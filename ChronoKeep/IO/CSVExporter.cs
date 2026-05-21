@@ -4,31 +4,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Chronokeep.UI.IO
+namespace Chronokeep.IO
 {
-    class CSVExporter : IDataExporter
+    class CSVExporter(string format) : IDataExporter
     {
-        string format = "";
-        string[] headers = { };
-        List<object[]> data;
-
-        public CSVExporter(string format)
-        {
-            this.format = format;
-        }
+        readonly string format = format;
+        string[] headers = [];
+        List<object[]> data = [];
 
         public void ExportData(string Path)
         {
-            using (var outFile = File.Create(Path))
+            using var outFile = File.Create(Path);
+            using var outWriter = new StreamWriter(outFile);
+            outWriter.WriteLine(string.Format(format, headers));
+            foreach (object[] line in data)
             {
-                using (var outWriter = new StreamWriter(outFile))
-                {
-                    outWriter.WriteLine(string.Format(format, headers));
-                    foreach (object[] line in data)
-                    {
-                        outWriter.WriteLine(string.Format(format, line.Select(x => x != null ? x.ToString() : "").ToArray()));
-                    }
-                }
+                outWriter.WriteLine(string.Format(format, [.. line.Select(x => x != null ? x.ToString() : "")]));
             }
         }
 

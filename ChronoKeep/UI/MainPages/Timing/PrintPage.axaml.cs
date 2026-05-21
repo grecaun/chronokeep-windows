@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -31,7 +32,7 @@ public partial class PrintPage : UserControl, ISubPage
             return;
         }
 
-        List<Distance> distances = database.GetDistances(theEvent.Identifier);
+        List<Distance>? distances = database.GetDistances(theEvent.Identifier);
         distances.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
         foreach (Distance d in distances)
         {
@@ -52,10 +53,10 @@ public partial class PrintPage : UserControl, ISubPage
 
     public void Search(CancellationToken token, string searchText) { }
 
-    private string GetOverallPrintableDocument(List<string> distances)
+    private string GetOverallPrintableDocument(List<string>? distances)
     {
         // Get all results for the race
-        List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
+        List<TimeResult>? results = database.GetTimingResults(theEvent!.Identifier);
         // Remove all unknown participants
         results.RemoveAll(x => x.Bib == Constants.Timing.CHIPREAD_DUMMYBIB);
         // REMOVE SOME DEPENDING ON WHO THEY WANT
@@ -71,7 +72,7 @@ public partial class PrintPage : UserControl, ISubPage
             Dictionary<string, TimeResult> lastResult = [];
             foreach (TimeResult individual in results)
             {
-                if (lastResult.TryGetValue(individual.ParticipantName, out TimeResult oLResult))
+                if (lastResult.TryGetValue(individual.ParticipantName, out TimeResult? oLResult))
                 {
                     if (oLResult.Occurrence < individual.Occurrence)
                     {
@@ -89,14 +90,14 @@ public partial class PrintPage : UserControl, ISubPage
         Dictionary<string, List<TimeResult>> dnfResultDictionary = [];
         foreach (TimeResult result in results)
         {
-            if (!distanceResults.TryGetValue(result.DistanceName, out List<TimeResult> oDistResultList))
+            if (!distanceResults.TryGetValue(result.DistanceName, out List<TimeResult>? oDistResultList))
             {
                 oDistResultList = [];
                 distanceResults[result.DistanceName] = oDistResultList;
             }
             if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
             {
-                if (!dnfResultDictionary.TryGetValue(result.DistanceName, out List<TimeResult> oDNFResList))
+                if (!dnfResultDictionary.TryGetValue(result.DistanceName, out List<TimeResult>? oDNFResList))
                 {
                     oDNFResList = [];
                     dnfResultDictionary[result.DistanceName] = oDNFResList;
@@ -120,10 +121,10 @@ public partial class PrintPage : UserControl, ISubPage
         return output.TransformText();
     }
 
-    private string GetGenderPrintableDocument(List<string> distances)
+    private string GetGenderPrintableDocument(List<string>? distances)
     {
         // Get all finish results for the race
-        List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
+        List<TimeResult>? results = database.GetTimingResults(theEvent!.Identifier);
         // Remove all unknown participants
         results.RemoveAll(x => x.Bib == Constants.Timing.CHIPREAD_DUMMYBIB);
         // REMOVE SOME DEPENDING ON WHO THEY WANT
@@ -141,7 +142,7 @@ public partial class PrintPage : UserControl, ISubPage
             Dictionary<string, TimeResult> lastResult = [];
             foreach (TimeResult individual in results)
             {
-                if (lastResult.TryGetValue(individual.ParticipantName, out TimeResult oLResult))
+                if (lastResult.TryGetValue(individual.ParticipantName, out TimeResult? oLResult))
                 {
                     if (oLResult.Occurrence < individual.Occurrence)
                     {
@@ -160,24 +161,24 @@ public partial class PrintPage : UserControl, ISubPage
         Dictionary<string, Dictionary<string, List<TimeResult>>> dnfResultsDictionary = [];
         foreach (TimeResult result in results)
         {
-            if (!distanceResults.TryGetValue(result.DistanceName, out Dictionary<string, List<TimeResult>> oDistResDict))
+            if (!distanceResults.TryGetValue(result.DistanceName, out Dictionary<string, List<TimeResult>>? oDistResDict))
             {
                 oDistResDict = [];
                 distanceResults[result.DistanceName] = oDistResDict;
             }
-            if (!oDistResDict.TryGetValue(result.Gender, out List<TimeResult> oDistGendResList))
+            if (!oDistResDict.TryGetValue(result.Gender, out List<TimeResult>? oDistGendResList))
             {
                 oDistGendResList = [];
                 oDistResDict[result.Gender] = oDistGendResList;
             }
             if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
             {
-                if (!dnfResultsDictionary.TryGetValue(result.DistanceName, out Dictionary<string, List<TimeResult>> oDnfResDict))
+                if (!dnfResultsDictionary.TryGetValue(result.DistanceName, out Dictionary<string, List<TimeResult>>? oDnfResDict))
                 {
                     oDnfResDict = [];
                     dnfResultsDictionary[result.DistanceName] = oDnfResDict;
                 }
-                if (!oDnfResDict.TryGetValue(result.Gender, out List<TimeResult> oDnfGndResList))
+                if (!oDnfResDict.TryGetValue(result.Gender, out List<TimeResult>? oDnfGndResList))
                 {
                     oDnfGndResList = [];
                     oDnfResDict[result.Gender] = oDnfGndResList;
@@ -204,14 +205,14 @@ public partial class PrintPage : UserControl, ISubPage
         return output.TransformText();
     }
 
-    private string GetAgeGroupPrintableDocument(List<string> distances)
+    private string GetAgeGroupPrintableDocument(List<string>? distances)
     {
         // Get all of the age groups for the race
-        Dictionary<int, AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier).ToDictionary(x => x.GroupId, x => x);
+        Dictionary<int, AgeGroup> ageGroups = database.GetAgeGroups(theEvent!.Identifier).ToDictionary(x => x.GroupId, x => x);
         // Add an age group for our unknown age people/
         ageGroups[Constants.Timing.TIMERESULT_DUMMYAGEGROUP] = new(theEvent.Identifier, Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, -1, 3000);
         // Get all finish results for the race
-        List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
+        List<TimeResult>? results = database.GetTimingResults(theEvent.Identifier);
         // Remove all unknown participants
         results.RemoveAll(x => x.Bib == Constants.Timing.CHIPREAD_DUMMYBIB);
         // REMOVE SOME DEPENDING ON WHO THEY WANT
@@ -229,7 +230,7 @@ public partial class PrintPage : UserControl, ISubPage
             Dictionary<string, TimeResult> lastResult = [];
             foreach (TimeResult individual in results)
             {
-                if (lastResult.TryGetValue(individual.ParticipantName, out TimeResult oLastRes))
+                if (lastResult.TryGetValue(individual.ParticipantName, out TimeResult? oLastRes))
                 {
                     if (oLastRes.Occurrence < individual.Occurrence)
                     {
@@ -247,24 +248,24 @@ public partial class PrintPage : UserControl, ISubPage
         Dictionary<string, Dictionary<(int, string), List<TimeResult>>> dnfResultsDictionary = [];
         foreach (TimeResult result in results)
         {
-            if (!distanceResults.TryGetValue(result.DistanceName, out Dictionary<(int, string), List<TimeResult>> oDistResDict))
+            if (!distanceResults.TryGetValue(result.DistanceName, out Dictionary<(int, string), List<TimeResult>>? oDistResDict))
             {
                 oDistResDict = [];
                 distanceResults[result.DistanceName] = oDistResDict;
             }
-            if (!oDistResDict.TryGetValue((result.AgeGroupId, result.Gender), out List<TimeResult> oDistResList))
+            if (!oDistResDict.TryGetValue((result.AgeGroupId, result.Gender), out List<TimeResult>? oDistResList))
             {
                 oDistResList = [];
                 oDistResDict[(result.AgeGroupId, result.Gender)] = oDistResList;
             }
             if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
             {
-                if (!dnfResultsDictionary.TryGetValue(result.DistanceName, out Dictionary<(int, string), List<TimeResult>> oDnfResDict))
+                if (!dnfResultsDictionary.TryGetValue(result.DistanceName, out Dictionary<(int, string), List<TimeResult>>? oDnfResDict))
                 {
                     oDnfResDict = [];
                     dnfResultsDictionary[result.DistanceName] = oDnfResDict;
                 }
-                if (!oDnfResDict.TryGetValue((result.AgeGroupId, result.Gender), out List<TimeResult> oDnfResList))
+                if (!oDnfResDict.TryGetValue((result.AgeGroupId, result.Gender), out List<TimeResult>? oDnfResList))
                 {
                     oDnfResList = [];
                     oDnfResDict[(result.AgeGroupId, result.Gender)] = oDnfResList;
@@ -281,7 +282,7 @@ public partial class PrintPage : UserControl, ISubPage
             Dictionary<(int, string), List<TimeResult>> lDistResDict = distanceResults[divName];
             foreach ((int ag, string gender) in lDistResDict.Keys)
             {
-                List<TimeResult> lDistResList = lDistResDict[(ag, gender)];
+                List<TimeResult>? lDistResList = lDistResDict[(ag, gender)];
                 // get rid of non-finish results
                 lDistResList.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
                 // sort results
@@ -313,21 +314,21 @@ public partial class PrintPage : UserControl, ISubPage
     private void Print_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.PrintPage", "All times - print clicked.");
-        List<string> divsToPrint = [];
-        foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
+        List<string>? divsToPrint = [];
+        foreach (ListBoxItem divItem in DistancesBox.SelectedItems!)
         {
-            if (divItem.Content.Equals("All"))
+            if (divItem.Content!.Equals("All"))
             {
                 divsToPrint = null;
                 break;
             }
-            divsToPrint.Add(divItem.Content.ToString());
+            divsToPrint.Add(divItem.Content.ToString()!);
         }
         if (divsToPrint != null && divsToPrint.Count < 1)
         {
             divsToPrint = null;
         }
-        string HTML_String = "";
+        string HTML_String;
         if (PlacementType.SelectedIndex == 0)
         {
             HTML_String = GetOverallPrintableDocument(divsToPrint);
@@ -388,32 +389,31 @@ public partial class PrintPage : UserControl, ISubPage
         }
     }
 
-    private void Save_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Save_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.PrintPage", "All times - save clicked.");
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "PDF (*.pdf)|*.pdf",
-            FileName = string.Format("{0} {1} Results.{2}", theEvent.YearCode, theEvent.Name, "pdf"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        List<string> divsToPrint = [];
-        foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
+            FileTypeChoices = [Utils.PDFType],
+            SuggestedFileName = string.Format("{0} {1} Results.{2}", theEvent!.YearCode, theEvent.Name, "pdf"),
+        });
+        List<string>? divsToPrint = [];
+        foreach (ListBoxItem divItem in DistancesBox.SelectedItems!)
         {
-            if (divItem.Content.Equals("All"))
+            if (divItem.Content!.Equals("All"))
             {
                 divsToPrint = null;
                 break;
             }
-            divsToPrint.Add(divItem.Content.ToString());
+            divsToPrint.Add(divItem.Content.ToString()!);
         }
         if (divsToPrint != null && divsToPrint.Count < 1)
         {
             divsToPrint = null;
         }
-        if (saveFileDialog.ShowDialog() == true)
+        if (file is not null)
         {
-            string HTML_String = "";
+            string HTML_String;
             if (PlacementType.SelectedIndex == 0)
             {
                 HTML_String = GetOverallPrintableDocument(divsToPrint);
@@ -439,14 +439,15 @@ public partial class PrintPage : UserControl, ISubPage
                 streamwriter.Write(HTML_String);
                 streamwriter.Close();
                 // Delete old file if it exists.
-                if (File.Exists(saveFileDialog.FileName))
+                if (File.Exists(file.Name))
                 {
-                    File.Delete(saveFileDialog.FileName);
+                    File.Delete(file.Name);
                 }
                 // Use wkhtmltopdf to convert our temp html file to a saved pdf file.
                 using Process create_pdf = new();
+                // TODO - Turn code into cross compatible code.
                 create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
-                create_pdf.StartInfo.Arguments = $"-s A4 {tmpFile} {saveFileDialog.FileName}";
+                create_pdf.StartInfo.Arguments = $"-s A4 {tmpFile} {file.Name}";
                 create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 create_pdf.StartInfo.UseShellExecute = true;
                 create_pdf.Start();

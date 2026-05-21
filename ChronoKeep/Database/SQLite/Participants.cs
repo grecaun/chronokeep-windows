@@ -8,7 +8,7 @@ namespace Chronokeep.Database.SQLite
 {
     class Participants
     {
-        internal static Participant AddParticipant(Participant person, SQLiteConnection connection)
+        internal static Participant? AddParticipant(Participant person, SQLiteConnection connection)
         {
             person.FormatData();
             SQLiteCommand command = connection.CreateCommand();
@@ -358,96 +358,96 @@ namespace Chronokeep.Database.SQLite
             {
                 output.Add(new Participant(
                     Convert.ToInt32(reader["participant_id"]),
-                    reader["participant_first"].ToString(),
-                    reader["participant_last"].ToString(),
-                    reader["participant_street"].ToString(),
-                    reader["participant_city"].ToString(),
-                    reader["participant_state"].ToString(),
-                    reader["participant_zip"].ToString(),
-                    reader["participant_birthday"].ToString(),
+                    reader["participant_first"].ToString()!,
+                    reader["participant_last"].ToString()!,
+                    reader["participant_street"].ToString()!,
+                    reader["participant_city"].ToString()!,
+                    reader["participant_state"].ToString()!,
+                    reader["participant_zip"].ToString()!,
+                    reader["participant_birthday"].ToString()!,
                     new EventSpecific(
                         Convert.ToInt32(reader["eventspecific_id"]),
                         Convert.ToInt32(reader["event_id"]),
                         Convert.ToInt32(reader["distance_id"]),
-                        reader["distance_name"].ToString(),
-                        reader["eventspecific_bib"].ToString(),
+                        reader["distance_name"].ToString()!,
+                        reader["eventspecific_bib"].ToString()!,
                         Convert.ToInt32(reader["eventspecific_checkedin"]),
-                        reader["eventspecific_comments"].ToString(),
-                        reader["eventspecific_owes"].ToString(),
-                        reader["eventspecific_other"].ToString(),
+                        reader["eventspecific_comments"].ToString()!,
+                        reader["eventspecific_owes"].ToString()!,
+                        reader["eventspecific_other"].ToString()!,
                         Convert.ToInt32(reader["eventspecific_status"]),
-                        reader["eventspecific_age_group_name"].ToString(),
+                        reader["eventspecific_age_group_name"].ToString()!,
                         Convert.ToInt32(reader["eventspecific_age_group_id"]),
-                        Convert.ToInt16(reader["eventspecific_anonymous"]) == 0 ? false : true,
-                        Convert.ToInt16(reader["eventspecific_sms_enabled"]) == 0 ? false : true,
-                        reader["eventspecific_apparel"] != DBNull.Value ? reader["eventspecific_apparel"].ToString() : "",
-                        reader["eventspecific_division"] != DBNull.Value ? reader["eventspecific_division"].ToString() : "",
+                        Convert.ToInt16(reader["eventspecific_anonymous"]) != 0,
+                        Convert.ToInt16(reader["eventspecific_sms_enabled"]) != 0,
+                        reader["eventspecific_apparel"] != DBNull.Value ? reader["eventspecific_apparel"].ToString()! : "",
+                        reader["eventspecific_division"] != DBNull.Value ? reader["eventspecific_division"].ToString()! : "",
                         Convert.ToInt32(reader["eventspecific_version"]),
                         Convert.ToInt32(reader["eventspecific_uploaded_version"])
                         ),
-                    reader["participant_email"].ToString(),
-                    reader["participant_phone"].ToString(),
-                    reader["participant_mobile"].ToString(),
-                    reader["participant_parent"].ToString(),
-                    reader["participant_country"].ToString(),
-                    reader["participant_street2"].ToString(),
-                    reader["participant_gender"].ToString(),
-                    reader["emergencycontact_name"].ToString(),
-                    reader["emergencycontact_phone"].ToString()
+                    reader["participant_email"].ToString()!,
+                    reader["participant_phone"].ToString()!,
+                    reader["participant_mobile"].ToString()!,
+                    reader["participant_parent"].ToString()!,
+                    reader["participant_country"].ToString()!,
+                    reader["participant_street2"].ToString()!,
+                    reader["participant_gender"].ToString()!,
+                    reader["emergencycontact_name"].ToString()!,
+                    reader["emergencycontact_phone"].ToString()!
                     ));
             }
             reader.Close();
             return output;
         }
 
-        internal static Participant GetParticipantWorker(SQLiteDataReader reader)
+        internal static Participant? GetParticipantWorker(SQLiteDataReader reader)
         {
             if (reader.Read())
             {
                 return new Participant(
                     Convert.ToInt32(reader["participant_id"]),
-                    reader["participant_first"].ToString(),
-                    reader["participant_last"].ToString(),
-                    reader["participant_street"].ToString(),
-                    reader["participant_city"].ToString(),
-                    reader["participant_state"].ToString(),
-                    reader["participant_zip"].ToString(),
-                    reader["participant_birthday"].ToString(),
+                    reader["participant_first"].ToString()!,
+                    reader["participant_last"].ToString()!,
+                    reader["participant_street"].ToString()!,
+                    reader["participant_city"].ToString()!,
+                    reader["participant_state"].ToString()!,
+                    reader["participant_zip"].ToString()!,
+                    reader["participant_birthday"].ToString()!,
                     new EventSpecific(
                         Convert.ToInt32(reader["eventspecific_id"]),
                         Convert.ToInt32(reader["event_id"]),
                         Convert.ToInt32(reader["distance_id"]),
-                        reader["distance_name"].ToString(),
-                        reader["eventspecific_bib"].ToString(),
+                        reader["distance_name"].ToString()!,
+                        reader["eventspecific_bib"].ToString()!,
                         Convert.ToInt32(reader["eventspecific_checkedin"]),
-                        reader["eventspecific_comments"].ToString(),
-                        reader["eventspecific_owes"].ToString(),
-                        reader["eventspecific_other"].ToString(),
+                        reader["eventspecific_comments"].ToString()!,
+                        reader["eventspecific_owes"].ToString()!,
+                        reader["eventspecific_other"].ToString()!,
                         Convert.ToInt32(reader["eventspecific_status"]),
-                        reader["eventspecific_age_group_name"].ToString(),
+                        reader["eventspecific_age_group_name"].ToString()!,
                         Convert.ToInt32(reader["eventspecific_age_group_id"]),
-                        Convert.ToInt16(reader["eventspecific_anonymous"]) == 0 ? false : true,
-                        Convert.ToInt16(reader["eventspecific_sms_enabled"]) == 0 ? false : true,
-                        reader["eventspecific_apparel"] != DBNull.Value ? reader["eventspecific_apparel"].ToString() : "",
-                        reader["eventspecific_division"] != DBNull.Value ? reader["eventspecific_division"].ToString() : "",
+                        Convert.ToInt16(reader["eventspecific_anonymous"]) != 0,
+                        Convert.ToInt16(reader["eventspecific_sms_enabled"]) != 0,
+                        reader["eventspecific_apparel"] != DBNull.Value ? reader["eventspecific_apparel"].ToString()! : "",
+                        reader["eventspecific_division"] != DBNull.Value ? reader["eventspecific_division"].ToString()! : "",
                         Convert.ToInt32(reader["eventspecific_version"]),
                         Convert.ToInt32(reader["eventspecific_uploaded_version"])
                         ),
-                    reader["participant_email"].ToString(),
-                    reader["participant_phone"].ToString(),
-                    reader["participant_mobile"].ToString(),
-                    reader["participant_parent"].ToString(),
-                    reader["participant_country"].ToString(),
-                    reader["participant_street2"].ToString(),
-                    reader["participant_gender"].ToString(),
-                    reader["emergencycontact_name"].ToString(),
-                    reader["emergencycontact_phone"].ToString()
+                    reader["participant_email"].ToString()!,
+                    reader["participant_phone"].ToString()!,
+                    reader["participant_mobile"].ToString()!,
+                    reader["participant_parent"].ToString()!,
+                    reader["participant_country"].ToString()!,
+                    reader["participant_street2"].ToString()!,
+                    reader["participant_gender"].ToString()!,
+                    reader["emergencycontact_name"].ToString()!,
+                    reader["emergencycontact_phone"].ToString()!
                     );
             }
             return null;
         }
 
-        internal static Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId, SQLiteConnection connection)
+        internal static Participant? GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM participants AS p " +
@@ -459,12 +459,12 @@ namespace Chronokeep.Database.SQLite
             command.Parameters.Add(new("@eventid", eventIdentifier));
             command.Parameters.Add(new("@eventSpecId", eventSpecificId));
             SQLiteDataReader reader = command.ExecuteReader();
-            Participant output = GetParticipantWorker(reader);
+            Participant? output = GetParticipantWorker(reader);
             reader.Close();
             return output;
         }
 
-        internal static Participant GetParticipantBib(int eventIdentifier, string bib, SQLiteConnection connection)
+        internal static Participant? GetParticipantBib(int eventIdentifier, string bib, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM participants AS p " +
@@ -476,12 +476,12 @@ namespace Chronokeep.Database.SQLite
             command.Parameters.Add(new("@eventid", eventIdentifier));
             command.Parameters.Add(new("@bib", bib));
             SQLiteDataReader reader = command.ExecuteReader();
-            Participant output = GetParticipantWorker(reader);
+            Participant? output = GetParticipantWorker(reader);
             reader.Close();
             return output;
         }
 
-        internal static Participant GetParticipantChip(int eventIdentifier, string chip, SQLiteConnection connection)
+        internal static Participant? GetParticipantChip(int eventIdentifier, string chip, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM participants AS p, eventspecific AS s, distances AS d, " +
@@ -493,12 +493,12 @@ namespace Chronokeep.Database.SQLite
                 new("@chip", chip)
                 ]);
             SQLiteDataReader reader = command.ExecuteReader();
-            Participant output = GetParticipantWorker(reader);
+            Participant? output = GetParticipantWorker(reader);
             reader.Close();
             return output;
         }
 
-        internal static Participant GetParticipant(int eventId, int identifier, SQLiteConnection connection)
+        internal static Participant? GetParticipant(int eventId, int identifier, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM participants AS p " +
@@ -509,12 +509,12 @@ namespace Chronokeep.Database.SQLite
             command.Parameters.Add(new("@eventid", eventId));
             command.Parameters.Add(new("@partId", identifier));
             SQLiteDataReader reader = command.ExecuteReader();
-            Participant output = GetParticipantWorker(reader);
+            Participant? output = GetParticipantWorker(reader);
             reader.Close();
             return output;
         }
 
-        internal static Participant GetParticipant(int eventId, Participant unknown, SQLiteConnection connection)
+        internal static Participant? GetParticipant(int eventId, Participant unknown, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM participants AS p " +
@@ -536,7 +536,7 @@ namespace Chronokeep.Database.SQLite
                     new("@birthday", unknown.Birthdate)
                 ]);
             SQLiteDataReader reader = command.ExecuteReader();
-            Participant output = GetParticipantWorker(reader);
+            Participant? output = GetParticipantWorker(reader);
             reader.Close();
             return output;
         }
@@ -548,14 +548,14 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "SELECT participant_id FROM participants WHERE participant_first=@first AND " +
                 "participant_last=@last AND participant_street=@street AND " +
                 "participant_zip=@zip AND participant_birthday=@birthday";
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                new SQLiteParameter("@first", person.FirstName),
-                new SQLiteParameter("@last", person.LastName),
-                new SQLiteParameter("@street", person.Street),
-                new SQLiteParameter("@zip", person.Zip),
-                new SQLiteParameter("@birthday", person.Birthdate)
-            });
+            command.Parameters.AddRange(
+            [
+                new("@first", person.FirstName),
+                new("@last", person.LastName),
+                new("@street", person.Street),
+                new("@zip", person.Zip),
+                new("@birthday", person.Birthdate)
+            ]);
             SQLiteDataReader reader = command.ExecuteReader();
             if (reader.Read())
             {
@@ -583,7 +583,7 @@ namespace Chronokeep.Database.SQLite
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(reader["eventspecific_division"].ToString());
+                output.Add(reader["eventspecific_division"].ToString()!);
             }
             reader.Close();
             return output;

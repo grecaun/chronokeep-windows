@@ -7,8 +7,8 @@ namespace Chronokeep.IO
 {
     class ExcelExporter : IDataExporter
     {
-        string[] headers = { };
-        List<object[]> data;
+        string[] headers = [];
+        List<object[]> data = [];
 
         public void ExportData(string Path)
         {

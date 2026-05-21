@@ -5,9 +5,9 @@ namespace Chronokeep.Objects.ChronoKeepAPI
     public class APIEventYear
     {
         [JsonPropertyName("year")]
-        public string Year { get; set; }
+        public string Year { get; set; } = "";
         [JsonPropertyName("date_time")]
-        public string DateTime { get; set; }
+        public string DateTime { get; set; } = "";
         [JsonPropertyName("live")]
         public bool Live { get; set; }
         [JsonPropertyName("days_allowed")]

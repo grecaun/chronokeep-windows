@@ -18,15 +18,15 @@ namespace Chronokeep.Helpers
 
         public static void SetupValues(IDBInterface db)
         {
-            if (!int.TryParse(db.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).Value, out UploadInterval))
+            if (!int.TryParse(db.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL)!.Value, out UploadInterval))
             {
                 DialogBox.Show("Something went wrong trying to get the upload interval.");
             }
-            if (!int.TryParse(db.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL).Value, out DownloadInterval))
+            if (!int.TryParse(db.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL)!.Value, out DownloadInterval))
             {
                 DialogBox.Show("Something went wrong trying to get the download interval.");
             }
-            if (!int.TryParse(db.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW).Value, out AnnouncerWindow))
+            if (!int.TryParse(db.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW)!.Value, out AnnouncerWindow))
             {
                 DialogBox.Show("Something went wrong trying to get the announcer window.");
             }
@@ -109,7 +109,7 @@ namespace Chronokeep.Helpers
             }
         }
 
-        private static readonly Dictionary<(string, RemoteNotification), ReaderMessage> readerMessages = new();
+        private static readonly Dictionary<(string, RemoteNotification), ReaderMessage> readerMessages = [];
         private static readonly Lock readerMessageLock = new();
 
         public static List<ReaderMessage> GetReaderMessages()

@@ -26,8 +26,8 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public const string VOICE_CUSTOM = "custom";
 
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         [JsonPropertyName("value")]
-        public string Value { get; set; }
+        public string Value { get; set; } = "";
     }
 }

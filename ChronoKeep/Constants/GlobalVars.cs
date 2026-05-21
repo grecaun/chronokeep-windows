@@ -137,9 +137,9 @@ namespace Chronokeep.Constants
 
         public static void SetTwilioCredentials(IDBInterface database)
         {
-            AppSetting sid = database.GetAppSetting(Settings.TWILIO_ACCOUNT_SID);
-            AppSetting auth = database.GetAppSetting(Settings.TWILIO_AUTH_TOKEN);
-            AppSetting phone = database.GetAppSetting(Settings.TWILIO_PHONE_NUMBER);
+            AppSetting sid = database.GetAppSetting(Settings.TWILIO_ACCOUNT_SID)!;
+            AppSetting auth = database.GetAppSetting(Settings.TWILIO_AUTH_TOKEN)!;
+            AppSetting phone = database.GetAppSetting(Settings.TWILIO_PHONE_NUMBER)!;
             if (sid != null)
             {
                 TwilioCredentials.AccountSID = sid.Value;

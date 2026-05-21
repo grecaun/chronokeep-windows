@@ -10,7 +10,7 @@ namespace Chronokeep.Database.SQLite
         public static Dictionary<int, TimingLocation> locations = [];
         public static Dictionary<int, Segment> segments = [];
         public static Dictionary<string, Distance> distances = [];
-        public static Event theEvent = null;
+        public static Event? theEvent = null;
 
         public static void GetStaticVariables(IDBInterface database)
         {
@@ -104,9 +104,8 @@ namespace Chronokeep.Database.SQLite
                 int readId = Convert.ToInt32(reader["read_id"]);
                 int distanceId = -1;
                 string bib = "";
-                Participant part = null;
-                ChipRead chipRead = null;
-                chipReadDict.TryGetValue(readId, out chipRead);
+                Participant? part = null;
+                chipReadDict.TryGetValue(readId, out ChipRead? chipRead);
                 if (eventSpecificId > -1 && partDict.TryGetValue(eventSpecificId, out part))
                 {
                     bib = part.Bib;
@@ -116,42 +115,42 @@ namespace Chronokeep.Database.SQLite
                 {
                     bib = chipRead.Bib;
                 }
-                bool knownDist = distanceDict.TryGetValue(distanceId, out Distance di);
+                bool knownDist = distanceDict.TryGetValue(distanceId, out Distance? di);
                 output.Add(new(
                     reader["event_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["event_id"]),
                     reader["eventspecific_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_id"]),
                     Convert.ToInt32(reader["location_id"]),
                     Convert.ToInt32(reader["segment_id"]),
-                    reader["timeresult_time"].ToString(),
+                    reader["timeresult_time"].ToString()!,
                     Convert.ToInt32(reader["timeresult_occurance"]),
                     part != null ? part.FirstName : "",
                     part != null ? part.LastName : "",
-                    knownDist ? di.Name : "",
+                    knownDist ? di!.Name : "",
                     bib,
                     readId,
-                    reader["timeresult_unknown_id"].ToString(),
+                    reader["timeresult_unknown_id"].ToString()!,
                     chipRead != null ? chipRead.TimeSeconds : 0,
                     chipRead != null ? chipRead.TimeMilliseconds : 0,
-                    reader["timeresult_chiptime"].ToString(),
+                    reader["timeresult_chiptime"].ToString()!,
                     Convert.ToInt32(reader["timeresult_place"]),
                     Convert.ToInt32(reader["timeresult_age_place"]),
                     Convert.ToInt32(reader["timeresult_gender_place"]),
                     part != null ? part.Gender : "",
                     Convert.ToInt32(reader["timeresult_status"]),
-                    reader["timeresult_splittime"].ToString(),
+                    reader["timeresult_splittime"].ToString()!,
                     part != null ? part.EventSpecific.AgeGroupId : -1,
                     part != null ? part.EventSpecific.AgeGroupName : "",
                     Convert.ToInt32(reader["timeresult_uploaded"]),
                     part != null ? part.Birthdate : "",
-                    knownDist ? di.Type : Constants.Timing.DISTANCE_TYPE_NORMAL,
-                    knownDist && distanceDict.TryGetValue(di.LinkedDistance, out Distance linked) ? linked.Name : "",
+                    knownDist ? di!.Type : Constants.Timing.DISTANCE_TYPE_NORMAL,
+                    knownDist && distanceDict.TryGetValue(di!.LinkedDistance, out Distance? linked) ? linked.Name : "",
                     chipRead != null ? chipRead.ChipNumber : "",
-                    part != null ? part.EventSpecific.Anonymous : false,
+                    part != null && part.EventSpecific.Anonymous,
                     part != null ? part.Identifier.ToString() : "",
                     locations,
                     segments,
                     distances,
-                    theEvent,
+                    theEvent!,
                     part != null ? part.EventSpecific.Division : "",
                     Convert.ToInt32(reader["timeresult_division_place"])
                     ));
@@ -162,7 +161,7 @@ namespace Chronokeep.Database.SQLite
 
         internal static List<TimeResult> GetTimingResults(int eventId, SQLiteConnection connection)
         {
-            Event theEvent = Events.GetEvent(eventId, connection);
+            Event theEvent = Events.GetEvent(eventId, connection)!;
             Dictionary<int, ChipRead> chipReadDict = [];
             foreach (ChipRead cr in ChipReads.GetChipReads(eventId, theEvent, connection))
             {
@@ -188,7 +187,7 @@ namespace Chronokeep.Database.SQLite
 
         internal static List<TimeResult> GetLastSeenResults(int eventId, SQLiteConnection connection)
         {
-            Event theEvent = Events.GetEvent(eventId, connection);
+            Event theEvent = Events.GetEvent(eventId, connection)!;
             Dictionary<int, ChipRead> chipReadDict = [];
             foreach (ChipRead cr in ChipReads.GetChipReads(eventId, theEvent, connection))
             {
@@ -230,7 +229,7 @@ namespace Chronokeep.Database.SQLite
 
         internal static List<TimeResult> GetSegmentTimes(int eventId, int segmentId, SQLiteConnection connection)
         {
-            Event theEvent = Events.GetEvent(eventId, connection);
+            Event theEvent = Events.GetEvent(eventId, connection)!;
             Dictionary<int, ChipRead> chipReadDict = [];
             foreach (ChipRead cr in ChipReads.GetChipReads(eventId, theEvent, connection))
             {
@@ -276,29 +275,27 @@ namespace Chronokeep.Database.SQLite
 
         internal static void SetUploadedTimingResults(List<TimeResult> results, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
+            using var transaction = connection.BeginTransaction();
+            foreach (TimeResult result in results)
             {
-                foreach (TimeResult result in results)
-                {
-                    SQLiteCommand command = connection.CreateCommand();
-                    command.CommandType = System.Data.CommandType.Text;
-                    command.CommandText = "UPDATE time_results SET timeresult_uploaded=@uploaded WHERE event_id=@event AND eventspecific_id=@eventspecific AND location_id=@location AND timeresult_occurance=@occurance";
-                    command.Parameters.AddRange([
-                        new("@uploaded", result.Uploaded),
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = "UPDATE time_results SET timeresult_uploaded=@uploaded WHERE event_id=@event AND eventspecific_id=@eventspecific AND location_id=@location AND timeresult_occurance=@occurance";
+                command.Parameters.AddRange([
+                    new("@uploaded", result.Uploaded),
                         new("@event", result.EventIdentifier),
                         new("@eventspecific", result.EventSpecificId),
                         new("@location", result.LocationId),
                         new("@occurance", result.Occurrence)]
-                    );
-                    command.ExecuteNonQuery();
-                }
-                transaction.Commit();
+                );
+                command.ExecuteNonQuery();
             }
+            transaction.Commit();
         }
 
         internal static List<TimeResult> GetNonUploadedResults(int eventId, SQLiteConnection connection)
         {
-            Event theEvent = Events.GetEvent(eventId, connection);
+            Event theEvent = Events.GetEvent(eventId, connection)!;
             Dictionary<int, ChipRead> chipReadDict = [];
             foreach (ChipRead cr in ChipReads.GetChipReads(eventId, theEvent, connection))
             {

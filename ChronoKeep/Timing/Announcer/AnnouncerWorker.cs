@@ -12,7 +12,7 @@ namespace Chronokeep.Timing.Announcer
     {
         private readonly IDBInterface database;
         private readonly IMainWindow window;
-        private static AnnouncerWorker announcer;
+        private static AnnouncerWorker? announcer;
 
         private static readonly Semaphore semaphore = new(0, 2);
         private static readonly Lock anLock = new();
@@ -112,7 +112,7 @@ namespace Chronokeep.Timing.Announcer
                     // Only work if we've not seen it before.
                     if ((!bibSeen.TryGetValue(read.Bib, out DateTime lastSeen)
                         || lastSeen.AddMinutes(seenWindow).CompareTo(timeRightNow) < 0)
-                        && participantBibDictionary.TryGetValue(read.Bib, out Participant part))
+                        && participantBibDictionary.TryGetValue(read.Bib, out Participant? part))
                     {
                         newParticipants = true;
                         bibSeen.Add(read.Bib, timeRightNow);
@@ -134,7 +134,7 @@ namespace Chronokeep.Timing.Announcer
         public void Run()
         {
             // Get the event we're looking at and fill the participant bib dictionary.
-            Event theEvent = database.GetCurrentEvent();
+            Event theEvent = database.GetCurrentEvent()!;
             Dictionary<string, Participant> participantBibDictionary = [];
             foreach (Participant part in database.GetParticipants(theEvent.Identifier))
             {
@@ -169,7 +169,7 @@ namespace Chronokeep.Timing.Announcer
                     if (notified)
                     {
                         Log.D("Timing.Announcer.AnnouncerWorker", "New chip reads found!");
-                        Event ev2 = database.GetCurrentEvent();
+                        Event ev2 = database.GetCurrentEvent()!;
                         // verify that we both ev2 and theevent are not null and they match
                         if (ev2 == null || theEvent == null || ev2.Identifier != theEvent.Identifier)
                         {

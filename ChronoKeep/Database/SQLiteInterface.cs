@@ -211,9 +211,9 @@ namespace Chronokeep
             return output;
         }
 
-        public Distance GetDistance(int distanceId)
+        public Distance? GetDistance(int distanceId)
         {
-            Distance output = null;
+            Distance? output = null;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 7");
             if (!dbLock.TryEnter(3000))
             {
@@ -375,9 +375,9 @@ namespace Chronokeep
             return output;
         }
 
-        public Event GetCurrentEvent()
+        public Event? GetCurrentEvent()
         {
-            AppSetting CurEvent = GetAppSetting(Constants.Settings.CURRENT_EVENT);
+            AppSetting? CurEvent = GetAppSetting(Constants.Settings.CURRENT_EVENT);
             if (CurEvent == null)
             {
                 return null;
@@ -394,9 +394,9 @@ namespace Chronokeep
             });
         }
 
-        public Event GetEvent(int id)
+        public Event? GetEvent(int id)
         {
-            Event output = null;
+            Event? output = null;
             if (id < 0)
             {
                 return output;
@@ -488,9 +488,9 @@ namespace Chronokeep
          * Participants
          */
 
-        public Participant AddParticipant(Participant person)
+        public Participant? AddParticipant(Participant person)
         {
-            Participant output = null;
+            Participant? output = null;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 19");
             if (!dbLock.TryEnter(3000))
             {
@@ -517,7 +517,7 @@ namespace Chronokeep
 
         public List<Participant> AddParticipants(List<Participant> people)
         {
-            List<Participant> output = new();
+            List<Participant> output = [];
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 20");
             if (!dbLock.TryEnter(3000))
             {
@@ -532,7 +532,7 @@ namespace Chronokeep
                 {
                     foreach (Participant person in people)
                     {
-                        output.Add(Participants.AddParticipant(person, connection));
+                        output.Add(Participants.AddParticipant(person, connection)!);
                     }
                     transaction.Commit();
                 }
@@ -743,9 +743,9 @@ namespace Chronokeep
             return output;
         }
 
-        public Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId)
+        public Participant? GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId)
         {
-            Participant output = null;
+            Participant? output = null;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 30");
             if (!dbLock.TryEnter(3000))
             {
@@ -766,9 +766,9 @@ namespace Chronokeep
             return output;
         }
 
-        public Participant GetParticipantBib(int eventIdentifier, string bib)
+        public Participant? GetParticipantBib(int eventIdentifier, string bib)
         {
-            Participant output = null;
+            Participant? output = null;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 31");
             if (!dbLock.TryEnter(3000))
             {
@@ -789,9 +789,9 @@ namespace Chronokeep
             return output;
         }
 
-        public Participant GetParticipantChip(int eventIdentifier, string chip)
+        public Participant? GetParticipantChip(int eventIdentifier, string chip)
         {
-            Participant output = null;
+            Participant? output = null;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 171");
             if (!dbLock.TryEnter(3000))
             {
@@ -812,9 +812,9 @@ namespace Chronokeep
             return output;
         }
 
-        public Participant GetParticipant(int eventId, int identifier)
+        public Participant? GetParticipant(int eventId, int identifier)
         {
-            Participant output = null;
+            Participant? output = null;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 32");
             if (!dbLock.TryEnter(3000))
             {
@@ -835,9 +835,9 @@ namespace Chronokeep
             return output;
         }
 
-        public Participant GetParticipant(int eventId, Participant unknown)
+        public Participant? GetParticipant(int eventId, Participant unknown)
         {
-            Participant output = null;
+            Participant? output = null;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 33");
             if (!dbLock.TryEnter(3000))
             {
@@ -1818,7 +1818,7 @@ namespace Chronokeep
             }
         }
 
-        private void RemoveBibChipAssociationInternal(BibChipAssociation assoc, SQLiteConnection connection)
+        private static void RemoveBibChipAssociationInternal(BibChipAssociation assoc, SQLiteConnection connection)
         {
             if (assoc != null) BibChips.RemoveBibChipAssociation(assoc.EventId, assoc.Chip, connection);
         }
@@ -2091,7 +2091,7 @@ namespace Chronokeep
 
         public List<ChipRead> GetChipReads()
         {
-            Event theEvent = GetCurrentEvent();
+            Event theEvent = GetCurrentEvent()!;
             List<ChipRead> output = [];
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 90");
             if (!dbLock.TryEnter(3000))
@@ -2116,7 +2116,7 @@ namespace Chronokeep
         public List<ChipRead> GetChipReads(int eventId)
         {
             List<ChipRead> output = [];
-            Event theEvent = GetCurrentEvent();
+            Event theEvent = GetCurrentEvent()!;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 91");
             if (!dbLock.TryEnter(3000))
             {
@@ -2140,7 +2140,7 @@ namespace Chronokeep
         public List<ChipRead> GetUsefulChipReads(int eventId)
         {
             List<ChipRead> output = [];
-            Event theEvent = GetCurrentEvent();
+            Event theEvent = GetCurrentEvent()!;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 92");
             if (!dbLock.TryEnter(3000))
             {
@@ -2164,7 +2164,7 @@ namespace Chronokeep
         public List<ChipRead> GetAnnouncerChipReads(int eventId)
         {
             List<ChipRead> output = [];
-            Event theEvent = GetCurrentEvent();
+            Event theEvent = GetCurrentEvent()!;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 133");
             if (!dbLock.TryEnter(3000))
             {
@@ -2188,7 +2188,7 @@ namespace Chronokeep
         public List<ChipRead> GetAnnouncerUsedChipReads(int eventId)
         {
             List<ChipRead> output = [];
-            Event theEvent = GetCurrentEvent();
+            Event theEvent = GetCurrentEvent()!;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 134");
             if (!dbLock.TryEnter(3000))
             {
@@ -2212,7 +2212,7 @@ namespace Chronokeep
         public List<ChipRead> GetDNSChipReads(int eventId)
         {
             List<ChipRead> output = [];
-            Event theEvent = GetCurrentEvent();
+            Event theEvent = GetCurrentEvent()!;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 136");
             if (!dbLock.TryEnter(3000))
             {
@@ -2237,9 +2237,9 @@ namespace Chronokeep
          * Settings
          */
 
-        public AppSetting GetAppSetting(string name)
+        public AppSetting? GetAppSetting(string name)
         {
-            AppSetting output = null;
+            AppSetting? output = null;
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 95");
             if (!dbLock.TryEnter(3000))
             {
@@ -2324,7 +2324,7 @@ namespace Chronokeep
         public List<AgeGroup> AddAgeGroups(List<AgeGroup> groups)
         {
             Log.D("SQLiteInterface", "Attempting to grab Lock: ID 108");
-            List<AgeGroup> output = new();
+            List<AgeGroup> output = [];
             if (!dbLock.TryEnter(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Lock: ID 108");
@@ -2650,7 +2650,7 @@ namespace Chronokeep
             List<Participant> parts = (distanceId == -1) ? GetParticipants(eventId) : GetParticipants(eventId, distanceId);
             foreach (Participant person in parts)
             {
-                if (!output.TryGetValue(person.Status, out List<Participant> statusList))
+                if (!output.TryGetValue(person.Status, out List<Participant>? statusList))
                 {
                     statusList = [];
                     output[person.Status] = statusList;
@@ -2730,9 +2730,9 @@ namespace Chronokeep
             }
         }
 
-        public APIObject GetAPI(int identifier)
+        public APIObject? GetAPI(int identifier)
         {
-            APIObject output = null;
+            APIObject? output = null;
             if (identifier < 0)
             {
                 return output;

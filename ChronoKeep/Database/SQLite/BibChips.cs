@@ -10,23 +10,21 @@ namespace Chronokeep.Database.SQLite
     {
         internal static void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO bib_chip_assoc (event_id, bib, chip) VALUES (@eventId, @bib, @chip);";
+            foreach (BibChipAssociation item in assoc)
             {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO bib_chip_assoc (event_id, bib, chip) VALUES (@eventId, @bib, @chip);";
-                foreach (BibChipAssociation item in assoc)
-                {
-                    Log.D("Database.SQLite.BibChips", "Event id " + eventId + " Bib " + item.Bib + " Chip " + item.Chip);
-                    command.Parameters.AddRange(
-                    [
-                        new("@eventId", eventId),
+                Log.D("Database.SQLite.BibChips", "Event id " + eventId + " Bib " + item.Bib + " Chip " + item.Chip);
+                command.Parameters.AddRange(
+                [
+                    new("@eventId", eventId),
                         new("@bib", item.Bib),
                         new("@chip", item.Chip),
                     ]);
-                    command.ExecuteNonQuery();
-                }
-                transaction.Commit();
+                command.ExecuteNonQuery();
             }
+            transaction.Commit();
         }
 
         internal static List<BibChipAssociation> GetBibChips(SQLiteConnection connection)
@@ -40,8 +38,8 @@ namespace Chronokeep.Database.SQLite
                 output.Add(new()
                 {
                     EventId = Convert.ToInt32(reader["event_id"]),
-                    Bib = reader["bib"].ToString(),
-                    Chip = reader["chip"].ToString()
+                    Bib = reader["bib"].ToString()!,
+                    Chip = reader["chip"].ToString()!
                 });
             }
             reader.Close();
@@ -60,8 +58,8 @@ namespace Chronokeep.Database.SQLite
                 output.Add(new()
                 {
                     EventId = Convert.ToInt32(reader["event_id"]),
-                    Bib = reader["bib"].ToString(),
-                    Chip = reader["chip"].ToString()
+                    Bib = reader["bib"].ToString()!,
+                    Chip = reader["chip"].ToString()!
                 });
             }
             reader.Close();

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Chronokeep.IO
 {
-    public partial class LogImporter : CSVImporter
+    public partial class LogImporter(string filePath) : CSVImporter(filePath)
     {
         [GeneratedRegex("^\\d,[0-9A-Fa-f]+,\\d,\"(\\d{4}-\\d{2}-\\d{2} )?\\d{1,2}:\\d{2}:\\d{2}\\.\\d{3}\"$|" + // RFID Timing style?
                                 "^[0-9A-Fa-f]+\\t(\\d{4}-\\d{2}-\\d{2} )?\\d{1,2}:\\d{2}:\\d{2}\\.\\d{3}$")]    // RFID Server style?    
@@ -15,11 +15,9 @@ namespace Chronokeep.IO
 
         public Type type = Type.CUSTOM;
 
-        public LogImporter(string filePath) : base(filePath) { }
-
         public void FindType()
         {
-            string headerLine = file.ReadLine();
+            string headerLine = file!.ReadLine()!;
             Log.D("IO.LogImporter", "HeaderLine: " + headerLine);
             if (Rfid().IsMatch(headerLine))
             {

@@ -5,12 +5,12 @@ namespace Chronokeep.Objects.ChronoKeepAPI
     public class APISmsSubscription
     {
         [JsonPropertyName("bib")]
-        public string Bib { get; set; }
+        public string Bib { get; set; } = "";
         [JsonPropertyName("first")]
-        public string First { get; set; }
+        public string First { get; set; } = "";
         [JsonPropertyName("last")]
-        public string Last { get; set; }
+        public string Last { get; set; } = "";
         [JsonPropertyName("phone")]
-        public string Phone { get; set; }
+        public string Phone { get; set; } = "";
     }
 }

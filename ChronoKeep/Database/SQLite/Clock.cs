@@ -18,8 +18,8 @@ namespace Chronokeep.Database.SQLite
                 output.Add(new()
                 {
                     Identifier = Convert.ToInt32(reader["clock_id"]),
-                    Name = reader["name"].ToString(),
-                    URL = reader["url"].ToString(),
+                    Name = reader["name"].ToString()!,
+                    URL = reader["url"].ToString()!,
                     Enabled = Convert.ToInt32(reader["enabled"]) != 0,
                 });
             }

@@ -5,8 +5,8 @@ namespace Chronokeep.Objects.ChronoKeepAPI
     public class BibChip
     {
         [JsonPropertyName("bib")]
-        public string Bib { get; set; }
+        public string Bib { get; set; } = "";
         [JsonPropertyName("chip")]
-        public string Chip { get; set; }
+        public string Chip { get; set; } = "";
     }
 }

@@ -309,7 +309,7 @@ namespace Chronokeep.Database.SQLite
                 queries.Add("CREATE INDEX idx_distance_id ON distances(distance_id);");
 
                 string gitVersion = "";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt")!)
                 {
                     using StreamReader fileReader = new(stream);
                     gitVersion = fileReader.ReadToEnd();
@@ -334,25 +334,23 @@ namespace Chronokeep.Database.SQLite
                 }
 
                 command = new("SELECT value FROM settings WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';", connection);
-                using (SQLiteDataReader versionChecker = command.ExecuteReader())
+                using SQLiteDataReader versionChecker = command.ExecuteReader();
+                if (versionChecker.Read())
                 {
-                    if (versionChecker.Read())
-                    {
-                        oldVersion = Convert.ToInt32(versionChecker["value"]);
-                    }
-                    else
-                    {
-                        Log.D("SQLite.Setup", "Something went wrong when checking the version...");
-                    }
-                    versionChecker.Close();
+                    oldVersion = Convert.ToInt32(versionChecker["value"]);
                 }
+                else
+                {
+                    Log.D("SQLite.Setup", "Something went wrong when checking the version...");
+                }
+                versionChecker.Close();
             }
             reader.Close();
-            AppSetting dbSetting = Settings.GetAppSetting(Constants.Settings.MINIMUM_COMPATIBLE_DATABASE, connection);
+            AppSetting dbSetting = Settings.GetAppSetting(Constants.Settings.MINIMUM_COMPATIBLE_DATABASE, connection)!;
             int maxVers = dbSetting == null ? SQLiteInterface.minimum_compatible_version : Convert.ToInt32(dbSetting.Value);
             connection.Close();
             if (oldVersion == -1) Log.D("SQLite.Setup", "Unable to get a version number. Something is terribly wrong.");
-            else if (oldVersion < version) Update.UpdateDatabase(oldVersion, version, connectionInfo);
+            else if (oldVersion < version) Update.UpdateDatabase(oldVersion, connectionInfo);
             // Check if the db version is greater than the minimum required.
             else if (maxVers > version)
             {

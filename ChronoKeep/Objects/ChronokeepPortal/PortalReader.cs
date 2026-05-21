@@ -15,11 +15,11 @@ namespace Chronokeep.Objects.ChronokeepPortal
         [JsonPropertyName("id")]
         public long Id { get; set; }
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         [JsonPropertyName("kind")]
-        public string Kind { get; set; }
+        public string Kind { get; set; } = "";
         [JsonPropertyName("ip_address")]
-        public string IPAddress { get; set; }
+        public string IPAddress { get; set; } = "";
         [JsonPropertyName("port")]
         public uint Port { get; set; }
         [JsonPropertyName("auto_connect")]
@@ -29,6 +29,6 @@ namespace Chronokeep.Objects.ChronokeepPortal
         [JsonPropertyName("connected")]
         public bool Connected { get; set; } = false;
         [JsonPropertyName("antennas")]
-        public int[] Antennas { get; set; }
+        public int[] Antennas { get; set; } = [];
     }
 }

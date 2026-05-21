@@ -5,7 +5,6 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System;
-using System.Media;
 using System.Threading.Tasks;
 
 namespace Chronokeep.UI.MainPages;
@@ -69,30 +68,22 @@ public partial class SettingsPage : UserControl, IMainPage
 
     public void UpdateView()
     {
-        AppSetting setting = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
-        switch (setting.Value)
+        AppSetting setting = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM)!;
+        DefaultTimingBox.SelectedIndex = setting.Value switch
         {
-            case Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL:
-                DefaultTimingBox.SelectedIndex = 1;
-                break;
-            case Constants.Readers.SYSTEM_IPICO:
-                DefaultTimingBox.SelectedIndex = 2;
-                break;
-            case Constants.Readers.SYSTEM_IPICO_LITE:
-                DefaultTimingBox.SelectedIndex = 3;
-                break;
-            default:
-                DefaultTimingBox.SelectedIndex = 0;
-                break;
-        }
-        CompanyNameBox.Text = database.GetAppSetting(Constants.Settings.COMPANY_NAME).Value;
-        ContactEmailBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL).Value;
-        DefaultExportDirBox.Text = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value;
-        UpdatePage.IsChecked = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE;
-        ExitNoPrompt.IsChecked = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).Value == Constants.Settings.SETTING_TRUE;
-        CheckUpdates.IsChecked = database.GetAppSetting(Constants.Settings.CHECK_UPDATES).Value == Constants.Settings.SETTING_TRUE;
-        AutoChangelog.IsChecked = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG).Value == Constants.Settings.SETTING_TRUE;
-        AppSetting themeSetting = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
+            Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL => 1,
+            Constants.Readers.SYSTEM_IPICO => 2,
+            Constants.Readers.SYSTEM_IPICO_LITE => 3,
+            _ => 0,
+        };
+        CompanyNameBox.Text = database.GetAppSetting(Constants.Settings.COMPANY_NAME)!.Value;
+        ContactEmailBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL)!.Value;
+        DefaultExportDirBox.Text = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value;
+        UpdatePage.IsChecked = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE;
+        ExitNoPrompt.IsChecked = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT)!.Value == Constants.Settings.SETTING_TRUE;
+        CheckUpdates.IsChecked = database.GetAppSetting(Constants.Settings.CHECK_UPDATES)!.Value == Constants.Settings.SETTING_TRUE;
+        AutoChangelog.IsChecked = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG)!.Value == Constants.Settings.SETTING_TRUE;
+        AppSetting themeSetting = database.GetAppSetting(Constants.Settings.CURRENT_THEME)!;
         Log.D("UI.MainPages.SettingsPage", "Current theme set to " + themeSetting.Value + " Theme Offset is " + ThemeOffset);
         if (themeSetting.Value == Constants.Settings.THEME_SYSTEM)
         {
@@ -109,35 +100,34 @@ public partial class SettingsPage : UserControl, IMainPage
             Log.D("UI.MainPages.SettingsPage", "Setting selected theme to Dark. " + (ThemeOffset + 2));
             ThemeColorBox.SelectedIndex = ThemeOffset + 2;
         }
-        if (int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).Value, out int uploadInt) && uploadInt > 0 && uploadInt < 60)
+        if (int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL)!.Value, out int uploadInt) && uploadInt > 0 && uploadInt < 60)
         {
             uploadSlider.Value = uploadInt;
             uploadBlock.Text = uploadInt.ToString();
         }
-        if (int.TryParse(database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL).Value, out int downloadInt) && downloadInt > 0 && downloadInt < 60)
+        if (int.TryParse(database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL)!.Value, out int downloadInt) && downloadInt > 0 && downloadInt < 60)
         {
             downloadSlider.Value = downloadInt;
             downloadBlock.Text = downloadInt.ToString();
         }
-        if (int.TryParse(database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW).Value, out int announcerWindow) && announcerWindow >= 15 && announcerWindow <= 180)
+        if (int.TryParse(database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW)!.Value, out int announcerWindow) && announcerWindow >= 15 && announcerWindow <= 180)
         {
             announcerSlider.Value = announcerWindow;
             announcerBlock.Text = announcerWindow.ToString();
         }
-        int alarm = 1;
-        if (int.TryParse(database.GetAppSetting(Constants.Settings.ALARM_SOUND).Value, out alarm))
+        if (int.TryParse(database.GetAppSetting(Constants.Settings.ALARM_SOUND)!.Value, out int alarm))
         {
             AlarmSoundBox.SelectedIndex = alarm - 1;
         }
-        RegistrationServerNameBox.Text = database.GetAppSetting(Constants.Settings.SERVER_NAME).Value;
-        TwilioAccountSIDBox.Text = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID).Value;
-        TwilioAuthTokenBox.Text = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN).Value;
-        TwilioPhoneNumberBox.Text = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER).Value;
-        MailgunFromNameBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME).Value;
-        MailgunFromEmailBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL).Value;
-        MailgunAPIKeyBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY).Value;
-        MailgunAPIURLBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL).Value;
-        UniqueProgramID.Text = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER).Value;
+        RegistrationServerNameBox.Text = database.GetAppSetting(Constants.Settings.SERVER_NAME)!.Value;
+        TwilioAccountSIDBox.Text = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID)!.Value;
+        TwilioAuthTokenBox.Text = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN)!.Value;
+        TwilioPhoneNumberBox.Text = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER)!.Value;
+        MailgunFromNameBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME)!.Value;
+        MailgunFromEmailBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL)!.Value;
+        MailgunAPIKeyBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY)!.Value;
+        MailgunAPIURLBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL)!.Value;
+        UniqueProgramID.Text = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER)!.Value;
     }
 
     private void SaveSettings()
@@ -172,7 +162,7 @@ public partial class SettingsPage : UserControl, IMainPage
         database.SetAppSetting(Constants.Settings.MAILGUN_API_URL, MailgunAPIURLBox.Text!.Trim());
     }
 
-    public void UpdateDatabase() { }
+    public static void UpdateDatabase() { }
 
     public void Keyboard_Ctrl_A() { }
 
@@ -256,8 +246,7 @@ public partial class SettingsPage : UserControl, IMainPage
 
     private void ThemeColorBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        ComboBoxItem? selectedItem = ThemeColorBox.SelectedItem as ComboBoxItem;
-        if (selectedItem != null)
+        if (ThemeColorBox.SelectedItem is ComboBoxItem selectedItem)
         {
             database.SetAppSetting(Constants.Settings.CURRENT_THEME, (string)((ComboBoxItem)ThemeColorBox.SelectedItem!).Tag!);
             string theme = "light";
@@ -368,8 +357,8 @@ public partial class SettingsPage : UserControl, IMainPage
         Log.D("UI.MainPages.SettingsPage", "Path we're trying to play: " + soundFile);
         try
         {
-            // Windows Only
-            new SoundPlayer(soundFile).Play();
+            // Windows Only TODO fix sound
+            //new SoundPlayer(soundFile).Play();
         }
         catch (Exception ex)
         {

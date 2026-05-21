@@ -15,16 +15,16 @@ namespace Chronokeep.Network
 {
     class HttpServer
     {
-        private Thread _serverThread;
-        private HttpListener _listener;
+        private Thread? _serverThread;
+        private HttpListener? _listener;
         private int _port;
-        private IDBInterface database;
-        private Event theEvent;
+        private IDBInterface? database;
+        private Event? theEvent;
         private readonly List<TimeResult> finishResults = [];
         private readonly Dictionary<string, TimeResult> finishDictionary = [];
         private readonly Dictionary<string, List<TimeResult>> participantResults = [];
 
-        private byte[] resultsCache = null;
+        private byte[]? resultsCache = null;
         private readonly Dictionary<string, byte[]> participantCache = [];
         private readonly Dictionary<string, byte[]> emailCache = [];
 
@@ -44,7 +44,7 @@ namespace Chronokeep.Network
 
         public HttpServer(IDBInterface database, int port)
         {
-            this.Initialize(database, port);
+            Initialize(database, port);
         }
 
         public HttpServer(IDBInterface database)
@@ -53,7 +53,7 @@ namespace Chronokeep.Network
             l.Start();
             int port = ((IPEndPoint)l.LocalEndpoint).Port;
             l.Stop();
-            this.Initialize(database, port);
+            Initialize(database, port);
         }
 
         public void UpdateInformation()
@@ -66,13 +66,13 @@ namespace Chronokeep.Network
             }
             try
             {
-                theEvent = database.GetCurrentEvent();
+                theEvent = database!.GetCurrentEvent();
                 finishResults.Clear();
                 finishDictionary.Clear();
                 participantResults.Clear();
-                foreach (TimeResult r in database.GetTimingResults(theEvent.Identifier))
+                foreach (TimeResult r in database.GetTimingResults(theEvent!.Identifier))
                 {
-                    if (!finishDictionary.TryGetValue(r.Bib, out TimeResult finRes))
+                    if (!finishDictionary.TryGetValue(r.Bib, out TimeResult? finRes))
                     {
                         finishDictionary[r.Bib] = r;
                     }
@@ -80,7 +80,7 @@ namespace Chronokeep.Network
                     {
                         finishDictionary[r.Bib] = r;
                     }
-                    if (!participantResults.TryGetValue(r.Bib, out List<TimeResult> pResList))
+                    if (!participantResults.TryGetValue(r.Bib, out List<TimeResult>? pResList))
                     {
                         pResList = [];
                         participantResults[r.Bib] = pResList;
@@ -121,7 +121,7 @@ namespace Chronokeep.Network
         public void Stop()
         {
             keepAlive = false;
-            _listener.Stop();
+            _listener?.Stop();
         }
 
         private void Listen()
@@ -130,7 +130,7 @@ namespace Chronokeep.Network
             {
                 try
                 {
-                    HttpListenerContext context = _listener.GetContext();
+                    HttpListenerContext context = _listener!.GetContext();
                     Process(context);
                 }
                 catch (Exception ex)
@@ -142,20 +142,19 @@ namespace Chronokeep.Network
 
         private void Process(HttpListenerContext context)
         {
-            string filename = context.Request.Url.AbsolutePath;
+            string filename = context.Request.Url!.AbsolutePath;
             Log.D("Network.HttpServer", "'" + filename + "' requested.");
-            filename = filename.Substring(1);
-
+            filename = filename[1..];
             string partBib = "";
             if (filename.StartsWith("part/", StringComparison.OrdinalIgnoreCase))
             {
-                filename = filename.Substring(5);
+                filename = filename[5..];
                 partBib = filename;
             }
             string emailBib = "";
             if (filename.StartsWith("email/", StringComparison.OrdinalIgnoreCase))
             {
-                filename = filename.Substring(6);
+                filename = filename[6..];
                 emailBib = filename;
             }
 
@@ -177,7 +176,7 @@ namespace Chronokeep.Network
                         if (resultsCache == null)
                         {
                             HtmlResultsTemplate results = new(
-                                theEvent,
+                                theEvent!,
                                 finishResults,
                                 true
                                 );
@@ -200,7 +199,7 @@ namespace Chronokeep.Network
                 // Serve up the file requested.
                 string newName = filename.Replace('/', '.');
                 Log.D("Network.HttpServer", "Newname is " + newName);
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + newName))
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + newName)!)
                 {
                     message = new byte[stream.Length];
                     stream.ReadExactly(message);
@@ -231,14 +230,14 @@ namespace Chronokeep.Network
                 {
                     try
                     {
-                        if (!participantResults.TryGetValue(partBib, out List<TimeResult> resList))
+                        if (!participantResults.TryGetValue(partBib, out List<TimeResult>? resList))
                         {
                             resList = [];
                             participantResults[partBib] = resList;
                         }
-                        if (!participantCache.TryGetValue(partBib, out byte[] partCache))
+                        if (!participantCache.TryGetValue(partBib, out byte[]? partCache))
                         {
-                            HtmlParticipantTemplate results = new(theEvent, resList);
+                            HtmlParticipantTemplate results = new(theEvent!, resList);
                             partCache = Encoding.Default.GetBytes(results.TransformText());
                             participantCache[partBib] = partCache;
                         }
@@ -266,16 +265,16 @@ namespace Chronokeep.Network
                     try
                     {
                         message = Encoding.Default.GetBytes("");
-                        if (finishDictionary.TryGetValue(emailBib, out TimeResult finishResult) && participantDictionary.TryGetValue(finishResult.ParticipantId, out Participant finPart))
+                        if (finishDictionary.TryGetValue(emailBib, out TimeResult? finishResult) && participantDictionary.TryGetValue(finishResult.ParticipantId, out Participant? finPart))
                         {
-                            if (!emailCache.TryGetValue(emailBib, out byte[] cachedEmail))
+                            if (!emailCache.TryGetValue(emailBib, out byte[]? cachedEmail))
                             {
                                 HtmlCertificateEmailTemplate email = new(
-                                    theEvent,
+                                    theEvent!,
                                     finishResult,
                                     finPart.Email,
                                     distanceNames.Count == 1,
-                                    apiDictionary.TryGetValue(theEvent.API_ID, out APIObject api) ? api : null
+                                    apiDictionary.TryGetValue(theEvent!.API_ID, out APIObject? api) ? api! : null
                                     );
                                 cachedEmail = Encoding.Default.GetBytes(email.TransformText());
                                 emailCache[emailBib] = cachedEmail;

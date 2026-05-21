@@ -26,10 +26,10 @@ namespace Chronokeep.Objects.Notifications
 
         public static MailgunCredentials GetCredentials(IDBInterface database)
         {
-            AppSetting APIKey = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY);
-            AppSetting Domain = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL);
-            AppSetting FromEmail = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL);
-            AppSetting FromName = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME);
+            AppSetting APIKey = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY)!;
+            AppSetting Domain = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL)!;
+            AppSetting FromEmail = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL)!;
+            AppSetting FromName = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME)!;
             MailgunCredentials output = new();
             if (APIKey != null)
             {

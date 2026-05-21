@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Chronokeep.Constants;
 using Chronokeep.Database;
@@ -15,7 +16,6 @@ using Chronokeep.Objects.Notifications;
 using Chronokeep.Timing.API;
 using Chronokeep.UI.API.Windows;
 using Chronokeep.UI.Export;
-using Chronokeep.UI.IO;
 using Chronokeep.UI.MainPages.Timing;
 using Chronokeep.UI.Parts;
 using Chronokeep.UI.Timing.Import;
@@ -62,7 +62,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private int total = 0, known = 0;
 
     private const string ipformat = "{0:D}.{1:D}.{2:D}.{3:D}";
-    private readonly int[] baseIP = { 0, 0, 0, 0 };
+    private readonly int[] baseIP = [0, 0, 0, 0];
 
     private readonly bool remote_api = false;
 
@@ -344,13 +344,13 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     public void Keyboard_Ctrl_Z() { }
 
-    public void UpdateDatabase() { }
+    public static void UpdateDatabase() { }
 
     public void Closing()
     {
         List<TimingSystem> removedSystems = database.GetTimingSystems();
         List<TimingSystem> ourSystems = [];
-        foreach (ReaderPart? box in ReadersBox.Items)
+        foreach (ReaderPart? box in ReadersBox.Items.Cast<ReaderPart?>())
         {
             box!.UpdateReader();
             if (box.reader.IPAddress != "0.0.0.0" && box.reader.IPAddress.Length > 7 &&
@@ -394,7 +394,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
         // Update locations in the list of readers (and reader status)
         total = ReadersBox.Items.Count; known = 0;
-        foreach (ReaderPart? read in ReadersBox.Items)
+        foreach (ReaderPart? read in ReadersBox.Items.Cast<ReaderPart?>())
         {
             read!.UpdateStatus();
             if (read.reader.Status == SYSTEM_STATUS.DISCONNECTED)
@@ -562,11 +562,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     public void UpdateSubView()
     {
         Log.D("UI.MainPages.TimingPage", "Updating sub view.");
-        if (cts != null)
-        {
-            cts.Cancel();
-            cts = null;
-        }
+        cts?.Cancel();
         cts = new();
         try
         {
@@ -675,11 +671,11 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                 {
                     if (now)
                     {
-                        sys.SystemInterface.SetTime(DateTime.Now);
+                        sys.SystemInterface?.SetTime(DateTime.Now);
                     }
                     else
                     {
-                        sys.SystemInterface.SetTime(time);
+                        sys.SystemInterface?.SetTime(time);
                     }
                 }
             }
@@ -694,7 +690,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     {
         database.RemoveTimingSystem(sys.SystemIdentifier);
         ReaderPart? removed = null;
-        foreach (ReaderPart? box in ReadersBox.Items)
+        foreach (ReaderPart? box in ReadersBox.Items.Cast<ReaderPart?>())
         {
             if (box!.reader.SystemIdentifier == sys.SystemIdentifier && sys.Saved())
             {
@@ -747,6 +743,8 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                 return PeopleType.UNKNOWN_FINISHES;
             case "Show Only Unknown Starts":
                 return PeopleType.UNKNOWN_STARTS;
+            default:
+                break;
         }
         return PeopleType.KNOWN;
     }
@@ -767,6 +765,8 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                 return SortType.GENDER;
             case "Place":
                 return SortType.PLACE;
+            default:
+                break;
         }
         return SortType.SYSTIME;
     }
@@ -969,12 +969,16 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private async void LoadLog(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Loading from log.");
-        OpenFileDialog csv_dialog = new() { Filter = "Log Files (*.csv,*.txt,*.log)|*.csv;*.txt;*.log|All Files|*" };
-        if (csv_dialog.ShowDialog((Window)mWindow) == true)
+        var files = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            FileTypeFilter = [Utils.LogType, FilePickerFileTypes.All],
+            AllowMultiple = false,
+        });
+        if (files.Count > 0)
         {
             try
             {
-                LogImporter importer = new(csv_dialog.FileName);
+                LogImporter importer = new(files[0].Name);
                 await Task.Run(() =>
                 {
                     importer.FindType();
@@ -994,20 +998,19 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
     }
 
-    private void SaveLog(object? sender, RoutedEventArgs e)
+    private async void SaveLog(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Save Log clicked.");
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "CSV (*.csv)|*.csv",
-            FileName = string.Format("{0} {1} Log.{2}", theEvent.YearCode, theEvent.Name, "csv"),
-            InitialDirectory = database.GetAppSetting(Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog((Window)mWindow) == true)
+            FileTypeChoices = [Utils.CSVType],
+            SuggestedFileName = string.Format("{0} {1} Log.{2}", theEvent!.YearCode, theEvent.Name, "csv"),
+        });
+        if (file is not null)
         {
             Dictionary<string, List<ChipRead>> locationReadDict = [];
             string[] headers =
-            {
+            [
                     "status",
                     "chip_number",
                     "seconds",
@@ -1024,7 +1027,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                     "start_time",
                     "read_bib",
                     "type"
-                };
+                ];
             List<ChipRead> chipReads = database.GetChipReads(theEvent!.Identifier);
             foreach (ChipRead read in chipReads)
             {
@@ -1071,7 +1074,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                 }
                 CSVExporter exporter = new(format.ToString());
                 exporter.SetData(headers, data);
-                exporter.ExportData(saveFileDialog.FileName);
+                exporter.ExportData(file.Name);
             }
             // Multiple locations, save each individually.
             else
@@ -1102,7 +1105,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                     }
                     CSVExporter exporter = new(format.ToString());
                     exporter.SetData(headers, data);
-                    string outFileName = string.Format("{0}\\{1}-{2}", Path.GetDirectoryName(saveFileDialog.FileName), FileSaveRegex().Replace(key.ToLower(), ""), Path.GetFileName(saveFileDialog.FileName));
+                    string outFileName = string.Format("{0}\\{1}-{2}", Path.GetDirectoryName(file.Name), FileSaveRegex().Replace(key.ToLower(), ""), Path.GetFileName(file.Name));
                     Log.D("UI.MainPages.TimingPage", string.Format("Saving file to: {0}", outFileName));
                     exporter.ExportData(outFileName);
                 }
@@ -1534,21 +1537,20 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         TimingFrame.Content = subPage;
     }
 
-    private void CreateHTML_Click(object? sender, RoutedEventArgs e)
+    private async void CreateHTML_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Create HTML clicked.");
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "HTML file (*.htm,*.html)|*.htm;*.html",
-            FileName = string.Format("{0} {1} Web.{2}", theEvent.YearCode, theEvent.Name, "html"),
-            InitialDirectory = database.GetAppSetting(Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog((Window)mWindow) == true)
+            FileTypeChoices = [Utils.HTMLType],
+            SuggestedFileName = string.Format("{0} {1} Web.{2}", theEvent!.YearCode, theEvent.Name, "html"),
+        });
+        if (file is not null)
         {
             List<TimeResult> finishResults = database.GetFinishTimes(theEvent!.Identifier);
             Dictionary<int, Participant> partDict = database.GetParticipants(theEvent.Identifier).ToDictionary(v => v.EventSpecific.Identifier, v => v);
             HtmlResultsTemplate template = new(theEvent, finishResults);
-            File.WriteAllText(saveFileDialog.FileName, template.TransformText());
+            File.WriteAllText(file.Name, template.TransformText());
             DialogBox.Show("File saved.");
         }
     }

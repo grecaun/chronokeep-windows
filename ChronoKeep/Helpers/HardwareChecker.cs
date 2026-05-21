@@ -8,21 +8,16 @@ using Chronokeep.UI.Parts;
 
 namespace Chronokeep.Helpers
 {
-    class HardwareChecker
+    class HardwareChecker(IDBInterface database)
     {
-        private IDBInterface database;
-
-        public HardwareChecker(IDBInterface database)
-        {
-            this.database = database;
-        }
+        private readonly IDBInterface database = database;
 
         public void Run()
         {
             try
             {
                 Log.D("Helpers.HardwareChecker", "Fetching hardware information.");
-                IHardwareInfo hardwareInfo = new HardwareInfo();
+                HardwareInfo hardwareInfo = new();
                 hardwareInfo.RefreshOperatingSystem();
                 hardwareInfo.RefreshCPUList(false, 10);
                 hardwareInfo.RefreshMemoryList();
@@ -52,7 +47,7 @@ namespace Chronokeep.Helpers
                 while (totalCapacity > 1024)
                 {
                     reductionNum++;
-                    totalCapacity = totalCapacity / 1024;
+                    totalCapacity /= 1024;
                 }
                 string byteType = reductionNum switch
                 {
@@ -74,7 +69,7 @@ namespace Chronokeep.Helpers
                 hardwareIDBuilder.Replace(' ', '_');
                 string hwID = hardwareIDBuilder.ToString();
                 Log.D("Helpers.HardwareChecker", $"Unique Identifier: '{hwID}'");
-                AppSetting hardwareSetting = database.GetAppSetting(Constants.Settings.HARDWARE_IDENTIFIER);
+                AppSetting hardwareSetting = database.GetAppSetting(Constants.Settings.HARDWARE_IDENTIFIER)!;
                 if (hardwareSetting != null)
                 {
                     if (!hardwareSetting.Value.Equals(hwID, StringComparison.OrdinalIgnoreCase))

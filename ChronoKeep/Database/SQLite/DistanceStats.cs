@@ -32,11 +32,11 @@ namespace Chronokeep.Database.SQLite
             while (reader.Read())
             {
                 int distanceId = Convert.ToInt32(reader["id"].ToString());
-                string distanceName = reader["name"].ToString();
+                string distanceName = reader["name"].ToString()!;
                 if (condense && int.TryParse(reader["linked_id"].ToString(), out int linked))
                 {
                     distanceId = linked;
-                    distanceName = reader["linked_name"].ToString();
+                    distanceName = reader["linked_name"].ToString()!;
                 }
                 statsDictionary.TryAdd(distanceId, new()
                 {

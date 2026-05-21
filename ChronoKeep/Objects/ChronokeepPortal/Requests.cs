@@ -59,7 +59,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public const string AUTO_UPLOAD_QUERY_STATUS = "status";
 
         [JsonPropertyName("command")]
-        public string Command { get; set; }
+        public string Command { get; set; } = "";
     }
 
     public enum AutoUploadQuery
@@ -79,13 +79,13 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         [JsonPropertyName("id")]
         public long ID { get; set; }
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         [JsonPropertyName("kind")]
-        public string Type { get; set; }
+        public string Type { get; set; } = "";
         [JsonPropertyName("uri")]
-        public string URI { get; set; }
+        public string URI { get; set; } = "";
         [JsonPropertyName("token")]
-        public string Token { get; set; }
+        public string Token { get; set; } = "";
     }
 
     public class ApiSaveAllRequest : Request
@@ -96,7 +96,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         }
 
         [JsonPropertyName("list")]
-        public List<PortalAPI> List { get; set; }
+        public List<PortalAPI> List { get; set; } = [];
     }
 
     public class ApiListRequest : Request
@@ -116,7 +116,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
 
         // AutoUploadQuery
         [JsonPropertyName("query")]
-        public string Query { get; set; }
+        public string Query { get; set; } = "";
     }
 
     public class ApiRemoteManualUploadRequest : Request
@@ -207,11 +207,11 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         [JsonPropertyName("id")]
         public long Id { get; set; }
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         [JsonPropertyName("kind")]
-        public string Type { get; set; }
+        public string Type { get; set; } = "";
         [JsonPropertyName("ip_address")]
-        public string IPAddress { get; set; }
+        public string IPAddress { get; set; } = "";
         [JsonPropertyName("port")]
         public uint Port { get; set; }
         [JsonPropertyName("auto_connect")]
@@ -305,7 +305,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         }
 
         [JsonPropertyName("read")]
-        public PortalRead Read { get; set; }
+        public PortalRead Read { get; set; } = new();
     }
 
     public class ReadsDeleteAllRequest : Request
@@ -358,7 +358,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         }
 
         [JsonPropertyName("settings")]
-        public List<PortalSetting> Settings { get; set; }
+        public List<PortalSetting> Settings { get; set; } = [];
     }
 
     public class SettingsGetRequest : Request 
@@ -404,6 +404,6 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         }
 
         [JsonPropertyName("time")]
-        public string Time { get; set; }
+        public string Time { get; set; } = "";
     }
 }

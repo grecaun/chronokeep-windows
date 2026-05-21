@@ -5,9 +5,9 @@ namespace Chronokeep.Objects
     public class AnnouncerParticipant(Participant person, long seconds)
     {
         private readonly long seconds = seconds;
-        private static Event tEvent = null;
+        private static Event? tEvent = null;
 
-        public static Event TheEvent { get => tEvent; set => tEvent = value; }
+        public static Event? TheEvent { get => tEvent; set => tEvent = value; }
         public Participant Person { get => person; }
         public DateTime When { get => Constants.Timing.RFIDEpochToDate(seconds); }
         public string AnnouncerWhen { get => this.When.ToString("HH:mm:ss"); }

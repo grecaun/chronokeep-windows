@@ -121,9 +121,9 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToDouble(reader["distance_segment"]),
                     Convert.ToDouble(reader["distance_cumulative"]),
                     Convert.ToInt32(reader["distance_unit"]),
-                    reader["name"].ToString(),
-                    reader["gps"].ToString(),
-                    reader["map_link"].ToString()
+                    reader["name"].ToString()!,
+                    reader["gps"].ToString()!,
+                    reader["map_link"].ToString()!
                     ));
             }
             reader.Close();
@@ -132,16 +132,14 @@ namespace Chronokeep.Database.SQLite
 
         internal static void ResetSegments(int eventId, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
-            {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "DELETE FROM segments WHERE event_id=@id";
-                command.Parameters.AddRange([
-                    new("@id", eventId) ]);
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "DELETE FROM segments WHERE event_id=@id";
+            command.Parameters.AddRange([
+                new("@id", eventId) ]);
+            command.ExecuteNonQuery();
+            transaction.Commit();
         }
 
         internal static int GetMaxSegments(int eventId, SQLiteConnection connection)

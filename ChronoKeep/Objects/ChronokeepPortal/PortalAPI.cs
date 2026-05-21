@@ -11,12 +11,12 @@ namespace Chronokeep.Objects.ChronokeepPortal
         [JsonPropertyName("id")]
         public long Id { get; set; }
         [JsonPropertyName("nickname")]
-        public string Nickname { get; set; }
+        public string Nickname { get; set; } = "";
         [JsonPropertyName("kind")]
-        public string Kind { get; set; }
+        public string Kind { get; set; } = "";
         [JsonPropertyName("token")]
-        public string Token { get; set; }
+        public string Token { get; set; } = "";
         [JsonPropertyName("uri")]
-        public string Uri { get; set; }
+        public string Uri { get; set; } = "";
     }
 }

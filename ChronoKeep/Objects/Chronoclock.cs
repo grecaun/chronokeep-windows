@@ -15,8 +15,8 @@ namespace Chronokeep.Objects
     public class Chronoclock
     {
         public int Identifier { get; set; }
-        public string Name { get; set; }
-        public string URL { get; set; }
+        public string Name { get; set; } = "";
+        public string URL { get; set; } = "";
         public bool Enabled { get; set; }
 
         public async Task<CountUpDownTimestampResponse> StartCountUp()
@@ -40,12 +40,12 @@ namespace Chronokeep.Objects
                 {
                     Log.D("Chronokeep.Objects.Chronoclock", "Status code = ok.");
                     string json = await response.Content.ReadAsStringAsync();
-                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json);
+                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json)!;
                     return result;
                 }
                 Log.D("Chronokeep.Objects.Chronoclock", "Status code = conflict.");
                 string eJson = await response.Content.ReadAsStringAsync();
-                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson);
+                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson)!;
                 content = eResult.Error;
             }
             catch (Exception ex)
@@ -77,12 +77,12 @@ namespace Chronokeep.Objects
                 {
                     Log.D("Chronokeep.Objects.Chronoclock", "Status code = ok.");
                     string json = await response.Content.ReadAsStringAsync();
-                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json);
+                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json)!;
                     return result;
                 }
                 Log.D("Chronokeep.Objects.Chronoclock", "Status code = conflict.");
                 string eJson = await response.Content.ReadAsStringAsync();
-                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson);
+                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson)!;
                 content = eResult.Error;
             }
             catch (Exception ex)
@@ -96,7 +96,7 @@ namespace Chronokeep.Objects
         public async Task<CountUpDownTimestampResponse> AdjustTime(int seconds)
         {
             Log.D("Chronokeep.Objects.Chronoclock", "AdjustTime");
-            if (this.URL == null || this.URL.Length == 0)
+            if (URL == null || URL.Length == 0)
             {
                 throw new APIException("url not set");
             }
@@ -107,7 +107,7 @@ namespace Chronokeep.Objects
                 string which = "/add_seconds";
                 if (seconds < 0)
                 {
-                    seconds = seconds * -1;
+                    seconds *= -1;
                     which = "/remove_seconds";
                 }
                 Dictionary<string, string> postContent = [];
@@ -123,12 +123,12 @@ namespace Chronokeep.Objects
                 {
                     Log.D("Chronokeep.Objects.Chronoclock", "Status code = ok.");
                     string json = await response.Content.ReadAsStringAsync();
-                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json);
+                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json)!;
                     return result;
                 }
                 Log.D("Chronokeep.Objects.Chronoclock", "Status code = conflict.");
                 string eJson = await response.Content.ReadAsStringAsync();
-                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson);
+                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson)!;
                 content = eResult.Error;
             }
             catch (Exception ex)
@@ -160,12 +160,12 @@ namespace Chronokeep.Objects
                 {
                     Log.D("Chronokeep.Objects.Chronoclock", "Status code = ok.");
                     string json = await response.Content.ReadAsStringAsync();
-                    GetTimeResponse result = JsonSerializer.Deserialize<GetTimeResponse>(json);
+                    GetTimeResponse result = JsonSerializer.Deserialize<GetTimeResponse>(json)!;
                     return result;
                 }
                 Log.D("Chronokeep.Objects.Chronoclock", "Status code = conflict.");
                 string eJson = await response.Content.ReadAsStringAsync();
-                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson);
+                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson)!;
                 content = eResult.Error;
             }
             catch (Exception ex)
@@ -197,12 +197,12 @@ namespace Chronokeep.Objects
                 {
                     Log.D("Chronokeep.Objects.Chronoclock", "Status code = ok.");
                     string json = await response.Content.ReadAsStringAsync();
-                    GetConfigResponse result = JsonSerializer.Deserialize<GetConfigResponse>(json);
+                    GetConfigResponse result = JsonSerializer.Deserialize<GetConfigResponse>(json)!;
                     return result;
                 }
                 Log.D("Chronokeep.Objects.Chronoclock", "Status code = conflict.");
                 string eJson = await response.Content.ReadAsStringAsync();
-                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson);
+                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson)!;
                 content = eResult.Error;
             }
             catch (Exception ex)
@@ -237,12 +237,12 @@ namespace Chronokeep.Objects
                 {
                     Log.D("Chronokeep.Objects.Chronoclock", "Status code = ok.");
                     string json = await response.Content.ReadAsStringAsync();
-                    GetTimeResponse result = JsonSerializer.Deserialize<GetTimeResponse>(json);
+                    GetTimeResponse result = JsonSerializer.Deserialize<GetTimeResponse>(json)!;
                     return result;
                 }
                 Log.D("Chronokeep.Objects.Chronoclock", "Status code = conflict.");
                 string eJson = await response.Content.ReadAsStringAsync();
-                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson);
+                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson)!;
                 content = eResult.Error;
             }
             catch (Exception ex)
@@ -277,12 +277,12 @@ namespace Chronokeep.Objects
                 {
                     Log.D("Chronokeep.Objects.Chronoclock", "Status code = ok.");
                     string json = await response.Content.ReadAsStringAsync();
-                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json);
+                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json)!;
                     return result;
                 }
                 Log.D("Chronokeep.Objects.Chronoclock", "Status code = conflict.");
                 string eJson = await response.Content.ReadAsStringAsync();
-                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson);
+                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson)!;
                 content = eResult.Error;
             }
             catch (Exception ex)
@@ -317,12 +317,12 @@ namespace Chronokeep.Objects
                 {
                     Log.D("Chronokeep.Objects.Chronoclock", "Status code = ok.");
                     string json = await response.Content.ReadAsStringAsync();
-                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json);
+                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json)!;
                     return result;
                 }
                 Log.D("Chronokeep.Objects.Chronoclock", "Status code = conflict.");
                 string eJson = await response.Content.ReadAsStringAsync();
-                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson);
+                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson)!;
                 content = eResult.Error;
             }
             catch (Exception ex)
@@ -357,12 +357,12 @@ namespace Chronokeep.Objects
                 {
                     Log.D("Chronokeep.Objects.Chronoclock", "Status code = ok.");
                     string json = await response.Content.ReadAsStringAsync();
-                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json);
+                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json)!;
                     return result;
                 }
                 Log.D("Chronokeep.Objects.Chronoclock", "Status code = conflict.");
                 string eJson = await response.Content.ReadAsStringAsync();
-                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson);
+                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson)!;
                 content = eResult.Error;
             }
             catch (Exception ex)
@@ -397,12 +397,12 @@ namespace Chronokeep.Objects
                 {
                     Log.D("Chronokeep.Objects.Chronoclock", "Status code = ok.");
                     string json = await response.Content.ReadAsStringAsync();
-                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json);
+                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json)!;
                     return result;
                 }
                 Log.D("Chronokeep.Objects.Chronoclock", "Status code = conflict.");
                 string eJson = await response.Content.ReadAsStringAsync();
-                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson);
+                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson)!;
                 content = eResult.Error;
             }
             catch (Exception ex)
@@ -437,12 +437,12 @@ namespace Chronokeep.Objects
                 {
                     Log.D("Chronokeep.Objects.Chronoclock", "Status code = ok.");
                     string json = await response.Content.ReadAsStringAsync();
-                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json);
+                    CountUpDownTimestampResponse result = JsonSerializer.Deserialize<CountUpDownTimestampResponse>(json)!;
                     return result;
                 }
                 Log.D("Chronokeep.Objects.Chronoclock", "Status code = conflict.");
                 string eJson = await response.Content.ReadAsStringAsync();
-                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson);
+                ChronoclockErrorResponse eResult = JsonSerializer.Deserialize<ChronoclockErrorResponse>(eJson)!;
                 content = eResult.Error;
             }
             catch (Exception ex)
@@ -457,17 +457,17 @@ namespace Chronokeep.Objects
     public class GetConfigResponse
     {
         [JsonPropertyName("mdns")]
-        public string MDNS { get; set; }
+        public string MDNS { get; set; } = "";
         [JsonPropertyName("apSsid")]
-        public string ApSSID { get; set; }
+        public string ApSSID { get; set; } = "";
         [JsonPropertyName("apPassword")]
-        public string ApPassword { get; set; }
+        public string ApPassword { get; set; } = "";
         [JsonPropertyName("ssids")]
-        public List<string> SSIDs { get; set; }
+        public List<string> SSIDs { get; set; } = [];
         [JsonPropertyName("passwords")]
-        public List<string> Passwords { get; set; }
+        public List<string> Passwords { get; set; } = [];
         [JsonPropertyName("timeZone")]
-        public string TimeZone { get; set; }
+        public string TimeZone { get; set; } = "";
         [JsonPropertyName("brightness")]
         public uint Brightness {  get; set; }
         [JsonPropertyName("flipDisplay")]
@@ -477,9 +477,9 @@ namespace Chronokeep.Objects
         [JsonPropertyName("lockCountUpDown")]
         public bool LockCountUpDown { get; set; }
         [JsonPropertyName("ntpServer1")]
-        public string NtpServer1 { get; set; }
+        public string NtpServer1 { get; set; } = "";
         [JsonPropertyName("ntpServer2")]
-        public string NtpServer2 { get; set; }
+        public string NtpServer2 { get; set; } = "";
         [JsonPropertyName("countupdownTimestamp")]
         public long CountUpDownTimestamp { get; set; }
     }
@@ -487,7 +487,7 @@ namespace Chronokeep.Objects
     public class GetTimeResponse
     {
         [JsonPropertyName("time")]
-        public string Time { get; set; }
+        public string Time { get; set; } = "";
     }
 
     public class CountUpDownTimestampResponse
@@ -507,6 +507,6 @@ namespace Chronokeep.Objects
     public class ChronoclockErrorResponse
     {
         [JsonPropertyName("error")]
-        public string Error { get; set; }
+        public string Error { get; set; } = "";
     }
 }

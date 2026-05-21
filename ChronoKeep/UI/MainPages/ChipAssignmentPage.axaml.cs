@@ -9,9 +9,7 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.ChipAssignment;
-using Chronokeep.UI.IO;
 using Chronokeep.UI.Parts;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -301,7 +299,7 @@ public partial class ChipAssignmentPage : UserControl, IMainPage
             FileTypeFilter = [ Utils.ExcelType, FilePickerFileTypes.All ],
             AllowMultiple = false,
         });
-        if (files.Count > 1)
+        if (files.Count > 0)
         {
             string ext = Path.GetExtension(files[0].Name);
             try

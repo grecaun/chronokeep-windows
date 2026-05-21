@@ -43,17 +43,15 @@ namespace Chronokeep.Database.SQLite
 
         internal static void RemoveAPI(int identifier, SQLiteConnection connection)
         {
-            using (var transaction = connection.BeginTransaction())
-            {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "UPDATE events SET api_id=-1, api_event_id='' WHERE api_id=@id; DELETE FROM results_api WHERE api_id=@id;";
-                command.Parameters.Add(("@id", identifier));
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
+            using var transaction = connection.BeginTransaction();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE events SET api_id=-1, api_event_id='' WHERE api_id=@id; DELETE FROM results_api WHERE api_id=@id;";
+            command.Parameters.Add(("@id", identifier));
+            command.ExecuteNonQuery();
+            transaction.Commit();
         }
 
-        internal static APIObject GetAPI(int identifier, SQLiteConnection connection)
+        internal static APIObject? GetAPI(int identifier, SQLiteConnection connection)
         {
             if (identifier < 0)
             {
@@ -63,16 +61,16 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "SELECT * FROM results_api WHERE api_id=@id";
             command.Parameters.Add(new("@id", identifier));
             SQLiteDataReader reader = command.ExecuteReader();
-            APIObject output = null;
+            APIObject? output = null;
             if (reader.Read())
             {
                 output = new APIObject(
                     Convert.ToInt32(reader["api_id"]),
-                    reader["api_type"].ToString(),
-                    reader["api_url"].ToString(),
-                    reader["api_nickname"].ToString(),
-                    reader["api_auth_token"].ToString(),
-                    reader["api_web_url"].ToString()
+                    reader["api_type"].ToString()!,
+                    reader["api_url"].ToString()!,
+                    reader["api_nickname"].ToString()!,
+                    reader["api_auth_token"].ToString()!,
+                    reader["api_web_url"].ToString()!
                     );
             }
             reader.Close();
@@ -89,11 +87,11 @@ namespace Chronokeep.Database.SQLite
             {
                 output.Add(new APIObject(
                     Convert.ToInt32(reader["api_id"]),
-                    reader["api_type"].ToString(),
-                    reader["api_url"].ToString(),
-                    reader["api_nickname"].ToString(),
-                    reader["api_auth_token"].ToString(),
-                    reader["api_web_url"].ToString()
+                    reader["api_type"].ToString()!,
+                    reader["api_url"].ToString()!,
+                    reader["api_nickname"].ToString()!,
+                    reader["api_auth_token"].ToString()!,
+                    reader["api_web_url"].ToString()!
                     ));
             }
             reader.Close();

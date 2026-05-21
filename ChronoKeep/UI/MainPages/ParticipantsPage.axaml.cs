@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.IO;
@@ -8,10 +10,10 @@ using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.UI.Import;
-using Chronokeep.UI.IO;
 using Chronokeep.UI.Participants;
 using Chronokeep.UI.Parts;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -23,7 +25,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
     private readonly List<Participant> participants = [];
     private readonly List<Participant> conflicts = [];
 
@@ -180,7 +182,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         DistanceBox.SelectedIndex = 0;
     }
 
-    public void UpdateDatabase() { }
+    public static void UpdateDatabase() { }
 
     public void Keyboard_Ctrl_A()
     {
@@ -193,7 +195,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
 
     public void Closing()
     {
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }
@@ -202,12 +204,12 @@ public partial class ParticipantsPage : UserControl, IMainPage
     public async void DownloadParticipants()
     {
         // Get API to upload.
-        if (theEvent.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
+        if (theEvent!.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
         {
             Download.Content = "Download";
             return;
         }
-        APIObject api = database.GetAPI(theEvent.API_ID);
+        APIObject api = database.GetAPI(theEvent.API_ID)!;
         string[] event_ids = theEvent.API_Event_ID.Split(',');
         if (event_ids.Length != 2)
         {
@@ -235,7 +237,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
             Dictionary<string, Participant> partESDictionary = [];
             Dictionary<string, Distance> distDictionary = [];
             string uniqueID = "";
-            AppSetting programID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
+            AppSetting programID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER)!;
             if (programID != null)
             {
                 uniqueID = string.Format("{0}-", programID.Value);
@@ -251,7 +253,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
             }
             foreach (APIPerson person in newPersons)
             {
-                if (!distDictionary.TryGetValue(person.Distance.ToLower(), out Distance dist))
+                if (!distDictionary.TryGetValue(person.Distance.ToLower(), out Distance? dist))
                 {
                     distDictionary[person.Distance.ToLower()] = new(person.Distance, theEvent.Identifier);
                     database.AddDistance(new(person.Distance, theEvent.Identifier));
@@ -268,9 +270,9 @@ public partial class ParticipantsPage : UserControl, IMainPage
             {
                 person.Trim();
                 person.FormatData();
-                if (distDictionary.TryGetValue(person.Distance.ToLower(), out Distance distance))
+                if (distDictionary.TryGetValue(person.Distance.ToLower(), out Distance? distance))
                 {
-                    if (partESDictionary.TryGetValue(person.Identifier, out Participant old) && old != null && old.IsSimilar(person))
+                    if (partESDictionary.TryGetValue(person.Identifier, out Participant? old) && old != null && old.IsSimilar(person))
                     {
                         // Only update if a bib exists and it has not been updated in the software since it was uploaded
                         // Uploaded Version should equal Version, Version will be higher if it was updated after upload.
@@ -324,7 +326,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
                             partsToUpdate.Add(newPart);
                         }
                     }
-                    else if (partDictionary.TryGetValue((person.First, person.Last, person.Birthdate, person.Distance.ToLower()), out Participant oldTwo))
+                    else if (partDictionary.TryGetValue((person.First, person.Last, person.Birthdate, person.Distance.ToLower()), out Participant? oldTwo))
                     {
                         // Only update if a bib exists and it has not been updated in the software since it was uploaded
                         // Uploaded Version should equal Version, Version will be higher if it was updated after upload.
@@ -370,7 +372,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
                                 oldTwo.ECPhone
                                 );
                             // Check if we've updated the Bib.
-                            if (old.Bib.Length > 0 && !oldTwo.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase))
+                            if (old!.Bib.Length > 0 && !oldTwo.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase))
                             {
                                 conflicts.Add(oldTwo);
                                 conflicts.Add(newPart);
@@ -431,7 +433,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
             {
                 if (part.Bib.Length > 0)
                 {
-                    if (knownBibs.TryGetValue(part.Bib, out Participant known))
+                    if (knownBibs.TryGetValue(part.Bib, out Participant? known))
                     {
                         if (!part.IsSimilar(known))
                         {
@@ -449,7 +451,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
             {
                 if (part.Bib.Length > 0)
                 {
-                    if (knownBibs.TryGetValue(part.Bib, out Participant known))
+                    if (knownBibs.TryGetValue(part.Bib, out Participant? known))
                     {
                         if (!part.IsSimilar(known))
                         {
@@ -467,7 +469,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
             {
                 if (part.Bib.Length > 0)
                 {
-                    if (knownBibs.TryGetValue(part.Bib, out Participant known))
+                    if (knownBibs.TryGetValue(part.Bib, out Participant? known))
                     {
                         if (!part.IsSimilar(known))
                         {
@@ -495,12 +497,12 @@ public partial class ParticipantsPage : UserControl, IMainPage
     private async void UploadParticipants()
     {
         // Get API to upload.
-        if (theEvent.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
+        if (theEvent!.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
         {
             Upload.Content = "Upload";
             return;
         }
-        APIObject api = database.GetAPI(theEvent.API_ID);
+        APIObject api = database.GetAPI(theEvent.API_ID)!;
         string[] event_ids = theEvent.API_Event_ID.Split(',');
         if (event_ids.Length != 2)
         {
@@ -521,7 +523,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         List<BibChip> upBibChips = [];
         Log.D("UI.MainPages.ParticipantsPage", "Participants count: " + participants.Count.ToString());
         string uniqueID = "";
-        AppSetting programID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
+        AppSetting programID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER)!;
         if (programID != null)
         {
             uniqueID = string.Format("{0}-", programID.Value);
@@ -631,31 +633,35 @@ public partial class ParticipantsPage : UserControl, IMainPage
         Upload.Content = "Upload";
     }
 
-    private void Import_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Import_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Import Excel clicked.");
-        OpenFileDialog open_dialog = new() { Filter = "Excel files (*.xlsx,*.xls,*.csv)|*.xlsx;*.xls;*.csv|All files|*" };
-        if (open_dialog.ShowDialog((Window)mWindow) == true)
+        var files = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            string ext = Path.GetExtension(open_dialog.FileName);
+            FileTypeFilter = [Utils.ExcelType, FilePickerFileTypes.All],
+            AllowMultiple = false,
+        });
+        if (files.Count > 0)
+        {
+            string ext = Path.GetExtension(files[0].Name);
             Log.D("UI.MainPages.ParticipantsPage", $"Extension found: {ext}");
             try
             {
                 IDataImporter importer;
                 if (ext == ".xlsx" || ext == ".xls")
                 {
-                    importer = new ExcelImporter(open_dialog.FileName);
+                    importer = new ExcelImporter(files[0].Name);
                 }
                 else
                 {
-                    importer = new CSVImporter(open_dialog.FileName);
+                    importer = new CSVImporter(files[0].Name);
                 }
                 importer.FetchHeaders();
                 ImportFileWindow importWindow = ImportFileWindow.NewWindow(mWindow, importer, database);
                 if (importWindow != null)
                 {
                     mWindow.AddWindow(importWindow);
-                    importWindow.ShowDialog((Window)mWindow);
+                    _ = importWindow.ShowDialog((Window)mWindow);
                 }
             }
             catch (Exception ex)
@@ -666,16 +672,15 @@ public partial class ParticipantsPage : UserControl, IMainPage
         }
     }
 
-    private async void Export_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Export_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Export clicked.");
-        SaveFileDialog saveFileDialog = new()
+        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
-            FileName = string.Format("{0} {1} Entrants.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        if (saveFileDialog.ShowDialog((Window)mWindow) == true)
+            FileTypeChoices = [Utils.ExcelType],
+            SuggestedFileName = string.Format("{0} {1} Entrants.{2}", theEvent!.YearCode, theEvent.Name, "xlsx"),
+        });
+        if (file is not null)
         {
             if (theEvent != null)
             {
@@ -746,8 +751,8 @@ public partial class ParticipantsPage : UserControl, IMainPage
                                 p.Apparel,
                             ]);
                     }
-                    IDataExporter exporter = null;
-                    string extension = Path.GetExtension(saveFileDialog.FileName);
+                    IDataExporter? exporter = null;
+                    string extension = Path.GetExtension(file.Name);
                     Log.D("UI.MainPages.ParticipantsPage", string.Format("Extension is '{0}'", extension));
                     if (extension.Contains("xls", StringComparison.CurrentCulture))
                     {
@@ -769,7 +774,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
                     if (exporter != null)
                     {
                         exporter.SetData(headers, data);
-                        exporter.ExportData(saveFileDialog.FileName);
+                        exporter.ExportData(file.Name);
                     }
                 });
                 DialogBox.Show("File saved.");
@@ -777,7 +782,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         }
     }
 
-    private void Upload_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Upload_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Upload clicked.");
         if (Upload.Content!.ToString() != "Working")
@@ -790,7 +795,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         Log.D("UI.MainPages.ParticipantsPage", "Already uploading.");
     }
 
-    private void Download_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Download_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Download clicked.");
         if (Download.Content!.ToString() != "Working")
@@ -803,7 +808,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         Log.D("UI.MainPages.ParticipantsPage", "Already downloading.");
     }
 
-    private async void Delete_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Delete_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Delete clicked.");
         if (Delete.Content!.ToString() != "Working")
@@ -813,12 +818,12 @@ public partial class ParticipantsPage : UserControl, IMainPage
             APIObject? api = null;
             try
             {
-                api = database.GetAPI(theEvent.API_ID);
+                api = database.GetAPI(theEvent!.API_ID);
                 Log.D("UI.MainPages.ParticipantsPage", "API found.");
             }
             catch { }
             // Get the event id values. Exit if not valid.
-            string[] event_ids = theEvent.API_Event_ID.Split(',');
+            string[] event_ids = theEvent!.API_Event_ID.Split(',');
             // Create a bool for checking if we've grabbed the APIController's lock so we release it later
             if (event_ids.Length == 2)
             {
@@ -839,7 +844,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         Log.D("UI.MainPages.ParticipantsPage", "Already deleting.");
     }
 
-    private void ConflictsBtn_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void ConflictsBtn_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Conflicts clicked.");
         ParticipantConflicts conflictWindow = ParticipantConflicts.NewWindow(mWindow, conflicts);
@@ -881,7 +886,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         Log.D("UI.MainPages.ParticipantsPage", "Done");
     }
 
-    private void Modify_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Modify_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Modify clicked.");
         List<Participant> selected = [];
@@ -897,7 +902,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
             changeMultiParticipantWindow.ShowDialog((Window)mWindow);
             return;
         }
-        Participant part = null;
+        Participant? part = null;
         foreach (Participant p in selected)
         {
             part = p;
@@ -911,7 +916,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         }
     }
 
-    private void Add_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Add_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Add clicked.");
         ModifyParticipantWindow addParticipant = ModifyParticipantWindow.NewWindow(mWindow, database);
@@ -943,7 +948,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         ParticipantsList.ItemsSource = newParts;
     }
 
-    private void Remove_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Remove_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Remove clicked.");
         IList selected = ParticipantsList.SelectedItems;
@@ -956,7 +961,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         UpdateView();
     }
 
-    private void ParticipantsList_MouseDoubleClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void ParticipantsList_MouseDoubleClick(object sender, RoutedEventArgs e)
     {
         if (ParticipantsList.SelectedItem == null) return;
         ModifyParticipantWindow modifyParticipant = ModifyParticipantWindow.NewWindow(mWindow, database, (Participant)ParticipantsList.SelectedItem);

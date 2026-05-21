@@ -2,7 +2,7 @@
 {
     public class DistanceStat
     {
-        public string DistanceName { get; set; }
+        public string DistanceName { get; set; } = "";
         public int DistanceID { get; set; }
         public int Total { get => DNF + DNS + Finished + Active; }
         public int DNF { get; set; }

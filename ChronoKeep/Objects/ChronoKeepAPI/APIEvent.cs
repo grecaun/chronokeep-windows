@@ -6,23 +6,23 @@ namespace Chronokeep.Objects.ChronoKeepAPI
     public class APIEvent
     {
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         [JsonPropertyName("cert_name")]
-        public string CertificateName { get; set; }
+        public string CertificateName { get; set; } = "";
         [JsonPropertyName("slug")]
-        public string Slug { get; set; }
+        public string Slug { get; set; } = "";
         [JsonPropertyName("website")]
-        public string Website { get; set; }
+        public string Website { get; set; } = "";
         [JsonPropertyName("image")]
-        public string Image { get; set; }
+        public string Image { get; set; } = "";
         [JsonPropertyName("contact_email")]
-        public string ContactEmail { get; set; }
+        public string ContactEmail { get; set; } = "";
         [JsonPropertyName("access_restricted")]
         public bool AccessRestricted { get; set; }
         [JsonPropertyName("type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = "";
         [JsonPropertyName("recent_time")]
-        public string RecentTime { get; set; }
+        public string RecentTime { get; set; } = "";
 
         public int CompareTo(APIEvent other)
         {
