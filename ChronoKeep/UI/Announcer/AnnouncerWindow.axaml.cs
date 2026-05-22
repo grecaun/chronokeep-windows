@@ -18,7 +18,7 @@ public partial class AnnouncerWindow : Window
     private readonly Thread announcerThread;
     private readonly IDBInterface database;
 
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
 
     public AnnouncerWindow(IMainWindow window, IDBInterface database)
     {
@@ -37,18 +37,13 @@ public partial class AnnouncerWindow : Window
     private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
         Log.D("UI.Announcer.AnnouncerWindow", "Announcer window is closing!");
-        if (announcerWorker != null)
-        {
-            AnnouncerWorker.Shutdown();
-        }
-        if (window != null)
-        {
-            window.AnnouncerClosing();
-        }
+        AnnouncerWorker.Shutdown();
+        window?.AnnouncerClosing();
     }
 
     public void UpdateTiming()
     {
+        if (theEvent == null) { return; }
         List<RemoteReader> readers = database.GetRemoteReaders(theEvent.Identifier);
         bool remote_announcer = false;
         foreach (RemoteReader reader in readers)
@@ -88,6 +83,7 @@ public partial class AnnouncerWindow : Window
 
     public void UpdateView()
     {
+        if (theEvent == null) { return; }
         List<RemoteReader> readers = database.GetRemoteReaders(theEvent.Identifier);
         bool remote_announcer = false;
         foreach (RemoteReader reader in readers)

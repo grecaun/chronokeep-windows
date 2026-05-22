@@ -36,7 +36,7 @@ public partial class SetTimeWindow : Window
 
     private void Check_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        timingSystem.SystemInterface.GetTime();
+        timingSystem.SystemInterface!.GetTime();
     }
 
     private void Set_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -51,11 +51,11 @@ public partial class SetTimeWindow : Window
         }
         else if (NowTimeRadioButton.IsChecked == true)
         {
-            timingSystem.SystemInterface.SetTime(DateTime.Now);
+            timingSystem.SystemInterface!.SetTime(DateTime.Now);
         }
         else
         {
-            timingSystem.SystemInterface.SetTime(alternateDate);
+            timingSystem.SystemInterface!.SetTime(alternateDate);
         }
     }
 

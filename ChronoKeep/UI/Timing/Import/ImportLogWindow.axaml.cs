@@ -34,7 +34,7 @@ public partial class ImportLogWindow : Window
         this.MinWidth = 100;
         this.Width = 300;
         this.Height = 250;
-        theEvent = database.GetCurrentEvent();
+        theEvent = database.GetCurrentEvent()!;
         List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
         if (!theEvent.CommonStartFinish)
         {
@@ -90,14 +90,14 @@ public partial class ImportLogWindow : Window
         await Task.Run(() =>
         {
             importer.FetchData();
-            ImportData data = importer.Data;
+            ImportData data = importer.Data!;
             int chip = ChipColumn, time = TimeColumn;
             locationId = iLocationId != Constants.Timing.LOCATION_DUMMY ? iLocationId : locationId;
-            List<ChipRead> chipreads = new();
+            List<ChipRead> chipreads = [];
             if (type == LogImporter.Type.IPICO)
             {
                 DateTime date = DateTime.ParseExact(data.Headers[1].Substring(20, 12), "yyMMddHHmmss", CultureInfo.InvariantCulture);
-                int.TryParse(data.Headers[1].Substring(32, 2), NumberStyles.HexNumber, null, out int milliseconds);
+                int.TryParse(data.Headers[1].AsSpan(32, 2), NumberStyles.HexNumber, null, out int milliseconds);
                 milliseconds *= 10;
                 date = date.AddMilliseconds(milliseconds);
                 chipreads.Add(new(
@@ -112,7 +112,7 @@ public partial class ImportLogWindow : Window
                 for (int counter = 0; counter < numEntries; counter++)
                 {
                     date = DateTime.ParseExact(data.Data[counter][1].Substring(20, 12), "yyMMddHHmmss", CultureInfo.InvariantCulture);
-                    int.TryParse(data.Data[counter][1].Substring(32, 2), NumberStyles.HexNumber, null, out milliseconds);
+                    _ = int.TryParse(data.Data[counter][1].AsSpan(32, 2), NumberStyles.HexNumber, null, out milliseconds);
                     milliseconds *= 10;
                     date = date.AddMilliseconds(milliseconds);
                     chipreads.Add(new(
@@ -156,7 +156,7 @@ public partial class ImportLogWindow : Window
             {
                 if (type == LogImporter.Type.RFID)
                 {
-                    if (importer.Data.Headers.Length < 4)
+                    if (importer.Data!.Headers.Length < 4)
                     {
                         chip = 1;
                         time = 2;

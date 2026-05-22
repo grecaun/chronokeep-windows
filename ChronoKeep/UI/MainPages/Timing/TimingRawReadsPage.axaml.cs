@@ -16,7 +16,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
 {
     private readonly IDBInterface database;
     private readonly ITimingPage parent;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
     private readonly IMainWindow mWindow;
 
     private readonly List<ChipRead> chipReads = [];
@@ -62,7 +62,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         PeopleType peopleType = parent.GetPeopleType();
         string location = parent.GetLocation();
         string readerName = parent.GetReader();
-        reads.AddRange(database.GetChipReads(theEvent.Identifier));
+        reads.AddRange(database.GetChipReads(theEvent!.Identifier));
         chipReads.Clear();
         chipReads.AddRange(reads);
         HashSet<string> readerNames = [];
@@ -105,7 +105,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
 
     public void Closing() { }
 
-    public void UpdateDatabase() { }
+    public static void UpdateDatabase() { }
 
     public void Keyboard_Ctrl_A() { }
 
@@ -115,7 +115,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
 
     public void EditSelected() { }
 
-    private void SortWorker(
+    private static void SortWorker(
         List<ChipRead> reads,
         SortType sortType,
         PeopleType peopleType,
@@ -280,7 +280,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
                     readsToDelete.Add(read);
                 }
                 database.DeleteChipReads(readsToDelete);
-                database.ResetTimingResultsEvent(theEvent.Identifier);
+                database.ResetTimingResultsEvent(theEvent!.Identifier);
                 if (parent is TimingPage)
                 {
                     PrivateUpdateView();
@@ -332,7 +332,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
             newChipReads.Add(read);
         }
         database.SetChipReadStatuses(newChipReads);
-        database.ResetTimingResultsEvent(theEvent.Identifier);
+        database.ResetTimingResultsEvent(theEvent!.Identifier);
         if (parent is TimingPage)
         {
             PrivateUpdateView();
@@ -363,7 +363,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
             newChipReads.Add(read);
         }
         database.SetChipReadStatuses(newChipReads);
-        database.ResetTimingResultsEvent(theEvent.Identifier);
+        database.ResetTimingResultsEvent(theEvent!.Identifier);
         if (parent is TimingPage)
         {
             PrivateUpdateView();
@@ -394,7 +394,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
             newChipReads.Add(read);
         }
         database.SetChipReadStatuses(newChipReads);
-        database.ResetTimingResultsEvent(theEvent.Identifier);
+        database.ResetTimingResultsEvent(theEvent!.Identifier);
         if (parent is TimingPage)
         {
             PrivateUpdateView();

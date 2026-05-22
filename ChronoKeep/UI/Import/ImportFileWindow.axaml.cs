@@ -99,7 +99,7 @@ public partial class ImportFileWindow : Window
         this.window = window;
         this.database = database;
         theEvent = database.GetCurrentEvent();
-        if (importer.Data.Type == ImportData.FileType.EXCEL)
+        if (importer.Data!.Type == ImportData.FileType.EXCEL)
         {
             SheetsBox.ItemsSource = ((ExcelImporter)importer).SheetNames;
             SheetsBox.SelectedIndex = 0;
@@ -130,7 +130,7 @@ public partial class ImportFileWindow : Window
                 keys[item.HeaderBox.SelectedIndex] = item.Index;
             }
         }
-        ImportData data = importer.Data;
+        ImportData data = importer.Data!;
         string[] distancesFromFile = data.GetDistanceNames(keys[DISTANCE]);
         if (distancesFromFile.Length <= 0)
         {
@@ -175,7 +175,7 @@ public partial class ImportFileWindow : Window
         HashSet<Participant> multiples = [];
         await Task.Run(() =>
         {
-            ImportData data = importer.Data;
+            ImportData data = importer.Data!;
             int thisYear = DateTime.Parse(theEvent.Date).Year;
             Dictionary<string, Distance> divHashName = [];
             Dictionary<int, Distance> divHashId = [];

@@ -85,7 +85,7 @@ public partial class DistanceStatsPage : UserControl, ISubPage
                     Dictionary<int, List<Participant>> partDictLinked = database.GetDistanceParticipantsStatus(theEvent.Identifier, d.Identifier);
                     foreach (int status in partDictLinked.Keys)
                     {
-                        if (!partDict.TryGetValue(status, out List<Participant> pList))
+                        if (!partDict.TryGetValue(status, out List<Participant>? pList))
                         {
                             pList = [];
                         }
@@ -105,12 +105,12 @@ public partial class DistanceStatsPage : UserControl, ISubPage
                 lastSeenDictionary[timeResult.Bib] = timeResult;
             }
         }
-        if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_STARTED, out List<Participant> oActiveList)) // ACTIVE
+        if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_STARTED, out List<Participant>? oActiveList)) // ACTIVE
         {
             activePanel.IsVisible = true;
             foreach (Participant p in oActiveList)
             {
-                bool lastSeenExists = lastSeenDictionary.TryGetValue(p.Bib, out TimeResult oLastSeenRes);
+                bool lastSeenExists = lastSeenDictionary.TryGetValue(p.Bib, out TimeResult? oLastSeenRes);
                 string lastSeen = lastSeenExists ? oLastSeenRes!.SegmentName : "";
                 string lastSeenTime = lastSeenExists ? oLastSeenRes!.SysTime : "";
                 activeParticipants.Add(new(p, lastSeen, lastSeenTime));
@@ -120,7 +120,7 @@ public partial class DistanceStatsPage : UserControl, ISubPage
         {
             activePanel.IsVisible = false;
         }
-        if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_DNS, out List<Participant> oDNSList)) // DNS
+        if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_DNS, out List<Participant>? oDNSList)) // DNS
         {
             dnsPanel.IsVisible = true;
             foreach (Participant p in oDNSList)
@@ -132,7 +132,7 @@ public partial class DistanceStatsPage : UserControl, ISubPage
         {
             dnsPanel.IsVisible = false;
         }
-        if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_UNKNOWN, out List<Participant> oUnknownList)) // UNKOWN
+        if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_UNKNOWN, out List<Participant>? oUnknownList)) // UNKOWN
         {
             unknownPanel.IsVisible = true;
             foreach (Participant p in oUnknownList)
@@ -144,7 +144,7 @@ public partial class DistanceStatsPage : UserControl, ISubPage
         {
             unknownPanel.IsVisible = false;
         }
-        if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_DNF, out List<Participant> oDNFList)) // DNF
+        if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_DNF, out List<Participant>? oDNFList)) // DNF
         {
             dnfPanel.IsVisible = true;
             foreach (Participant p in oDNFList)
@@ -156,7 +156,7 @@ public partial class DistanceStatsPage : UserControl, ISubPage
         {
             dnfPanel.IsVisible = false;
         }
-        if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_FINISHED, out List<Participant> oFinishedList)) // FINISHED
+        if (partDict.TryGetValue(Constants.Timing.EVENTSPECIFIC_FINISHED, out List<Participant>? oFinishedList)) // FINISHED
         {
             finishedPanel.IsVisible = true;
             foreach (Participant p in oFinishedList)

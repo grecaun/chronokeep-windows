@@ -22,7 +22,7 @@ namespace Chronokeep.UI;
 public partial class MinWindow : Window, IMainWindow
 {
     private readonly MemStore.MemStore? database;
-    private readonly IMainPage? page;
+    private readonly MinTimingPage? page;
     private readonly string dbName = "Chronokeep.sqlite";
 
     // Timing objects.
@@ -285,7 +285,7 @@ public partial class MinWindow : Window, IMainWindow
     {
         Application.Current!.Dispatcher.Invoke(new Action(delegate ()
         {
-            if (!system.SystemInterface.WasShutdown())
+            if (!system.SystemInterface!.WasShutdown())
             {
                 DialogBox.Show(string.Format("Reader at {0} has unexpectedly disconnected. IP Address was {1}.", system.LocationName, system.IPAddress));
             }
@@ -370,10 +370,7 @@ public partial class MinWindow : Window, IMainWindow
             // Let the announcer window know that it has new information.
             Application.Current!.Dispatcher.Invoke(new Action(delegate ()
             {
-                if (page is TimingPage)
-                {
-                    page.UpdateView();
-                }
+                page?.UpdateView();
             }));
         }));
         newThread.Start();

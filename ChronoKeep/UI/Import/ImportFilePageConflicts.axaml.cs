@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.Import;
 
@@ -19,7 +20,7 @@ public partial class ImportFilePageConflicts : UserControl
     public List<Participant> GetParticipantsToRemove()
     {
         List<Participant> output = [];
-        foreach (MultipleEntryPart item in multiplesListBox.Items)
+        foreach (MultipleEntryPart item in multiplesListBox.Items.Cast<MultipleEntryPart>())
         {
             if (item.Keep.IsChecked == false)
             {

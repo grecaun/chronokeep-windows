@@ -82,7 +82,7 @@ public partial class SegmentsPage : UserControl, IMainPage
         }
         else
         {
-            DistanceSegmentHolderPart newHolder = new(theEvent, this, null, distances, allSegments[Constants.Timing.COMMON_SEGMENTS_DISTANCEID], locations);
+            DistanceSegmentHolderPart newHolder = new(theEvent, this, null, distances!, allSegments[Constants.Timing.COMMON_SEGMENTS_DISTANCEID], locations!);
             items.Add(newHolder);
             foreach (UserControl item in newHolder.SegmentItems)
             {
@@ -178,20 +178,20 @@ public partial class SegmentsPage : UserControl, IMainPage
 
     public void Closing()
     {
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
             bool occurrence_error = false;
             foreach (object? seg in SegmentsBox.Items)
             {
-                if (seg is SegmentPart)
+                if (seg is SegmentPart part)
                 {
-                    Segment thisSegment = ((SegmentPart)seg).mySegment;
+                    Segment thisSegment = part.mySegment;
                     if (thisSegment.LocationId == Constants.Timing.LOCATION_FINISH && thisSegment.Occurrence >= theEvent!.FinishMaxOccurrences)
                     {
                         occurrence_error = true;
                     }
-                    Log.D("UI.MainPages.SegmentsPage", "Distance ID " + ((SegmentPart)seg).mySegment.DistanceId + " Segment Name " + ((SegmentPart)seg).mySegment.Name + " segment ID " + ((SegmentPart)seg).mySegment.Identifier);
+                    Log.D("UI.MainPages.SegmentsPage", "Distance ID " + part.mySegment.DistanceId + " Segment Name " + part.mySegment.Name + " segment ID " + part.mySegment.Identifier);
                 }
             }
             if (occurrence_error)
@@ -218,7 +218,7 @@ public partial class SegmentsPage : UserControl, IMainPage
     public void CopyFromDistance(int intoDistance, int fromDistance)
     {
         Log.D("UI.MainPages.SegmentsPage", "Copying segments.");
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }
@@ -247,7 +247,7 @@ public partial class SegmentsPage : UserControl, IMainPage
                 UploadButton.Content = "Error";
                 return;
             }
-            APIObject api = database.GetAPI(theEvent.API_ID);
+            APIObject api = database.GetAPI(theEvent.API_ID)!;
             string[] event_ids = theEvent.API_Event_ID.Split(',');
             if (event_ids.Length != 2)
             {
@@ -372,7 +372,7 @@ public partial class SegmentsPage : UserControl, IMainPage
                 DeleteButton.Content = "Error";
                 return;
             }
-            APIObject api = database.GetAPI(theEvent.API_ID);
+            APIObject api = database.GetAPI(theEvent.API_ID)!;
             string[] event_ids = theEvent.API_Event_ID.Split(',');
             if (event_ids.Length != 2)
             {

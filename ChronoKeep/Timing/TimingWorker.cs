@@ -17,7 +17,7 @@ namespace Chronokeep.Timing
     {
         private readonly IDBInterface database;
         private readonly IMainWindow window;
-        private static TimingWorker worker;
+        private static TimingWorker? worker;
 
         private static readonly Semaphore semaphore = new(0, 2);
         private static readonly Lock tWorkLock = new();
@@ -41,10 +41,7 @@ namespace Chronokeep.Timing
 
         public static TimingWorker NewWorker(IMainWindow window, IDBInterface database)
         {
-            if (worker == null)
-            {
-                worker = new TimingWorker(window, database);
-            }
+            worker ??= new TimingWorker(window, database);
             return worker;
         }
 
@@ -137,7 +134,7 @@ namespace Chronokeep.Timing
                 {
                     Log.D("Timing.TimingWorker", "Multiples of a segment found in segment set.");
                 }
-                if (!dictionary.DistanceSegmentOrder.TryGetValue(seg.DistanceId, out List<Segment> segList))
+                if (!dictionary.DistanceSegmentOrder.TryGetValue(seg.DistanceId, out List<Segment>? segList))
                 {
                     segList = [];
                     dictionary.DistanceSegmentOrder[seg.DistanceId] = segList;
@@ -150,7 +147,7 @@ namespace Chronokeep.Timing
             {
                 if (d.DistanceValue > 0)
                 {
-                    if (!dictionary.DistanceSegmentOrder.TryGetValue(d.Identifier, out List<Segment> segOrderList))
+                    if (!dictionary.DistanceSegmentOrder.TryGetValue(d.Identifier, out List<Segment>? segOrderList))
                     {
                         segOrderList = [];
                         dictionary.DistanceSegmentOrder[d.Identifier] = segOrderList;
@@ -223,7 +220,7 @@ namespace Chronokeep.Timing
             foreach (BibChipAssociation assoc in bibChips)
             {
                 dictionary.chipToBibDictionary[assoc.Chip] = assoc.Bib;
-                if (!dictionary.bibToChipDictionary.TryGetValue(assoc.Bib, out List<string> chipList))
+                if (!dictionary.bibToChipDictionary.TryGetValue(assoc.Bib, out List<string>? chipList))
                 {
                     chipList = [];
                     dictionary.bibToChipDictionary[assoc.Bib] = chipList;
@@ -242,7 +239,7 @@ namespace Chronokeep.Timing
                 {
                     Log.D("Timing.TimingWorker", "Linked distance found. " + d.LinkedDistance);
                     // Verify we know the distance its linked to.
-                    if (!dictionary.distanceDictionary.TryGetValue(d.LinkedDistance, out Distance distVal))
+                    if (!dictionary.distanceDictionary.TryGetValue(d.LinkedDistance, out Distance? distVal))
                     {
                         Log.E("Timing.TimingWorker", "Unable to find linked distance.");
                     }
@@ -315,7 +312,7 @@ namespace Chronokeep.Timing
             foreach (ChipRead read in dnsReads)
             {
                 dictionary.dnsChips.Add(read.ChipNumber);
-                if (dictionary.chipToBibDictionary.TryGetValue(read.ChipNumber, out string oBib))
+                if (dictionary.chipToBibDictionary.TryGetValue(read.ChipNumber, out string? oBib))
                 {
                     dictionary.dnsBibs.Add(oBib);
                 }
@@ -347,7 +344,7 @@ namespace Chronokeep.Timing
                 {
                     break;
                 }
-                Event theEvent = database.GetCurrentEvent();
+                Event theEvent = database.GetCurrentEvent()!;
                 // ensure the event exists and we've got unprocessed reads
                 if (theEvent != null && theEvent.Identifier != -1)
                 {
@@ -477,7 +474,7 @@ namespace Chronokeep.Timing
                             {
                                 // verify the distance is set to allow sms alerts and the runner hasn't been notified already
                                 // and we're within 15 minutes of it happening
-                                if (dictionary.distanceNameDictionary.TryGetValue(result.RealDistanceName, out Distance dist) && true == dist.SMSEnabled
+                                if (dictionary.distanceNameDictionary.TryGetValue(result.RealDistanceName, out Distance? dist) && true == dist.SMSEnabled
                                     && Constants.Timing.EVENTSPECIFIC_UNKNOWN != result.EventSpecificId
                                     && false == AlertsSent.Contains((result.EventSpecificId, result.SegmentId))
                                     && result.SystemTime.CompareTo(fifteenPrior) > 0
@@ -495,7 +492,7 @@ namespace Chronokeep.Timing
                             {
                                 if (lastSubscriptionFetch.AddSeconds(30).CompareTo(now) < 0)
                                 {
-                                    APIObject lapi = database.GetAPI(theEvent.API_ID);
+                                    APIObject lapi = database.GetAPI(theEvent.API_ID)!;
                                     string[] event_ids = theEvent.API_Event_ID.Split(',');
                                     if (event_ids.Length == 2)
                                     {
@@ -527,14 +524,14 @@ namespace Chronokeep.Timing
                                     {
                                         string name = sub.First.ToLower() + sub.Last.ToLower();
                                         name = AlphaOnly().Replace(name, string.Empty);
-                                        if (nameToBibDict.TryGetValue(name, out string bibFromName))
+                                        if (nameToBibDict.TryGetValue(name, out string? bibFromName))
                                         {
                                             bib = bibFromName;
                                         }
                                     }
                                     if (bib.Length > 0 && phone.Length > 0)
                                     {
-                                        if (!bibToPhonesDict.TryGetValue(bib, out HashSet<string> phoneSet))
+                                        if (!bibToPhonesDict.TryGetValue(bib, out HashSet<string>? phoneSet))
                                         {
                                             phoneSet = [];
                                             bibToPhonesDict[bib] = phoneSet;
@@ -545,11 +542,11 @@ namespace Chronokeep.Timing
                                 // Build list of phones to send result information to
                                 foreach (TimeResult result in SMSResults)
                                 {
-                                    if (bibToPhonesDict.TryGetValue(result.Bib, out HashSet<string> phonesFromDict))
+                                    if (bibToPhonesDict.TryGetValue(result.Bib, out HashSet<string>? phonesFromDict))
                                     {
                                         foreach (string phone in phonesFromDict)
                                         {
-                                            if (!toSendTo.TryGetValue(result, out HashSet<string> phones))
+                                            if (!toSendTo.TryGetValue(result, out HashSet<string>? phones))
                                             {
                                                 phones = [];
                                                 toSendTo[result] = phones;
@@ -559,7 +556,7 @@ namespace Chronokeep.Timing
                                     }
                                 }
                                 string resultsURL = "";
-                                if (dictionary.apis.TryGetValue(theEvent.API_ID, out APIObject api) && api.WebURL.Length > 0)
+                                if (dictionary.apis.TryGetValue(theEvent.API_ID, out APIObject? api) && api.WebURL.Length > 0)
                                 {
                                     string[] event_ids = theEvent.API_Event_ID.Split(',');
                                     if (event_ids.Length == 2)

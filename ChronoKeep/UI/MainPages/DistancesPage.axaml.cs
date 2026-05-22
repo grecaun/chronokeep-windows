@@ -9,6 +9,7 @@ using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.UI.Parts;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -30,7 +31,7 @@ public partial class DistancesPage : UserControl, IMainPage
         this.mWindow = mWindow;
         this.database = database;
         this.theEvent = database.GetCurrentEvent();
-        if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
+        if (theEvent!.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
         {
             apiPanel.IsVisible = true;
         }
@@ -59,7 +60,7 @@ public partial class DistancesPage : UserControl, IMainPage
             // Check if we're a linked distance
             if (div.LinkedDistance > 0)
             {
-                if (!subDistanceDictionary.TryGetValue(div.LinkedDistance, out List<Distance> oSubDistList))
+                if (!subDistanceDictionary.TryGetValue(div.LinkedDistance, out List<Distance>? oSubDistList))
                 {
                     oSubDistList = [];
                     subDistanceDictionary[div.LinkedDistance] = oSubDistList;
@@ -74,7 +75,7 @@ public partial class DistancesPage : UserControl, IMainPage
         foreach (Distance div in superDivs)
         {
             distanceDictionary[div.Identifier] = div;
-            DistancePart parent = new(this, div, theEvent.FinishMaxOccurrences, distances, distanceDictionary, theEvent);
+            DistancePart parent = new(this, div, theEvent.FinishMaxOccurrences, distances, distanceDictionary, theEvent, null);
             DistancesBox.Items.Add(parent);
             DistanceCount = div.Identifier > DistanceCount - 1 ? div.Identifier + 1 : DistanceCount;
             // Add linked distances
@@ -82,7 +83,7 @@ public partial class DistancesPage : UserControl, IMainPage
             {
                 foreach (Distance sub in tSubDistList)
                 {
-                    DistancesBox.Items.Add(new ASubDistance(this, sub, parent));
+                    DistancesBox.Items.Add(new DistancePart(this, sub, theEvent.FinishMaxOccurrences, distances, distanceDictionary, theEvent, parent));
                     DistanceCount = sub.Identifier > DistanceCount - 1 ? sub.Identifier + 1 : DistanceCount;
                 }
             }
@@ -100,7 +101,7 @@ public partial class DistancesPage : UserControl, IMainPage
     internal void RemoveDistance(Distance distance)
     {
         Log.D("UI.MainPages.DistancesPage", "Remove distance clicked.");
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }
@@ -168,11 +169,11 @@ public partial class DistancesPage : UserControl, IMainPage
         {
             oldDistances[distance.Identifier] = distance;
         }
-        foreach (ADistanceInterface listDiv in DistancesBox.Items)
+        foreach (DistancePart listDiv in DistancesBox.Items.Cast<DistancePart>())
         {
             listDiv.UpdateDistance();
             int divId = listDiv.GetDistance().Identifier;
-            if (oldDistances.TryGetValue(divId, out Distance oDist) &&
+            if (oldDistances.TryGetValue(divId, out Distance? oDist) &&
                 (oDist.StartOffsetSeconds != listDiv.GetDistance().StartOffsetSeconds
                 || oDist.StartOffsetMilliseconds != listDiv.GetDistance().StartOffsetMilliseconds
                 || oDist.FinishOccurrence != listDiv.GetDistance().FinishOccurrence))
@@ -208,7 +209,7 @@ public partial class DistancesPage : UserControl, IMainPage
 
     public void Closing()
     {
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }
@@ -224,7 +225,7 @@ public partial class DistancesPage : UserControl, IMainPage
     public void UpdateDistance(Distance distance)
     {
         int divId = distance.Identifier;
-        Distance oldDiv = database.GetDistance(divId);
+        Distance oldDiv = database.GetDistance(divId)!;
         if (oldDiv.StartOffsetSeconds != distance.StartOffsetSeconds ||
             oldDiv.StartOffsetMilliseconds != distance.StartOffsetMilliseconds
             || oldDiv.FinishOccurrence != distance.FinishOccurrence)
@@ -237,7 +238,7 @@ public partial class DistancesPage : UserControl, IMainPage
 
     public void AddSubDistance(Distance theDistance)
     {
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }
@@ -272,7 +273,7 @@ public partial class DistancesPage : UserControl, IMainPage
                 DeleteButton.Content = "Error";
                 return;
             }
-            APIObject api = database.GetAPI(theEvent.API_ID);
+            APIObject api = database.GetAPI(theEvent.API_ID)!;
             string[] event_ids = theEvent.API_Event_ID.Split(',');
             if (event_ids.Length != 2)
             {
@@ -305,7 +306,7 @@ public partial class DistancesPage : UserControl, IMainPage
                 UploadButton.Content = "Error";
                 return;
             }
-            APIObject api = database.GetAPI(theEvent.API_ID);
+            APIObject api = database.GetAPI(theEvent.API_ID)!;
             string[] event_ids = theEvent.API_Event_ID.Split(',');
             if (event_ids.Length != 2)
             {
@@ -356,7 +357,7 @@ public partial class DistancesPage : UserControl, IMainPage
     private void Add_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.DistancesPage", "Add distance clicked.");
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }

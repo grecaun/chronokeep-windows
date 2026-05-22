@@ -66,14 +66,14 @@ public partial class APIPage2 : UserControl
         }
         nameBox.Text = theEvent.Name;
         slugBox.Text = theEvent.Name.Replace(' ', '-').Replace("'", "").ToLower();
-        contactBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL).Value;
+        contactBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL)!.Value;
         eventPanel.IsVisible = true;
         holdingLabel.IsVisible = false;
     }
 
     private void SearchBox_TextChanged(object? sender, TextChangedEventArgs e)
     {
-        List<APIEvent> ev = [.. events.Events];
+        List<APIEvent> ev = [.. events!.Events];
         if (searchBox.Text!.Trim().Length > 0)
         {
             Log.D("UI.API.APIPage2", $"searchBox.Text {searchBox.Text}");

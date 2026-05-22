@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
@@ -6,14 +7,12 @@ using Chronokeep.Interfaces.IO;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
-using Chronokeep.UI.IO;
 using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Chronokeep.UI.Export;
 
@@ -112,7 +111,7 @@ public partial class ExportResults : Window
         window?.WindowFinalize(this);
     }
 
-    private async Task Done_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Done_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.Export.ExportResults", "Done clicked.");
         List<string> headersToOutput = [];

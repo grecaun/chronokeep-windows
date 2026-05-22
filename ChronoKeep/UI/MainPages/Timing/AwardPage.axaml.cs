@@ -330,11 +330,9 @@ public partial class AwardPage : UserControl, ISubPage
         {
             return firstSplit1[1].CompareTo(firstSplit2[1]);
         }
-        int start1 = -1;
-        int.TryParse(secondSplit1[0], out start1);
-        int start2 = -1;
-        int.TryParse(secondSplit2[0], out start2);
-        if (start1 < 0 || start2 < 0)
+        bool sOneOkay = int.TryParse(secondSplit1[0], out int start1);
+        bool sTwoOkay = int.TryParse(secondSplit2[0], out int start2);
+        if (!sOneOkay || !sTwoOkay)
         {
             return firstSplit1[1].CompareTo(firstSplit2[1]);
         }
@@ -356,7 +354,7 @@ public partial class AwardPage : UserControl, ISubPage
     public void UpdateView()
     {
         customAgeGroups.Clear();
-        foreach (AgeGroup age in database.GetAgeGroups(theEvent.Identifier, Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID))
+        foreach (AgeGroup age in database.GetAgeGroups(theEvent!.Identifier, Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID))
         {
             customAgeGroups.Add(age);
         }
@@ -380,10 +378,7 @@ public partial class AwardPage : UserControl, ISubPage
             int start = Convert.ToInt32(startCustom.Text);
             int end = Convert.ToInt32(endCustom.Text);
             string custom = customNameBox.Text!;
-            if (custom == null)
-            {
-                custom = "";
-            }
+            custom ??= "";
             if (start > -1 || end < 101)
             {
                 database.AddAgeGroup(

@@ -17,7 +17,7 @@ public partial class APIPage1 : UserControl
         InitializeComponent();
         this.window = window;
 
-        AppSetting last_api = database.GetAppSetting(Constants.Settings.LAST_USED_API_ID);
+        AppSetting last_api = database.GetAppSetting(Constants.Settings.LAST_USED_API_ID)!;
         List<APIObject> apis = database.GetAllAPI();
         apis.RemoveAll(x => !Constants.APIConstants.API_RESULTS[x.Type]);
         apiDict = [];
@@ -50,7 +50,6 @@ public partial class APIPage1 : UserControl
             count++;
         }
         APIBox.SelectedIndex = ix;
-        Event theEvent = database.GetCurrentEvent();
     }
 
     private void Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

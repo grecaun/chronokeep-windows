@@ -14,7 +14,7 @@ public partial class TimingResultsPage : UserControl, ISubPage
 {
     private readonly TimingPage parent;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
 
     public readonly List<TimeResult> Results = [];
 
@@ -25,7 +25,7 @@ public partial class TimingResultsPage : UserControl, ISubPage
         this.database = database;
         theEvent = database.GetCurrentEvent();
         updateListView.ItemsSource = this.Results;
-        if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+        if (Constants.Timing.EVENT_TYPE_TIME == theEvent!.EventType)
         {
             updateListView.Columns[4].Header = "Lap Time";
         }
@@ -71,7 +71,7 @@ public partial class TimingResultsPage : UserControl, ISubPage
         else if (peopleType == PeopleType.UNKNOWN_FINISHES)
 
         {
-            if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+            if (Constants.Timing.EVENT_TYPE_TIME == theEvent!.EventType)
             {
                 Log.D("UI.Timing.TimingResultsPage", "Time based event.");
                 Dictionary<int, TimeResult> validResults = [];
@@ -98,7 +98,7 @@ public partial class TimingResultsPage : UserControl, ISubPage
         }
         else if (peopleType == PeopleType.FINISHES)
         {
-            if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+            if (Constants.Timing.EVENT_TYPE_TIME == theEvent!.EventType)
             {
                 Log.D("UI.Timing.TimingResultsPage", "Time based event.");
                 Dictionary<int, TimeResult> validResults = [];
@@ -191,7 +191,7 @@ public partial class TimingResultsPage : UserControl, ISubPage
 
     }
 
-    public void UpdateDatabase() { }
+    public static void UpdateDatabase() { }
 
     public async void UpdateView()
     {
@@ -202,7 +202,7 @@ public partial class TimingResultsPage : UserControl, ISubPage
         string location = parent.GetLocation();
         await Task.Run(() =>
         {
-            newResults = database.GetTimingResults(theEvent.Identifier);
+            newResults = database.GetTimingResults(theEvent!.Identifier);
         });
         Results.Clear();
         Results.AddRange(newResults);
@@ -213,7 +213,7 @@ public partial class TimingResultsPage : UserControl, ISubPage
         updateListView.ItemsSource = newResults;
         updateListView.ScrollIntoView(newResults[^1], null);
         updateListView.SelectedItem = null;
-        if (theEvent.DisplayPlacements)
+        if (theEvent!.DisplayPlacements)
         {
             DisplayPlacements();
         }

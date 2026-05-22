@@ -5,6 +5,7 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Chronokeep.UI.MainPages.Timing;
@@ -63,7 +64,7 @@ public partial class AlarmsPage : UserControl, ISubPage
     public void Closing()
     {
         Log.D("UI.Timing.AlarmsPage", "Closing Page.");
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             if (AlarmErrors(true))
             {
@@ -107,7 +108,7 @@ public partial class AlarmsPage : UserControl, ISubPage
     {
         Log.D("UI.Timing.AlarmsPage", "Saving Alarms.");
         Alarm.ClearAlarms();
-        foreach (AlarmPart? alarm in AlarmsBox.Items)
+        foreach (AlarmPart? alarm in AlarmsBox.Items.Cast<AlarmPart?>())
         {
             Alarm.AddAlarm(alarm!.GetUpdatedAlarm());
         }
@@ -120,7 +121,7 @@ public partial class AlarmsPage : UserControl, ISubPage
         HashSet<string> bibs = [];
         HashSet<string> chips = [];
         bool notSetExists = false;
-        foreach (AlarmPart? alarm in AlarmsBox.Items)
+        foreach (AlarmPart? alarm in AlarmsBox.Items.Cast<AlarmPart?>())
         {
             Alarm al = alarm!.GetUpdatedAlarm();
             if (al.Bib.Length > 0 && bibs.Contains(al.Bib))

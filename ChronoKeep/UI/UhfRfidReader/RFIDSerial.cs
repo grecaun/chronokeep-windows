@@ -9,7 +9,7 @@ namespace Chronokeep.UI.UhfRfidReader
     {
         private string ComPort = ComPort;
         private int BaudRate = BaudRate;
-        private SerialPort Port;
+        private SerialPort Port = new();
 
         public Error DeviceInit(string ComPort, int BaudRate)
         {

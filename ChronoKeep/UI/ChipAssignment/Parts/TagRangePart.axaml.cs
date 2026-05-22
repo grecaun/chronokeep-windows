@@ -52,7 +52,7 @@ public partial class TagRangePart : UserControl
         catch { }
     }
 
-    private void StartBib_TextChanged(object sender, RoutedEventArgs e)
+    private void StartBib_TextChanged(object sender, TextChangedEventArgs e)
     {
         string replaceStr = StartBib.Text!.Replace(" ", "");
         if (StartBib.Text.Length != replaceStr.Length)
@@ -62,7 +62,7 @@ public partial class TagRangePart : UserControl
         UpdateEndChip();
     }
 
-    private void EndBib_TextChanged(object sender, RoutedEventArgs e)
+    private void EndBib_TextChanged(object sender, TextChangedEventArgs e)
     {
         string replaceStr = EndBib.Text!.Replace(" ", "");
         if (EndBib.Text.Length != replaceStr.Length)
@@ -72,14 +72,14 @@ public partial class TagRangePart : UserControl
         UpdateEndChip();
     }
 
-    private void StartChip_TextChanged(object sender, RoutedEventArgs e)
+    private void StartChip_TextChanged(object sender, TextChangedEventArgs e)
     {
         string replaceStr = StartChip.Text!.Replace(" ", "");
         if (StartChip.Text.Length != replaceStr.Length)
         {
             StartChip.Text = replaceStr;
         }
-        int.TryParse(StartChip.Text, out int startChip);
+        _ = (int.TryParse(StartChip.Text, out int startChip));
         if (string.CompareOrdinal(StartChip.Text, startChip.ToString()) != 0)
         {
             StartChip.Text = startChip.ToString();
@@ -87,7 +87,7 @@ public partial class TagRangePart : UserControl
         UpdateEndChip();
     }
 
-    private void SelectAll(object sender, RoutedEventArgs e)
+    private void SelectAll(object sender, FocusChangedEventArgs e)
     {
         TextBox src = (TextBox)e.Source!;
         src.SelectAll();

@@ -38,7 +38,7 @@ public partial class BibChipAssociationWindow : Window
         this.Height = 300;
         this.Width = 300;
         this.Topmost = true;
-        if (importer.Data.Type == ImportData.FileType.EXCEL)
+        if (importer.Data!.Type == ImportData.FileType.EXCEL)
         {
             SheetsContainer.IsVisible = true;
             SheetsBox.ItemsSource = ((ExcelImporter)importer).SheetNames;
@@ -67,7 +67,7 @@ public partial class BibChipAssociationWindow : Window
         int[] check = new int[ImportFileWindow.human_fields.Length];
         bool repeat = false;
         List<string> output = [];
-        foreach (BibChipHeaderPart? item in headerListBox.Items)
+        foreach (BibChipHeaderPart? item in headerListBox.Items.Cast<BibChipHeaderPart?>())
         {
             int val = item!.HeaderBox.SelectedIndex;
             if (val > 0)
@@ -105,7 +105,7 @@ public partial class BibChipAssociationWindow : Window
         excelImporter.ChangeSheet(selection);
         excelImporter.FetchHeaders();
         headerListBox.Items.Clear();
-        for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
+        for (int i = 1; i < importer.Data!.GetNumHeaders(); i++)
         {
             headerListBox.Items.Add(new BibChipHeaderPart(importer.Data.Headers[i], i));
         }
@@ -116,12 +116,12 @@ public partial class BibChipAssociationWindow : Window
         Log.D("UI.BibChipAssociationWindow", "Bib Chip Association = Done Clicked.");
         List<string> headers = RepeatHeaders();
         int eventId = -1;
-        eventId = database.GetCurrentEvent().Identifier;
+        eventId = database.GetCurrentEvent()!.Identifier;
         if (headers == null)
         {
             importer.FetchData();
             keys = new int[3];
-            foreach (BibChipHeaderPart? item in headerListBox.Items)
+            foreach (BibChipHeaderPart? item in headerListBox.Items.Cast<BibChipHeaderPart?>())
             {
                 if (item!.HeaderBox.SelectedIndex != 0)
                 {
@@ -133,8 +133,8 @@ public partial class BibChipAssociationWindow : Window
             {
                 Dictionary<string, string> currentAssociations = database.GetBibChips(eventId).ToDictionary(x => x.Chip, x => x.Bib);
                 List<BibChipAssociation> items = [];
-                ImportData data = importer.Data;
-                int numEntries = data.Data.Count;
+                ImportData data = importer.Data!;
+                int numEntries = data!.Data.Count;
                 if (extraAssoc)
                 {
                     items.Add(new()

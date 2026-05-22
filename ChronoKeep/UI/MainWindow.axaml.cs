@@ -663,7 +663,7 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Stopping Remote Controller");
-                RemoteController?.Shutdown();
+                RemoteReadsController.Shutdown();
                 RemoteController = null;
             }
             catch

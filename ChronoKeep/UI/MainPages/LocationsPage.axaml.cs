@@ -7,6 +7,7 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -14,7 +15,7 @@ public partial class LocationsPage : UserControl, IMainPage
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
     private int LocationCount = 1;
     private bool UpdateTimingWorker = false;
 
@@ -49,7 +50,7 @@ public partial class LocationsPage : UserControl, IMainPage
     internal void RemoveLocation(TimingLocation location)
     {
         Log.D("UI.MainPages.LocationsPage", "Removing a location.");
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }
@@ -67,12 +68,12 @@ public partial class LocationsPage : UserControl, IMainPage
 
     public void UpdateDatabase()
     {
-        foreach (LocationPart? locItem in LocationsBox.Items)
+        foreach (LocationPart? locItem in LocationsBox.Items.Cast<LocationPart?>())
         {
             locItem!.UpdateLocation();
             if (locItem.myLocation.Identifier == Constants.Timing.LOCATION_FINISH)
             {
-                if (theEvent.FinishMaxOccurrences != locItem.myLocation.MaxOccurrences
+                if (theEvent!.FinishMaxOccurrences != locItem.myLocation.MaxOccurrences
                     || theEvent.FinishIgnoreWithin != locItem.myLocation.IgnoreWithin)
                 {
                     theEvent.FinishMaxOccurrences = locItem.myLocation.MaxOccurrences;
@@ -83,7 +84,7 @@ public partial class LocationsPage : UserControl, IMainPage
             }
             else if (locItem.myLocation.Identifier == Constants.Timing.LOCATION_START)
             {
-                if (theEvent.StartWindow != locItem.myLocation.IgnoreWithin
+                if (theEvent!.StartWindow != locItem.myLocation.IgnoreWithin
                     || theEvent.StartMaxOccurrences != locItem.myLocation.MaxOccurrences)
                 {
                     theEvent.StartWindow = locItem.myLocation.IgnoreWithin;
@@ -126,14 +127,14 @@ public partial class LocationsPage : UserControl, IMainPage
     public void Closing()
     {
         Log.D("UI.MainPages.LocationsPage", "Location page closing.");
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }
         if (UpdateTimingWorker)
         {
             Log.D("UI.MainPages.LocationsPage", "Resetting results.");
-            database.ResetTimingResultsEvent(theEvent.Identifier);
+            database.ResetTimingResultsEvent(theEvent!.Identifier);
             mWindow.NetworkClearResults();
             mWindow.NotifyTimingWorker();
         }
@@ -142,11 +143,11 @@ public partial class LocationsPage : UserControl, IMainPage
     private void Add_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.LocationsPage", "Add Location clicked.");
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }
-        database.AddTimingLocation(new(theEvent.Identifier, "Location " + LocationCount));
+        database.AddTimingLocation(new(theEvent!.Identifier, "Location " + LocationCount));
         UpdateTimingWorker = true;
         UpdateView();
     }

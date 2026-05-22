@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.API.Windows.APIWindow"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         SizeToContent="Height"
         Title="Link Event">

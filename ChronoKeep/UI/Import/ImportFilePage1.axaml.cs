@@ -16,7 +16,7 @@ public partial class ImportFilePage1 : UserControl
     {
         InitializeComponent();
         this.importer = importer;
-        for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
+        for (int i = 1; i < importer.Data!.GetNumHeaders(); i++)
         {
             headerListBox.Items.Add(new HeaderPart(importer.Data.Headers[i], i));
         }
@@ -88,7 +88,7 @@ public partial class ImportFilePage1 : UserControl
         excelImporter.ChangeSheet(selection);
         excelImporter.FetchHeaders();
         headerListBox.Items.Clear();
-        for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
+        for (int i = 1; i < importer.Data!.GetNumHeaders(); i++)
         {
             headerListBox.Items.Add(new HeaderPart(importer.Data.Headers[i], i));
         }

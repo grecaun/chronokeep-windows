@@ -30,7 +30,7 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
     int total = 4, connected = 0;
 
     private const string ipformat = "{0:D}.{1:D}.{2:D}.{3:D}";
-    private readonly int[] baseIP = { 0, 0, 0, 0 };
+    private readonly int[] baseIP = [0, 0, 0, 0];
 
     public MinTimingPage(IMainWindow window, IDBInterface database)
     {
@@ -99,10 +99,10 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
         }
         List<TimingSystem> systems = mWindow.GetConnectedSystems();
         int numSystems = systems.Count;
-        string system = Readers.DEFAULT_TIMING_SYSTEM;
+        string system;
         try
         {
-            system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM).Value;
+            system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM)!.Value;
         }
         catch
         {
@@ -138,7 +138,7 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
 
     public void Keyboard_Ctrl_Z() { }
 
-    public void UpdateDatabase() { }
+    public static void UpdateDatabase() { }
 
     public void Closing() { }
 
@@ -177,7 +177,7 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
 
         // Update locations in the list of readers
         connected = 0; total = ReadersBox.Items.Count;
-        foreach (ReaderPart? read in ReadersBox.Items)
+        foreach (ReaderPart? read in ReadersBox.Items.Cast<ReaderPart?>())
         {
             read!.UpdateLocations(locations);
             read!.UpdateStatus();
@@ -201,7 +201,7 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
             string system = Readers.DEFAULT_TIMING_SYSTEM;
             try
             {
-                system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM).Value;
+                system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM)!.Value;
             }
             catch
             {
@@ -234,10 +234,7 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
 
     public void NewMessage()
     {
-        if (timeWindow != null)
-        {
-            timeWindow.UpdateTime();
-        }
+        timeWindow?.UpdateTime();
     }
 
     public void OpenTimeWindow(TimingSystem system)
@@ -264,11 +261,11 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
         {
             if (now)
             {
-                sys.SystemInterface.SetTime(DateTime.Now);
+                sys.SystemInterface?.SetTime(DateTime.Now);
             }
             else
             {
-                sys.SystemInterface.SetTime(time);
+                sys.SystemInterface?.SetTime(time);
             }
         }
     }
@@ -276,7 +273,7 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
     public void RemoveSystem(TimingSystem sys)
     {
         ReaderPart? removed = null;
-        foreach (ReaderPart? box in ReadersBox.Items)
+        foreach (ReaderPart? box in ReadersBox.Items.Cast<ReaderPart?>())
         {
             if (box!.reader.SystemIdentifier == sys.SystemIdentifier && sys.Saved())
             {
@@ -298,10 +295,10 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
         Log.D("UI.MainPages.TimingPage", connected + " systems connected or trying to connect.");
         if (connected >= total)
         {
-            string system = Readers.DEFAULT_TIMING_SYSTEM;
+            string system;
             try
             {
-                system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM).Value;
+                system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM)!.Value;
             }
             catch
             {

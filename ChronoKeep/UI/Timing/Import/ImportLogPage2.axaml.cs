@@ -25,7 +25,7 @@ public partial class ImportLogPage2 : UserControl
     {
         InitializeComponent();
         this.parent = parent;
-        for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
+        for (int i = 1; i < importer.Data!.GetNumHeaders(); i++)
         {
             itemListBox.Items.Add(new LogPart(importer.Data.Headers[i], i, human_fields, 0));
         }

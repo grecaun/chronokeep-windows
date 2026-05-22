@@ -5,6 +5,7 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.MainPages.Dashboard;
 
@@ -52,7 +53,7 @@ public partial class APIPage : UserControl, IMainPage
 
     public void Closing()
     {
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateResultsAPI();
         }
@@ -60,7 +61,7 @@ public partial class APIPage : UserControl, IMainPage
 
     public void UpdateResultsAPI()
     {
-        foreach (APIPart? listDiv in APIBox.Items)
+        foreach (APIPart? listDiv in APIBox.Items.Cast<APIPart?>())
         {
             listDiv!.UpdateResultsAPI();
             database.UpdateAPI(listDiv.theAPI);
@@ -69,7 +70,7 @@ public partial class APIPage : UserControl, IMainPage
 
     public void RemoveAPI(APIObject api)
     {
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateResultsAPI();
         }
@@ -86,7 +87,7 @@ public partial class APIPage : UserControl, IMainPage
     private void Add_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.APIPage", "Add api clicked.");
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateResultsAPI();
         }

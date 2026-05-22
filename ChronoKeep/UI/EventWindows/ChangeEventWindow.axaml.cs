@@ -38,7 +38,7 @@ public partial class ChangeEventWindow : Window
             events = database.GetEvents();
         });
         events.Sort();
-        if (searchBox.Text!.Length > 0)
+        if (searchBox.Text != null && searchBox.Text.Length > 0)
         {
             Log.D("UI.ChangeEventWindow", "searchBox.Text " + searchBox.Text);
             events.RemoveAll(x => !x.Name.Contains(searchBox.Text, StringComparison.OrdinalIgnoreCase));

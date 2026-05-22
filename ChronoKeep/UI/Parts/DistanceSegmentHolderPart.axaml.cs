@@ -12,13 +12,13 @@ namespace Chronokeep.UI.Parts;
 public partial class DistanceSegmentHolderPart : UserControl
 {
 
-    public Distance distance;
-    private SegmentsPage page;
+    public Distance? distance;
+    private readonly SegmentsPage page;
     private readonly int finish_occurrences;
     private readonly List<Distance> otherDistances;
     public readonly List<UserControl> SegmentItems = [];
 
-    public DistanceSegmentHolderPart(Event theEvent, SegmentsPage page, Distance distance,
+    public DistanceSegmentHolderPart(Event theEvent, SegmentsPage page, Distance? distance,
                 List<Distance> distances, List<Segment> segments, List<TimingLocation> locations)
     {
         InitializeComponent();
@@ -66,7 +66,7 @@ public partial class DistanceSegmentHolderPart : UserControl
         {
             selectedDistance = distance.Identifier;
         }
-        int.TryParse(numAdd.Text, out int count);
+        _ = int.TryParse(numAdd.Text, out int count);
         for (int i = 0; i < count; i++)
         {
             page.AddSegment(selectedDistance);

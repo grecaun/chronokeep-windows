@@ -14,7 +14,7 @@ public partial class DistancePart : UserControl
 {
     public bool PlusWave { get; set; } = true;
     public bool MinusWave { get => !PlusWave; }
-    public bool IsMain { get; set; } = true;
+    public bool IsMain { get => parent == null; }
     public bool IsLinked { get => !IsMain; }
     public bool DistanceEvent { get; set; } = true;
     public bool NotDistanceEvent { get => !DistanceEvent; }
@@ -24,7 +24,7 @@ public partial class DistancePart : UserControl
     private const string LimitFormat = "{0:D2}:{1:D2}:{2:D2}";
     readonly DistancesPage page;
     public Distance theDistance;
-    public DistancePart parent;
+    public DistancePart? parent;
     private readonly Dictionary<int, Distance> distanceDictionary;
 
     [GeneratedRegex("[^0-9.]")]
@@ -34,7 +34,7 @@ public partial class DistancePart : UserControl
 
     public DistancePart(DistancesPage page, Distance distance, int maxOccurrences,
                 List<Distance> distances, Dictionary<int, Distance> distanceDictionary,
-                Event theEvent, DistancePart parent)
+                Event theEvent, DistancePart? parent)
     {
         InitializeComponent();
         List<Distance> otherDistances = [.. distances];
@@ -176,7 +176,7 @@ public partial class DistancePart : UserControl
         }
         if (theEvent.EventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
         {
-            IsMain = false;
+            NotBackyardEvent = false;
         }
         TypeBox.Items.Add(
             new ComboBoxItem

@@ -55,12 +55,12 @@ public partial class EditAPIWindow : Window
 
     public void GotoEditEvent()
     {
-        EditAPIFrame.Content = new EditEventPage(this, api, slug);
+        EditAPIFrame.Content = new EditEventPage(this, api!, slug!);
     }
 
     public void GotoEditYear()
     {
-        EditAPIFrame.Content = new EditYearPage(this, api, slug, year);
+        EditAPIFrame.Content = new EditYearPage(this, api!, slug!, year!);
     }
 
     private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

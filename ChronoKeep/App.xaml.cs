@@ -55,7 +55,7 @@ namespace Chronokeep
                 foreach (string arg in desktop.Args!)
                 {
                     Log.D("AppStartup", "Startup arg: " + arg);
-                    if (arg.Contains("safe", System.StringComparison.OrdinalIgnoreCase))
+                    if (arg.Contains("safe", StringComparison.OrdinalIgnoreCase))
                     {
                         safeMode = true;
                     }
@@ -66,12 +66,21 @@ namespace Chronokeep
                 }
                 else
                 {
-                    desktop.MainWindow = new MinWindow();
+                    desktop.MainWindow = new MainWindow();
                 }
             }
 
             base.OnFrameworkInitializationCompleted();
         }
+
+        static void Main(string[] args)
+            => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+
+        public static AppBuilder BuildAvaloniaApp()
+            => AppBuilder.Configure<App>()
+                .UsePlatformDetect()
+                .WithInterFont()
+                .LogToTrace();
 
         static void CaptureException(Exception ex)
         {

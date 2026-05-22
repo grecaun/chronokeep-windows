@@ -66,14 +66,14 @@ public partial class NewEventWindow : Window
             {
                 oldEventId = oEvent.Identifier;
             }
-            Event newEvent = new Event(nameString, dateVal, yearString);
+            Event newEvent = new(nameString, dateVal, yearString);
             database.AddEvent(newEvent);
             newEvent.Identifier = database.GetEventID(newEvent);
             // Copy all values from old event.
             if (oldEventId > 0)
             {
                 // Copy old event values.
-                Event oldEvent = database.GetEvent(oldEventId);
+                Event oldEvent = database.GetEvent(oldEventId)!;
                 newEvent.CopyFrom(oldEvent);
                 // Update database with current values.
                 database.UpdateEvent(newEvent);

@@ -187,7 +187,7 @@
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
-                        Watermark="Search"
+                        PlaceholderText="Search"
                         />
                     <ComboBox
                         Name="viewOnlyBox"

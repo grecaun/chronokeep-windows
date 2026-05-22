@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -6,6 +7,7 @@ using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -13,7 +15,7 @@ public partial class AgeGroupsPage : UserControl, IMainPage
 {
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
-    private readonly Event theEvent;
+    private readonly Event? theEvent;
 
     private bool touched = false;
 
@@ -28,6 +30,10 @@ public partial class AgeGroupsPage : UserControl, IMainPage
 
     public void UpdateView()
     {
+        if (theEvent == null || theEvent.Identifier < 0)
+        {
+            return;
+        }
         if (theEvent.CommonAgeGroups)
         {
             DistancesBox.IsVisible = true;
@@ -106,9 +112,13 @@ public partial class AgeGroupsPage : UserControl, IMainPage
 
     public void Closing()
     {
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
+        }
+        if (theEvent == null || theEvent.Identifier < 0)
+        {
+            return;
         }
         if (touched)
         {
@@ -121,7 +131,7 @@ public partial class AgeGroupsPage : UserControl, IMainPage
                 {
                     AgeGroups[(g.DistanceId, i)] = g;
                 }
-                if (!LastAgeGroup.TryGetValue(g.DistanceId, out AgeGroup lastAg) || lastAg.StartAge < g.StartAge)
+                if (!LastAgeGroup.TryGetValue(g.DistanceId, out AgeGroup? lastAg) || lastAg.StartAge < g.StartAge)
                 {
                     lastAg = g;
                     LastAgeGroup[g.DistanceId] = lastAg;
@@ -137,12 +147,12 @@ public partial class AgeGroupsPage : UserControl, IMainPage
                     person.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
                     person.EventSpecific.AgeGroupName = "";
                 }
-                else if (AgeGroups.TryGetValue((agDivId, age), out AgeGroup group))
+                else if (AgeGroups.TryGetValue((agDivId, age), out AgeGroup? group))
                 {
                     person.EventSpecific.AgeGroupId = group.GroupId;
                     person.EventSpecific.AgeGroupName = group.PrettyName();
                 }
-                else if (LastAgeGroup.TryGetValue(agDivId, out AgeGroup lGroup))
+                else if (LastAgeGroup.TryGetValue(agDivId, out AgeGroup? lGroup))
                 {
                     person.EventSpecific.AgeGroupId = lGroup.GroupId;
                     person.EventSpecific.AgeGroupName = lGroup.PrettyName();
@@ -160,17 +170,21 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         }
     }
 
-    private void Revert_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Revert_Click(object? sender, RoutedEventArgs? e)
     {
         UpdateAgeGroupsList();
     }
 
-    private void Update_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Update_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.AgeGroupsPage", "Update age groups button clicked.");
+        if (theEvent == null || theEvent.Identifier < 0)
+        {
+            return;
+        }
         List<AgeGroup> ageGroups = [];
         List<AgeGroup> toAdd = [];
-        foreach (AgeGroupPart? aAge in AgeGroupsBox.Items)
+        foreach (AgeGroupPart? aAge in AgeGroupsBox.Items.Cast<AgeGroupPart?>())
         {
             if (aAge is AgeGroupPart group)
             {
@@ -179,7 +193,7 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         }
         ageGroups.Sort();
         bool conflict = false;
-        AgeGroup previous = null;
+        AgeGroup? previous = null;
         foreach (AgeGroup current in ageGroups)
         {
             if (previous != null)
@@ -224,9 +238,13 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         UpdateAgeGroupsList();
     }
 
-    private void Add_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Add_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.AgeGroupsPage", "Adding group.");
+        if (theEvent == null || theEvent.Identifier < 0)
+        {
+            return;
+        }
         int divId = Constants.Timing.COMMON_AGEGROUPS_DISTANCEID;
         if (!theEvent.CommonAgeGroups)
         {
@@ -238,16 +256,20 @@ public partial class AgeGroupsPage : UserControl, IMainPage
     private void Distances_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         Log.D("UI.MainPages.AgeGroupsPage", "Distance changed.");
-        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
+        if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE)!.Value == Constants.Settings.SETTING_TRUE)
         {
             UpdateDatabase();
         }
         UpdateAgeGroupsList();
     }
 
-    private void AddDefault_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void AddDefault_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.AgeGroupsPage", "Add default age groups button clicked.");
+        if (theEvent == null || theEvent.Identifier < 0)
+        {
+            return;
+        }
         int divId = Constants.Timing.COMMON_AGEGROUPS_DISTANCEID;
         if (!theEvent.CommonAgeGroups)
         {

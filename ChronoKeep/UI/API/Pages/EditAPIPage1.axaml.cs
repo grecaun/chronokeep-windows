@@ -20,7 +20,7 @@ public partial class EditAPIPage1 : UserControl
 
     private void Unlink_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        Event theEvent = database.GetCurrentEvent();
+        Event theEvent = database.GetCurrentEvent()!;
         // Check if we've actually got a linked event, then unlink it.
         if (theEvent != null && theEvent.API_ID != Constants.APIConstants.NULL_ID && theEvent.API_Event_ID != Constants.APIConstants.NULL_EVENT_ID)
         {

@@ -87,7 +87,7 @@ public partial class RewindWindow : Window
                     BackgroundWorker worker = new();
                     worker.DoWork += (o, ea) =>
                     {
-                        system.SystemInterface.Rewind(from, to, Reader1.IsChecked == true ? 1 : 2);
+                        system.SystemInterface!.Rewind(from, to, Reader1.IsChecked == true ? 1 : 2);
                         ((IpicoInterface)system.SystemInterface).GetRewind();
                     };
                     worker.RunWorkerCompleted += (o, ea) =>
@@ -100,7 +100,7 @@ public partial class RewindWindow : Window
         }
         else
         {
-            system.SystemInterface.Rewind(from, to);
+            system.SystemInterface!.Rewind(from, to);
         }
         Close();
     }

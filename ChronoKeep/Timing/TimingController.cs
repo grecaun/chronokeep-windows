@@ -69,7 +69,7 @@ namespace Chronokeep.Timing
         {
             Log.D("Timing.TimingController", "-- UPDATE -- Creating interface for communication with timing system.");
             system.CreateTimingSystemInterface(database, mainWindow);
-            List<Socket> sockets = system.Connect();
+            List<Socket> sockets = system.Connect()!;
             if (sockets == null || sockets.Count < 1)
             {
                 Log.D("Timing.TimingController", "No sockets returned.");
@@ -112,7 +112,7 @@ namespace Chronokeep.Timing
         public void DisconnectTimingSystem(TimingSystem system)
         {
             system.Disconnect();
-            foreach (Socket sock in system.Sockets)
+            foreach (Socket sock in system.Sockets!)
             {
                 TimingSystemSockets.Remove(sock);
                 TimingSystemDict.Remove(sock);
@@ -177,7 +177,7 @@ namespace Chronokeep.Timing
                         {
                             string msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
                             Log.D("Timing.TimingController", "Timing System - Message is :" + msg.Trim());
-                            Dictionary<MessageType, List<string>> messageTypes = TimingSystemDict[sock].SystemInterface.ParseMessages(msg, sock);
+                            Dictionary<MessageType, List<string>> messageTypes = TimingSystemDict[sock].SystemInterface!.ParseMessages(msg, sock);
                             foreach (MessageType type in messageTypes.Keys)
                             {
                                 switch (type)
@@ -244,12 +244,12 @@ namespace Chronokeep.Timing
                     catch (Exception e)
                     {
                         Log.E("Timing.TimingController", "Error trying to parse messages. " + e.Message);
-                        if (TimingSystemDict.TryGetValue(sock, out TimingSystem system))
+                        if (TimingSystemDict.TryGetValue(sock, out TimingSystem? system))
                         {
                             Log.D("Timing.TimingController", "Socket errored on us.");
                             try
                             {
-                                system.SystemInterface.CloseSettings();
+                                system.SystemInterface!.CloseSettings();
                             }
                             catch (Exception ex)
                             {

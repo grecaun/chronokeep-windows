@@ -181,7 +181,7 @@ public partial class ReaderPart : UserControl
             ClockButton.IsEnabled = true;
             RewindButton.Opacity = 1.0;
             ClockButton.Opacity = 1.0;
-            if (reader.SystemInterface.SettingsEditable())
+            if (reader.SystemInterface!.SettingsEditable())
             {
                 SettingsButton.IsEnabled = true;
                 ReaderButton.IsEnabled = true;
@@ -361,7 +361,7 @@ public partial class ReaderPart : UserControl
             reader.Status = SYSTEM_STATUS.WORKING;
             parent.DisconnectSystem(reader);
             UpdateStatus();
-            reader.SystemInterface.CloseSettings();
+            reader.SystemInterface!.CloseSettings();
             return;
         }
         Log.D("UI.MainPages.TimingPage", "Connect button pressed. IP is " + ReaderIP.Text);

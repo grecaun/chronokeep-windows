@@ -6,6 +6,7 @@ using Chronokeep.Objects;
 using Chronokeep.UI.ChipAssignment.Parts;
 using Chronokeep.UI.Parts;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chronokeep.UI.ChipAssignment;
 
@@ -46,7 +47,7 @@ public partial class ChipTool : Window
     private void Save_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         List<Range> ranges = [];
-        foreach (TagRangePart? tag in correlationBox.Items)
+        foreach (TagRangePart? tag in correlationBox.Items.Cast<TagRangePart?>())
         {
             _ = int.TryParse(tag!.StartBib.Text, out int startBib);
             _ = int.TryParse(tag!.EndBib.Text, out int endBib);
@@ -88,7 +89,7 @@ public partial class ChipTool : Window
                 });
             }
         }
-        Event theEvent = database.GetCurrentEvent();
+        Event theEvent = database!.GetCurrentEvent()!;
         database.AddBibChipAssociation(theEvent.Identifier, list);
         ImportComplete = true;
         this.Close();

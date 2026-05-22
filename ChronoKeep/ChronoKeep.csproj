@@ -29,6 +29,7 @@
     <IsPublishable>False</IsPublishable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="App.xaml" />
     <None Remove="help\images\bootstrap-icons.css" />
     <None Remove="help\images\bootstrap-icons.json" />
     <None Remove="help\images\bootstrap-icons.min.css" />
@@ -178,12 +179,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Chronokeep.pfx" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Avalonia" Version="12.0.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.0.3" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.0.0" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.3" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.3" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="Hardware.Info" Version="110.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.18.0" />
@@ -195,6 +195,7 @@
   <ItemGroup>
     <EmbeddedResource Include="IO\HtmlTemplates\js\*" />
     <EmbeddedResource Include="IO\HtmlTemplates\css\*" />
+    <AvaloniaXaml Include="App.xaml" />
     <EmbeddedResource Include="version.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -234,24 +235,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="gs9561w32.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="gsdll32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="gsdll32.lib">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="gswin32.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="gswin32c.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="help\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -265,9 +248,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Sounds\*.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="changelog\1.7.1.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="wkhtmltopdf.exe">

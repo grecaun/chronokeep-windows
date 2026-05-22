@@ -47,7 +47,7 @@ public partial class DialogBox : Window
             false,
             () => { }
             );
-        output.ShowDialog(null);
+        output.ShowDialog(MainWindow.mWindow!);
     }
 
     public static void Show(string Message, string LeftButtonContent, string RightButtonContent, LeftClickDelegate LeftClick)
@@ -59,7 +59,7 @@ public partial class DialogBox : Window
             true,
             LeftClick
             );
-        output.ShowDialog(null);
+        output.ShowDialog(MainWindow.mWindow!);
     }
 
     public static void Show(string Message, string CopyText)
@@ -77,11 +77,11 @@ public partial class DialogBox : Window
         output.CopyBox.Text = CopyText;
         output.CopyBox.IsVisible = true;
         output.Width = 500.0;
-        output.ShowDialog(null);
+        output.ShowDialog(MainWindow.mWindow!);
     }
 
     private void CopyBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-        CopyText = CopyBox.Text;
+        CopyText = CopyBox.Text!;
     }
 }

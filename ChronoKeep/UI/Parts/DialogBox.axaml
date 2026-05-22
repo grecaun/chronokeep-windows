@@ -6,7 +6,6 @@
         x:Class="Chronokeep.UI.Parts.DialogBox"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
         WindowStartupLocation="CenterScreen"
         Title=""
         Width="400"
