@@ -1,5 +1,4 @@
-﻿using Chronokeep.Database;
-using Chronokeep.Database.SQLite;
+﻿using Chronokeep.Database.SQLite;
 using Chronokeep.Helpers;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
@@ -9,7 +8,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Threading;
 
-namespace Chronokeep
+namespace Chronokeep.Database
 {
     class SQLiteInterface(string info) : IDBInterface
     {

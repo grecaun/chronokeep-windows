@@ -130,7 +130,7 @@ namespace Chronokeep.UI
             Event? theEvent = database.GetCurrentEvent();
 
             CurrentPage = new DashboardPage(this, database);
-            ParentSplitView.Content = CurrentPage;
+            CurrentContent.Content = CurrentPage;
 
             UpdateStatus();
 
@@ -331,7 +331,7 @@ namespace Chronokeep.UI
         {
             CurrentPage?.Closing();
             CurrentPage = iPage;
-            ParentSplitView.Content = CurrentPage;
+            CurrentContent.Content = CurrentPage;
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)

@@ -11,6 +11,7 @@ using Chronokeep.UI.Parts;
 using Chronokeep.UI.UhfRfidReader;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Chronokeep.UI.MainPages;
@@ -65,7 +66,7 @@ public partial class DashboardPage : UserControl, IMainPage
         divisionsEnabledCheckbox.IsChecked = theEvent!.DivisionsEnabled;
         uploadSpecificDistanceResults.IsChecked = theEvent!.UploadSpecific;
         ComboBoxItem? eventType = null;
-        foreach (ComboBoxItem? item in TypeBox.Items)
+        foreach (ComboBoxItem? item in TypeBox.Items.Cast<ComboBoxItem?>())
         {
             if ((string)item!.Tag! == theEvent!.EventType.ToString())
             {

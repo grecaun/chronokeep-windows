@@ -117,7 +117,7 @@ public partial class SettingsPage : UserControl, IMainPage
         }
         if (int.TryParse(database.GetAppSetting(Constants.Settings.ALARM_SOUND)!.Value, out int alarm))
         {
-            AlarmSoundBox.SelectedIndex = alarm - 1;
+            AlarmSoundBox.SelectedIndex = alarm;
         }
         RegistrationServerNameBox.Text = database.GetAppSetting(Constants.Settings.SERVER_NAME)!.Value;
         TwilioAccountSIDBox.Text = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID)!.Value;
@@ -148,7 +148,7 @@ public partial class SettingsPage : UserControl, IMainPage
         Globals.DownloadInterval = Convert.ToInt32(downloadSlider.Value);
         database.SetAppSetting(Constants.Settings.ANNOUNCER_WINDOW, Convert.ToInt32(announcerSlider.Value).ToString());
         Globals.AnnouncerWindow = Convert.ToInt32(announcerSlider.Value);
-        database.SetAppSetting(Constants.Settings.ALARM_SOUND, (string)((ComboBoxItem)AlarmSoundBox.SelectedItem!).Tag!);
+        database.SetAppSetting(Constants.Settings.ALARM_SOUND, AlarmSoundBox.SelectedIndex.ToString());
         database.SetAppSetting(Constants.Settings.SERVER_NAME, RegistrationServerNameBox.Text!.Trim());
 
         Constants.GlobalVars.SetTwilioCredentials(TwilioAccountSIDBox.Text!.Trim(), TwilioAuthTokenBox.Text!.Trim(), TwilioPhoneNumberBox.Text!.Trim());

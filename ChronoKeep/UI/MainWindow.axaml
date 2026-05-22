@@ -15,8 +15,9 @@
         TransparencyLevelHint="Mica,AcrylicBlur"
         Background="{DynamicResource SecondaryBackground}"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
+        ExtendClientAreaTitleBarHeightHint="30"
         WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="False"
         x:DataType="vm:MainWindow"
         >
     <Window.Styles>
@@ -94,13 +95,17 @@
             <Setter Property="Margin" Value="0,3"/>
             <Setter Property="Opacity" Value="0.5"/>
         </Style>
+        <Style Selector="WindowDrawnDecorations /template/ Panel#PART_TitleTextPanel > TextBlock">
+            <Setter Property="IsVisible" Value="False"/>
+            <Setter Property="Height" Value="0"/>
+        </Style>
     </Window.Styles>
     <SplitView IsPaneOpen="True"
                OpenPaneLength="160"
                DisplayMode="CompactInline"
                Name="ParentSplitView"
                CornerRadius="8"
-               Margin="0,30,0,0"
+               Margin="0,0,0,0"
                >
 		<SplitView.Pane>
             <Grid RowDefinitions="*,auto">
@@ -191,5 +196,8 @@
                 </StackPanel>
             </Grid>
         </SplitView.Pane>
+        <SplitView.Content>
+           <ContentControl Margin="0,30,0,0" Name="CurrentContent"/> 
+        </SplitView.Content>
     </SplitView>
 </Window>

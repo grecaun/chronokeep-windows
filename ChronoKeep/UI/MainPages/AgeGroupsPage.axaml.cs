@@ -34,16 +34,8 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         {
             return;
         }
-        if (theEvent.CommonAgeGroups)
-        {
-            DistancesBox.IsVisible = true;
-            UpdateAgeGroupsList();
-        }
-        else
-        {
-            DistancesBox.IsVisible = false;
-            UpdateDistancesBox();
-        }
+        UpdateDistancesBox();
+        UpdateAgeGroupsList();
     }
 
     private void UpdateDistancesBox()
@@ -64,6 +56,7 @@ public partial class AgeGroupsPage : UserControl, IMainPage
             });
         }
         DistancesBox.SelectedIndex = 0;
+        DistancesBox.IsVisible = !theEvent.CommonAgeGroups;
     }
 
     private void UpdateAgeGroupsList()
@@ -76,6 +69,17 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         AgeGroupsBox.Items.Add(new ALabel());
         List<AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier);
         ageGroups.RemoveAll(x => Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID == x.DistanceId);
+        if (!theEvent.CommonAgeGroups)
+        {
+            if (int.TryParse(((ComboBoxItem)DistancesBox.SelectedItem!).Tag!.ToString(), out int distanceID))
+            {
+                ageGroups.RemoveAll(x => x.DistanceId != distanceID);
+            }
+            else
+            {
+                ageGroups.Clear();
+            }
+        }
         ageGroups.Sort();
         foreach (AgeGroup group in ageGroups)
         {
