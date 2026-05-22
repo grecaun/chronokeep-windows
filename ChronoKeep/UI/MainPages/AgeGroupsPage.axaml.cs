@@ -7,7 +7,6 @@ using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -34,7 +33,10 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         {
             return;
         }
-        UpdateDistancesBox();
+        if (!theEvent.CommonAgeGroups)
+        {
+            UpdateDistancesBox();
+        }
         UpdateAgeGroupsList();
     }
 
@@ -188,7 +190,7 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         }
         List<AgeGroup> ageGroups = [];
         List<AgeGroup> toAdd = [];
-        foreach (AgeGroupPart? aAge in AgeGroupsBox.Items.Cast<AgeGroupPart?>())
+        foreach (object? aAge in AgeGroupsBox.Items)
         {
             if (aAge is AgeGroupPart group)
             {

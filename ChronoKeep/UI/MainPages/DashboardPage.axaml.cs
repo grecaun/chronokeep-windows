@@ -47,24 +47,24 @@ public partial class DashboardPage : UserControl, IMainPage
         }
         LeftPanel.IsVisible = true;
         RightPanel.IsVisible = true;
-        eventNameTextBox.Text = theEvent.Name;
-        eventYearCodeTextBox.Text = theEvent.YearCode;
-        eventDatePicker.Text = theEvent.Date;
-        rankByGunCheckBox.IsChecked = theEvent.RankByGun;
+        EventNameTextBox.Text = theEvent.Name;
+        EventYearCodeTextBox.Text = theEvent.YearCode;
+        EventDatePicker.Text = theEvent.Date;
+        RankByGunCheckBox.IsChecked = theEvent.RankByGun;
         if (theEvent != null && Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
         {
-            rankByGunCheckBox.Content = "Rank by Elapsed Time";
+            RankByGunLabel.Content = "Rank by Elapsed Time";
         }
         else
         {
-            rankByGunCheckBox.Content = "Rank by Clock Time";
+            RankByGunLabel.Content = "Rank by Clock Time";
         }
-        commonAgeCheckBox.IsChecked = theEvent!.CommonAgeGroups;
-        commonStartCheckBox.IsChecked = theEvent!.CommonStartFinish;
-        segmentCheckBox.IsChecked = theEvent!.DistanceSpecificSegments;
-        placementsCheckBox.IsChecked = theEvent!.DisplayPlacements;
-        divisionsEnabledCheckbox.IsChecked = theEvent!.DivisionsEnabled;
-        uploadSpecificDistanceResults.IsChecked = theEvent!.UploadSpecific;
+        CommonAgeCheckBox.IsChecked = theEvent!.CommonAgeGroups;
+        CommonStartCheckBox.IsChecked = theEvent!.CommonStartFinish;
+        SegmentCheckBox.IsChecked = theEvent!.DistanceSpecificSegments;
+        PlacementsCheckBox.IsChecked = theEvent!.DisplayPlacements;
+        DivisionsEnabledCheckbox.IsChecked = theEvent!.DivisionsEnabled;
+        UploadSpecificDistanceResults.IsChecked = theEvent!.UploadSpecific;
         ComboBoxItem? eventType = null;
         foreach (ComboBoxItem? item in TypeBox.Items.Cast<ComboBoxItem?>())
         {
@@ -81,63 +81,63 @@ public partial class DashboardPage : UserControl, IMainPage
         {
             TypeBox.SelectedIndex = 0;
         }
-        editButton.Content = Constants.DashboardLabels.EDIT;
-        cancelButton.IsVisible = false;
+        EditButton.Content = Constants.DashboardLabels.EDIT;
+        CancelButton.IsVisible = false;
         if (theEvent.API_ID > 0 && theEvent.API_Event_ID != "")
         {
-            apiLinkButton.Content = "Event Linked";
+            ApiLinkButton.Content = "Event Linked";
         }
         else
         {
-            apiLinkButton.Content = "Link to API Event";
+            ApiLinkButton.Content = "Link to API Event";
         }
         if (mWindow.IsRegistrationRunning())
         {
-            registrationButton.Content = "Stop Registration";
+            RegistrationButton.Content = "Stop Registration";
         }
         else
         {
-            registrationButton.Content = "Start Registration";
+            RegistrationButton.Content = "Start Registration";
         }
     }
 
     public void DisableEditableFields()
     {
-        eventNameTextBox.IsEnabled = false;
-        eventYearCodeTextBox.IsEnabled = false;
-        eventDatePicker.IsEnabled = false;
-        rankByGunCheckBox.IsEnabled = false;
-        commonAgeCheckBox.IsEnabled = false;
-        commonStartCheckBox.IsEnabled = false;
-        segmentCheckBox.IsEnabled = false;
-        placementsCheckBox.IsEnabled = false;
-        divisionsEnabledCheckbox.IsEnabled = false;
-        uploadSpecificDistanceResults.IsEnabled = false;
+        EventNameTextBox.IsEnabled = false;
+        EventYearCodeTextBox.IsEnabled = false;
+        EventDatePicker.IsEnabled = false;
+        RankByGunCheckBox.IsEnabled = false;
+        CommonAgeCheckBox.IsEnabled = false;
+        CommonStartCheckBox.IsEnabled = false;
+        SegmentCheckBox.IsEnabled = false;
+        PlacementsCheckBox.IsEnabled = false;
+        DivisionsEnabledCheckbox.IsEnabled = false;
+        UploadSpecificDistanceResults.IsEnabled = false;
         TypeBox.IsEnabled = false;
     }
 
     public void EnableEditableFields()
     {
-        eventNameTextBox.IsEnabled = true;
-        eventYearCodeTextBox.IsEnabled = true;
-        eventDatePicker.IsEnabled = true;
-        rankByGunCheckBox.IsEnabled = true;
+        EventNameTextBox.IsEnabled = true;
+        EventYearCodeTextBox.IsEnabled = true;
+        EventDatePicker.IsEnabled = true;
+        RankByGunCheckBox.IsEnabled = true;
         if ((string)((ComboBoxItem)TypeBox.SelectedItem!).Tag! == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA.ToString())
         {
-            commonAgeCheckBox.IsEnabled = false;
-            segmentCheckBox.IsEnabled = false;
-            commonStartCheckBox.IsEnabled = false;
+            CommonAgeCheckBox.IsEnabled = false;
+            SegmentCheckBox.IsEnabled = false;
+            CommonStartCheckBox.IsEnabled = false;
         }
         else
         {
-            commonAgeCheckBox.IsEnabled = true;
-            segmentCheckBox.IsEnabled = true;
-            commonStartCheckBox.IsEnabled = true;
+            CommonAgeCheckBox.IsEnabled = true;
+            SegmentCheckBox.IsEnabled = true;
+            CommonStartCheckBox.IsEnabled = true;
         }
         TypeBox.IsEnabled = true;
-        placementsCheckBox.IsEnabled = true;
-        divisionsEnabledCheckbox.IsEnabled = true;
-        uploadSpecificDistanceResults.IsEnabled = true;
+        PlacementsCheckBox.IsEnabled = true;
+        DivisionsEnabledCheckbox.IsEnabled = true;
+        UploadSpecificDistanceResults.IsEnabled = true;
     }
 
     private bool CancelEventChangeAsync(EventClickType clickType)
@@ -176,7 +176,7 @@ public partial class DashboardPage : UserControl, IMainPage
                                 int lastID = -1;
                                 foreach (Event ev in events)
                                 {
-                                    int tmp = SaveEvent(ev, savedDatabase, database);
+                                    int tmp = Save_Event(ev, savedDatabase, database);
                                     if (tmp > 0)
                                     {
                                         lastID = tmp;
@@ -234,7 +234,7 @@ public partial class DashboardPage : UserControl, IMainPage
         DeleteEvent,
     }
 
-    private static int SaveEvent(Event oldEvent, IDBInterface loadFrom, IDBInterface saveTo)
+    private static int Save_Event(Event oldEvent, IDBInterface loadFrom, IDBInterface saveTo)
     {
         // Make some modifications, note that we cannot guarantee API compatibility between events.
         Event newEvent = new();
@@ -549,7 +549,7 @@ public partial class DashboardPage : UserControl, IMainPage
             SQLiteInterface savedDatabase = new(file.Name);
             savedDatabase.Initialize();
             Event theEvent = database.GetCurrentEvent()!;
-            SaveEvent(theEvent, database, savedDatabase);
+            Save_Event(theEvent, database, savedDatabase);
             Log.D("UI.DashboardPage", "Done saving file.");
             DialogBox.Show("Event saved successfully.");
         }
@@ -575,7 +575,7 @@ public partial class DashboardPage : UserControl, IMainPage
             int lastID = -1;
             foreach (Event ev in events)
             {
-                int tmp = SaveEvent(ev, savedDatabase, database);
+                int tmp = Save_Event(ev, savedDatabase, database);
                 if (tmp > 0)
                 {
                     lastID = tmp;
@@ -620,73 +620,73 @@ public partial class DashboardPage : UserControl, IMainPage
     private void TypeBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         Log.D("UI.DashboardPage", "TypeBox selection changed.");
-        int eventType = -1;
+        int eventType = 0;
         try
         {
-            eventType = int.Parse((string)((ComboBoxItem)TypeBox.SelectedItem!).Tag!);
+            eventType = TypeBox.SelectedIndex;
         }
         catch
         {
-            commonAgeCheckBox.IsEnabled = true;
-            segmentCheckBox.IsEnabled = true;
-            commonStartCheckBox.IsEnabled = true;
+            CommonAgeCheckBox.IsEnabled = true;
+            SegmentCheckBox.IsEnabled = true;
+            CommonStartCheckBox.IsEnabled = true;
         }
         // Common age groups when backyard ultra is the event type.
         if (eventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
         {
-            commonAgeCheckBox.IsEnabled = false;
-            commonAgeCheckBox.IsChecked = true;
-            segmentCheckBox.IsEnabled = false;
-            segmentCheckBox.IsChecked = false;
-            commonStartCheckBox.IsEnabled = false;
-            commonStartCheckBox.IsChecked = true;
-            rankByGunCheckBox.Content = "Rank by Elapsed Time";
+            CommonAgeCheckBox.IsEnabled = false;
+            CommonAgeCheckBox.IsChecked = true;
+            SegmentCheckBox.IsEnabled = false;
+            SegmentCheckBox.IsChecked = false;
+            CommonStartCheckBox.IsEnabled = false;
+            CommonStartCheckBox.IsChecked = true;
+            RankByGunLabel.Content = "Rank by Elapsed Time";
         }
-        else if (editButton != null && editButton.Content!.ToString() == Constants.DashboardLabels.SAVE)
+        else if (EditButton != null && EditButton.Content!.ToString() == Constants.DashboardLabels.SAVE)
         {
-            commonAgeCheckBox.IsEnabled = true;
-            segmentCheckBox.IsEnabled = true;
-            commonStartCheckBox.IsEnabled = true;
-            rankByGunCheckBox.Content = "Rank by Clock Time";
+            CommonAgeCheckBox.IsEnabled = true;
+            SegmentCheckBox.IsEnabled = true;
+            CommonStartCheckBox.IsEnabled = true;
+            RankByGunLabel.Content = "Rank by Clock Time";
         }
         else
         {
-            rankByGunCheckBox.Content = "Rank by Clock Time";
+            RankByGunLabel.Content = "Rank by Clock Time";
         }
     }
 
     private void EditButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.DashboardPage", "Edit Button Clicked.");
-        if (editButton.Content!.ToString() == Constants.DashboardLabels.EDIT)
+        if (EditButton.Content!.ToString() == Constants.DashboardLabels.EDIT)
         {
             Log.D("UI.DashboardPage", "Editing.");
-            editButton.Content = Constants.DashboardLabels.WORKING;
+            EditButton.Content = Constants.DashboardLabels.WORKING;
             EnableEditableFields();
-            editButton.Content = Constants.DashboardLabels.SAVE;
-            cancelButton.IsVisible = true;
+            EditButton.Content = Constants.DashboardLabels.SAVE;
+            CancelButton.IsVisible = true;
         }
-        else if (editButton.Content.ToString() == Constants.DashboardLabels.SAVE)
+        else if (EditButton.Content.ToString() == Constants.DashboardLabels.SAVE)
         {
             Log.D("UI.DashboardPage", "Saving");
-            editButton.Content = Constants.DashboardLabels.WORKING;
+            EditButton.Content = Constants.DashboardLabels.WORKING;
             DisableEditableFields();
             // If distance specific segments are being enabled/disabled then reset all segments
             // so no residual segments stay around.
-            if (theEvent!.DistanceSpecificSegments != segmentCheckBox.IsChecked)
+            if (theEvent!.DistanceSpecificSegments != SegmentCheckBox.IsChecked)
             {
                 database.ResetSegments(theEvent.Identifier);
             }
-            theEvent.Name = eventNameTextBox.Text!;
-            theEvent.YearCode = eventYearCodeTextBox.Text!;
-            theEvent.Date = eventDatePicker.Text!;
-            theEvent.RankByGun = rankByGunCheckBox.IsChecked ?? false;
-            theEvent.CommonAgeGroups = commonAgeCheckBox.IsChecked ?? false;
-            theEvent.CommonStartFinish = commonStartCheckBox.IsChecked ?? false;
-            theEvent.DistanceSpecificSegments = segmentCheckBox.IsChecked ?? false;
-            theEvent.DisplayPlacements = placementsCheckBox.IsChecked ?? true;
-            theEvent.DivisionsEnabled = divisionsEnabledCheckbox.IsChecked ?? false;
-            theEvent.UploadSpecific = uploadSpecificDistanceResults.IsChecked ?? false;
+            theEvent.Name = EventNameTextBox.Text!;
+            theEvent.YearCode = EventYearCodeTextBox.Text!;
+            theEvent.Date = EventDatePicker.Text!;
+            theEvent.RankByGun = RankByGunCheckBox.IsChecked ?? false;
+            theEvent.CommonAgeGroups = CommonAgeCheckBox.IsChecked ?? false;
+            theEvent.CommonStartFinish = CommonStartCheckBox.IsChecked ?? false;
+            theEvent.DistanceSpecificSegments = SegmentCheckBox.IsChecked ?? false;
+            theEvent.DisplayPlacements = PlacementsCheckBox.IsChecked ?? true;
+            theEvent.DivisionsEnabled = DivisionsEnabledCheckbox.IsChecked ?? false;
+            theEvent.UploadSpecific = UploadSpecificDistanceResults.IsChecked ?? false;
             try
             {
                 theEvent.EventType = int.Parse((string)((ComboBoxItem)TypeBox.SelectedItem!).Tag!);
@@ -735,8 +735,8 @@ public partial class DashboardPage : UserControl, IMainPage
         Log.D("UI.DashboardPage", "Cancel clicked.");
         DisableEditableFields();
         UpdateView();
-        editButton.Content = Constants.DashboardLabels.EDIT;
-        cancelButton.IsVisible = false;
+        EditButton.Content = Constants.DashboardLabels.EDIT;
+        CancelButton.IsVisible = false;
     }
 
     private void ApiLinkButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -781,12 +781,12 @@ public partial class DashboardPage : UserControl, IMainPage
         if (mWindow.IsRegistrationRunning())
         {
             mWindow.StopRegistration();
-            registrationButton.Content = "Start Registration";
+            RegistrationButton.Content = "Start Registration";
         }
         else
         {
             mWindow.StartRegistration();
-            registrationButton.Content = "Stop Registration";
+            RegistrationButton.Content = "Stop Registration";
         }
     }
 }

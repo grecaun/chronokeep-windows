@@ -17,7 +17,6 @@
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="30"
         WindowStartupLocation="CenterScreen"
-        ShowInTaskbar="False"
         x:DataType="vm:MainWindow"
         >
     <Window.Styles>
@@ -94,10 +93,6 @@
             <Setter Property="CornerRadius" Value="1"/>
             <Setter Property="Margin" Value="0,3"/>
             <Setter Property="Opacity" Value="0.5"/>
-        </Style>
-        <Style Selector="WindowDrawnDecorations /template/ Panel#PART_TitleTextPanel > TextBlock">
-            <Setter Property="IsVisible" Value="False"/>
-            <Setter Property="Height" Value="0"/>
         </Style>
     </Window.Styles>
     <SplitView IsPaneOpen="True"

@@ -1,12 +1,14 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Chronokeep.UI.MainPages"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
              x:Class="Chronokeep.UI.MainPages.DashboardPage"
              Padding="16"
              Background="{DynamicResource PrimaryBackground}"
              CornerRadius="8,0,0,0"
+             x:DataType="local:DashboardPage"
              >
     <UserControl.Styles>
         <Style Selector="Button.dash">
@@ -15,7 +17,7 @@
             <Setter Property="Margin" Value="15,10,15,10"/>
             <Setter Property="Height" Value="40"/>
         </Style>
-        <Style Selector="TextBlock">
+        <Style Selector="TextBlock.Label">
 			<Setter Property="FontSize" Value="16"/>
 			<Setter Property="Margin" Value="10,0,5,0"/>
 			<Setter Property="VerticalAlignment" Value="Center"/>
@@ -26,12 +28,6 @@
 			<Setter Property="FontSize" Value="16"/>
 			<Setter Property="Margin" Value="5,0,10,0"/>
 			<Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="DatePicker">
-			<Setter Property="FontSize" Value="16"/>
-			<Setter Property="Margin" Value="5,0,10,0"/>
-			<Setter Property="VerticalAlignment" Value="Center"/>
-			<Setter Property="HorizontalAlignment" Value="Stretch"/>
         </Style>
         <Style Selector="StackPanel.toggle">
 			<Setter Property="Margin" Value="10,3"/>
@@ -46,8 +42,6 @@
         </Style>
         <Style Selector="ToggleSwitch">
 			<Setter Property="FontSize" Value="16"/>
-			<Setter Property="OffContent" Value=""/>
-			<Setter Property="OnContent" Value=""/>
 			<Setter Property="Margin" Value="10,-7,10,-7"/>
             <Setter Property="Width" Value="40"/>
         </Style>
@@ -73,35 +67,35 @@
             </Grid.ColumnDefinitions>
             <Button
                 Grid.Column="0"
-                Name="newEvent"
+                Name="NewEvent"
                 Content="New Event"
                 Click="NewEvent_Click"
                 Classes="dash"
                 />
             <Button
                 Grid.Column="1"
-                Name="importEvent"
+                Name="ImportEvent"
                 Content="Import Event"
                 Click="ImportEvent_Click"
                 Classes="dash"
                 />
             <Button
                 Grid.Column="2"
-                Name="saveEvent"
+                Name="SaveEvent"
                 Content="Save Event"
                 Click="SaveEvent_Click"
                 Classes="dash"
                 />
             <Button
                 Grid.Column="3"
-                Name="changeEvent"
+                Name="ChangeEvent"
                 Content="Change Event"
                 Click="ChangeEvent_Click"
                 Classes="dash"
                 />
             <Button
                 Grid.Column="4"
-                Name="deleteEvent"
+                Name="DeleteEvent"
                 Content="Delete Event"
                 Click="DeleteEvent_Click"
                 Classes="dash"
@@ -115,57 +109,57 @@
                       >
             <StackPanel>
                 <DockPanel LastChildFill="True" Margin="0,0,0,5">
-                    <TextBlock Text="Event Name" />
-                    <TextBox Name="eventNameTextBox" IsEnabled="False" />
+                    <TextBlock Text="Event Name" Classes="Label"/>
+                    <TextBox Name="EventNameTextBox" IsEnabled="False" />
                 </DockPanel>
                 <DockPanel LastChildFill="True" Margin="0,0,0,5">
-                    <TextBlock Text="Year Code" />
-                    <TextBox Name="eventYearCodeTextBox" IsEnabled="False" />
+                    <TextBlock Text="Year Code" Classes="Label"/>
+                    <TextBox Name="EventYearCodeTextBox" IsEnabled="False" />
                 </DockPanel>
                 <DockPanel LastChildFill="True">
-                    <TextBlock Text="Date" />
-                    <MaskedTextBox Mask="90/90/0000" Name="eventDatePicker" IsEnabled="False" />
+                    <TextBlock Text="Date" Classes="Label"/>
+                    <MaskedTextBox Mask="90/90/0000" Name="EventDatePicker" IsEnabled="False" />
                 </DockPanel>
                 <Separator Margin="5,5,5,5" />
                 <StackPanel Orientation="Horizontal" Classes="toggle">
-                    <ToggleSwitch Name="rankByGunCheckBox" IsEnabled="False"/>
-                    <Label>Rank by Clock Time</Label>
+                    <ToggleSwitch Name="RankByGunCheckBox" IsEnabled="False"/>
+                    <Label Name="RankByGunLabel">Rank by Clock Time</Label>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Classes="toggle">
-                    <ToggleSwitch Name="commonAgeCheckBox" IsEnabled="False"/>
+                    <ToggleSwitch Name="CommonAgeCheckBox" IsEnabled="False"/>
                     <Label>Common Age Groups for Distances</Label>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Classes="toggle">
-                    <ToggleSwitch Name="commonStartCheckBox" IsEnabled="False"/>
+                    <ToggleSwitch Name="CommonStartCheckBox" IsEnabled="False"/>
                     <Label>Common Start/Finish Location</Label>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Classes="toggle">
-                    <ToggleSwitch Name="segmentCheckBox" IsEnabled="False"/>
+                    <ToggleSwitch Name="SegmentCheckBox" IsEnabled="False"/>
                     <Label>Distance Specific Segments</Label>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Classes="toggle">
-                    <ToggleSwitch Name="placementsCheckBox" IsEnabled="False"/>
+                    <ToggleSwitch Name="PlacementsCheckBox" IsEnabled="False"/>
                     <Label>Display Participant Placements</Label>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Classes="toggle">
-                    <ToggleSwitch Name="divisionsEnabledCheckbox" IsEnabled="False"/>
+                    <ToggleSwitch Name="DivisionsEnabledCheckbox" IsEnabled="False"/>
                     <Label>Enable Divisions?</Label>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Classes="toggle">
-                    <ToggleSwitch Name="uploadSpecificDistanceResults" IsEnabled="False"/>
+                    <ToggleSwitch Name="UploadSpecificDistanceResults" IsEnabled="False"/>
                     <Label>Upload Results for Select Distances?</Label>
                 </StackPanel>
                 <DockPanel Margin="10,5,10,5">
-                    <TextBlock Text="Event Type" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock Text="Event Type" Classes="Label"/>
                     <ComboBox Name="TypeBox"
                               SelectionChanged="TypeBox_SelectionChanged"
                               IsEnabled="False"
                               Margin="10,0,0,0"
-                              VerticalContentAlignment="Center"
-                              HorizontalAlignment="Stretch">
-                        <ComboBoxItem Content="Distance Based" Tag="0" IsSelected="True"/>
-                        <ComboBoxItem Content="Time Based" Tag="1" />
-                        <ComboBoxItem Content="Backyard Ultra" Tag="2" />
+                              HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Stretch">
+                        <ComboBoxItem HorizontalAlignment="Stretch">Distance Based</ComboBoxItem>
+                        <ComboBoxItem HorizontalAlignment="Stretch">Time Based</ComboBoxItem>
+                        <ComboBoxItem HorizontalAlignment="Stretch">Backyard Ultra</ComboBoxItem>
                     </ComboBox>
                 </DockPanel>
                 <Separator Margin="5,5,5,5" />
@@ -174,7 +168,7 @@
                     HorizontalAlignment="Center"
                     >
                     <Button
-                        Name="editButton"
+                        Name="EditButton"
                         Content="Edit"
                         Click="EditButton_Click"
                         Classes="dash"
@@ -182,7 +176,7 @@
                         Width="150"
                         />
                     <Button
-                        Name="cancelButton"
+                        Name="CancelButton"
                         Content="Cancel"
                         Click="CancelButton_Click"
                         Classes="dash"
@@ -200,7 +194,7 @@
             Margin="10,15,15,0"
             >
             <Button
-                Name="apiPageButton"
+                Name="ApiPageButton"
                 Content="Manage API"
                 Click="ApiPageButton_Click"
                 Classes="dash"
@@ -208,7 +202,7 @@
                 HorizontalAlignment="Stretch"
                 />
             <Button
-                Name="apiLinkButton"
+                Name="ApiLinkButton"
                 Content="Link to API Event"
                 Click="ApiLinkButton_Click"
                 Classes="dash"
@@ -216,7 +210,7 @@
                 HorizontalAlignment="Stretch"
                 />
             <Button
-                Name="tagTesterButton"
+                Name="TagTesterButton"
                 Content="Chip Tester"
                 Click="TagTesterButton_Click"
                 Classes="dash"
@@ -224,7 +218,7 @@
                 HorizontalAlignment="Stretch"
                 />
             <Button
-                Name="registrationButton"
+                Name="RegistrationButton"
                 Content="Start Registration"
                 Click="RegistrationButton_Click"
                 Classes="dash"
