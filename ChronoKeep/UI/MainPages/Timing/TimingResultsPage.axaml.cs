@@ -34,6 +34,7 @@ public partial class TimingResultsPage : UserControl, ISubPage
             Database.SQLite.Results.GetStaticVariables(database);
         }
         parent.SetReaders([], false);
+        UpdateView();
     }
 
     public void Closing() { }

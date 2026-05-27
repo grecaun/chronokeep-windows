@@ -63,7 +63,6 @@ public partial class DashboardPage : UserControl, IMainPage
         CommonStartCheckBox.IsChecked = theEvent!.CommonStartFinish;
         SegmentCheckBox.IsChecked = theEvent!.DistanceSpecificSegments;
         PlacementsCheckBox.IsChecked = theEvent!.DisplayPlacements;
-        DivisionsEnabledCheckbox.IsChecked = theEvent!.DivisionsEnabled;
         UploadSpecificDistanceResults.IsChecked = theEvent!.UploadSpecific;
         ComboBoxItem? eventType = null;
         foreach (ComboBoxItem? item in TypeBox.Items.Cast<ComboBoxItem?>())
@@ -111,7 +110,6 @@ public partial class DashboardPage : UserControl, IMainPage
         CommonStartCheckBox.IsEnabled = false;
         SegmentCheckBox.IsEnabled = false;
         PlacementsCheckBox.IsEnabled = false;
-        DivisionsEnabledCheckbox.IsEnabled = false;
         UploadSpecificDistanceResults.IsEnabled = false;
         TypeBox.IsEnabled = false;
     }
@@ -136,7 +134,6 @@ public partial class DashboardPage : UserControl, IMainPage
         }
         TypeBox.IsEnabled = true;
         PlacementsCheckBox.IsEnabled = true;
-        DivisionsEnabledCheckbox.IsEnabled = true;
         UploadSpecificDistanceResults.IsEnabled = true;
     }
 
@@ -685,7 +682,6 @@ public partial class DashboardPage : UserControl, IMainPage
             theEvent.CommonStartFinish = CommonStartCheckBox.IsChecked ?? false;
             theEvent.DistanceSpecificSegments = SegmentCheckBox.IsChecked ?? false;
             theEvent.DisplayPlacements = PlacementsCheckBox.IsChecked ?? true;
-            theEvent.DivisionsEnabled = DivisionsEnabledCheckbox.IsChecked ?? false;
             theEvent.UploadSpecific = UploadSpecificDistanceResults.IsChecked ?? false;
             try
             {

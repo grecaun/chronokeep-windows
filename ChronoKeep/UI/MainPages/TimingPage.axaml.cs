@@ -20,7 +20,6 @@ using Chronokeep.UI.MainPages.Timing;
 using Chronokeep.UI.Parts;
 using Chronokeep.UI.Timing.Import;
 using Chronokeep.UI.Timing.Notifications;
-using Chronokeep.UI.Timing.ReaderSettings.Parts;
 using Chronokeep.UI.Timing.Windows;
 using System;
 using System.Collections.Generic;
@@ -74,12 +73,17 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     [GeneratedRegex(@"[^a-z0-9\-]")]
     private static partial Regex FileSaveRegex();
 
+    private readonly bool loaded = false;
+
     public TimingPage(IMainWindow window, IDBInterface database)
     {
         InitializeComponent();
         this.database = database;
         this.mWindow = window;
         theEvent = database.GetCurrentEvent();
+        viewOnlyBox.SelectedIndex = 0;
+        SortBy.SelectedIndex = 0;
+        loaded = true;
 
         if (theEvent == null || theEvent.Identifier == -1)
         {
@@ -773,7 +777,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     public string GetSearchValue()
     {
-        return searchBox.Text!.Trim();
+        return searchBox.Text == null ? "" : searchBox.Text.Trim();
     }
 
     public string GetLocation()
@@ -1133,6 +1137,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     private void ViewOnlyBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
+        if (!loaded) { return; }
         if (subPage == null)
         {
             return;
@@ -1165,6 +1170,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     private void ReaderSelectionBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
+        if (!loaded) { return; }
         if (subPage == null) return;
         string readerItem = (string)readerSelectionBox.SelectedItem!;
         if (readerItem == null)
@@ -1179,6 +1185,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     private void LocationBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
+        if (!loaded) { return; }
         if (subPage == null)
         {
             return;
@@ -1196,6 +1203,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     private void SortBy_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
+        if (!loaded) { return; }
         if (subPage == null)
         {
             return;

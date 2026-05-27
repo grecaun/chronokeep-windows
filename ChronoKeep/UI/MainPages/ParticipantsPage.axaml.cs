@@ -29,7 +29,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
     private List<Participant> allParticipants = [];
     private readonly List<Participant> conflicts = [];
 
-    private bool loaded = false;
+    private readonly bool loaded = false;
 
     public ParticipantsPage(IMainWindow mainWindow, IDBInterface database)
     {

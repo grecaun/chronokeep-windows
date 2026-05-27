@@ -142,10 +142,6 @@
                     <Label>Display Participant Placements</Label>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Classes="toggle">
-                    <ToggleSwitch Name="DivisionsEnabledCheckbox" IsEnabled="False"/>
-                    <Label>Enable Divisions?</Label>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Classes="toggle">
                     <ToggleSwitch Name="UploadSpecificDistanceResults" IsEnabled="False"/>
                     <Label>Upload Results for Select Distances?</Label>
                 </StackPanel>

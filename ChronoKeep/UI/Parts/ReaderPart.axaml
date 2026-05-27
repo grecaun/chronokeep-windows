@@ -8,20 +8,20 @@
 		  HorizontalAlignment="Center">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="140"/> <!-- Type -->
-			<ColumnDefinition Width="140"/> <!-- IP -->
-			<ColumnDefinition Width="80"/>  <!-- Port -->
-			<ColumnDefinition Width="140"/> <!-- Location -->
-			<ColumnDefinition Width="60"/>  <!-- Clock -->
-			<ColumnDefinition Width="60"/>  <!-- Rewinnd -->
-			<ColumnDefinition Width="60"/>  <!-- Settings -->
-			<ColumnDefinition Width="60"/>  <!-- Reader -->
-			<ColumnDefinition Width="60"/>  <!-- Connect -->
-			<ColumnDefinition Width="60"/>  <!-- Delete -->
+			<ColumnDefinition Width="120"/> <!-- IP -->
+			<ColumnDefinition Width="50"/>  <!-- Port -->
+			<ColumnDefinition Width="130"/> <!-- Location -->
+			<ColumnDefinition Width="50"/>  <!-- Clock -->
+			<ColumnDefinition Width="50"/>  <!-- Rewinnd -->
+			<ColumnDefinition Width="50"/>  <!-- Settings -->
+			<ColumnDefinition Width="50"/>  <!-- Reader -->
+			<ColumnDefinition Width="50"/>  <!-- Connect -->
+			<ColumnDefinition Width="50"/>  <!-- Delete -->
         </Grid.ColumnDefinitions>
 		<ComboBox Grid.Column="0"
 			Name="ReaderType"
 			SelectionChanged="ReaderType_SelectionChanged"
-			Margin="5"
+			Margin="2"
 			Height="40"
 			HorizontalAlignment="Stretch"
 			VerticalContentAlignment="Center"/>
@@ -30,7 +30,7 @@
 		    GotFocus="SelectAll"
 			TextInput="IPValidation"
 			Text=""
-			Margin="5"
+			Margin="2"
 			Height="40"
 			FontSize="14"
 			VerticalAlignment="Center"
@@ -41,7 +41,7 @@
 			GotFocus="SelectAll"
 			TextInput="NumberValidation"
 			Text=""
-			Margin="5"
+			Margin="2"
 			Height="40"
 			FontSize="14"
 			VerticalAlignment="Center"
@@ -49,14 +49,14 @@
 			VerticalContentAlignment="Center"/>
 		<ComboBox Grid.Column="3"
 			Name="ReaderLocation"
-			Margin="5"
+			Margin="2"
 			Height="40"
 			HorizontalAlignment="Stretch"
 			VerticalContentAlignment="Center"/>
 		<Button Grid.Column="4"
 			Name="ClockButton"
 			Click="Clock_Click"
-			Margin="5"
+			Margin="2"
 			Height="40"
 			Opacity="0.2"
 			IsEnabled="False"
@@ -67,7 +67,7 @@
 		<Button Grid.Column="5"
 			Name="RewindButton"
 			Click="Rewind_Click"
-			Margin="5"
+			Margin="2"
 			Height="40"
 			Opacity="0.2"
 			IsEnabled="False"
@@ -78,7 +78,7 @@
 		<Button Grid.Column="6"
 		    Name="SettingsButton"
 			Click="Settings_Click"
-			Margin="5"
+			Margin="2"
 			Height="40"
 			Opacity="0.2"
 			IsEnabled="False"
@@ -89,7 +89,7 @@
 		<Button Grid.Column="7"
 		    Name="ReaderButton"
 			Click="Readers_Click"
-			Margin="5"
+			Margin="2"
 			Height="40"
 			Opacity="0.2"
 			IsEnabled="False"
@@ -100,7 +100,7 @@
 		<Button Grid.Column="8"
 			Name="ConnectButton"
 			Click="Connect_Click"
-			Margin="5"
+			Margin="2"
 			Height="40"
 			HorizontalAlignment="Stretch"
 			VerticalContentAlignment="Center">
@@ -109,7 +109,7 @@
 		<Button Grid.Column="9"
 			Name="RemoveButton"
 			Click="Remove_Click"
-			Margin="5"
+			Margin="2"
 			Height="40"
 			IsVisible="False"
 			HorizontalAlignment="Stretch"

@@ -32,6 +32,7 @@ public partial class ReaderPart : UserControl
     {
         this.parent = parent;
         this.locations = locations;
+        InitializeComponent();
         reader = sys;
         ComboBoxItem? current, selected = null;
         foreach (string SYSTEM_IDVAL in Readers.SYSTEM_NAMES.Keys)

@@ -53,6 +53,7 @@
 
     <Application.Resources>
         <ResourceDictionary>
+            <x:Double x:Key="DataGridSortIconMinWidth">0</x:Double>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://Chronokeep/Icons.axaml" />
                 <ResourceInclude Source="avares://Chronokeep/Colors.axaml" />

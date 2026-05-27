@@ -15,10 +15,11 @@
         </Style>
         <Style Selector="Expander">
 			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+			<Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
         </Style>
     </UserControl.Styles>
 
-    <Grid>
+    <Grid Background="{DynamicResource PrimaryBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -67,7 +68,7 @@
                             Name="StartTimeLabel"
                             Text="Start Time"
                             FontSize="14"
-                            Width="65"
+                            Width="75"
                             VerticalAlignment="Center"
                             TextAlignment="Right"
                             Margin="0,0,10,0"
@@ -75,7 +76,7 @@
                     <MaskedTextBox
                             Name="StartTime"
                             Mask="00:00:00.000"
-                            Width="125"
+                            Width="135"
                             Height="30"
                             VerticalAlignment="Center"
                             VerticalContentAlignment="Center"
@@ -194,11 +195,10 @@
                         Width="250"
                         Height="35"
                         Margin="0,5,0,0"
-                        SelectedIndex="0"
                         HorizontalAlignment="Stretch"
                         SelectionChanged="ViewOnlyBox_SelectionChanged"
                         >
-                        <ComboBoxItem Content="Hide Unknown" IsSelected="True"/>
+                        <ComboBoxItem Content="Hide Unknown"/>
                         <ComboBoxItem Content="Show All" />
                         <ComboBoxItem Content="Show Only Starts" />
                         <ComboBoxItem Content="Show Only Finishes" />
@@ -229,7 +229,6 @@
                         Width="250"
                         Height="35"
                         Margin="0,5,0,0"
-                        SelectedIndex="0"
                         HorizontalAlignment="Stretch"
                         SelectionChanged="SortBy_SelectionChanged"
                         >
@@ -523,14 +522,14 @@
             </Grid.RowDefinitions>
             <Expander 
                 MaxHeight="235"
-                Margin="5,0,5,5"
+                Margin="0,0,0,5"
                 HorizontalAlignment="Stretch"
                 IsExpanded="False"
                 ExpandDirection="Down"
                 Grid.Row="0"
                 Expanded="Expander_Expanded"
                 Collapsed="Expander_Expanded"
-                x:Name="readerExpander"
+                Name="readerExpander"
                 >
                 <Expander.Header>
                     <DockPanel
@@ -544,7 +543,7 @@
                             />
                         <Button
                             DockPanel.Dock="Right"
-                            x:Name="ReaderMessageButton"
+                            Name="ReaderMessageButton"
                             Click="ReaderMessageButton_Click"
                             IsVisible="False"
                             Margin="0,0,-10,0"
@@ -552,13 +551,13 @@
                             CornerRadius="30"
                             >
                             <TextBlock
-                                x:Name="ReaderMessageNumberBox"
+                                Name="ReaderMessageNumberBox"
                                 Text="0"
                                 />
                         </Button>
                         <ToggleSwitch 
                             DockPanel.Dock="Right"
-                            x:Name="remoteControllerSwitch" 
+                            Name="remoteControllerSwitch" 
                             IsCheckedChanged="RemoteControllerSwitch_Checked"
                             Margin="-2,-7,-5,-7" 
                             VerticalAlignment="Center"
@@ -567,7 +566,7 @@
                             OnContent=""
                             />
                         <TextBlock 
-                            x:Name="remoteErrorsBlock"
+                            Name="remoteErrorsBlock"
                             Margin="0,0,5,0"
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
@@ -575,7 +574,7 @@
                             />
                         <Button
                             DockPanel.Dock="Right" 
-                            x:Name="remoteReadersButton" 
+                            Name="remoteReadersButton" 
                             Content="Remote Readers" 
                             Click="RemoteReadersButton_Click"
                             Classes="tim"
