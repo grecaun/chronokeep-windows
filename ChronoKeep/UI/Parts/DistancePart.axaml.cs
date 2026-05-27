@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -12,13 +13,7 @@ namespace Chronokeep.UI.Parts;
 
 public partial class DistancePart : UserControl
 {
-    public bool PlusWave { get; set; } = true;
-    public bool MinusWave { get => !PlusWave; }
-    public bool IsMain { get => parent == null; }
-    public bool IsLinked { get => !IsMain; }
-    public bool DistanceEvent { get; set; } = true;
-    public bool NotDistanceEvent { get => !DistanceEvent; }
-    public bool NotBackyardEvent { get; set; } = true;
+    private bool PlusWave = true;
 
     private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
     private const string LimitFormat = "{0:D2}:{1:D2}:{2:D2}";
@@ -36,13 +31,13 @@ public partial class DistancePart : UserControl
                 List<Distance> distances, Dictionary<int, Distance> distanceDictionary,
                 Event theEvent, DistancePart? parent)
     {
-        InitializeComponent();
         List<Distance> otherDistances = [.. distances];
         this.distanceDictionary = distanceDictionary;
         otherDistances.Remove(distance);
         this.page = page;
         this.theDistance = distance;
         this.parent = parent;
+        InitializeComponent();
         DistanceName.Text = theDistance.Name;
         CopyFromBox.Items.Add(new ComboBoxItem()
         {
@@ -165,6 +160,8 @@ public partial class DistancePart : UserControl
                 theDistance.StartOffsetMilliseconds *= -1;
             }
         }
+        PlusIcon.IsVisible = PlusWave;
+        MinusIcon.IsVisible = !PlusWave;
         StartOffset.Text = string.Format(TimeFormat, theDistance.StartOffsetSeconds / 3600,
             theDistance.StartOffsetSeconds % 3600 / 60, theDistance.StartOffsetSeconds % 60,
             theDistance.StartOffsetMilliseconds);
@@ -173,10 +170,6 @@ public partial class DistancePart : UserControl
         {
             UploadPanel.IsVisible = true;
             Upload.IsChecked = theDistance.Upload;
-        }
-        if (theEvent.EventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
-        {
-            NotBackyardEvent = false;
         }
         TypeBox.Items.Add(
             new ComboBoxItem
@@ -240,6 +233,20 @@ public partial class DistancePart : UserControl
         {
             TypeBox.SelectedIndex = 0;
         }
+        DistPanel.IsVisible = parent == null;
+        CopyPanel.IsVisible = parent == null;
+        AddRemovePanel.IsVisible = parent == null;
+        LinkedPanel.IsVisible = parent != null;
+        RankPanel.IsVisible = parent != null;
+        AltRemoveBtn.IsVisible = parent != null;
+        CertPanel.IsVisible = Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType && parent == null;
+        IntervalBlock.IsVisible = Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType;
+        MaxTimePanel.IsVisible = Constants.Timing.EVENT_TYPE_DISTANCE != theEvent.EventType;
+        OccurrencePanel.IsVisible = Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType;
+        if (parent != null)
+        {
+            MainPanel.Margin = new Thickness(50, 0, 0, 0);
+        }
     }
 
     public Distance GetDistance()
@@ -302,7 +309,7 @@ public partial class DistancePart : UserControl
         {
             DialogBox.Show("Error with values given.");
         }
-        if (MinusWave)
+        if (!PlusWave)
         {
             Log.D("UI.MainPages.DistancesPage", "Recording negative values.");
             theDistance.StartOffsetSeconds *= -1;
@@ -361,6 +368,8 @@ public partial class DistancePart : UserControl
     {
         Log.D("UI.MainPages.DistancesPage", "Plus/Minus sign clicked. PlusWave is: " + PlusWave);
         PlusWave = !PlusWave;
+        PlusIcon.IsVisible = PlusWave;
+        MinusIcon.IsVisible = !PlusWave;
     }
 
     private void DotValidation(object? sender, TextInputEventArgs e)
