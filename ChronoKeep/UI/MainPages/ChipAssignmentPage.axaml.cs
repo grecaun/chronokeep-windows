@@ -23,8 +23,6 @@ namespace Chronokeep.UI.MainPages;
 
 public partial class ChipAssignmentPage : UserControl, IMainPage
 {
-    private List<BibChipAssociation> EventChips { get; } = [];
-    private List<BibChipAssociation> GlobalChips { get; } = [];
 
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
@@ -54,6 +52,7 @@ public partial class ChipAssignmentPage : UserControl, IMainPage
         }
         ChipTypeBox.SelectionChanged += ChipTypeBox_SelectionChanged;
         theEvent = database.GetCurrentEvent();
+        UpdateView();
     }
 
     public async void UpdateView()
@@ -71,10 +70,8 @@ public partial class ChipAssignmentPage : UserControl, IMainPage
             ignored = database.GetBibChips(-1);
             ignored.Sort();
         });
-        EventChips.Clear();
-        EventChips.AddRange(list);
-        GlobalChips.Clear();
-        GlobalChips.AddRange(ignored);
+        bibChipList.ItemsSource = list;
+        ignoredChipList.ItemsSource = ignored;
         long maxChip = 0;
         long chip = -1;
         // check if hex before using a convert

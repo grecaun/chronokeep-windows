@@ -2,14 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:objects="using:Chronokeep.Objects"
              xmlns:local="using:Chronokeep.UI.MainPages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
              x:Class="Chronokeep.UI.MainPages.ChipAssignmentPage"
              Padding="16"
              Background="{DynamicResource PrimaryBackground}"
-             CornerRadius="8,0,0,0"
-             x:DataType="local:ChipAssignmentPage"
-             >
+             CornerRadius="8,0,0,0">
     <UserControl.Styles>
         <Style Selector="Button.chip">
             <Setter Property="Margin" Value="0,5,5,5"/>
@@ -27,11 +26,21 @@
         <Style Selector="DataGrid">
             <Setter Property="IsReadOnly" Value="True"/>
             <Setter Property="SelectionMode" Value="Extended"/>
-            <Setter Property="GridLinesVisibility" Value="All"/>
-			<Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="CanUserResizeColumns" Value="True"/>
-            <Setter Property="CanUserSortColumns" Value="True"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+        </Style>
+        <Style Selector="DataGridRow">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBackground}"/>
+        </Style>
+        <Style Selector="DataGridRow:pointerover">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource SecondaryBackground}"/>
+        </Style>
+        <Style Selector="DataGridRow:selected">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
         </Style>
     </UserControl.Styles>
     <Grid>
@@ -49,11 +58,10 @@
             </Grid.RowDefinitions>
             <DataGrid
                 Grid.Row="0"
-                Name="bibChipList" 
-                ItemsSource="{Binding EventChips}">
+                Name="bibChipList">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="110"/>
-                    <DataGridTextColumn Header="Chip" Binding="{Binding Chip}" MinWidth="120"/>
+                    <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" Width="auto" x:DataType="objects:BibChipAssociation"/>
+                    <DataGridTextColumn Header="Chip" Binding="{Binding Chip}" Width="*" x:DataType="objects:BibChipAssociation"/>
                 </DataGrid.Columns>
             </DataGrid>
             <Grid Grid.Row="1">
@@ -78,14 +86,13 @@
                     Classes="chip"
                     />
             </Grid>
-            <TextBlock Grid.Row="2" Text="Ignored Chips" Margin="14,0" />
+            <TextBlock Grid.Row="2" Text="Ignored Chips" HorizontalAlignment="Center" Margin="14,0" />
             <DataGrid
                 Grid.Row="3"
-                Name="ignoredChipList"
-                ItemsSource="{Binding GlobalChips}">
+                Name="ignoredChipList">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="110"/>
-                    <DataGridTextColumn Header="Chip" Binding="{Binding Chip}" MinWidth="120"/>
+                    <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" Width="auto" x:DataType="objects:BibChipAssociation"/>
+                    <DataGridTextColumn Header="Chip" Binding="{Binding Chip}" Width="*" x:DataType="objects:BibChipAssociation"/>
                 </DataGrid.Columns>
             </DataGrid>
             <Grid Grid.Row="4">
