@@ -26,17 +26,15 @@ public partial class LocationPart : UserControl
         LocationName.Text = myLocation.Name;
         MaxOccurrences.Text = myLocation.MaxOccurrences.ToString();
         string labelLabel = myLocation.Identifier == Constants.Timing.LOCATION_START ? "Start Window" : "Ignore Within";
-        int labelWidth = 120;
         if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType
             || (Constants.Timing.LOCATION_START == myLocation.Identifier && theEvent.CommonStartFinish))
         {
             OccPanel.IsVisible = false;
             OccPanel.Height = 0;
             OccPanel.Width = 0;
-            labelWidth = 140;
         }
         IgnoreWithinLabel.Text = labelLabel;
-        IgnoreWithinLabel.Width = labelWidth;
+        IgnoreWithinLabel.Width = 120;
         string ignStr = string.Format(TimeFormat, myLocation.IgnoreWithin / 3600, (myLocation.IgnoreWithin % 3600) / 60, myLocation.IgnoreWithin % 60);
         IgnoreWithin.Text = ignStr;
         if (Constants.Timing.EVENT_TYPE_TIME != theEvent.EventType
