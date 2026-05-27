@@ -68,7 +68,6 @@ public partial class AgeGroupsPage : UserControl, IMainPage
             return;
         }
         AgeGroupsBox.Items.Clear();
-        AgeGroupsBox.Items.Add(new ALabel());
         List<AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier);
         ageGroups.RemoveAll(x => Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID == x.DistanceId);
         if (!theEvent.CommonAgeGroups)
@@ -310,39 +309,5 @@ public partial class AgeGroupsPage : UserControl, IMainPage
         }
         touched = true;
         UpdateAgeGroupsList();
-    }
-
-    private class ALabel : ListBoxItem
-    {
-        public ALabel()
-        {
-            Grid theGrid = new()
-            {
-                MaxWidth = 400
-            };
-            theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
-            theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
-            theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(1, GridUnitType.Star) });
-            TextBlock l = new()
-            {
-                Text = "Start Age",
-                FontSize = 16,
-                Margin = new Avalonia.Thickness(10, 10, 10, 10),
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
-            };
-            theGrid.Children.Add(l);
-            Grid.SetColumn(l, 0);
-            l = new()
-            {
-                Text = "End Age",
-                FontSize = 16,
-                Margin = new Avalonia.Thickness(10, 10, 10, 10),
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
-            };
-            theGrid.Children.Add(l);
-            Grid.SetColumn(l, 1);
-            this.Content = theGrid;
-            this.IsTabStop = false;
-        }
     }
 }

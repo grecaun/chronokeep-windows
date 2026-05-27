@@ -59,6 +59,7 @@ public partial class SegmentsPage : UserControl, IMainPage
             }
         }
         UpdateSegments();
+        UpdateView();
     }
 
     public void UpdateView()

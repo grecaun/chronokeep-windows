@@ -19,6 +19,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="55"/>
         </Grid.RowDefinitions>
@@ -37,14 +38,34 @@
                   HorizontalAlignment="Center"
                   VerticalContentAlignment="Center"
                   IsVisible="False"/>
-        <ListBox
-            Name="AgeGroupsBox"
-            CornerRadius="8"
-            KeyboardNavigation.TabNavigation="Continue"
-            Grid.Row="1"
-            >
-        </ListBox>
-        <DockPanel LastChildFill="False" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+        <Grid Grid.Row="1"
+              MaxWidth="400"
+              VerticalAlignment="Center"
+              >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="55" />
+            </Grid.ColumnDefinitions> 
+            <TextBlock Grid.Column="0"
+                       Text="Start Age"
+                       FontSize="16"
+                       Margin="10"
+                       HorizontalAlignment="Center"
+                       />
+            <TextBlock Grid.Column="1"
+                       Text="End Age"
+                       FontSize="16"
+                       Margin="10"
+                       HorizontalAlignment="Center"
+                       />
+        </Grid>
+        <ListBox Grid.Row="2"
+                 Name="AgeGroupsBox"
+                 CornerRadius="8"
+                 KeyboardNavigation.TabNavigation="Continue"
+                 />
+        <DockPanel LastChildFill="False" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Center">
             <Button Name="Add"
                     Content="Add Group"
                     Click="Add_Click"

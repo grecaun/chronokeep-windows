@@ -33,6 +33,22 @@
             <Setter Property="IsVisible" Value="False"/>
             <Setter Property="Height" Value="0"/>
         </Style>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
+        </Style>
+        <Style Selector="ListBoxItem:focus /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
+        </Style>
+        <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
+        </Style>
     </Application.Styles>
 
     <Application.Resources>

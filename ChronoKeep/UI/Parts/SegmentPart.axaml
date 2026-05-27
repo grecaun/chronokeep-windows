@@ -5,9 +5,10 @@
              mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="450"
              x:Class="Chronokeep.UI.Parts.SegmentPart">
     <DockPanel Name="SegmentPanel"
-                MaxWidth="1150"
+                Width="1050"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+                VerticalAlignment="Center"
+                >
         <ComboBox Name="Location"
                     SelectionChanged="Location_Changed"
                     Width="140"
@@ -62,7 +63,7 @@
                     VerticalContentAlignment="Center"/>
         <TextBox Name="MapLink"
                     GotFocus="SelectAll"
-                    Width="190"
+                    Width="218"
                     Height="35"
                     FontSize="14"
                     Margin="2,2,2,0"

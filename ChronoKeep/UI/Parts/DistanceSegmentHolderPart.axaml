@@ -5,25 +5,26 @@
              mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="450"
              x:Class="Chronokeep.UI.Parts.DistanceSegmentHolderPart">
     <UserControl.Styles>
-		<Style Selector="TextBlock">
+		<Style Selector="TextBlock.TeBlock">
             <Setter Property="Margin" Value="2,5,2,2"/>
 			<Setter Property="FontSize" Value="14"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
     </UserControl.Styles>
-    <StackPanel>
+    <StackPanel IsTabStop="False">
 	    <Grid>
 		    <Grid.ColumnDefinitions>
 			    <ColumnDefinition Width="*"/>
 			    <ColumnDefinition Width="50"/>
-			    <ColumnDefinition Width="85"/>
+			    <ColumnDefinition Width="50"/>
 			    <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock Name="distanceName"
                        FontSize="20"
                        Margin="10,5,0,5"
                        VerticalAlignment="Center"
+                       Classes="TeBlock"
                        Grid.Column="0"/>
             <TextBox Name="numAdd"
                      Text="1"
@@ -34,9 +35,9 @@
                      Width="40"
                      Height="35"
                      TextInput="NumberValidation"
+                     Margin="2,5,2,2"
                      Grid.Column="1"/>
             <Button Name="AddButton"
-                    Content="Add"
                     FontSize="16"
                     VerticalAlignment="Center"
                     VerticalContentAlignment="Center"
@@ -44,22 +45,28 @@
                     Width="40"
                     Height="35"
                     Click="AddClick"
-                    Grid.Column="2"/>
+                    Grid.Column="2">
+                <PathIcon Data="{StaticResource add_regular}"/>
+            </Button>
+            <DockPanel Name="copyPanel" Grid.Column="3" LastChildFill="True">
+			    <TextBlock Text="Copy from"
+                           FontSize="14"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Classes="TeBlock"
+                           Margin="10,0,2,0"
+                           />
+                <ComboBox Name="copyFromDistance"
+                          FontSize="14"
+                          Height="35"
+                          Width="150"
+                          VerticalAlignment="Center"
+                          VerticalContentAlignment="Center"
+                          Margin="0,0,10,0"
+                          SelectionChanged="CopyFromDistanceSelected"
+                          />
+            </DockPanel>
         </Grid>
-        <DockPanel Name="copyPanel" Grid.Column="3" Width="250">
-			<TextBlock Text="Copy from"
-                       FontSize="14"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       Margin="10,0,2,0"/>
-            <ComboBox Name="copyFromDistance"
-                      FontSize="14"
-                      Height="35"
-                      VerticalAlignment="Center"
-                      VerticalContentAlignment="Center"
-                      Margin="0,0,10,0"
-                      SelectionChanged="CopyFromDistanceSelected"/>
-        </DockPanel>
         <Rectangle HorizontalAlignment="Stretch"
                    VerticalAlignment="Center"
                    Margin="5,0"

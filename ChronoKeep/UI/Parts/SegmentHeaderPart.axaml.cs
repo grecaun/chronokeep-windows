@@ -8,7 +8,7 @@ public partial class SegmentHeaderPart : UserControl
     public SegmentHeaderPart(Event theEvent)
     {
         InitializeComponent();
-        if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
+        if (Constants.Timing.EVENT_TYPE_DISTANCE != theEvent.EventType)
         {
             Occurrence.Height = 0;
             Occurrence.IsVisible = false;

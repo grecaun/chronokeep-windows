@@ -6,33 +6,49 @@
              x:Class="Chronokeep.UI.Parts.SegmentHeaderPart">
     <UserControl.Styles>
 		<Style Selector="TextBlock">
-            <Setter Property="Margin" Value="2,5,2,2"/>
 			<Setter Property="FontSize" Value="14"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
     </UserControl.Styles>
     <DockPanel Name="HeaderPanel"
-               MaxWidth="1150"
+               Width="1050"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
-               IsTabStop="False">
+               IsTabStop="False"
+               >
 		<TextBlock Text="Where"
-                   Width="140"/>
+                   Width="140"
+                   Margin="2,2,2,0"
+                   />
         <TextBlock Text="Name"
-                   Width="190"/>
+                   Width="190"
+                   Margin="2,2,2,0"
+                   />
         <TextBlock Name="Occurrence"
                    Text="Occ"
-                   Width="70"/>
+                   Width="70"
+                   Margin="2,2,2,0"
+                   />
         <TextBlock Text="Dist"
-                   Width="70"/>
+                   Width="70"
+                   Margin="2,2,2,0"
+                   />
         <TextBlock Text="Unit"
-                   Width="90"/>
+                   Width="90"
+                   Margin="2,2,2,0"
+                   />
         <TextBlock Text="GPS"
-                   Width="190"/>
+                   Width="190"
+                   Margin="2,2,2,0"
+                   />
         <TextBlock Text="Map Link"
-                   Width="190"/>
+                   Width="218"
+                   Margin="2,2,2,0"
+                   />
         <TextBlock Text=""
-                   Width="50"/>
+                   Width="50"
+                   Margin="2,2,2,0"
+                   />
     </DockPanel>
 </UserControl>
