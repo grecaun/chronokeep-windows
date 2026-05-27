@@ -26,7 +26,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
     private readonly IMainWindow mWindow;
     private readonly IDBInterface database;
     private readonly Event? theEvent;
-    private readonly List<Participant> participants = [];
+    private List<Participant> allParticipants = [];
     private readonly List<Participant> conflicts = [];
 
     public ParticipantsPage(IMainWindow mainWindow, IDBInterface database)
@@ -35,6 +35,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         this.mWindow = mainWindow;
         this.database = database;
         theEvent = database.GetCurrentEvent();
+        UpdateDistancesBox();
     }
 
     public async void UpdateView()
@@ -53,20 +54,22 @@ public partial class ParticipantsPage : UserControl, IMainPage
         {
             distanceId = -1;
         }
-        List<Participant> newParts = [];
+        Log.D("PartPage", string.Format("Distance ID is {0}", distanceId));
+        List<Participant> newList = [];
         await Task.Run(() =>
         {
+            allParticipants = database.GetParticipants(theEvent.Identifier);
             if (distanceId == -1)
             {
-                newParts.AddRange(database.GetParticipants(theEvent.Identifier));
+                newList.AddRange(allParticipants);
             }
             else
             {
-                newParts.AddRange(database.GetParticipants(theEvent.Identifier, distanceId));
+                newList.AddRange(database.GetParticipants(theEvent.Identifier, distanceId));
             }
         });
         Dictionary<string, BibStats> bibStats = [];
-        foreach (Participant p in newParts)
+        foreach (Participant p in allParticipants)
         {
             if (!bibStats.TryGetValue(p.Distance, out BibStats? bStats))
             {
@@ -118,24 +121,28 @@ public partial class ParticipantsPage : UserControl, IMainPage
         {
             statsExpander.IsVisible = false;
         }
-        participants.Clear();
-        participants.AddRange(newParts);
-        switch (((ComboBoxItem)SortBox.SelectedItem!).Content)
+        if (SortBox.SelectedItem != null)
         {
-            case "Name":
-                newParts.Sort(Participant.CompareByName);
-                break;
-            case "Bib":
-                newParts.Sort(Participant.CompareByBib);
-                break;
-            default:
-                newParts.Sort();
-                break;
+            switch (((ComboBoxItem)SortBox.SelectedItem).Content)
+            {
+                case "Name":
+                    newList.Sort(Participant.CompareByName);
+                    break;
+                case "Bib":
+                    newList.Sort(Participant.CompareByBib);
+                    break;
+                default:
+                    newList.Sort();
+                    break;
+            }
         }
-        string search = SearchBox != null ? SearchBox.Text!.Trim() : "";
-        newParts.RemoveAll(x => x.IsNotMatch(search));
-        ParticipantsList.SelectedItems.Clear();
-        ParticipantsList.ItemsSource = newParts;
+        else
+        {
+            newList.Sort();
+        }
+        string search = SearchBox != null && SearchBox.Text != null ? SearchBox.Text.Trim() : "";
+        newList.RemoveAll(x => x.IsNotMatch(search));
+        ParticipantsList.ItemsSource = newList;
         if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
         {
             apiPanel.IsVisible = true;
@@ -144,6 +151,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         {
             apiPanel.IsVisible = false;
         }
+        // Make conflict check HERE
         if (conflicts.Count > 0)
         {
             ConflictsBtn.Content = string.Format("Conflicts - {0}", conflicts.Count);
@@ -857,32 +865,28 @@ public partial class ParticipantsPage : UserControl, IMainPage
 
     private void DistanceBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
+        Log.D("UI.MainPages.ParticipantsPage", "New Distance selected.");
         UpdateView();
     }
 
     private void SortBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Sort style changed.");
-        if (participants != null)
+        List<Participant> newParts = [.. allParticipants];
+        switch (((ComboBoxItem)SortBox.SelectedItem!).Content)
         {
-            switch (((ComboBoxItem)SortBox.SelectedItem!).Content)
-            {
-                case "Name":
-                    participants.Sort(Participant.CompareByName);
-                    break;
-                case "Bib":
-                    participants.Sort(Participant.CompareByBib);
-                    break;
-                default:
-                    participants.Sort();
-                    break;
-            }
-            if (ParticipantsList != null)
-            {
-                ParticipantsList.ItemsSource = participants;
-                ParticipantsList.SelectedItems.Clear();
-            }
+            case "Name":
+                newParts.Sort(Participant.CompareByName);
+                break;
+            case "Bib":
+                newParts.Sort(Participant.CompareByBib);
+                break;
+            default:
+                newParts.Sort();
+                break;
         }
+        ParticipantsList.SelectedItems.Clear();
+        ParticipantsList.ItemsSource = newParts;
         Log.D("UI.MainPages.ParticipantsPage", "Done");
     }
 
@@ -929,23 +933,23 @@ public partial class ParticipantsPage : UserControl, IMainPage
 
     private void SearchBox_TextChanged(object? sender, TextChangedEventArgs e)
     {
-        List<Participant> newParts = [.. participants];
+        List<Participant> newList = [.. allParticipants];
         switch (((ComboBoxItem)SortBox.SelectedItem!).Content)
         {
             case "Name":
-                newParts.Sort(Participant.CompareByName);
+                newList.Sort(Participant.CompareByName);
                 break;
             case "Bib":
-                newParts.Sort(Participant.CompareByBib);
+                newList.Sort(Participant.CompareByBib);
                 break;
             default:
-                newParts.Sort();
+                newList.Sort();
                 break;
         }
         string search = SearchBox != null ? SearchBox.Text!.Trim() : "";
-        newParts.RemoveAll(x => x.IsNotMatch(search));
+        newList.RemoveAll(x => x.IsNotMatch(search));
         ParticipantsList.SelectedItems.Clear();
-        ParticipantsList.ItemsSource = newParts;
+        ParticipantsList.ItemsSource = newList;
     }
 
     private void Remove_Click(object? sender, RoutedEventArgs e)
@@ -961,7 +965,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
         UpdateView();
     }
 
-    private void ParticipantsList_MouseDoubleClick(object sender, RoutedEventArgs e)
+    private void ParticipantsList_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
     {
         if (ParticipantsList.SelectedItem == null) return;
         ModifyParticipantWindow modifyParticipant = ModifyParticipantWindow.NewWindow(mWindow, database, (Participant)ParticipantsList.SelectedItem);

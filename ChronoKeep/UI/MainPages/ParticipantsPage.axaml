@@ -19,17 +19,23 @@
         <Style Selector="DataGrid">
             <Setter Property="IsReadOnly" Value="True"/>
             <Setter Property="GridLinesVisibility" Value="All"/>
-			<Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="CanUserResizeColumns" Value="False"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
             <Setter Property="CanUserSortColumns" Value="False"/>
+        </Style>
+        <Style Selector="DataGridRow:pointerover">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource SecondaryBackground}"/>
+        </Style>
+        <Style Selector="DataGridRow:selected">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
         </Style>
     </UserControl.Styles>
 
      <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
         <ScrollViewer
             Grid.Column="1"
@@ -50,7 +56,7 @@
                     Classes="part"
                     />
                 <StackPanel
-                    x:Name="apiPanel"
+                    Name="apiPanel"
                     IsVisible="False"
                     >
                     <TextBlock 
@@ -91,7 +97,7 @@
                     Margin="10,0,10,5"
                     IsVisible="False"
                     />
-                <StackPanel x:Name="ViewPanel">
+                <StackPanel Name="ViewPanel">
                     <TextBlock
                         Text="View"
                         FontSize="16"
@@ -102,6 +108,7 @@
                         Name="DistanceBox"
                         FontSize="16"
                         Margin="10,0,10,0"
+                        HorizontalAlignment="Stretch"
                         SelectionChanged="DistanceBox_SelectionChanged"
                         />
                 </StackPanel>
@@ -115,10 +122,10 @@
                     Name="SortBox" 
                     FontSize="16"
                     Margin="10,0,10,5"
+                    HorizontalAlignment="Stretch"
                     SelectionChanged="SortBox_SelectionChanged"
-                    SelectedIndex="0"
                     >
-                    <ComboBoxItem Content="Distance" />
+                    <ComboBoxItem Content="Distance" IsSelected="True" />
                     <ComboBoxItem Content="Name" />
                     <ComboBoxItem Content="Bib" />
                 </ComboBox>
@@ -153,17 +160,21 @@
                 <Expander
                     Name="statsExpander"
                     Header="Bibs"
-                    Margin="5,5,5,0"
+                    Margin="5"
                     IsExpanded="True"
+                    HorizontalAlignment="Stretch"
                     IsVisible="False"
                     >
                     <DataGrid Grid.Row="0"
                                 Name="statsListView"
-                                Margin="3,0">
+                                Margin="3,0"
+                                FontSize="10"
+                                GridLinesVisibility="None"
+                                >
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Distance" Width="75" Binding="{Binding DistanceName}" x:DataType="objects:BibStats"/>
-                            <DataGridTextColumn Header="w/" Width="35" Binding="{Binding With}" x:DataType="objects:BibStats"/>
-                            <DataGridTextColumn Header="w/o" Width="35" Binding="{Binding Without}" x:DataType="objects:BibStats"/>
+                            <DataGridTextColumn FontSize="10" Header="Distance" Width="*" Binding="{Binding DistanceName}" x:DataType="objects:BibStats"/>
+                            <DataGridTextColumn FontSize="10" Header="w/" Width="50" Binding="{Binding With}" x:DataType="objects:BibStats"/>
+                            <DataGridTextColumn FontSize="10" Header="w/o" Width="50" Binding="{Binding Without}" x:DataType="objects:BibStats"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -172,30 +183,32 @@
         <DataGrid Grid.Column="0"
                   Name="ParticipantsList"
                   SelectionMode="Extended"
-                  Margin="3,0">
+                  Margin="3,0"
+                  DoubleTapped="ParticipantsList_DoubleTapped"
+                  >
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Bib" Width="45"/>
-                <DataGridTextColumn Header="Distance" Width="125"/>
-                <DataGridTextColumn Header="First" Width="100"/>
-                <DataGridTextColumn Header="Last" Width="175"/>
-                <DataGridTextColumn Header="Gender" Width="75"/>
-                <DataGridTextColumn Header="Birthday" Width="100"/>
-                <DataGridTextColumn Header="Goodies" Width="150"/>
-                <DataGridTextColumn Header="Division" Width="150"/>
-                <DataGridTextColumn Header="Phone" Width="120"/>
-                <DataGridTextColumn Header="Mobile" Width="120"/>
-                <DataGridTextColumn Header="EC Name" Width="150"/>
-                <DataGridTextColumn Header="EC Phone" Width="150"/>
-                <DataGridTextColumn Header="Anon" Width="35"/>
-                <DataGridTextColumn Header="Commends" Width="200"/>
-                <DataGridTextColumn Header="Other" Width="150"/>
-                <DataGridTextColumn Header="Email" Width="200"/>
-                <DataGridTextColumn Header="Street" Width="175"/>
-                <DataGridTextColumn Header="Apt" Width="50"/>
-                <DataGridTextColumn Header="City" Width="120"/>
-                <DataGridTextColumn Header="State" Width="50"/>
-                <DataGridTextColumn Header="Zip" Width="70"/>
-                <DataGridTextColumn Header="Country" Width="60"/>
+                <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Distance" Binding="{Binding Distance}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="First" Binding="{Binding FirstName}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Last" Binding="{Binding LastName}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Gender" Binding="{Binding Gender}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Birthday" Binding="{Binding Birthdate}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Goodies" Binding="{Binding Apparel}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Division" Binding="{Binding Division}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Mobile" Binding="{Binding Mobile}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="EC Name" Binding="{Binding ECName}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="EC Phone" Binding="{Binding ECPhone}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Anon" Binding="{Binding PrettyAnonymous}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Comments" Binding="{Binding Comments}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Other" Binding="{Binding Other}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Email" Binding="{Binding Email}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Street" Binding="{Binding Street}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Apt" Binding="{Binding Street2}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="City" Binding="{Binding City}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="State" Binding="{Binding State}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Zip" Binding="{Binding Zip}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Country" Binding="{Binding Country}" x:DataType="objects:Participant"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
