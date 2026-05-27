@@ -18,7 +18,7 @@
         </Style>
         <Style Selector="DataGrid">
             <Setter Property="IsReadOnly" Value="True"/>
-            <Setter Property="GridLinesVisibility" Value="All"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
             <Setter Property="CanUserResizeColumns" Value="True"/>
             <Setter Property="CanUserSortColumns" Value="False"/>
         </Style>
@@ -125,7 +125,7 @@
                     HorizontalAlignment="Stretch"
                     SelectionChanged="SortBox_SelectionChanged"
                     >
-                    <ComboBoxItem Content="Distance" IsSelected="True" />
+                    <ComboBoxItem Content="Distance" />
                     <ComboBoxItem Content="Name" />
                     <ComboBoxItem Content="Bib" />
                 </ComboBox>
@@ -166,11 +166,11 @@
                     IsVisible="False"
                     >
                     <DataGrid Grid.Row="0"
-                                Name="statsListView"
-                                Margin="3,0"
-                                FontSize="10"
-                                GridLinesVisibility="None"
-                                >
+                              Name="statsListView"
+                              Margin="3,0"
+                              FontSize="10"
+                              GridLinesVisibility="None"
+                              >
                         <DataGrid.Columns>
                             <DataGridTextColumn FontSize="10" Header="Distance" Width="*" Binding="{Binding DistanceName}" x:DataType="objects:BibStats"/>
                             <DataGridTextColumn FontSize="10" Header="w/" Width="50" Binding="{Binding With}" x:DataType="objects:BibStats"/>

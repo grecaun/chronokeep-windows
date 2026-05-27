@@ -25,21 +25,11 @@
         <Style Selector="DataGrid">
             <Setter Property="IsReadOnly" Value="True"/>
             <Setter Property="SelectionMode" Value="Extended"/>
-            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
         </Style>
         <Style Selector="DataGridRow">
             <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
             <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBackground}"/>
-        </Style>
-        <Style Selector="DataGridRow:pointerover">
-            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-            <Setter Property="Background" Value="{DynamicResource SecondaryBackground}"/>
-        </Style>
-        <Style Selector="DataGridRow:selected">
-            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
         </Style>
     </UserControl.Styles>
     <Grid>

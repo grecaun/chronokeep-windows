@@ -29,12 +29,16 @@ public partial class ParticipantsPage : UserControl, IMainPage
     private List<Participant> allParticipants = [];
     private readonly List<Participant> conflicts = [];
 
+    private bool loaded = false;
+
     public ParticipantsPage(IMainWindow mainWindow, IDBInterface database)
     {
         InitializeComponent();
         this.mWindow = mainWindow;
         this.database = database;
         theEvent = database.GetCurrentEvent();
+        SortBox.SelectedIndex = 0;
+        loaded = true;
         UpdateDistancesBox();
     }
 
@@ -871,6 +875,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
 
     private void SortBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
+        if (!loaded) return;
         Log.D("UI.MainPages.ParticipantsPage", "Sort style changed.");
         List<Participant> newParts = [.. allParticipants];
         switch (((ComboBoxItem)SortBox.SelectedItem!).Content)
@@ -933,6 +938,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
 
     private void SearchBox_TextChanged(object? sender, TextChangedEventArgs e)
     {
+        if (!loaded) return;
         List<Participant> newList = [.. allParticipants];
         switch (((ComboBoxItem)SortBox.SelectedItem!).Content)
         {
