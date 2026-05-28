@@ -9,10 +9,10 @@ using Chronokeep.UI.EventWindows;
 using Chronokeep.UI.MainPages.Dashboard;
 using Chronokeep.UI.Parts;
 using Chronokeep.UI.UhfRfidReader;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -160,28 +160,42 @@ public partial class DashboardPage : UserControl, IMainPage
                             }
                             break;
                         case EventClickType.ImportEvent:
-                            var files = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                            var topLevel = TopLevel.GetTopLevel(this);
+                            if (topLevel != null)
                             {
-                                FileTypeFilter = [Utils.SQLiteType, FilePickerFileTypes.All],
-                                AllowMultiple = false,
-                            });
-                            if (files.Count > 0)
-                            {
-                                SQLiteInterface savedDatabase = new(files[0].Name);
-                                savedDatabase.Initialize();
-                                List<Event> events = savedDatabase.GetEvents();
-                                int lastID = -1;
-                                foreach (Event ev in events)
+                                IStorageFolder? startingFolder;
+                                try
                                 {
-                                    int tmp = Save_Event(ev, savedDatabase, database);
-                                    if (tmp > 0)
-                                    {
-                                        lastID = tmp;
-                                    }
+                                    startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
                                 }
-                                database.SetCurrentEvent(lastID);
-                                UpdateView();
-                                mWindow.UpdateStatus();
+                                catch
+                                {
+                                    startingFolder = null;
+                                }
+                                var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                                {
+                                    FileTypeFilter = [Utils.SQLiteType, FilePickerFileTypes.All],
+                                    AllowMultiple = false,
+                                    SuggestedStartLocation = startingFolder,
+                                });
+                                if (files.Count > 0)
+                                {
+                                    SQLiteInterface savedDatabase = new(files[0].Name);
+                                    savedDatabase.Initialize();
+                                    List<Event> events = savedDatabase.GetEvents();
+                                    int lastID = -1;
+                                    foreach (Event ev in events)
+                                    {
+                                        int tmp = Save_Event(ev, savedDatabase, database);
+                                        if (tmp > 0)
+                                        {
+                                            lastID = tmp;
+                                        }
+                                    }
+                                    database.SetCurrentEvent(lastID);
+                                    UpdateView();
+                                    mWindow.UpdateStatus();
+                                }
                             }
                             break;
                         case EventClickType.ChangeEvent:
@@ -526,29 +540,43 @@ public partial class DashboardPage : UserControl, IMainPage
     private async void SaveEvent_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.DashboardPage", "Saving event.");
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.SQLiteType],
-            SuggestedFileName = string.Format("{0} {1}.{2}", theEvent!.YearCode, theEvent.Name, "sqlite"),
-        });
-        if (file is not null)
-        {
-            Log.D("UI.DashboardPage", "Creating database file.");
+            IStorageFolder? startingFolder;
             try
             {
-                SQLiteConnection.CreateFile(file.Name);
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
             catch
             {
-                DialogBox.Show("Unable to save to file");
-                return;
+                startingFolder = null;
             }
-            SQLiteInterface savedDatabase = new(file.Name);
-            savedDatabase.Initialize();
-            Event theEvent = database.GetCurrentEvent()!;
-            Save_Event(theEvent, database, savedDatabase);
-            Log.D("UI.DashboardPage", "Done saving file.");
-            DialogBox.Show("Event saved successfully.");
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                FileTypeChoices = [Utils.SQLiteType],
+                SuggestedFileName = string.Format("{0} {1}.{2}", theEvent!.YearCode, theEvent.Name, "sqlite"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
+            {
+                Log.D("UI.DashboardPage", "Creating database file.");
+                try
+                {
+                    SQLiteConnection.CreateFile(file.Name);
+                }
+                catch
+                {
+                    DialogBox.Show("Unable to save to file");
+                    return;
+                }
+                SQLiteInterface savedDatabase = new(file.Name);
+                savedDatabase.Initialize();
+                Event theEvent = database.GetCurrentEvent()!;
+                Save_Event(theEvent, database, savedDatabase);
+                Log.D("UI.DashboardPage", "Done saving file.");
+                DialogBox.Show("Event saved successfully.");
+            }
         }
     }
 
@@ -559,28 +587,42 @@ public partial class DashboardPage : UserControl, IMainPage
         {
             return;
         }
-        var files = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeFilter = [Utils.SQLiteType, FilePickerFileTypes.All],
-            AllowMultiple = false,
-        });
-        if (files.Count > 0)
-        {
-            SQLiteInterface savedDatabase = new(files[0].Name);
-            savedDatabase.Initialize();
-            List<Event> events = savedDatabase.GetEvents();
-            int lastID = -1;
-            foreach (Event ev in events)
+            IStorageFolder? startingFolder;
+            try
             {
-                int tmp = Save_Event(ev, savedDatabase, database);
-                if (tmp > 0)
-                {
-                    lastID = tmp;
-                }
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
-            database.SetCurrentEvent(lastID);
-            UpdateView();
-            mWindow.UpdateStatus();
+            catch
+            {
+                startingFolder = null;
+            }
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                FileTypeFilter = [Utils.SQLiteType, FilePickerFileTypes.All],
+                AllowMultiple = false,
+                SuggestedStartLocation = startingFolder,
+            });
+            if (files.Count > 0)
+            {
+                SQLiteInterface savedDatabase = new(files[0].Name);
+                savedDatabase.Initialize();
+                List<Event> events = savedDatabase.GetEvents();
+                int lastID = -1;
+                foreach (Event ev in events)
+                {
+                    int tmp = Save_Event(ev, savedDatabase, database);
+                    if (tmp > 0)
+                    {
+                        lastID = tmp;
+                    }
+                }
+                database.SetCurrentEvent(lastID);
+                UpdateView();
+                mWindow.UpdateStatus();
+            }
         }
     }
 

@@ -6,6 +6,7 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.IO.HtmlTemplates.Printables;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -392,76 +393,90 @@ public partial class PrintPage : UserControl, ISubPage
     private async void Save_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.PrintPage", "All times - save clicked.");
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.PDFType],
-            SuggestedFileName = string.Format("{0} {1} Results.{2}", theEvent!.YearCode, theEvent.Name, "pdf"),
-        });
-        List<string>? divsToPrint = [];
-        foreach (ListBoxItem divItem in DistancesBox.SelectedItems!)
-        {
-            if (divItem.Content!.Equals("All"))
-            {
-                divsToPrint = null;
-                break;
-            }
-            divsToPrint.Add(divItem.Content.ToString()!);
-        }
-        if (divsToPrint != null && divsToPrint.Count < 1)
-        {
-            divsToPrint = null;
-        }
-        if (file is not null)
-        {
-            string HTML_String;
-            if (PlacementType.SelectedIndex == 0)
-            {
-                HTML_String = GetOverallPrintableDocument(divsToPrint);
-            }
-            else if (PlacementType.SelectedIndex == 1)
-            {
-                HTML_String = GetGenderPrintableDocument(divsToPrint);
-            }
-            else if (PlacementType.SelectedIndex == 2)
-            {
-                HTML_String = GetAgeGroupPrintableDocument(divsToPrint);
-            }
-            else
-            {
-                DialogBox.Show("Please select a type.");
-                return;
-            }
+            IStorageFolder? startingFolder;
             try
             {
-                // Write HTML to a temp file.
-                string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
-                using StreamWriter streamwriter = new(File.Open(tmpFile, FileMode.Create));
-                streamwriter.Write(HTML_String);
-                streamwriter.Close();
-                // Delete old file if it exists.
-                if (File.Exists(file.Name))
-                {
-                    File.Delete(file.Name);
-                }
-                // Use wkhtmltopdf to convert our temp html file to a saved pdf file.
-                using Process create_pdf = new();
-                // TODO - Turn code into cross compatible code.
-                create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
-                create_pdf.StartInfo.Arguments = $"-s A4 {tmpFile} {file.Name}";
-                create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                create_pdf.StartInfo.UseShellExecute = true;
-                create_pdf.Start();
-                // wait for it to exit then kill it, even if the wait timed out
-                create_pdf.WaitForExit(15000);
-                create_pdf.Kill();
-                create_pdf.Close();
-                // delete old file
-                File.Delete(tmpFile);
-                DialogBox.Show("File saved.");
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
             catch
             {
-                DialogBox.Show("Unable to save file.");
+                startingFolder = null;
+            }
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                FileTypeChoices = [Utils.PDFType],
+                SuggestedFileName = string.Format("{0} {1} Results.{2}", theEvent!.YearCode, theEvent.Name, "pdf"),
+                SuggestedStartLocation = startingFolder,
+            });
+            List<string>? divsToPrint = [];
+            foreach (ListBoxItem divItem in DistancesBox.SelectedItems!)
+            {
+                if (divItem.Content!.Equals("All"))
+                {
+                    divsToPrint = null;
+                    break;
+                }
+                divsToPrint.Add(divItem.Content.ToString()!);
+            }
+            if (divsToPrint != null && divsToPrint.Count < 1)
+            {
+                divsToPrint = null;
+            }
+            if (file is not null)
+            {
+                string HTML_String;
+                if (PlacementType.SelectedIndex == 0)
+                {
+                    HTML_String = GetOverallPrintableDocument(divsToPrint);
+                }
+                else if (PlacementType.SelectedIndex == 1)
+                {
+                    HTML_String = GetGenderPrintableDocument(divsToPrint);
+                }
+                else if (PlacementType.SelectedIndex == 2)
+                {
+                    HTML_String = GetAgeGroupPrintableDocument(divsToPrint);
+                }
+                else
+                {
+                    DialogBox.Show("Please select a type.");
+                    return;
+                }
+                try
+                {
+                    // Write HTML to a temp file.
+                    string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
+                    using StreamWriter streamwriter = new(File.Open(tmpFile, FileMode.Create));
+                    streamwriter.Write(HTML_String);
+                    streamwriter.Close();
+                    // Delete old file if it exists.
+                    if (File.Exists(file.Name))
+                    {
+                        File.Delete(file.Name);
+                    }
+                    // Use wkhtmltopdf to convert our temp html file to a saved pdf file.
+                    using Process create_pdf = new();
+                    // TODO - Turn code into cross compatible code.
+                    create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
+                    create_pdf.StartInfo.Arguments = $"-s A4 {tmpFile} {file.Name}";
+                    create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    create_pdf.StartInfo.UseShellExecute = true;
+                    create_pdf.Start();
+                    // wait for it to exit then kill it, even if the wait timed out
+                    create_pdf.WaitForExit(15000);
+                    create_pdf.Kill();
+                    create_pdf.Close();
+                    // delete old file
+                    File.Delete(tmpFile);
+                    DialogBox.Show("File saved.");
+                }
+                catch
+                {
+                    DialogBox.Show("Unable to save file.");
+                }
             }
         }
     }

@@ -648,38 +648,52 @@ public partial class ParticipantsPage : UserControl, IMainPage
     private async void Import_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Import Excel clicked.");
-        var files = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeFilter = [Utils.ExcelType, FilePickerFileTypes.All],
-            AllowMultiple = false,
-        });
-        if (files.Count > 0)
-        {
-            string ext = Path.GetExtension(files[0].Name);
-            Log.D("UI.MainPages.ParticipantsPage", $"Extension found: {ext}");
+            IStorageFolder? startingFolder;
             try
             {
-                IDataImporter importer;
-                if (ext == ".xlsx" || ext == ".xls")
-                {
-                    importer = new ExcelImporter(files[0].Name);
-                }
-                else
-                {
-                    importer = new CSVImporter(files[0].Name);
-                }
-                importer.FetchHeaders();
-                ImportFileWindow importWindow = ImportFileWindow.NewWindow(mWindow, importer, database);
-                if (importWindow != null)
-                {
-                    mWindow.AddWindow(importWindow);
-                    _ = importWindow.ShowDialog((Window)mWindow);
-                }
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
-            catch (Exception ex)
+            catch
             {
-                DialogBox.Show("There was a problem importing the file.");
-                Log.E("UI.MainPages.ParticipantsPage", $"Something went wrong when trying to read the Excel file. {ex.StackTrace}");
+                startingFolder = null;
+            }
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                FileTypeFilter = [Utils.ExcelType, FilePickerFileTypes.All],
+                AllowMultiple = false,
+                SuggestedStartLocation = startingFolder,
+            });
+            if (files.Count > 0)
+            {
+                string ext = Path.GetExtension(files[0].Name);
+                Log.D("UI.MainPages.ParticipantsPage", $"Extension found: {ext}");
+                try
+                {
+                    IDataImporter importer;
+                    if (ext == ".xlsx" || ext == ".xls")
+                    {
+                        importer = new ExcelImporter(files[0].Name);
+                    }
+                    else
+                    {
+                        importer = new CSVImporter(files[0].Name);
+                    }
+                    importer.FetchHeaders();
+                    ImportFileWindow importWindow = ImportFileWindow.NewWindow(mWindow, importer, database);
+                    if (importWindow != null)
+                    {
+                        mWindow.AddWindow(importWindow);
+                        _ = importWindow.ShowDialog((Window)mWindow);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DialogBox.Show("There was a problem importing the file.");
+                    Log.E("UI.MainPages.ParticipantsPage", $"Something went wrong when trying to read the Excel file. {ex.StackTrace}");
+                }
             }
         }
     }
@@ -687,109 +701,123 @@ public partial class ParticipantsPage : UserControl, IMainPage
     private async void Export_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.ParticipantsPage", "Export clicked.");
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.ExcelType],
-            SuggestedFileName = string.Format("{0} {1} Entrants.{2}", theEvent!.YearCode, theEvent.Name, "xlsx"),
-        });
-        if (file is not null)
-        {
-            if (theEvent != null)
+            IStorageFolder? startingFolder;
+            try
             {
-                await Task.Run(() =>
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
+            }
+            catch
+            {
+                startingFolder = null;
+            }
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                FileTypeChoices = [Utils.ExcelType],
+                SuggestedFileName = string.Format("{0} {1} Entrants.{2}", theEvent!.YearCode, theEvent.Name, "xlsx"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
+            {
+                if (theEvent != null)
                 {
-                    Log.D("UI.MainPages.ParticipantsPage", "Event has name " + theEvent.Name + " and date of " + theEvent.Date + " and finally has ID " + theEvent.Identifier);
-                    List<Participant> parts = database.GetParticipants(theEvent.Identifier);
-                    string[] headers = [
-                        "Bib",
-                            "Distance",
-                            "Status",
-                            "First",
-                            "Last",
-                            "Birthday",
-                            "Age",
-                            "Age Group",
-                            "Division",
-                            "Street",
-                            "Apartment",
-                            "City",
-                            "State",
-                            "Zip",
-                            "Country",
-                            "Phone",
-                            "Mobile",
-                            "Email",
-                            "Parent",
-                            "Gender",
-                            "Comments",
-                            "Other",
-                            "Owes",
-                            "Emergency Contact Name",
-                            "Emergency Contact Phone",
-                            "Anonymous",
-                            "Apparel" // new
-                    ];
-                    List<object[]> data = [];
-                    foreach (Participant p in parts)
+                    await Task.Run(() =>
                     {
-                        data.Add([
-                            p.Bib,
-                                p.Distance,
-                                p.EventSpecific.StatusStr,
-                                p.FirstName,
-                                p.LastName,
-                                p.Birthdate,
-                                p.Age(theEvent.Date),
-                                p.EventSpecific.AgeGroupName,
-                                p.EventSpecific.Division,
-                                p.Street,
-                                p.Street2,
-                                p.City,
-                                p.State,
-                                p.Zip,
-                                p.Country,
-                                p.Phone,
-                                p.Mobile,
-                                p.Email,
-                                p.Parent,
-                                p.Gender,
-                                // Get rid of all the quote and newline characters.
-                                p.Comments.Replace('\"', ' ').Replace('\n', ' ').Replace('\r', ' ').Replace('\'', ' '),
-                                p.Other.Replace('\"', ' ').Replace('\n', ' ').Replace('\r', ' ').Replace('\'', ' '),
-                                p.Owes,
-                                p.ECName,
-                                p.ECPhone,
-                                p.PrettyAnonymous,
-                                p.Apparel,
-                            ]);
-                    }
-                    IDataExporter? exporter = null;
-                    string extension = Path.GetExtension(file.Name);
-                    Log.D("UI.MainPages.ParticipantsPage", string.Format("Extension is '{0}'", extension));
-                    if (extension.Contains("xls", StringComparison.CurrentCulture))
-                    {
-                        exporter = new ExcelExporter();
-                    }
-                    else
-                    {
-                        StringBuilder format = new();
-                        for (int i = 0; i < headers.Length; i++)
+                        Log.D("UI.MainPages.ParticipantsPage", "Event has name " + theEvent.Name + " and date of " + theEvent.Date + " and finally has ID " + theEvent.Identifier);
+                        List<Participant> parts = database.GetParticipants(theEvent.Identifier);
+                        string[] headers = [
+                            "Bib",
+                                "Distance",
+                                "Status",
+                                "First",
+                                "Last",
+                                "Birthday",
+                                "Age",
+                                "Age Group",
+                                "Division",
+                                "Street",
+                                "Apartment",
+                                "City",
+                                "State",
+                                "Zip",
+                                "Country",
+                                "Phone",
+                                "Mobile",
+                                "Email",
+                                "Parent",
+                                "Gender",
+                                "Comments",
+                                "Other",
+                                "Owes",
+                                "Emergency Contact Name",
+                                "Emergency Contact Phone",
+                                "Anonymous",
+                                "Apparel" // new
+                        ];
+                        List<object[]> data = [];
+                        foreach (Participant p in parts)
                         {
-                            format.Append("\"{");
-                            format.Append(i);
-                            format.Append("}\",");
+                            data.Add([
+                                p.Bib,
+                                    p.Distance,
+                                    p.EventSpecific.StatusStr,
+                                    p.FirstName,
+                                    p.LastName,
+                                    p.Birthdate,
+                                    p.Age(theEvent.Date),
+                                    p.EventSpecific.AgeGroupName,
+                                    p.EventSpecific.Division,
+                                    p.Street,
+                                    p.Street2,
+                                    p.City,
+                                    p.State,
+                                    p.Zip,
+                                    p.Country,
+                                    p.Phone,
+                                    p.Mobile,
+                                    p.Email,
+                                    p.Parent,
+                                    p.Gender,
+                                    // Get rid of all the quote and newline characters.
+                                    p.Comments.Replace('\"', ' ').Replace('\n', ' ').Replace('\r', ' ').Replace('\'', ' '),
+                                    p.Other.Replace('\"', ' ').Replace('\n', ' ').Replace('\r', ' ').Replace('\'', ' '),
+                                    p.Owes,
+                                    p.ECName,
+                                    p.ECPhone,
+                                    p.PrettyAnonymous,
+                                    p.Apparel,
+                                ]);
                         }
-                        format.Remove(format.Length - 1, 1);
-                        Log.D("UI.MainPages.ParticipantsPage", string.Format("The format is '{0}'", format.ToString()));
-                        exporter = new CSVExporter(format.ToString());
-                    }
-                    if (exporter != null)
-                    {
-                        exporter.SetData(headers, data);
-                        exporter.ExportData(file.Name);
-                    }
-                });
-                DialogBox.Show("File saved.");
+                        IDataExporter? exporter = null;
+                        string extension = Path.GetExtension(file.Name);
+                        Log.D("UI.MainPages.ParticipantsPage", string.Format("Extension is '{0}'", extension));
+                        if (extension.Contains("xls", StringComparison.CurrentCulture))
+                        {
+                            exporter = new ExcelExporter();
+                        }
+                        else
+                        {
+                            StringBuilder format = new();
+                            for (int i = 0; i < headers.Length; i++)
+                            {
+                                format.Append("\"{");
+                                format.Append(i);
+                                format.Append("}\",");
+                            }
+                            format.Remove(format.Length - 1, 1);
+                            Log.D("UI.MainPages.ParticipantsPage", string.Format("The format is '{0}'", format.ToString()));
+                            exporter = new CSVExporter(format.ToString());
+                        }
+                        if (exporter != null)
+                        {
+                            exporter.SetData(headers, data);
+                            exporter.ExportData(file.Name);
+                        }
+                    });
+                    DialogBox.Show("File saved.");
+                }
             }
         }
     }

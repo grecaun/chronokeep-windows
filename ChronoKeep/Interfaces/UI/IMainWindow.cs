@@ -61,7 +61,7 @@ namespace Chronokeep.Interfaces.UI
         void ShowNotificationDialog(string ReaderName, string Address, RemoteNotification notification);
 
         // Theme related calls
-        void UpdateTheme(string theme, bool system);
+        void UpdateTheme(string theme);
 
         // Registration related calls
         bool StartRegistration();

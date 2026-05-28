@@ -291,43 +291,58 @@ public partial class ChipAssignmentPage : UserControl, IMainPage
     private async void FileImport_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Import from file clicked.");
-        var files = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeFilter = [ Utils.ExcelType, FilePickerFileTypes.All ],
-            AllowMultiple = false,
-        });
-        if (files.Count > 0)
-        {
-            string ext = Path.GetExtension(files[0].Name);
+            IStorageFolder? startingFolder;
             try
             {
-                IDataImporter importer;
-                if (ext == ".xlsx" || ext == ".xls")
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
+            }
+            catch
+            {
+                startingFolder = null;
+            }
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                FileTypeFilter = [Utils.ExcelType, FilePickerFileTypes.All],
+                AllowMultiple = false,
+                SuggestedStartLocation = startingFolder,
+            });
+            if (files.Count > 0)
+            {
+                string ext = Path.GetExtension(files[0].Name);
+                try
                 {
-                    importer = new ExcelImporter(files[0].Name);
-                }
-                else
-                {
-                    importer = new CSVImporter(files[0].Name);
-                }
-                await Task.Run(() =>
-                {
-                    importer.FetchHeaders();
-                });
-                BibChipAssociationWindow bcWindow = BibChipAssociationWindow.NewWindow(mWindow, importer, database);
-                if (bcWindow != null)
-                {
-                    mWindow.AddWindow(bcWindow);
-                    await bcWindow.ShowDialog((Window)mWindow);
-                    if (bcWindow.ImportComplete)
+                    IDataImporter importer;
+                    if (ext == ".xlsx" || ext == ".xls")
                     {
-                        BibsChanged = true;
+                        importer = new ExcelImporter(files[0].Name);
+                    }
+                    else
+                    {
+                        importer = new CSVImporter(files[0].Name);
+                    }
+                    await Task.Run(() =>
+                    {
+                        importer.FetchHeaders();
+                    });
+                    BibChipAssociationWindow bcWindow = BibChipAssociationWindow.NewWindow(mWindow, importer, database);
+                    if (bcWindow != null)
+                    {
+                        mWindow.AddWindow(bcWindow);
+                        await bcWindow.ShowDialog((Window)mWindow);
+                        if (bcWindow.ImportComplete)
+                        {
+                            BibsChanged = true;
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.E("UI.MainPages.ChipAssignmentPage", $"Something went wrong when trying to read the CSV file. {ex.StackTrace}");
+                catch (Exception ex)
+                {
+                    Log.E("UI.MainPages.ChipAssignmentPage", $"Something went wrong when trying to read the CSV file. {ex.StackTrace}");
+                }
             }
         }
     }
@@ -350,48 +365,62 @@ public partial class ChipAssignmentPage : UserControl, IMainPage
     private async void Export_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Export clicked.");
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.ExcelType],
-            SuggestedFileName = string.Format("{0} {1} Chips.{2}", theEvent!.YearCode, theEvent.Name, "xlsx"),
-        });
-        if (file is not null)
-        {
-            List<object[]> data = [];
-            List<BibChipAssociation> associations = database.GetBibChips(theEvent.Identifier);
-            associations.Sort();
-            foreach (BibChipAssociation association in associations)
+            IStorageFolder? startingFolder;
+            try
             {
-                Log.D("UI.MainPages.ChipAssignmentPage", "Checking associations ... Bib " + association.Bib + " Chip " + association.Chip);
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
-            string[] headers = ["Bib", "Chip"];
-            foreach (BibChipAssociation bca in associations)
+            catch
             {
-                data.Add([bca.Bib, bca.Chip]);
+                startingFolder = null;
             }
-            IDataExporter exporter;
-            string extension = Path.GetExtension(file.Name);
-            Log.D("UI.MainPages.ChipAssignmentPage", string.Format("Extension is '{0}'", extension));
-            if (extension.Contains("xls", StringComparison.CurrentCulture))
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                exporter = new ExcelExporter();
-            }
-            else
+                FileTypeChoices = [Utils.ExcelType],
+                SuggestedFileName = string.Format("{0} {1} Chips.{2}", theEvent!.YearCode, theEvent.Name, "xlsx"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
             {
-                StringBuilder format = new();
-                for (int i = 0; i < headers.Length; i++)
+                List<object[]> data = [];
+                List<BibChipAssociation> associations = database.GetBibChips(theEvent.Identifier);
+                associations.Sort();
+                foreach (BibChipAssociation association in associations)
                 {
-                    format.Append("\"{");
-                    format.Append(i);
-                    format.Append("}\",");
+                    Log.D("UI.MainPages.ChipAssignmentPage", "Checking associations ... Bib " + association.Bib + " Chip " + association.Chip);
                 }
-                format.Remove(format.Length - 1, 1);
-                Log.D("UI.MainPages.ChipAssignmentPage", string.Format("The format is '{0}'", format.ToString()));
-                exporter = new CSVExporter(format.ToString());
+                string[] headers = ["Bib", "Chip"];
+                foreach (BibChipAssociation bca in associations)
+                {
+                    data.Add([bca.Bib, bca.Chip]);
+                }
+                IDataExporter exporter;
+                string extension = Path.GetExtension(file.Name);
+                Log.D("UI.MainPages.ChipAssignmentPage", string.Format("Extension is '{0}'", extension));
+                if (extension.Contains("xls", StringComparison.CurrentCulture))
+                {
+                    exporter = new ExcelExporter();
+                }
+                else
+                {
+                    StringBuilder format = new();
+                    for (int i = 0; i < headers.Length; i++)
+                    {
+                        format.Append("\"{");
+                        format.Append(i);
+                        format.Append("}\",");
+                    }
+                    format.Remove(format.Length - 1, 1);
+                    Log.D("UI.MainPages.ChipAssignmentPage", string.Format("The format is '{0}'", format.ToString()));
+                    exporter = new CSVExporter(format.ToString());
+                }
+                exporter.SetData(headers, data);
+                exporter.ExportData(file.Name);
+                DialogBox.Show("File saved.");
             }
-            exporter.SetData(headers, data);
-            exporter.ExportData(file.Name);
-            DialogBox.Show("File saved.");
         }
     }
 

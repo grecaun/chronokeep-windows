@@ -1,5 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Styling;
+using Avalonia.Themes.Fluent;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -160,15 +162,16 @@ public partial class MinWindow : Window, IMainWindow
         DeleteEvent,
     }
 
-    public void UpdateTheme(string theme, bool system)
+    public void UpdateTheme(string theme)
     {
-        if (system)
+        if (Application.Current != null)
         {
-
-        }
-        else
-        {
-
+            Application.Current.RequestedThemeVariant = theme switch
+            {
+                Constants.Settings.THEME_SYSTEM => Utils.GetSystemTheme() == 1 ? ThemeVariant.Dark : ThemeVariant.Light,
+                Constants.Settings.THEME_DARK => ThemeVariant.Dark,
+                _ => ThemeVariant.Light,
+            };
         }
     }
 
@@ -299,14 +302,11 @@ public partial class MinWindow : Window, IMainWindow
     private void Window_Loaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         // Check for current theme color and apply it.
-        AppSetting themeColor = database!.GetAppSetting(Constants.Settings.CURRENT_THEME)!;
-        string theme = "light";
-        bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
-        if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
+        AppSetting? themeColor = database!.GetAppSetting(Constants.Settings.CURRENT_THEME);
+        if (themeColor != null)
         {
-            theme = "dark";
+            UpdateTheme(themeColor.Value);
         }
-        UpdateTheme(theme, system);
     }
 
     public void Exit()

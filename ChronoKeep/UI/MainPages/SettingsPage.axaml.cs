@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -249,42 +250,36 @@ public partial class SettingsPage : UserControl, IMainPage
         if (ThemeColorBox.SelectedItem is ComboBoxItem selectedItem)
         {
             database.SetAppSetting(Constants.Settings.CURRENT_THEME, (string)((ComboBoxItem)ThemeColorBox.SelectedItem!).Tag!);
-            string theme = "light";
-            bool system = (string)selectedItem.Tag! == Constants.Settings.THEME_SYSTEM;
-            if (((string)selectedItem.Tag! == Constants.Settings.THEME_SYSTEM && SystemTheme == 0) || (string)selectedItem.Tag! == Constants.Settings.THEME_DARK)
-            {
-                theme = "dark";
-            }
-            mWindow.UpdateTheme(theme, system);
+            string theme = selectedItem.Tag != null ? (string)selectedItem.Tag : "light";
+            mWindow.UpdateTheme(theme);
         }
     }
 
-    private void ChangeExport_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void ChangeExport_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.SettingsPage", "Change export directory button clicked.");
-        /*
-        try
+        var topLevel = TopLevel.GetTopLevel((Window)mWindow);
+        if (topLevel != null)
         {
-            using (var dialog = new FolderBrowserDialog
+            IStorageFolder? oldFold;
+            try
             {
-                Description = "Export Directory",
-                UseDescriptionForTitle = true,
-                InitialDirectory = DefaultExportDirBox.Text,
-                SelectedPath = DefaultExportDirBox.Text,
-                ShowNewFolderButton = true,
-            })
+                oldFold = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(DefaultExportDirBox.Text ?? ""));
+            }
+            catch
             {
-
-                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    DefaultExportDirBox.Text = dialog.SelectedPath;
-                }
+                oldFold = null;
+            }
+            var folder = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Default Export Directory",
+                SuggestedStartLocation = oldFold,
+            });
+            if (folder.Count > 0)
+            {
+                DefaultExportDirBox.Text = folder[0].Path.ToString();
             }
         }
-        catch
-        {
-            Log.E("UI.MainPages.SettingsPage", "Something went wrong with the dialog.");
-        }//*/
     }
 
     private void UploadSlider_ValueChanged(object? sender, Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)

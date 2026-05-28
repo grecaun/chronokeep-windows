@@ -973,31 +973,45 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private async void LoadLog(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Loading from log.");
-        var files = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeFilter = [Utils.LogType, FilePickerFileTypes.All],
-            AllowMultiple = false,
-        });
-        if (files.Count > 0)
-        {
+            IStorageFolder? startingFolder;
             try
             {
-                LogImporter importer = new(files[0].Name);
-                await Task.Run(() =>
-                {
-                    importer.FindType();
-                });
-                ImportLogWindow logWindow = ImportLogWindow.NewWindow(mWindow, importer, database);
-                if (logWindow != null)
-                {
-                    mWindow.AddWindow(logWindow);
-                    await logWindow.ShowDialog((Window)mWindow);
-                }
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
-            catch (Exception ex)
+            catch
             {
-                Log.E("UI.MainPages.TimingPage", "Something went wrong when trying to read the CSV file.");
-                Log.E("UI.MainPages.TimingPage", ex.StackTrace!);
+                startingFolder = null;
+            }
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                FileTypeFilter = [Utils.LogType, FilePickerFileTypes.All],
+                AllowMultiple = false,
+                SuggestedStartLocation = startingFolder,
+            });
+            if (files.Count > 0)
+            {
+                try
+                {
+                    LogImporter importer = new(files[0].Name);
+                    await Task.Run(() =>
+                    {
+                        importer.FindType();
+                    });
+                    ImportLogWindow logWindow = ImportLogWindow.NewWindow(mWindow, importer, database);
+                    if (logWindow != null)
+                    {
+                        mWindow.AddWindow(logWindow);
+                        await logWindow.ShowDialog((Window)mWindow);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.E("UI.MainPages.TimingPage", "Something went wrong when trying to read the CSV file.");
+                    Log.E("UI.MainPages.TimingPage", ex.StackTrace!);
+                }
             }
         }
     }
@@ -1005,116 +1019,130 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private async void SaveLog(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Save Log clicked.");
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.CSVType],
-            SuggestedFileName = string.Format("{0} {1} Log.{2}", theEvent!.YearCode, theEvent.Name, "csv"),
-        });
-        if (file is not null)
-        {
-            Dictionary<string, List<ChipRead>> locationReadDict = [];
-            string[] headers =
-            [
-                    "status",
-                    "chip_number",
-                    "seconds",
-                    "milliseconds",
-                    "time_seconds",
-                    "time_milliseconds",
-                    "antenna",
-                    "reader",
-                    "box",
-                    "log_index",
-                    "rssi",
-                    "is_rewind",
-                    "reader_time",
-                    "start_time",
-                    "read_bib",
-                    "type"
-                ];
-            List<ChipRead> chipReads = database.GetChipReads(theEvent!.Identifier);
-            foreach (ChipRead read in chipReads)
+            IStorageFolder? startingFolder;
+            try
             {
-                if (!locationReadDict.TryGetValue(read.LocationName, out List<ChipRead>? locChipReads))
-                {
-                    locChipReads = [];
-                    locationReadDict[read.LocationName] = locChipReads;
-                }
-
-                locChipReads.Add(read);
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
-            StringBuilder format = new();
-            for (int i = 0; i < headers.Length; i++)
+            catch
             {
-                format.Append("\"{");
-                format.Append(i);
-                format.Append("}\",");
+                startingFolder = null;
             }
-            format.Remove(format.Length - 1, 1);
-            Log.D("UI.MainPages.TimingPage", string.Format("The format is '{0}'", format.ToString()));
-            if (locationReadDict.Keys.Count == 1)
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                List<object[]> data = [];
+                FileTypeChoices = [Utils.CSVType],
+                SuggestedFileName = string.Format("{0} {1} Log.{2}", theEvent!.YearCode, theEvent.Name, "csv"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
+            {
+                Dictionary<string, List<ChipRead>> locationReadDict = [];
+                string[] headers =
+                [
+                        "status",
+                        "chip_number",
+                        "seconds",
+                        "milliseconds",
+                        "time_seconds",
+                        "time_milliseconds",
+                        "antenna",
+                        "reader",
+                        "box",
+                        "log_index",
+                        "rssi",
+                        "is_rewind",
+                        "reader_time",
+                        "start_time",
+                        "read_bib",
+                        "type"
+                    ];
+                List<ChipRead> chipReads = database.GetChipReads(theEvent!.Identifier);
                 foreach (ChipRead read in chipReads)
                 {
-                    data.Add([
-                        read.Status,
-                            read.ChipNumber,
-                            read.Seconds,
-                            read.Milliseconds,
-                            read.TimeSeconds,
-                            read.TimeMilliseconds,
-                            read.Antenna,
-                            read.Reader,
-                            read.Box,
-                            read.LogId,
-                            read.RSSI,
-                            read.IsRewind,
-                            read.ReaderTime,
-                            read.StartTime,
-                            read.ReadBib,
-                            read.Type
-                    ]);
+                    if (!locationReadDict.TryGetValue(read.LocationName, out List<ChipRead>? locChipReads))
+                    {
+                        locChipReads = [];
+                        locationReadDict[read.LocationName] = locChipReads;
+                    }
+
+                    locChipReads.Add(read);
                 }
-                CSVExporter exporter = new(format.ToString());
-                exporter.SetData(headers, data);
-                exporter.ExportData(file.Name);
-            }
-            // Multiple locations, save each individually.
-            else
-            {
-                foreach (string key in locationReadDict.Keys)
+                StringBuilder format = new();
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    format.Append("\"{");
+                    format.Append(i);
+                    format.Append("}\",");
+                }
+                format.Remove(format.Length - 1, 1);
+                Log.D("UI.MainPages.TimingPage", string.Format("The format is '{0}'", format.ToString()));
+                if (locationReadDict.Keys.Count == 1)
                 {
                     List<object[]> data = [];
-                    foreach (ChipRead read in locationReadDict[key])
+                    foreach (ChipRead read in chipReads)
                     {
                         data.Add([
-                        read.Status,
-                            read.ChipNumber,
-                            read.Seconds,
-                            read.Milliseconds,
-                            read.TimeSeconds,
-                            read.TimeMilliseconds,
-                            read.Antenna,
-                            read.Reader,
-                            read.Box,
-                            read.LogId,
-                            read.RSSI,
-                            read.IsRewind,
-                            read.ReaderTime,
-                            read.StartTime,
-                            read.ReadBib,
-                            read.Type
-                    ]);
+                            read.Status,
+                                read.ChipNumber,
+                                read.Seconds,
+                                read.Milliseconds,
+                                read.TimeSeconds,
+                                read.TimeMilliseconds,
+                                read.Antenna,
+                                read.Reader,
+                                read.Box,
+                                read.LogId,
+                                read.RSSI,
+                                read.IsRewind,
+                                read.ReaderTime,
+                                read.StartTime,
+                                read.ReadBib,
+                                read.Type
+                        ]);
                     }
                     CSVExporter exporter = new(format.ToString());
                     exporter.SetData(headers, data);
-                    string outFileName = string.Format("{0}\\{1}-{2}", Path.GetDirectoryName(file.Name), FileSaveRegex().Replace(key.ToLower(), ""), Path.GetFileName(file.Name));
-                    Log.D("UI.MainPages.TimingPage", string.Format("Saving file to: {0}", outFileName));
-                    exporter.ExportData(outFileName);
+                    exporter.ExportData(file.Name);
                 }
+                // Multiple locations, save each individually.
+                else
+                {
+                    foreach (string key in locationReadDict.Keys)
+                    {
+                        List<object[]> data = [];
+                        foreach (ChipRead read in locationReadDict[key])
+                        {
+                            data.Add([
+                            read.Status,
+                                read.ChipNumber,
+                                read.Seconds,
+                                read.Milliseconds,
+                                read.TimeSeconds,
+                                read.TimeMilliseconds,
+                                read.Antenna,
+                                read.Reader,
+                                read.Box,
+                                read.LogId,
+                                read.RSSI,
+                                read.IsRewind,
+                                read.ReaderTime,
+                                read.StartTime,
+                                read.ReadBib,
+                                read.Type
+                        ]);
+                        }
+                        CSVExporter exporter = new(format.ToString());
+                        exporter.SetData(headers, data);
+                        string outFileName = string.Format("{0}\\{1}-{2}", Path.GetDirectoryName(file.Name), FileSaveRegex().Replace(key.ToLower(), ""), Path.GetFileName(file.Name));
+                        Log.D("UI.MainPages.TimingPage", string.Format("Saving file to: {0}", outFileName));
+                        exporter.ExportData(outFileName);
+                    }
+                }
+                DialogBox.Show("File saved.");
             }
-            DialogBox.Show("File saved.");
         }
     }
 
@@ -1548,18 +1576,32 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private async void CreateHTML_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Create HTML clicked.");
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.HTMLType],
-            SuggestedFileName = string.Format("{0} {1} Web.{2}", theEvent!.YearCode, theEvent.Name, "html"),
-        });
-        if (file is not null)
-        {
-            List<TimeResult> finishResults = database.GetFinishTimes(theEvent!.Identifier);
-            Dictionary<int, Participant> partDict = database.GetParticipants(theEvent.Identifier).ToDictionary(v => v.EventSpecific.Identifier, v => v);
-            HtmlResultsTemplate template = new(theEvent, finishResults);
-            File.WriteAllText(file.Name, template.TransformText());
-            DialogBox.Show("File saved.");
+            IStorageFolder? startingFolder;
+            try
+            {
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
+            }
+            catch
+            {
+                startingFolder = null;
+            }
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                FileTypeChoices = [Utils.HTMLType],
+                SuggestedFileName = string.Format("{0} {1} Web.{2}", theEvent!.YearCode, theEvent.Name, "html"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
+            {
+                List<TimeResult> finishResults = database.GetFinishTimes(theEvent!.Identifier);
+                Dictionary<int, Participant> partDict = database.GetParticipants(theEvent.Identifier).ToDictionary(v => v.EventSpecific.Identifier, v => v);
+                HtmlResultsTemplate template = new(theEvent, finishResults);
+                File.WriteAllText(file.Name, template.TransformText());
+                DialogBox.Show("File saved.");
+            }
         }
     }
 

@@ -7,6 +7,7 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -144,85 +145,141 @@ public partial class ExportDistanceResults : Window
 
     private async void SaveAllBoston()
     {
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.ExcelType],
-            SuggestedFileName = string.Format("{0} {1} Boston.{2}", theEvent!.YearCode, theEvent.Name, "xlsx"),
-        });
-        if (file is not null)
-        {
-            string extension = Path.GetExtension(file.Name);
-            string fileName = Path.GetFileNameWithoutExtension(file.Name);
-            string filePath = Path.GetDirectoryName(file.Name)!;
-            foreach (Distance distance in distanceDictionary!.Values)
+            IStorageFolder? startingFolder;
+            try
             {
-                SaveBostonInternal(
-                    distance.Name,
-                    Path.Combine(filePath, string.Format("{0} {1}{2}", fileName, distance.Name, extension)),
-                    extension
-                    );
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
-            DialogBox.Show("Files saved.");
+            catch
+            {
+                startingFolder = null;
+            }
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                FileTypeChoices = [Utils.ExcelType],
+                SuggestedFileName = string.Format("{0} {1} Boston.{2}", theEvent!.YearCode, theEvent.Name, "xlsx"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
+            {
+                string extension = Path.GetExtension(file.Name);
+                string fileName = Path.GetFileNameWithoutExtension(file.Name);
+                string filePath = Path.GetDirectoryName(file.Name)!;
+                foreach (Distance distance in distanceDictionary!.Values)
+                {
+                    SaveBostonInternal(
+                        distance.Name,
+                        Path.Combine(filePath, string.Format("{0} {1}{2}", fileName, distance.Name, extension)),
+                        extension
+                        );
+                }
+                DialogBox.Show("Files saved.");
+            }
         }
     }
 
     private async void SaveAllUltraSignup()
     {
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.CSVType],
-            SuggestedFileName = string.Format("{0} {1} Ultrasignup.{2}", theEvent!.YearCode, theEvent.Name, "csv"),
-        });
-        if (file is not null)
-        {
-            string extension = Path.GetExtension(file.Name);
-            string fileName = Path.GetFileNameWithoutExtension(file.Name);
-            string filePath = Path.GetDirectoryName(file.Name)!;
-            foreach (Distance distance in distanceDictionary!.Values)
+            IStorageFolder? startingFolder;
+            try
             {
-                SaveUltraSignupInternal(
-                    distance.Name,
-                    Path.Combine(filePath, string.Format("{0} {1}{2}", fileName, distance.Name, extension))
-                    );
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
-            DialogBox.Show("Files saved.");
+            catch
+            {
+                startingFolder = null;
+            }
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                FileTypeChoices = [Utils.CSVType],
+                SuggestedFileName = string.Format("{0} {1} Ultrasignup.{2}", theEvent!.YearCode, theEvent.Name, "csv"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
+            {
+                string extension = Path.GetExtension(file.Name);
+                string fileName = Path.GetFileNameWithoutExtension(file.Name);
+                string filePath = Path.GetDirectoryName(file.Name)!;
+                foreach (Distance distance in distanceDictionary!.Values)
+                {
+                    SaveUltraSignupInternal(
+                        distance.Name,
+                        Path.Combine(filePath, string.Format("{0} {1}{2}", fileName, distance.Name, extension))
+                        );
+                }
+                DialogBox.Show("Files saved.");
+            }
         }
     }
 
     private async void SaveAllRunsignup()
     {
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.CSVType],
-            SuggestedFileName = string.Format("{0} {1} Runsignup.{2}", theEvent!.YearCode, theEvent.Name, "csv"),
-        });
-        if (file is not null)
-        {
-            string extension = Path.GetExtension(file.Name);
-            string fileName = Path.GetFileNameWithoutExtension(file.Name);
-            string filePath = Path.GetDirectoryName(file.Name)!;
-            foreach (Distance distance in distanceDictionary!.Values)
+            IStorageFolder? startingFolder;
+            try
             {
-                SaveRunsignupInternal(
-                    distance.Name,
-                    Path.Combine(filePath, string.Format("{0} {1}{2}", fileName, distance.Name, extension))
-                    );
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
-            DialogBox.Show("Files saved.");
+            catch
+            {
+                startingFolder = null;
+            }
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                FileTypeChoices = [Utils.CSVType],
+                SuggestedFileName = string.Format("{0} {1} Runsignup.{2}", theEvent!.YearCode, theEvent.Name, "csv"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
+            {
+                string extension = Path.GetExtension(file.Name);
+                string fileName = Path.GetFileNameWithoutExtension(file.Name);
+                string filePath = Path.GetDirectoryName(file.Name)!;
+                foreach (Distance distance in distanceDictionary!.Values)
+                {
+                    SaveRunsignupInternal(
+                        distance.Name,
+                        Path.Combine(filePath, string.Format("{0} {1}{2}", fileName, distance.Name, extension))
+                        );
+                }
+                DialogBox.Show("Files saved.");
+            }
         }
     }
 
     private async void SaveAbbot(string distance)
     {
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.ExcelType],
-            SuggestedFileName = string.Format("{0} {1} {2} AbbotWMM.{3}", theEvent!.YearCode, theEvent.Name, distance, "xlsx"),
-        });
-        if (file is not null)
-        {
-            SaveAbbotInternal(distance, file.Name, Path.GetExtension(file.Name));
-            DialogBox.Show("File saved.");
+            IStorageFolder? startingFolder;
+            try
+            {
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
+            }
+            catch
+            {
+                startingFolder = null;
+            }
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                FileTypeChoices = [Utils.ExcelType],
+                SuggestedFileName = string.Format("{0} {1} {2} AbbotWMM.{3}", theEvent!.YearCode, theEvent.Name, distance, "xlsx"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
+            {
+                SaveAbbotInternal(distance, file.Name, Path.GetExtension(file.Name));
+                DialogBox.Show("File saved.");
+            }
         }
     }
     private void SaveAbbotInternal(string distance, string fileName, string extension)
@@ -396,15 +453,29 @@ public partial class ExportDistanceResults : Window
 
     private async void SaveBoston(string distance)
     {
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.ExcelType],
-            SuggestedFileName = string.Format("{0} {1} {2} Boston.{3}", theEvent!.YearCode, theEvent.Name, distance, "xlsx"),
-        });
-        if (file is not null)
-        {
-            SaveBostonInternal(distance, file.Name, Path.GetExtension(file.Name));
-            DialogBox.Show("File saved.");
+            IStorageFolder? startingFolder;
+            try
+            {
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
+            }
+            catch
+            {
+                startingFolder = null;
+            }
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                FileTypeChoices = [Utils.ExcelType],
+                SuggestedFileName = string.Format("{0} {1} {2} Boston.{3}", theEvent!.YearCode, theEvent.Name, distance, "xlsx"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
+            {
+                SaveBostonInternal(distance, file.Name, Path.GetExtension(file.Name));
+                DialogBox.Show("File saved.");
+            }
         }
     }
 
@@ -543,51 +614,79 @@ public partial class ExportDistanceResults : Window
 
     private async void SaveUltraSignup(string distance)
     {
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.CSVType],
-            SuggestedFileName = string.Format("{0} {1} {2} Ultrasignup.{3}", theEvent!.YearCode, theEvent.Name, distance, "csv"),
-        });
-        if (file is not null)
-        {
-            string filename = file.Name;
-            string[] fileSplit = filename.Split('.');
-            if (fileSplit.Length != 2)
+            IStorageFolder? startingFolder;
+            try
             {
-                DialogBox.Show("Filename appears to be invalid.");
-                return;
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
-            if (!fileSplit[1].Equals("csv"))
+            catch
             {
-                filename = string.Format("{0}.{1}", fileSplit[0], "csv");
+                startingFolder = null;
             }
-            SaveUltraSignupInternal(distance, filename);
-            DialogBox.Show("File saved.");
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                FileTypeChoices = [Utils.CSVType],
+                SuggestedFileName = string.Format("{0} {1} {2} Ultrasignup.{3}", theEvent!.YearCode, theEvent.Name, distance, "csv"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
+            {
+                string filename = file.Name;
+                string[] fileSplit = filename.Split('.');
+                if (fileSplit.Length != 2)
+                {
+                    DialogBox.Show("Filename appears to be invalid.");
+                    return;
+                }
+                if (!fileSplit[1].Equals("csv"))
+                {
+                    filename = string.Format("{0}.{1}", fileSplit[0], "csv");
+                }
+                SaveUltraSignupInternal(distance, filename);
+                DialogBox.Show("File saved.");
+            }
         }
     }
 
     private async void SaveRunsignup(string distance)
     {
-        var file = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            FileTypeChoices = [Utils.CSVType],
-            SuggestedFileName = string.Format("{0} {1} {2} Runsignup.{3}", theEvent!.YearCode, theEvent.Name, distance, "csv"),
-        });
-        if (file is not null)
-        {
-            string filename = file.Name;
-            string[] fileSplit = filename.Split('.');
-            if (fileSplit.Length != 2)
+            IStorageFolder? startingFolder;
+            try
             {
-                DialogBox.Show("Filename appears to be invalid.");
-                return;
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
-            if (!fileSplit[1].Equals("csv"))
+            catch
             {
-                filename = string.Format("{0}.{1}", fileSplit[0], "csv");
+                startingFolder = null;
             }
-            SaveRunsignupInternal(distance, filename);
-            DialogBox.Show("File saved.");
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                FileTypeChoices = [Utils.CSVType],
+                SuggestedFileName = string.Format("{0} {1} {2} Runsignup.{3}", theEvent!.YearCode, theEvent.Name, distance, "csv"),
+                SuggestedStartLocation = startingFolder,
+            });
+            if (file is not null)
+            {
+                string filename = file.Name;
+                string[] fileSplit = filename.Split('.');
+                if (fileSplit.Length != 2)
+                {
+                    DialogBox.Show("Filename appears to be invalid.");
+                    return;
+                }
+                if (!fileSplit[1].Equals("csv"))
+                {
+                    filename = string.Format("{0}.{1}", fileSplit[0], "csv");
+                }
+                SaveRunsignupInternal(distance, filename);
+                DialogBox.Show("File saved.");
+            }
         }
     }
 

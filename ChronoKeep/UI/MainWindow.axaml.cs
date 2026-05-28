@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
@@ -170,15 +171,16 @@ namespace Chronokeep.UI
             Constants.GlobalVars.SetTwilioCredentials(database);
         }
 
-        public void UpdateTheme(string theme, bool system)
+        public void UpdateTheme(string theme)
         {
-            if (system)
+            if (Application.Current != null)
             {
-
-            }
-            else
-            {
-
+                Application.Current.RequestedThemeVariant = theme switch
+                {
+                    Constants.Settings.THEME_SYSTEM => Utils.GetSystemTheme() == 0 ? ThemeVariant.Dark : ThemeVariant.Light,
+                    Constants.Settings.THEME_DARK => ThemeVariant.Dark,
+                    _ => ThemeVariant.Light,
+                };
             }
         }
 
@@ -254,14 +256,11 @@ namespace Chronokeep.UI
             TimingWorkerThread.Start();
             TimingWorker.Notify();
             // Check for current theme color and apply it.
-            AppSetting themeColor = database!.GetAppSetting(Constants.Settings.CURRENT_THEME)!;
-            string theme = "light";
-            bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
-            if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
+            AppSetting? themeColor = database!.GetAppSetting(Constants.Settings.CURRENT_THEME);
+            if (themeColor != null)
             {
-                theme = "dark";
+                UpdateTheme(themeColor.Value);
             }
-            UpdateTheme(theme, system);
             // Check for hardware changes.
             Log.D("UI.MainWindow", "Starting hardware checker.");
             HardwareChecker hwCheck = new(database);
