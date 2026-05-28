@@ -5,23 +5,23 @@
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
         x:Class="Chronokeep.UI.Parts.DialogBox"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         Title=""
         Width="400"
         CanResize="False"
-        SizeToContent="Height">
-    <StackPanel>
+        SizeToContent="Height"
+        >
+    <StackPanel VerticalAlignment="Center" Margin="0,35">
         <StackPanel VerticalAlignment="Center"
                     HorizontalAlignment="Center">
-            <TextBlock x:Name="MessageBox"
+            <TextBlock Name="MessageBox"
                        Text="This is some random text for testing purposes."
                        Margin="15,15,15,0"
                        FontSize="16"
                        TextWrapping="Wrap"
                        TextAlignment="Center"
                        VerticalAlignment="Center"/>
-            <TextBox x:Name="CopyBox"
+            <TextBox Name="CopyBox"
                      Text=""
                      TextChanged="CopyBox_TextChanged"
                      FontSize="16"
@@ -29,19 +29,19 @@
                      IsVisible="False"
                      HorizontalAlignment="Stretch"/>
         </StackPanel>
-        <Grid>
+        <Grid Margin="35,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                    x:Name="LeftButton"
+                    Name="LeftButton"
                     Content="Yes"
                     Height="35"
                     Margin="15,15,5,15"
                     HorizontalAlignment="Stretch"/>
             <Button Grid.Column="1"
-                    x:Name="RightButton"
+                    Name="RightButton"
                     Content="No"
                     Height="35"
                     Margin="5,15,15,15"

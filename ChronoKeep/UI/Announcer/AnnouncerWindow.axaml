@@ -5,7 +5,9 @@
         xmlns:objects="using:Chronokeep.Objects"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Chronokeep.UI.Announcer.AnnouncerWindow"
-        Title="AnnouncerWindow">
+        Title="AnnouncerWindow"
+        Closing="Window_Closing"
+        >
     <Window.Styles>
         <Style Selector="DataGrid">
             <Setter Property="IsReadOnly" Value="True"/>

@@ -32,6 +32,7 @@ namespace Chronokeep.UI
     {
         internal static Window? mWindow;
         internal IMainPage? CurrentPage;
+        internal static bool ForceClose = false;
 
         private readonly MemStore.MemStore? database;
         private readonly string dbName = "Chronokeep.sqlite";
@@ -187,24 +188,21 @@ namespace Chronokeep.UI
             {
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT)!.Value == Constants.Settings.SETTING_FALSE &&
+            if (!ForceClose && database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT)!.Value == Constants.Settings.SETTING_FALSE &&
                 (BackgroundProcessesRunning()))
             {
-                bool AllowClose = false;
                 DialogBox.Show(
                     "Are you sure you wish to exit?",
                     "Yes",
                     "No",
                     () =>
-                    {
-                        AllowClose = true;
-                    }
+                        {
+                            ForceClose = true;
+                            mWindow?.Close();
+                        }
                     );
-                if (!AllowClose)
-                {
-                    e.Cancel = true;
-                    return;
-                }
+                e.Cancel = true;
+                return;
             }
             Log.D("UI.MainWindow", "Window is closing!");
             try
@@ -905,11 +903,15 @@ namespace Chronokeep.UI
         private void Announcer_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Announer window button clicked.");
+            Log.E("UI.MainWindow", string.Format("announcerWindow is null? {0}", announcerWindow == null));
             if (announcerWindow != null)
             {
-                announcerWindow.Focus();
+                announcerWindow.Hide();
+                announcerWindow.Show();
+                UpdateStatus();
                 return;
             }
+            Log.E("UI.MainWindow", string.Format("beep boop"));
             announcerWindow = new AnnouncerWindow(this, database!);
             announcerWindow.Show();
             UpdateStatus();

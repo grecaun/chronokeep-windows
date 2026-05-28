@@ -34,11 +34,10 @@ public partial class DialogBox : Window
         this.MinWidth = 400.0;
         this.Width = 400.0;
         this.MinHeight = 200.0;
-        this.Height = 200.0;
         this.Topmost = true;
     }
 
-    public static void Show(string Message)
+    public async static void Show(string Message)
     {
         DialogBox output = new(
             Message,
@@ -47,10 +46,10 @@ public partial class DialogBox : Window
             false,
             () => { }
             );
-        output.ShowDialog(MainWindow.mWindow!);
+        await output.ShowDialog(MainWindow.mWindow!);
     }
 
-    public static void Show(string Message, string LeftButtonContent, string RightButtonContent, LeftClickDelegate LeftClick)
+    public async static void Show(string Message, string LeftButtonContent, string RightButtonContent, LeftClickDelegate LeftClick)
     {
         DialogBox output = new(
             Message,
@@ -59,10 +58,10 @@ public partial class DialogBox : Window
             true,
             LeftClick
             );
-        output.ShowDialog(MainWindow.mWindow!);
+        await output.ShowDialog(MainWindow.mWindow!);
     }
 
-    public static void Show(string Message, string CopyText)
+    public async static void Show(string Message, string CopyText)
     {
         DialogBox output = new(
             Message,
@@ -77,7 +76,7 @@ public partial class DialogBox : Window
         output.CopyBox.Text = CopyText;
         output.CopyBox.IsVisible = true;
         output.Width = 500.0;
-        output.ShowDialog(MainWindow.mWindow!);
+        await output.ShowDialog(MainWindow.mWindow!);
     }
 
     private void CopyBox_TextChanged(object sender, TextChangedEventArgs e)

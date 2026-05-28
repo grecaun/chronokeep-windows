@@ -34,7 +34,7 @@ public partial class AnnouncerWindow : Window
         UpdateTiming();
     }
 
-    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    private void Window_Closing(object sender, WindowClosingEventArgs e)
     {
         Log.D("UI.Announcer.AnnouncerWindow", "Announcer window is closing!");
         AnnouncerWorker.Shutdown();
