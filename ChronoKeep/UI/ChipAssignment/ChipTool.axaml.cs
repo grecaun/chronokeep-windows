@@ -29,9 +29,10 @@ public partial class ChipTool : Window
         correlationBox.Items.Add(new TagRangePart(correlationBox));
         this.window = window;
         this.database = database;
-        this.MinHeight = 100;
-        this.MinWidth = 550;
-        this.CanResize = false;
+        MinHeight = 100;
+        MinWidth = 550;
+        Width = 600;
+        CanResize = false;
     }
 
     public static ChipTool NewWindow(IWindowCallback window, IDBInterface database)

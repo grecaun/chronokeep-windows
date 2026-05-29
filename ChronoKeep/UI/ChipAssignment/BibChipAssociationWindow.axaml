@@ -5,11 +5,9 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Chronokeep.UI.ChipAssignment.BibChipAssociationWindow"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
-        SizeToContent="Height"
-        Title="Load Chips">
-    <Grid>
+        SizeToContent="Height">
+    <Grid Margin="0,30,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
