@@ -49,7 +49,7 @@ public partial class DashboardPage : UserControl, IMainPage
         RightPanel.IsVisible = true;
         EventNameTextBox.Text = theEvent.Name;
         EventYearCodeTextBox.Text = theEvent.YearCode;
-        EventDatePicker.Text = theEvent.Date;
+        EventDatePicker.Text = DateTime.Parse(theEvent.Date).ToString("MM/dd/yyyy");
         RankByGunCheckBox.IsChecked = theEvent.RankByGun;
         if (theEvent != null && Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
         {
@@ -718,7 +718,7 @@ public partial class DashboardPage : UserControl, IMainPage
             }
             theEvent.Name = EventNameTextBox.Text!;
             theEvent.YearCode = EventYearCodeTextBox.Text!;
-            theEvent.Date = EventDatePicker.Text!;
+            theEvent.Date = DateTime.Parse(EventDatePicker.Text!.Replace('_','0')).ToString("MM/dd/yyyy");
             theEvent.RankByGun = RankByGunCheckBox.IsChecked ?? false;
             theEvent.CommonAgeGroups = CommonAgeCheckBox.IsChecked ?? false;
             theEvent.CommonStartFinish = CommonStartCheckBox.IsChecked ?? false;
