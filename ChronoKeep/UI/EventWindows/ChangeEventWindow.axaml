@@ -7,36 +7,48 @@
         x:Class="Chronokeep.UI.EventWindows.ChangeEventWindow"
         Closing="Window_Closing"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         Topmost="True"
         Height="400"
         Width="500"
         Title="Change Event">
-    <Grid Margin="5">
+    <Window.Styles>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
+        </Style>
+        <Style Selector="ListBoxItem:focus /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
+        </Style>
+        <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style> 
+    </Window.Styles>
+    <Grid Margin="5,35,5,5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" VerticalAlignment="Center">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <PathIcon Grid.Column="0"
-                      Data="{StaticResource search_regular}"
-                      Margin="20,0,10,10"
-                      VerticalAlignment="Center"/>
-            <TextBox Grid.Column="1"
+            <TextBox Grid.Row="0"
                      Name="searchBox"
                      TextChanged="SearchBox_TextChanged"
                      PlaceholderText="Search..."
-                     Height="40"
-                     Margin="5,0,15,15"/>
-        </Grid>
-        <Grid Grid.Row="1" Margin="19,0,19,0">
+                     Margin="35,0,35,15"
+                     VerticalAlignment="Center"
+                     VerticalContentAlignment="Center">
+                <TextBox.InnerLeftContent>
+                    <PathIcon Data="{StaticResource search_regular}" Margin="10,0,5,0"/>
+                </TextBox.InnerLeftContent>
+            </TextBox>
+        <Grid Grid.Row="1" Margin="30,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250" />
                 <ColumnDefinition Width="70" />
@@ -49,7 +61,7 @@
         <ListBox Grid.Row="2"
                  Name="eventList"
                  DoubleTapped="EventList_MouseDoubleClick"
-                 Margin="14,0,14,0"
+                 Margin="30,0"
                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch">

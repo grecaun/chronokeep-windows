@@ -212,7 +212,10 @@ public partial class TimingResultsPage : UserControl, ISubPage
             Customize(sortType, peopleType, newResults, search, location);
         });
         updateListView.ItemsSource = newResults;
-        updateListView.ScrollIntoView(newResults[^1], null);
+        if (newResults.Count > 0)
+        {
+            updateListView.ScrollIntoView(newResults[^1], null);
+        }
         updateListView.SelectedItem = null;
         if (theEvent!.DisplayPlacements)
         {
@@ -263,7 +266,10 @@ public partial class TimingResultsPage : UserControl, ISubPage
             Customize(sortType, peopleType, newResults, search, location);
         });
         updateListView.ItemsSource = newResults;
-        updateListView.ScrollIntoView(newResults[^1], null);
+        if (newResults.Count > 0)
+        {
+            updateListView.ScrollIntoView(newResults[^1], null);
+        }
     }
 
     public void Reader(string reader) { }

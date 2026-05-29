@@ -49,9 +49,9 @@ public partial class NewEventWindow : Window
         string nameString = nameBox.Text!.Trim();
         string yearString = yearCodeBox.Text!.Trim();
         long dateVal = DateTime.Now.Date.Ticks;
-        if (datePicker.SelectedDate != null)
+        if (datePicker.Text != null)
         {
-            dateVal = datePicker.SelectedDate.Value.Date.Ticks;
+            dateVal = DateTime.Parse(datePicker.Text.Replace('_','0')).Ticks;
         }
         Log.D("NewEventWindow", "Name given for event: '" + nameString + "' Date Given: " + dateVal + " Date Value: " + dateVal);
         if (nameString == "")
