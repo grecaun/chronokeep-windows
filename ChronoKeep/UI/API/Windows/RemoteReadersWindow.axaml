@@ -5,7 +5,6 @@
         mc:Ignorable="d" d:DesignWidth="1090" d:DesignHeight="250"
         x:Class="Chronokeep.UI.API.Windows.RemoteReadersWindow"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
         Title="Remote Readers"
@@ -27,8 +26,8 @@
         <ListBox
             Name="apiListView"
             IsVisible="False"
-            Margin="10,0,10,10">
-        </ListBox>
+            Margin="10,0,10,10"
+            />
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Name="CloseButton"
                     Content="Close"

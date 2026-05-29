@@ -5,7 +5,6 @@
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200"
         x:Class="Chronokeep.UI.Participants.ChangeMultiParticipantWindow"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         Title="Modify Participants"
         Width="300"
