@@ -10,10 +10,10 @@
                 HorizontalAlignment="Center">
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center">
-			<TextBox x:Name="nameBox"
+			<TextBox Name="nameBox"
                      Width="190"
                      Margin="5" />
-            <ComboBox x:Name="kindBox"
+            <ComboBox Name="kindBox"
                       Width="120" Margin="5"
                       SelectedIndex="0"
                       SelectionChanged="KindBox_ValueChanged" >
@@ -22,15 +22,15 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center">
-			<TextBox x:Name="ipBox"
+			<TextBox Name="ipBox"
                      Width="120"
                      Margin="5"
                      TextInput="IPValidation" />
-            <TextBox x:Name="portBox"
+            <TextBox Name="portBox"
                      Width="60"
                      Margin="5"
                      TextInput="NumberValidation" />
-            <ToggleSwitch x:Name="autoConnectSwitch"
+            <ToggleSwitch Name="autoConnectSwitch"
                             Width="40"
                             OnContent=""
                             OffContent=""
@@ -41,7 +41,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center">
-            <ToggleSwitch x:Name="connectedSwitch"
+            <ToggleSwitch Name="connectedSwitch"
                             Width="40"
                             OnContent=""
                             OffContent=""
@@ -49,13 +49,13 @@
                             VerticalContentAlignment="Center" /> <!-- add ConnectReader -->
             <Label Content="Connected"
                    Width="75" />
-            <Button x:Name="saveReaderButton"
+            <Button Name="saveReaderButton"
                     Width="40"
                     Margin="5"
                     Click="SaveReader">
 			    <PathIcon Data="{StaticResource save_regular}"/>
             </Button>
-            <Button x:Name="removeReaderButton"
+            <Button Name="removeReaderButton"
                     Width="40"
                     Margin="5"
                     Click="DeleteReader">
@@ -64,6 +64,6 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"
-                    x:Name="antennaPanel" />
+                    Name="antennaPanel" />
     </StackPanel>
 </UserControl>

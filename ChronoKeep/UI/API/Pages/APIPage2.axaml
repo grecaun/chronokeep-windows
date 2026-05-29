@@ -1,11 +1,33 @@
 <UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:chronokeepapi="using:Chronokeep.Objects.ChronoKeepAPI"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:objects="using:Chronokeep.Objects"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chronokeep.UI.API.APIPage2">
-    <StackPanel VerticalAlignment="Center">
+    <UserControl.Styles>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
+        </Style>
+        <Style Selector="ListBoxItem:focus /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
+        </Style>
+        <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+    </UserControl.Styles>
+    <StackPanel VerticalAlignment="Center" Margin="0,35,0,10">
         <TextBlock Name="holdingLabel"
                    Text="Retrieving Events, Please Hold."
                    FontSize="18"
@@ -55,7 +77,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <DockPanel>
-                            <TextBlock Margin="8,4" Text="{Binding Name}" x:DataType="objects:Event"/>
+                            <TextBlock Margin="8,4" Text="{Binding Name}" x:DataType="chronokeepapi:APIEvent"/>
                         </DockPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

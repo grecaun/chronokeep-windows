@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chronokeep.UI.API.APIPage3">
-
-    <StackPanel VerticalAlignment="Center">
+    <StackPanel VerticalAlignment="Center" Margin="0,35,0,10">
         <TextBlock Name="holdingLabel" 
                    Text="Retrieving Years, Please Hold." 
                    FontSize="18" 
@@ -75,7 +74,7 @@
                               HorizontalAlignment="Stretch"/>
                 </DockPanel>
                 <StackPanel Orientation="Horizontal">
-                    <ToggleSwitch x:Name="LiveBox"
+                    <ToggleSwitch Name="LiveBox"
                                   VerticalAlignment="Center"
                                   HorizontalAlignment="Center"
                                   Margin="0,-7,0,-7"

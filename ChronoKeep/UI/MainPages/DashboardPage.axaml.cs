@@ -787,7 +787,6 @@ public partial class DashboardPage : UserControl, IMainPage
             {
                 mWindow.AddWindow(editWindow);
                 editWindow.ShowDialog((Window)mWindow);
-                UpdateView();
             }
         }
         else
@@ -797,7 +796,6 @@ public partial class DashboardPage : UserControl, IMainPage
             {
                 mWindow.AddWindow(apiWindow);
                 apiWindow.ShowDialog((Window)mWindow);
-                UpdateView();
             }
         }
     }

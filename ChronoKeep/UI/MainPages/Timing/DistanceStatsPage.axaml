@@ -20,13 +20,13 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="55"/>
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" x:Name="mainScroll">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Name="mainScroll">
             <StackPanel>
                 <TextBlock Name="DistanceName" Text="Distance Name" HorizontalAlignment="Center" FontSize="18" Margin="0,10,0,10"/>
-                <Expander x:Name="activePanel" Header="Active" Margin="0,0,0,5" IsExpanded="True" FontSize="12" HorizontalAlignment="Stretch">
+                <Expander Name="activePanel" Header="Active" Margin="0,0,0,5" IsExpanded="True" FontSize="12" HorizontalAlignment="Stretch">
                     <DataGrid
                         Grid.Row="0"
-                        x:Name="activeListView"
+                        Name="activeListView"
                         SelectionMode="Single"
                         FontSize="12"
                         DoubleTapped="ListView_MouseDoubleClick"
@@ -44,9 +44,9 @@
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
-                <Expander x:Name="dnfPanel" Header="Did Not Finish" Margin="0,0,0,5" IsExpanded="True" FontSize="12" HorizontalAlignment="Stretch">
+                <Expander Name="dnfPanel" Header="Did Not Finish" Margin="0,0,0,5" IsExpanded="True" FontSize="12" HorizontalAlignment="Stretch">
                     <DataGrid
-                        x:Name="dnfListView"
+                        Name="dnfListView"
                         SelectionMode="Single"
                         FontSize="12"
                         DoubleTapped="ListView_MouseDoubleClick"
@@ -62,9 +62,9 @@
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
-                <Expander x:Name="dnsPanel" Header="Did Not Start" Margin="0,0,0,5" IsExpanded="False" FontSize="12" HorizontalAlignment="Stretch">
+                <Expander Name="dnsPanel" Header="Did Not Start" Margin="0,0,0,5" IsExpanded="False" FontSize="12" HorizontalAlignment="Stretch">
                     <DataGrid
-                        x:Name="dnsListView"
+                        Name="dnsListView"
                         SelectionMode="Single"
                         FontSize="12"
                         DoubleTapped="ListView_MouseDoubleClick"
@@ -80,9 +80,9 @@
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
-                <Expander x:Name="unknownPanel" Header="Unknown" Margin="0,0,0,5" IsExpanded="False" FontSize="12" HorizontalAlignment="Stretch">
+                <Expander Name="unknownPanel" Header="Unknown" Margin="0,0,0,5" IsExpanded="False" FontSize="12" HorizontalAlignment="Stretch">
                     <DataGrid
-                        x:Name="unknownListView"
+                        Name="unknownListView"
                         SelectionMode="Single"
                         FontSize="12"
                         DoubleTapped="ListView_MouseDoubleClick"
@@ -98,9 +98,9 @@
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
-                <Expander x:Name="finishedPanel" Header="Finished" Margin="0,0,0,0" IsExpanded="False" FontSize="12" HorizontalAlignment="Stretch">
+                <Expander Name="finishedPanel" Header="Finished" Margin="0,0,0,0" IsExpanded="False" FontSize="12" HorizontalAlignment="Stretch">
                     <DataGrid
-                        x:Name="finishedListView"
+                        Name="finishedListView"
                         SelectionMode="Single"
                         FontSize="12"
                         DoubleTapped="ListView_MouseDoubleClick"

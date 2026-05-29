@@ -15,7 +15,9 @@
 
     <StackPanel Grid.ColumnSpan="2"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+                VerticalAlignment="Center"
+                Margin="0,35,0,10"
+                >
         <Button Content="Unlink"
                 Click="Unlink_Click"/>
         <Button Content="Edit Event"

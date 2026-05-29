@@ -47,7 +47,7 @@
             <TextBlock Grid.Column="2" Margin="8,4" Text="Date" />
         </Grid>
         <ListBox Grid.Row="2"
-                 x:Name="eventList"
+                 Name="eventList"
                  DoubleTapped="EventList_MouseDoubleClick"
                  Margin="14,0,14,0"
                  ScrollViewer.HorizontalScrollBarVisibility="Auto"

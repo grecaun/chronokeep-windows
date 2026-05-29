@@ -23,7 +23,7 @@
                            VerticalAlignment="Center"
                            Width="120"
                            Margin="5,5,5,5"/>
-                <TextBox x:Name="nameBox"
+                <TextBox Name="nameBox"
                          Width="250"
                          Margin="5,5,5,5"/>
             </StackPanel>
@@ -33,7 +33,7 @@
                            VerticalAlignment="Center"
                            Width="120"
                            Margin="5,5,5,5"/>
-                <TextBox x:Name="readWindowBox"
+                <TextBox Name="readWindowBox"
                          Width="250"
                          Margin="5,5,5,5"/>
             </StackPanel>
@@ -43,7 +43,7 @@
                            VerticalAlignment="Center"
                            Width="120"
                            Margin="5,5,5,5"/>
-                <ComboBox x:Name="chipTypeBox"
+                <ComboBox Name="chipTypeBox"
                           Width="250"
                           Margin="5,5,5,5"
                           SelectedIndex="0">
@@ -52,7 +52,7 @@
                 </ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <ToggleSwitch x:Name="soundBox"
+                <ToggleSwitch Name="soundBox"
                               OnContent=""
                               OffContent=""
                               Margin="5,-7,-7,-7"
@@ -65,7 +65,7 @@
                            VerticalAlignment="Center"
                            Width="120"
                            Margin="5,5,5,5"/>
-                <Slider x:Name="volumeSlider"
+                <Slider Name="volumeSlider"
                         ValueChanged="VolumeSlider_ValueChanged"
                         Width="210"
                         Minimum="0"
@@ -73,7 +73,7 @@
                         TickFrequency="1"
                         Margin="10,5,5,5"
                         IsSnapToTickEnabled="True"/>
-                <TextBlock x:Name="volumeBlock"
+                <TextBlock Name="volumeBlock"
                            FontSize="14"
                            Text="0"
                            Width="30"
@@ -88,7 +88,7 @@
                            Margin="5,5,5,5"
                            TextAlignment="Right"
                            VerticalAlignment="Center"/>
-                <ComboBox x:Name="voiceBox"
+                <ComboBox Name="voiceBox"
                           Width="250"
                           Margin="5,5,5,5"
                           SelectedIndex="0">
@@ -97,13 +97,13 @@
                     <ComboBoxItem Content="Custom" Tag="custom"/>
                 </ComboBox>
             </StackPanel>
-            <StackPanel x:Name="screenPanel" Orientation="Horizontal" IsVisible="False">
+            <StackPanel Name="screenPanel" Orientation="Horizontal" IsVisible="False">
                 <TextBlock Text="Voice"
                            Width="120"
                            Margin="5,5,5,5"
                            TextAlignment="Right"
                            VerticalAlignment="Center"/>
-                <ComboBox x:Name="screenBox"
+                <ComboBox Name="screenBox"
                           Width="250"
                           Margin="5,5,5,5"
                           SelectedIndex="0">
@@ -111,7 +111,7 @@
                     <ComboBoxItem Content="PCF8574T" Tag="PCF8574T"/>
                 </ComboBox>
             </StackPanel>
-            <Expander x:Name="readerExpander"
+            <Expander Name="readerExpander"
                       Expanded="ReaderExpander_Changed"
                       Collapsed="ReaderExpander_Changed"
                       Margin="5,5,5,5"
@@ -124,7 +124,7 @@
                                    Margin="5,0,0,0"
                                    VerticalAlignment="Center" />
                         <Button DockPanel.Dock="Right"
-                                x:Name="addReaderButton"
+                                Name="addReaderButton"
                                 Click="AddReaderButton_Click"
                                 Margin="0,0,10,0"
                                 IsVisible="False"
@@ -133,13 +133,13 @@
                         </Button>
                     </DockPanel>
                 </Expander.Header>
-                <ListBox x:Name="readerListView"
+                <ListBox Name="readerListView"
                          Height="160"
                          Margin="0,-10,0,0"
                          HorizontalAlignment="Center"
                          ScrollViewer.VerticalScrollBarVisibility="Auto"/>
             </Expander>
-            <Expander x:Name="apiExpander"
+            <Expander Name="apiExpander"
                       Expanded="APIExpander_Changed"
                       Collapsed="APIExpander_Changed"
                       MaxHeight="205"
@@ -153,7 +153,7 @@
                                    Margin="5,0,0,0"
                                    VerticalAlignment="Center"/>
                         <Button DockPanel.Dock="Right"
-                                x:Name="addAPIButton"
+                                Name="addAPIButton"
                                 Click="AddAPIButton_Click"
                                 Margin="0,0,10,0"
                                 IsVisible="False"
@@ -162,7 +162,7 @@
                         </Button>
                     </DockPanel>
                 </Expander.Header>
-                <ListBox x:Name="apiListView"
+                <ListBox Name="apiListView"
                          Height="145"
                          Margin="0,-10,0,0"
                          HorizontalAlignment="Center"
@@ -178,7 +178,7 @@
                                    Margin="5,5,5,5"
                                    TextAlignment="Right"
                                    VerticalAlignment="Center"/>
-                        <TextBox x:Name="ntfyUrlBox"
+                        <TextBox Name="ntfyUrlBox"
                                  Width="250"
                                  Margin="5,5,5,5"/>
                     </StackPanel>
@@ -188,7 +188,7 @@
                                    Margin="5,5,5,5"
                                    TextAlignment="Right"
                                    VerticalAlignment="Center"/>
-                        <TextBox x:Name="ntfyTopicBox"
+                        <TextBox Name="ntfyTopicBox"
                                  Width="250"
                                  Margin="5,5,5,5"/>
                     </StackPanel>
@@ -198,7 +198,7 @@
                                    Margin="5,5,5,5"
                                    TextAlignment="Right"
                                    VerticalAlignment="Center"/>
-                        <TextBox x:Name="ntfyUserBox"
+                        <TextBox Name="ntfyUserBox"
                                  Width="250"
                                  Margin="5,5,5,5"/>
                     </StackPanel>
@@ -208,7 +208,7 @@
                                    Margin="5,5,5,5"
                                    TextAlignment="Right"
                                    VerticalAlignment="Center"/>
-                        <TextBox x:Name="ntfyPassBox"
+                        <TextBox Name="ntfyPassBox"
                                  Width="250"
                                  Margin="5,5,5,5"/>
                     </StackPanel>
@@ -220,7 +220,7 @@
                            Margin="5,5,5,5"
                            TextAlignment="Right"
                            VerticalAlignment="Center"/>
-                <Slider x:Name="uploadSlider"
+                <Slider Name="uploadSlider"
                         ValueChanged="UploadSlider_ValueChanged"
                         Width="210"
                         Minimum="10"
@@ -228,7 +228,7 @@
                         Margin="10,5,5,5"
                         TickFrequency="5"
                         IsSnapToTickEnabled="True"/>
-                <TextBlock x:Name="uploadBlock"
+                <TextBlock Name="uploadBlock"
                            FontSize="14"
                            Text="10"
                            Width="30"
@@ -238,14 +238,14 @@
                            HorizontalAlignment="Center"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <ToggleSwitch x:Name="autoResultsSwitch"
+                <ToggleSwitch Name="autoResultsSwitch"
                               Click="AutoResultsSwitch_Checked"
                               Height="35"
                               OnContent=""
                               OffContent=""
                               Margin="5,-7,-7,-7"/>
                 <Label Content="Auto Upload Results" VerticalAlignment="Center"/>
-                <ToggleSwitch x:Name="enableNTFYSwitch"
+                <ToggleSwitch Name="enableNTFYSwitch"
                               Height="35"
                               OnContent=""
                               OffContent=""
@@ -253,13 +253,13 @@
                 <Label Content="Enable NTFY" VerticalAlignment="Center"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="manualResultsButton"
+                <Button Name="manualResultsButton"
                         Content="Manual Results Upload"
                         Click="ManualResultsButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"/>
-                <Button x:Name="deleteReadsButton"
+                <Button Name="deleteReadsButton"
                         Content="Clear Reads"
                         Click="DeleteReadsButton_Click"
                         Width="185"
@@ -267,13 +267,13 @@
                         Margin="5,5,5,5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="updateServerButton"
+                <Button Name="updateServerButton"
                         Content="Update Server"
                         Click="UpdateServerButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"/>
-                <Button x:Name="restartServerButton"
+                <Button Name="restartServerButton"
                         Content="Restart Server"
                         Click="RestartServerButton_Click"
                         Width="185"
@@ -281,13 +281,13 @@
                         Margin="5,5,5,5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="stopServerButton"
+                <Button Name="stopServerButton"
                         Content="Stop Server"
                         Click="StopServerButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"/>
-                <Button x:Name="shutdownServerButton"
+                <Button Name="shutdownServerButton"
                         Content="Shutdown Server"
                         Click="ShutdownServerButton_Click"
                         Width="185"
@@ -295,13 +295,13 @@
                         Margin="5,5,5,5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="saveButton"
+                <Button Name="saveButton"
                         Content="Save Settings"
                         Click="SaveButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"/>
-                <Button x:Name="closeButton"
+                <Button Name="closeButton"
                         Content="Close"
                         Click="CloseButton_Click"
                         Width="185"

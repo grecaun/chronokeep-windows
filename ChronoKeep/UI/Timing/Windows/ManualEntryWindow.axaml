@@ -55,7 +55,7 @@
                         FontSize="16"
                         Margin="5,5,10,5"/>
         </DockPanel>
-        <DockPanel x:Name="LocationPanel">
+        <DockPanel Name="LocationPanel">
             <TextBlock Text="Location"
                        Width="80"
                        FontSize="16"

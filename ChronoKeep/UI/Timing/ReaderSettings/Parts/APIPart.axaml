@@ -10,10 +10,10 @@
                 HorizontalAlignment="Center">
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center">
-            <TextBox x:Name="nameBox"
+            <TextBox Name="nameBox"
                      Width="170"
                      Margin="5"/>
-            <ComboBox x:Name="kindBox"
+            <ComboBox Name="kindBox"
                       Width="140"
                       Margin="5"
                       SelectionChanged="KindBox_ValueChanged">
@@ -23,13 +23,13 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center">
-            <TextBox x:Name="tokenBox"
+            <TextBox Name="tokenBox"
                      Width="320"
                      Margin="5"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center">
-            <TextBox x:Name="uriBox"
+            <TextBox Name="uriBox"
                      Width="220"
                      Margin="5"/>
             <Button Width="40"

@@ -72,7 +72,7 @@
                             HorizontalContentAlignment="Center"/>
             <RadioButton Grid.Column="0"
                             Grid.Row="3"
-                            x:Name="Reader1"
+                            Name="Reader1"
                             Content="Reader 1"
                             GroupName="Readers"
                             IsChecked="True"
@@ -82,7 +82,7 @@
                             VerticalContentAlignment="Center"/>
             <RadioButton Grid.Column="1"
                             Grid.Row="3"
-                            x:Name="Reader2"
+                            Name="Reader2"
                             Content="Reader 2"
                             GroupName="Readers"
                             Margin="5,5,10,5"

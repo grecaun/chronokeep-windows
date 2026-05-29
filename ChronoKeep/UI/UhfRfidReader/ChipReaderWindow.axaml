@@ -24,7 +24,7 @@
         </Style>
     </Window.Styles>
     <StackPanel>
-        <DataGrid x:Name="chipNumbers">
+        <DataGrid Name="chipNumbers">
             <DataGrid.Columns>
                 <!--
                 <DataGridTextColumn Header="Dec Number" Binding="{Binding DecNumber}"/>

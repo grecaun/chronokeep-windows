@@ -5,7 +5,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chronokeep.UI.API.EditEventPage">
     <StackPanel HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+                VerticalAlignment="Center"
+                Margin="0,35,0,10">
         <TextBlock Name="holdingLabel"
                    Text="Retrieving Event, Please Hold."
                    FontSize="18"
@@ -17,7 +18,8 @@
         <StackPanel Name="eventPanel"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Margin="5,0">
+                    Margin="5,0"
+                    IsVisible="False">
             <DockPanel Margin="0,0,0,5">
                 <TextBlock Text="Name"
                            FontSize="15"

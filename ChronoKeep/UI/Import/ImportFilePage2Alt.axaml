@@ -17,7 +17,7 @@
                    HorizontalAlignment="Center"
                    TextAlignment="Center"/>
         <ListBox Grid.Row="1"
-                 x:Name="distanceListBox"
+                 Name="distanceListBox"
                  KeyboardNavigation.TabNavigation="Continue"
                  IsTabStop="False">
         </ListBox>

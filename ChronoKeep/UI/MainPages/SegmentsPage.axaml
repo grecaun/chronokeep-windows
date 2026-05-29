@@ -30,7 +30,7 @@
         </ListBox>
         <DockPanel Grid.Row="1"
                    HorizontalAlignment="Center">
-            <DockPanel x:Name="apiPanel"
+            <DockPanel Name="apiPanel"
                        IsVisible="False"
                        HorizontalAlignment="Center">
                 <Button Name="UploadButton"

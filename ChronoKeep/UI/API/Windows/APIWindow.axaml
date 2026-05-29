@@ -8,6 +8,8 @@
         ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         SizeToContent="Height"
-        Title="Link Event">
-    <UserControl x:Name="APIFrame" IsTabStop="False" />
+        Title="Link Event"
+        Closing="Window_Closing"
+        >
+    <UserControl Name="APIFrame" IsTabStop="False" />
 </Window>

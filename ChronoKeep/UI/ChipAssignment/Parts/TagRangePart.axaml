@@ -13,7 +13,7 @@
 		    <ColumnDefinition Width="*"/>
 		    <ColumnDefinition Width="*"/>	
         </Grid.ColumnDefinitions>
-        <TextBox x:Name="StartBib"
+        <TextBox Name="StartBib"
                  Grid.Column="0"
                  Margin="2"
                  VerticalContentAlignment="Center"
@@ -38,7 +38,7 @@
                    Grid.Column="3"
                    Margin="7,2,2,2"
                    VerticalAlignment="Center"/>
-        <Button x:Name="Remove"
+        <Button Name="Remove"
                 Grid.Column="4"
                 Click="Remove_Click"
                 Width="75"

@@ -5,6 +5,7 @@ using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.UI.API.Windows;
 using Chronokeep.UI.Parts;
 using System;
+using System.Linq;
 
 namespace Chronokeep.UI.API;
 
@@ -45,7 +46,7 @@ public partial class EditEventPage : UserControl
         imageBox.Text = apiEvent.Event.Image;
         restrictBox.IsChecked = apiEvent.Event.AccessRestricted == true;
         ComboBoxItem? type = null;
-        foreach (ComboBoxItem? item in typeBox.Items)
+        foreach (ComboBoxItem? item in typeBox.Items.Cast<ComboBoxItem?>())
         {
 
             if (item!.Content!.ToString()!.Equals("Distance", StringComparison.OrdinalIgnoreCase)

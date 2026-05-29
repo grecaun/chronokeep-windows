@@ -53,9 +53,9 @@
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <ToggleSwitch x:Name="onlyIgnoreBox" IsCheckedChanged="OnlyIgnoreBox_Unchecked"/>
+            <ToggleSwitch Name="onlyIgnoreBox" IsCheckedChanged="OnlyIgnoreBox_Unchecked"/>
             <Label Content="Ignored"/>
-            <ToggleSwitch x:Name="onlyManualBox" IsCheckedChanged="OnlyManualBox_Unchecked" />
+            <ToggleSwitch Name="onlyManualBox" IsCheckedChanged="OnlyManualBox_Unchecked" />
             <Label Content="Manual"/>
             <Button Name="DeleteButton"
                     Content="Delete"

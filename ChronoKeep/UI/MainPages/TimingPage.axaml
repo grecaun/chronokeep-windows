@@ -109,7 +109,7 @@
             <ScrollViewer
                 Grid.Row="1"
                 VerticalScrollBarVisibility="Auto"
-                x:Name="controlScroll"
+                Name="controlScroll"
                 >
                 <StackPanel>
                     <Grid Width="250">
@@ -149,7 +149,7 @@
                             />
                         <Button
                             Grid.Column="1"
-                            x:Name="DNFButton"
+                            Name="DNFButton"
                             Content="Add DNF"
                             Click="AddDNF_Click"
                             Classes="tim"
@@ -171,7 +171,7 @@
                             />
                         <Button
                             Grid.Column="1"
-                            x:Name="SaveLogButton"
+                            Name="SaveLogButton"
                             Content="Save Log"
                             Click="SaveLog"
                             Classes="tim"
@@ -257,7 +257,7 @@
                                         VerticalAlignment="Center"
                                         />
                                     <ToggleSwitch 
-                                        x:Name="condenseSwitch" 
+                                        Name="condenseSwitch" 
                                         Margin="0,-7,3,-7" 
                                         VerticalAlignment="Center"
                                         DockPanel.Dock="Right"
@@ -267,7 +267,7 @@
                                         />
                                 </DockPanel>
                             </Expander.Header>
-                            <DataGrid x:Name="statsListView"
+                            <DataGrid Name="statsListView"
                                       SelectionMode="Single"
                                       FontSize="10"
                                       CornerRadius="8"
@@ -321,14 +321,14 @@
                                 Classes="tim"
                                 Margin="0,0,0,0" 
                                 />
-                            <Grid x:Name="apiPanel">
+                            <Grid Name="apiPanel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
                                 <Button
                                     Grid.Column="0"
-                                    x:Name="AutoAPIButton"
+                                    Name="AutoAPIButton"
                                     Content="Auto Upload"
                                     Click="AutoAPI_Click" 
                                     Classes="tim"
@@ -336,7 +336,7 @@
                                     />
                                 <Button 
                                     Grid.Column="1"
-                                    x:Name="ManualAPIButton"
+                                    Name="ManualAPIButton"
                                     Content="Manual Upload"
                                     Click="ManualAPI_Click"
                                     Classes="tim"
@@ -371,7 +371,7 @@
                                         Margin="0,5,5,0"
                                         />
                                     <Button
-                                        x:Name="HttpServerButton"
+                                        Name="HttpServerButton"
                                         Content="Start Web"
                                         Click="HTMLServerButton_Click"
                                         Classes="tim"
@@ -471,7 +471,7 @@
                                 Classes="tim"
                                 Margin="0,0,0,0"
                                 />
-                            <Grid x:Name="exportPanel">
+                            <Grid Name="exportPanel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="1*" />

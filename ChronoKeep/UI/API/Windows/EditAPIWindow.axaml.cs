@@ -63,7 +63,7 @@ public partial class EditAPIWindow : Window
         EditAPIFrame.Content = new EditYearPage(this, api!, slug!, year!);
     }
 
-    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    private void Window_Closing(object? sender, WindowClosingEventArgs e)
     {
         window?.WindowFinalize(this);
     }

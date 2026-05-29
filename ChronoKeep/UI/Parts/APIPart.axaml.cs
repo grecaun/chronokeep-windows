@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Helpers;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages.Dashboard;
@@ -16,19 +17,33 @@ public partial class APIPart : UserControl
         theAPI = api;
         this.page = page;
         APINickname.Text = api.Nickname;
+        ComboBoxItem? selected = null;
         foreach (string uid in Constants.APIConstants.API_TYPE_NAMES.Keys)
         {
-            APIType.Items.Add(new ComboBoxItem()
+            ComboBoxItem newItem = new()
             {
                 Content = Constants.APIConstants.API_TYPE_NAMES[uid],
                 Tag = uid,
                 IsSelected = theAPI.Type.Equals(uid),
-            });
+            };
+            if (theAPI.Type.Equals(uid))
+            {
+                selected = newItem;
+            }
+            APIType.Items.Add(newItem);
         }
         APIURL.Text = api.URL;
         APIURL.IsEnabled = Constants.APIConstants.API_SELF_HOSTED[theAPI.Type];
         APIToken.Text = api.AuthToken;
         APIWebURL.Text = api.WebURL;
+        if (selected != null)
+        {
+            APIType.SelectedItem = selected;
+        }
+        else
+        {
+            APIType.SelectedIndex = 0;
+        }
     }
 
     public void UpdateResultsAPI()
@@ -36,16 +51,15 @@ public partial class APIPart : UserControl
         Log.D("UI.MainPages.APIPage", "Updating api.");
         theAPI.Nickname = APINickname.Text!;
         theAPI.URL = APIURL.Text!;
-        if (!theAPI.URL!.EndsWith("/"))
-        {
-            theAPI.URL = theAPI.URL + "/";
+        if (!theAPI.URL!.EndsWith('/'))        {
+            theAPI.URL += "/";
         }
         theAPI.AuthToken = APIToken.Text!;
         theAPI.Type = (string)((ComboBoxItem)APIType.SelectedItem!).Tag!;
         theAPI.WebURL = APIWebURL.Text!;
-        if (theAPI.WebURL!.Length > 0 && !theAPI.WebURL.EndsWith("/"))
+        if (theAPI.WebURL!.Length > 0 && !theAPI.WebURL.EndsWith('/'))
         {
-            theAPI.WebURL = theAPI.WebURL + "/";
+            theAPI.WebURL += "/";
         }
     }
 
@@ -79,9 +93,9 @@ public partial class APIPart : UserControl
         }
     }
 
-    private void Remove_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Remove_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.APIPage", "Removing api.");
-        this.page.RemoveAPI(theAPI);
+        page.RemoveAPI(theAPI);
     }
 }

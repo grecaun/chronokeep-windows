@@ -14,14 +14,14 @@
         SizeToContent="WidthAndHeight"
         Closed="Window_Closed">
     <StackPanel Margin="20,10,20,20">
-        <StackPanel x:Name="settingsPanel" IsVisible="True" Margin="0,10,0,0">
+        <StackPanel Name="settingsPanel" IsVisible="True" Margin="0,10,0,0">
             <StackPanel Orientation="Horizontal" Height="45">
                 <TextBlock Text="Ultra ID"
                             Width="100"
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <Slider x:Name="idSlider"
+                <Slider Name="idSlider"
                         ValueChanged="IdSlider_ValueChanged"
                         Width="200"
                         Minimum="1"
@@ -30,7 +30,7 @@
                         TickFrequency="1"
                         IsSnapToTickEnabled="True"
                         VerticalAlignment="Center"/>
-                <TextBlock x:Name="idDisplay"
+                <TextBlock Name="idDisplay"
                             Text="255"
                             Width="35"
                             Margin="5,5,5,5"
@@ -48,7 +48,7 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <ComboBox x:Name="chipBox"
+                <ComboBox Name="chipBox"
                             Width="250"
                             Margin="5,5,5,5"
                             VerticalAlignment="Center">
@@ -67,7 +67,7 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <ComboBox x:Name="gatingModeBox"
+                <ComboBox Name="gatingModeBox"
                             Width="250"
                             Margin="5,5,5,5"
                             VerticalAlignment="Center">
@@ -87,7 +87,7 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <Slider x:Name="gatingSlider"
+                <Slider Name="gatingSlider"
                         ValueChanged="GatingSlider_ValueChanged"
                         Width="200"
                         Minimum="0"
@@ -97,7 +97,7 @@
                         VerticalAlignment="Center"
                         IsSnapToTickEnabled="True"/>
                 <TextBlock
-                    x:Name="gatingDisplay"
+                    Name="gatingDisplay"
                     Text="20"
                     TextAlignment="Left"
                     VerticalAlignment="Center"
@@ -116,7 +116,7 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <ComboBox x:Name="whenBeepBox"
+                <ComboBox Name="whenBeepBox"
                             Width="250"
                             Margin="5,5,5,5"
                             VerticalAlignment="Center">
@@ -135,7 +135,7 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <ComboBox x:Name="volumeBox"
+                <ComboBox Name="volumeBox"
                             Width="250"
                             Margin="5,5,5,5"
                             VerticalAlignment="Center">
@@ -155,7 +155,7 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <Slider x:Name="timeZoneSlider"
+                <Slider Name="timeZoneSlider"
                         ValueChanged="TimeZoneSlider_ValueChanged"
                         Width="200"
                         Minimum="-23"
@@ -164,7 +164,7 @@
                         TickFrequency="1"
                         VerticalAlignment="Center"
                         IsSnapToTickEnabled="True"/>
-                <TextBlock x:Name="timeZoneDisplay"
+                <TextBlock Name="timeZoneDisplay"
                             Text="10"
                             Width="35"
                             Margin="5,5,5,5"
@@ -181,7 +181,7 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
                 <ToggleSwitch
-                    x:Name="setGPSSwitch"
+                    Name="setGPSSwitch"
                     Click="SetGPSSwitch_Click"
                     OnContent=""
                     OffContent=""
@@ -194,7 +194,7 @@
                         Orientation="Horizontal"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
-                <ToggleSwitch x:Name="readingSwitch"
+                <ToggleSwitch Name="readingSwitch"
                                 Click="ReadingSwitch_Click"
                                 OnContent=""
                                 OffContent=""
@@ -206,7 +206,7 @@
             <StackPanel Height="45"
                         Orientation="Horizontal"
                         HorizontalAlignment="Center">
-                <Button x:Name="closeButton"
+                <Button Name="closeButton"
                         Content="Close"
                         Click="CloseButton_Click"
                         Width="165"

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chronokeep.UI.Parts.APIPart">
-    <Grid MaxWidth="100">
+    <Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="150"/>
@@ -19,11 +19,13 @@
                        Margin="10,5,0,5"
                        TextAlignment="Center"
                        VerticalAlignment="Center"/>
-            <TextBox x:Name="APINickname"
+            <TextBox Name="APINickname"
                      FontSize="15"
                      Height="45"
                      Margin="10,5,0,5"
-                     VerticalAlignment="Center"/>
+                     VerticalAlignment="Center"
+                     VerticalContentAlignment="Center"
+                     />
         </StackPanel>
         <StackPanel Grid.Column="1">
 		    <TextBlock Text="API Type"
@@ -31,11 +33,12 @@
                        Margin="10,5,0,5"
                        TextAlignment="Center"
                        VerticalAlignment="Center"/>
-            <ComboBox x:Name="APIType"
+            <ComboBox Name="APIType"
                       FontSize="14"
                       Height="45"
                       Margin="10,5,0,5"
                       VerticalAlignment="Center"
+                      HorizontalAlignment="Stretch"
                       SelectionChanged="APIType_SelectionChanged"/>
         </StackPanel>
         <StackPanel Grid.Column="2">
@@ -44,12 +47,14 @@
                        Margin="10,5,0,5"
                        TextAlignment="Center"
                        VerticalAlignment="Center"/>
-            <TextBox x:Name="APIURL"
-                      FontSize="15"
-                      Height="45"
-                      Margin="10,5,0,5"
-                      VerticalAlignment="Center"
-                      IsEnabled="False" />
+            <TextBox Name="APIURL"
+                     FontSize="15"
+                     Height="45"
+                     Margin="10,5,0,5"
+                     VerticalAlignment="Center"
+                     IsEnabled="False"
+                     VerticalContentAlignment="Center"
+                     />
         </StackPanel>
         <StackPanel Grid.Column="3">
 		    <TextBlock Text="API Key"
@@ -57,11 +62,13 @@
                        Margin="10,5,0,5"
                        TextAlignment="Center"
                        VerticalAlignment="Center"/>
-            <TextBox x:Name="APIToken"
-                      FontSize="15"
-                      Height="45"
-                      Margin="10,5,0,5"
-                      VerticalAlignment="Center"/>
+            <TextBox Name="APIToken"
+                     FontSize="15"
+                     Height="45"
+                     Margin="10,5,0,5"
+                     VerticalAlignment="Center"
+                     VerticalContentAlignment="Center"
+                     />
         </StackPanel>
         <StackPanel Grid.Column="4">
 		    <TextBlock Text="API Web URL"
@@ -69,11 +76,13 @@
                        Margin="10,5,0,5"
                        TextAlignment="Center"
                        VerticalAlignment="Center"/>
-            <TextBox x:Name="APIWebURL"
-                      FontSize="15"
-                      Height="45"
-                      Margin="10,5,0,5"
-                      VerticalAlignment="Center"/>
+            <TextBox Name="APIWebURL"
+                     FontSize="15"
+                     Height="45"
+                     Margin="10,5,0,5"
+                     VerticalAlignment="Center"
+                     VerticalContentAlignment="Center"
+                     />
         </StackPanel>
         <Button Grid.Column="5"
                 Click="Remove_Click"

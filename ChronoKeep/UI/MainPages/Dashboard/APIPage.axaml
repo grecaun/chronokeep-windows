@@ -26,8 +26,7 @@
             Name="APIBox"
             KeyboardNavigation.TabNavigation="Continue"
             Grid.Row="0"
-            >
-        </ListBox>
+            />
         <DockPanel Grid.Row="1" HorizontalAlignment="Center">
             <Button Name="Add"
                     Content="Add API"

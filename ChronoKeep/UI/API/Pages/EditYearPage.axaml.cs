@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Chronokeep.Helpers;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
@@ -43,7 +44,7 @@ public partial class EditYearPage : UserControl
             return;
         }
         yearBox.Text = response.EventYear.Year;
-        dateBox.Text = response.EventYear.DateTime;
+        dateBox.Text = DateTime.Parse(response.EventYear.DateTime).ToString("MM/dd/yyyy");
         if (response.Event.Type == Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_BACKYARD_ULTRA)
         {
             rankBox.Items.Add(new ComboBoxItem
@@ -94,7 +95,7 @@ public partial class EditYearPage : UserControl
             await APIHandlers.UpdateEventYear(api, slug, new APIEventYear
             {
                 Year = yearBox.Text!,
-                DateTime = Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss zzz"),
+                DateTime = Convert.ToDateTime(dateBox.Text!.Replace('_', '0')).ToString("yyyy/MM/dd HH:mm:ss zzz"),
                 Live = LiveBox.IsChecked == true,
                 DaysAllowed = Convert.ToInt32(DaysAllowedSlider.Value),
                 RankingType = ((string)((ComboBoxItem)rankBox.SelectedItem!).Tag!).Equals("Chip", StringComparison.OrdinalIgnoreCase) ? "chip" : "gun",

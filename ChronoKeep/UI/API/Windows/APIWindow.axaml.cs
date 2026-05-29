@@ -73,10 +73,11 @@ public partial class APIWindow : Window
             DialogBox.Show("One or more values retrieved is invalid.");
             return;
         }
-        this.Close();
+        Close();
     }
 
-    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+
+    private void Window_Closing(object? sender, WindowClosingEventArgs e)
     {
         window?.WindowFinalize(this);
     }

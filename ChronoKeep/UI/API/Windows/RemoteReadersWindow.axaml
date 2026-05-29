@@ -8,8 +8,9 @@
         ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
-        Title="Remote Readers">
-    
+        Title="Remote Readers"
+        Closed="Window_Closed"
+        >
     <StackPanel Width="1090">
         <StackPanel Name="loadingPanel"
                     Width="300"

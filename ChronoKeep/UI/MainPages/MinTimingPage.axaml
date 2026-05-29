@@ -21,7 +21,7 @@
         </Grid.RowDefinitions>
         <Expander 
             Grid.Row="0"
-            x:Name="readerExpander"
+            Name="readerExpander"
             Margin="5,0,5,5"
             MaxHeight="235"
             HorizontalAlignment="Stretch"

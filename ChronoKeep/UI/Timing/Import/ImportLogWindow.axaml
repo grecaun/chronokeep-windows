@@ -10,5 +10,5 @@
         Title="Load Log"
         SizeToContent="Height"
         Closing="Window_Closing">
-    <UserControl x:Name="Frame" IsTabStop="False"/>
+    <UserControl Name="Frame" IsTabStop="False"/>
 </Window>

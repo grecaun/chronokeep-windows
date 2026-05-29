@@ -5,9 +5,10 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Chronokeep.UI.API.Windows.EditAPIWindow"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         SizeToContent="Height"
-        Title="Edit Linked Event">
+        Title="Edit Linked Event"
+        Closing="Window_Closing"
+        >
     <UserControl Name="EditAPIFrame" IsTabStop="False"/>
 </Window>

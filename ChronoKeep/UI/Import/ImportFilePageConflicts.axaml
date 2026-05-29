@@ -35,7 +35,7 @@
             </Grid>
         </StackPanel>
         <ListBox Grid.Row="1"
-                 x:Name="multiplesListBox"
+                 Name="multiplesListBox"
                  KeyboardNavigation.TabNavigation="Continue"
                  IsTabStop="False">
         </ListBox>

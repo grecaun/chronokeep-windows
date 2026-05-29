@@ -28,7 +28,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBlock Text="{Binding WaveName}" Margin="4,4" x:DataType="local:WaveSMS"/>
-                                <ToggleSwitch x:Name="smsEnabledSwitch"
+                                <ToggleSwitch Name="smsEnabledSwitch"
                                               DockPanel.Dock="Right"
                                               IsChecked="{Binding SMSEnabled}"
                                               Margin="4,4"

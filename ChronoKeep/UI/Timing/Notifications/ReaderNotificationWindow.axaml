@@ -14,7 +14,7 @@
         Topmost="True"
         Closing="Window_Closing">
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-        <ListBox x:Name="notificationsList"
+        <ListBox Name="notificationsList"
                  Margin="10,0"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  Background="Transparent"/>

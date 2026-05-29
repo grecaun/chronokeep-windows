@@ -65,7 +65,7 @@ public partial class APIPage2 : UserControl
             eventList.ScrollIntoView(ev[0]);
         }
         nameBox.Text = theEvent.Name;
-        slugBox.Text = theEvent.Name.Replace(' ', '-').Replace("'", "").ToLower();
+        slugBox.Text = theEvent.Name.Replace(' ', '-').Replace("'", "").Replace("/", "").Replace("\\", "").ToLower();
         contactBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL)!.Value;
         eventPanel.IsVisible = true;
         holdingLabel.IsVisible = false;
