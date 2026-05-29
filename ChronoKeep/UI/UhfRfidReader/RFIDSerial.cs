@@ -11,18 +11,18 @@ namespace Chronokeep.UI.UhfRfidReader
         private int BaudRate = BaudRate;
         private SerialPort Port = new();
 
-        public Error DeviceInit(string ComPort, int BaudRate)
+        public RFIDError DeviceInit(string ComPort, int BaudRate)
         {
             this.ComPort = ComPort;
             this.BaudRate = BaudRate;
             return DeviceInit();
         }
 
-        public Error DeviceInit()
+        public RFIDError DeviceInit()
         {
             if (ComPort == "N/A" || BaudRate == 0)
             {
-                return Error.BADSETTINGS;
+                return RFIDError.BADSETTINGS;
             }
             try
             {
@@ -35,12 +35,12 @@ namespace Chronokeep.UI.UhfRfidReader
             catch (IOException Exc)
             {
                 Console.WriteLine(Exc.StackTrace);
-                return Error.UNABLETOCONNECT;
+                return RFIDError.UNABLETOCONNECT;
             }
-            return Error.NOERR;
+            return RFIDError.NOERR;
         }
 
-        public Error DeviceConnect()
+        public RFIDError DeviceConnect()
         {
             try
             {
@@ -58,14 +58,14 @@ namespace Chronokeep.UI.UhfRfidReader
                 }
                 if (InMsg[0] != 0xE4 || InMsg[InMsg[1] + 1] != CheckSum(InMsg, InMsg[1] + 1) || InMsg[1] < 0x04 || InMsg[4] != 0x00)
                 {
-                    return Error.UNABLETOCONNECT;
+                    return RFIDError.UNABLETOCONNECT;
                 }
             }
             catch
             {
-                return Error.UNABLETOCONNECT;
+                return RFIDError.UNABLETOCONNECT;
             }
-            return Error.NOERR;
+            return RFIDError.NOERR;
         }
 
         public void DeviceDisconnect()
@@ -75,10 +75,10 @@ namespace Chronokeep.UI.UhfRfidReader
 
         public static void DeviceDeinit() { }
 
-        public Error Connect()
+        public RFIDError Connect()
         {
-            Error err = DeviceInit();
-            if (err != Error.NOERR)
+            RFIDError err = DeviceInit();
+            if (err != RFIDError.NOERR)
             {
                 return err;
             }
@@ -91,7 +91,7 @@ namespace Chronokeep.UI.UhfRfidReader
             DeviceDeinit();
         }
 
-        private static byte CheckSum (byte[] buffer, int buffLen)
+        internal static byte CheckSum (byte[] buffer, int buffLen)
         {
             byte sum = 0;
             for (int i=0; i < buffLen; i++)
@@ -104,7 +104,7 @@ namespace Chronokeep.UI.UhfRfidReader
             return sum;
         }
 
-        public Info ReadData()
+        public RFIDInfo ReadData()
         {
             byte[] OutMsg = [0xA0, 0x03, 0x82, 0x00, 0xDB];
             byte[] InMsg = new byte[256];
@@ -129,7 +129,7 @@ namespace Chronokeep.UI.UhfRfidReader
                 {
                     return new()
                     {
-                        ErrorCode = Error.NODATA
+                        ErrorCode = RFIDError.NODATA
                     };
                 }
                 return new(InMsg);
@@ -138,72 +138,72 @@ namespace Chronokeep.UI.UhfRfidReader
             {
                 return new()
                 {
-                    ErrorCode = Error.CONERROR
+                    ErrorCode = RFIDError.CONERROR
                 };
             }
         }
 
-        public class Info
+    }
+    public class RFIDInfo
+    {
+        public long DecNumber { get; set; }
+        public int DeviceNumber { get; set; }
+        public int AntennaNumber { get; set; }
+        public string HexNumber { get; set; } = "";
+        public byte[] Data { get; set; }
+        public string DataRep { get => BitConverter.ToString(Data); }
+        public int ReadNumber { get; set; }
+        public RFIDError ErrorCode { get; set; }
+
+        public RFIDInfo(int DecChip, string HexChip, int DeviceNo, int AntennaNo, byte[] Data)
         {
-            public long DecNumber { get; set; }
-            public int DeviceNumber { get; set; }
-            public int AntennaNumber { get; set; }
-            public string HexNumber { get; set; } = "";
-            public byte[] Data { get; set; }
-            public string DataRep { get => BitConverter.ToString(Data); }
-            public int ReadNumber { get; set; }
-            public Error ErrorCode { get; set; }
-
-            public Info(int DecChip, string HexChip, int DeviceNo, int AntennaNo, byte[] Data)
-            {
-                this.DecNumber = DecChip;
-                this.HexNumber = HexChip;
-                this.DeviceNumber = DeviceNo;
-                this.AntennaNumber = AntennaNo;
-                this.Data = Data;
-                this.ErrorCode = Error.NOERR;
-            }
-
-            public Info() => Data = [0x00];
-
-            public Info(byte[] inData)
-            {
-                ErrorCode = Error.NOERR;
-                Data = new byte[inData[1] + 2];
-                for (int i=0; i < this.Data.Length; i++)
-                {
-                    Data[i] = inData[i];
-                }
-                if (Data[^1] != CheckSum(Data, Data.Length - 1))
-                {
-                    ErrorCode = Error.BADDATA;
-                }
-                if (Data.Length == 18)
-                {
-                    HexNumber = BitConverter.ToString(Data, 5, 12);
-                    byte[] epc = new byte[8];
-                    for (int i=0; i<8; i++)
-                    {
-                        epc[i] = inData[16 - i];
-                    }
-                    DecNumber = BitConverter.ToInt64(epc, 0);
-                    DeviceNumber = inData[3];
-                    AntennaNumber = inData[4];
-                }
-                else if (Data.Length == 6)
-                {
-                    ErrorCode = Error.NODATA;
-                }
-                else
-                {
-                    ErrorCode = Error.BADDATA;
-                }
-            }
+            this.DecNumber = DecChip;
+            this.HexNumber = HexChip;
+            this.DeviceNumber = DeviceNo;
+            this.AntennaNumber = AntennaNo;
+            this.Data = Data;
+            this.ErrorCode = RFIDError.NOERR;
         }
 
-        public enum Error
+        public RFIDInfo() => Data = [0x00];
+
+        public RFIDInfo(byte[] inData)
         {
-            UNABLETOCONNECT, NOERR, UNKNOWNERR, BADSETTINGS, NODATA, BADDATA, CONERROR
-        };
+            ErrorCode = RFIDError.NOERR;
+            Data = new byte[inData[1] + 2];
+            for (int i = 0; i < this.Data.Length; i++)
+            {
+                Data[i] = inData[i];
+            }
+            if (Data[^1] != RFIDSerial.CheckSum(Data, Data.Length - 1))
+            {
+                ErrorCode = RFIDError.BADDATA;
+            }
+            if (Data.Length == 18)
+            {
+                HexNumber = BitConverter.ToString(Data, 5, 12);
+                byte[] epc = new byte[8];
+                for (int i = 0; i < 8; i++)
+                {
+                    epc[i] = inData[16 - i];
+                }
+                DecNumber = BitConverter.ToInt64(epc, 0);
+                DeviceNumber = inData[3];
+                AntennaNumber = inData[4];
+            }
+            else if (Data.Length == 6)
+            {
+                ErrorCode = RFIDError.NODATA;
+            }
+            else
+            {
+                ErrorCode = RFIDError.BADDATA;
+            }
+        }
     }
+
+    public enum RFIDError
+    {
+        UNABLETOCONNECT, NOERR, UNKNOWNERR, BADSETTINGS, NODATA, BADDATA, CONERROR
+    };
 }

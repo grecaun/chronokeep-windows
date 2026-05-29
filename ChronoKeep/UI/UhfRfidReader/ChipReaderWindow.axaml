@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="using:Chronokeep.UI.UhfRfidReader"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Chronokeep.UI.UhfRfidReader.ChipReaderWindow"
@@ -20,23 +21,20 @@
 			<Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="CanUserResizeColumns" Value="True"/>
-            <Setter Property="CanUserSortColumns" Value="True"/>
         </Style>
     </Window.Styles>
-    <StackPanel>
-        <DataGrid Name="chipNumbers">
+    <Grid RowDefinitions="*,auto" Margin="0,30,0,0">
+        <DataGrid Name="chipNumbers" Grid.Row="0">
             <DataGrid.Columns>
-                <!--
-                <DataGridTextColumn Header="Dec Number" Binding="{Binding DecNumber}"/>
-                <DataGridTextColumn Header="Hex Number" Binding="{Binding HexNumber}"/>
-                <DataGridTextColumn Header="Ant Number" Binding="{Binding AntennaNumber}"/>
-                <DataGridTextColumn Header="Dev Number" Binding="{Binding DeviceNumber}"/>
-                <DataGridTextColumn Header="Data" Binding="{Binding DataRep}"/>
-                <DataGridTextColumn Header="Read Number" Binding="{Binding ReadNumber}"/>
-                -->
+                <DataGridTextColumn Header="Dec Number" Binding="{Binding DecNumber}" x:DataType="local:RFIDInfo"/>
+                <DataGridTextColumn Header="Hex Number" Binding="{Binding HexNumber}" x:DataType="local:RFIDInfo"/>
+                <DataGridTextColumn Header="Ant Number" Binding="{Binding AntennaNumber}" x:DataType="local:RFIDInfo"/>
+                <DataGridTextColumn Header="Dev Number" Binding="{Binding DeviceNumber}" x:DataType="local:RFIDInfo"/>
+                <DataGridTextColumn Header="Data" Binding="{Binding DataRep}" x:DataType="local:RFIDInfo"/>
+                <DataGridTextColumn Header="Read Number" Binding="{Binding ReadNumber}" x:DataType="local:RFIDInfo"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Grid HorizontalAlignment="Center" Height="55">
+        <Grid HorizontalAlignment="Center" Height="55" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250" />
                 <ColumnDefinition Width="80" />
@@ -93,5 +91,5 @@
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"/>
         </Grid>
-    </StackPanel>
+    </Grid>
 </Window>

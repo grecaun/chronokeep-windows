@@ -72,7 +72,7 @@ public partial class ChipPersonWindow : Window
     {
         if (e.Key == Key.Escape)
         {
-            this.Close();
+            Close();
         }
     }
 
@@ -83,6 +83,6 @@ public partial class ChipPersonWindow : Window
 
     private void Exit_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        this.Close();
+        Close();
     }
 }

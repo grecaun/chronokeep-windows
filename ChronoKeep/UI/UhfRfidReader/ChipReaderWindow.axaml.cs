@@ -7,6 +7,7 @@ using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Threading;
 
@@ -23,7 +24,7 @@ public partial class ChipReaderWindow : Window
     private readonly IWindowCallback? window = null;
     private readonly int eventId = -1;
 
-    private readonly List<RFIDSerial.Info> chipInfo = [];
+    private readonly ObservableCollection<RFIDInfo> chipInfo = [];
 
     public ChipReaderWindow(IWindowCallback window, IDBInterface database)
     {
@@ -67,13 +68,13 @@ public partial class ChipReaderWindow : Window
     internal void KillReader()
     {
         serial?.Disconnect();
-        chipInfo.Add(new RFIDSerial.Info { DecNumber = -1 });
+        chipInfo.Add(new RFIDInfo { DecNumber = -1 });
         reader?.Kill();
         readingThread?.Join(TimeSpan.FromSeconds(1));
         readingThread = null;
     }
 
-    internal void AddRFIDItem(RFIDSerial.Info read)
+    internal void AddRFIDItem(RFIDInfo read)
     {
         Application.Current!.Dispatcher.Invoke(new Action(delegate ()
         {
@@ -132,7 +133,7 @@ public partial class ChipReaderWindow : Window
                 DialogBox.Show("No serial port selected.");
                 return;
             }
-            if (serial.Connect() != RFIDSerial.Error.NOERR)
+            if (serial.Connect() != RFIDError.NOERR)
             {
                 DialogBox.Show("Unable to connect to device.");
                 return;
@@ -140,7 +141,7 @@ public partial class ChipReaderWindow : Window
             connectBtn.Content = "Disconnect";
             beautyBtn.IsVisible = true;
             beautyBtn.Content = "Show Info Window";
-            chipInfo.Add(new RFIDSerial.Info { DecNumber = 0 });
+            chipInfo.Add(new RFIDInfo { DecNumber = 0 });
             readingThread = new Thread(new ThreadStart(reader.Run));
             readingThread.Start();
         }

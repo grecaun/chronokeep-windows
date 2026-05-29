@@ -22,8 +22,8 @@ namespace Chronokeep.UI.UhfRfidReader
             {
                 System.Console.WriteLine("Active - Loop Number " + counter++);
                 Console.Write("Hello? Is anyone there?");
-                RFIDSerial.Info read = serial!.ReadData();
-                if (read.ErrorCode == RFIDSerial.Error.NOERR)
+                RFIDInfo read = serial!.ReadData();
+                if (read.ErrorCode == RFIDError.NOERR)
                 {
                     Console.WriteLine(" Ahhh! It's a monster!");
                     chipReaderWindow.AddRFIDItem(read);
