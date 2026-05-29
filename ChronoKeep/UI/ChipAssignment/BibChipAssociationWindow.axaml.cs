@@ -1,13 +1,11 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.IO;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
-using Chronokeep.UI.Import;
 using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
@@ -53,7 +51,6 @@ public partial class BibChipAssociationWindow : Window
         {
             headerListBox.Items.Add(new BibChipHeaderPart(importer.Data.Headers[i], i));
         }
-        EventHolder.IsVisible = false;
     }
 
     public static BibChipAssociationWindow NewWindow(IWindowCallback window, IDataImporter importer, IDBInterface database)
@@ -64,22 +61,25 @@ public partial class BibChipAssociationWindow : Window
     internal List<string> RepeatHeaders()
     {
         Log.D("UI.BibChipAssociationWindow", "Checking for repeat headers in user selection.");
-        int[] check = new int[ImportFileWindow.human_fields.Length];
+        int[] check = new int[BibChipHeaderPart.human_fields.Length];
         bool repeat = false;
         List<string> output = [];
-        foreach (BibChipHeaderPart? item in headerListBox.Items.Cast<BibChipHeaderPart?>())
+        foreach (object? item in headerListBox.Items)
         {
-            int val = item!.HeaderBox.SelectedIndex;
-            if (val > 0)
+            if (item != null && item is BibChipHeaderPart part)
             {
-                if (check[val] > 0)
+                int val = part.HeaderBox.SelectedIndex;
+                if (val > 0)
                 {
-                    output.Add(item.HeaderBox.SelectedItem!.ToString()!);
-                    repeat = true;
-                }
-                else
-                {
-                    check[val] = 1;
+                    if (check[val] > 0)
+                    {
+                        output.Add(part.HeaderBox.SelectedItem!.ToString()!);
+                        repeat = true;
+                    }
+                    else
+                    {
+                        check[val] = 1;
+                    }
                 }
             }
         }
@@ -89,7 +89,7 @@ public partial class BibChipAssociationWindow : Window
     internal BibChipHeaderPart[] GetListBoxItems()
     {
         BibChipHeaderPart[] output = new BibChipHeaderPart[headerListBox.Items.Count];
-        for (int i=0; i<headerListBox.Items.Count; i++)
+        for (int i = 0; i < headerListBox.Items.Count; i++)
         {
             output[i] = (BibChipHeaderPart)headerListBox.Items[i]!;
         }
@@ -117,7 +117,7 @@ public partial class BibChipAssociationWindow : Window
         List<string> headers = RepeatHeaders();
         int eventId = -1;
         eventId = database.GetCurrentEvent()!.Identifier;
-        if (headers == null)
+        if (headers.Count == 0)
         {
             importer.FetchData();
             keys = new int[3];
@@ -191,7 +191,7 @@ public partial class BibChipAssociationWindow : Window
             });
             Log.D("UI.BibChipAssociationWindow", "All done with bib chip associations.");
             ImportComplete = true;
-            this.Close();
+            Close();
         }
         else
         {
@@ -204,7 +204,7 @@ public partial class BibChipAssociationWindow : Window
         }
     }
 
-    private void Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Cancel_Click(object? sender, RoutedEventArgs e)
     {
         importer.Finish();
         Log.D("UI.BibChipAssociationWindow", "Bib Chip Association - Cancel Button clicked.");
@@ -212,7 +212,7 @@ public partial class BibChipAssociationWindow : Window
         Close();
     }
 
-    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    private void Window_Closing(object? sender, WindowClosingEventArgs e)
     {
         window?.WindowFinalize(this);
     }

@@ -12,7 +12,7 @@ namespace Chronokeep.IO
 
         public ImportData? Data { get; private set; }
         protected readonly string FilePath;
-        protected StreamReader? file;
+        protected StreamReader file;
 
         public CSVImporter(string filePath)
         {

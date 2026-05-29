@@ -6,28 +6,35 @@
         x:Class="Chronokeep.UI.ChipAssignment.BibChipAssociationWindow"
         ExtendClientAreaToDecorationsHint="True"
         WindowStartupLocation="CenterScreen"
-        SizeToContent="Height">
+        SizeToContent="Height"
+        Closing="Window_Closing">
     <Grid Margin="0,30,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Name="EventHolder" Grid.Row="0" HorizontalAlignment="Center">
+        <StackPanel Name="SheetsContainer"
+                    Grid.Row="0"
+                    HorizontalAlignment="Center">
             <TextBlock Text="Please choose a sheet:"
                        FontSize="18"
-                       Margin="10,10,20,0"
+                       Margin="10,10,10,5"
                        TextAlignment="Center"
                        HorizontalAlignment="Center"/>
-            <ComboBox Name="events" Margin="0,5,0,5" Width="350" Height="25" />
+            <ComboBox Name="SheetsBox"
+                      SelectionChanged="SheetsBox_SelectionChanged"
+                      TabIndex="1"
+                      Margin="5"
+                      HorizontalAlignment="Stretch"/>
         </StackPanel>
         <ListBox Grid.Row="1"
                  Name="headerListBox"
-                 Margin="0,0,0,0"
-                 KeyboardNavigation.TabNavigation="Continue">
-        </ListBox>
+                 Margin="20,3"
+                 KeyboardNavigation.TabNavigation="Continue"></ListBox>
         <StackPanel Grid.Row="2">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
                 <ToggleSwitch
                     Name="Headers"
                     IsChecked="True"
@@ -39,24 +46,6 @@
                     VerticalContentAlignment="Center"
                     />
                 <Label Content="First Row Contains Headers"/>
-            </StackPanel>
-            <StackPanel Name="SheetsContainer"
-                        Orientation="Horizontal"
-                        Margin="0,5"
-                        IsVisible="False"
-                        HorizontalAlignment="Center">
-                <TextBlock Name="SheetsLabel"
-                           FontSize="16"
-                           Text="Sheet"
-                           Margin="5,0,0,0"
-                           TextAlignment="Right"
-                           VerticalAlignment="Center"/>
-                <ComboBox Name="SheetsBox"
-                          SelectionChanged="SheetsBox_SelectionChanged"
-                          Width="150"
-                          TabIndex="1"
-                          Margin="5,0,0,0"
-                          HorizontalAlignment="Stretch"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal"
                         Margin="0,5,0,10"

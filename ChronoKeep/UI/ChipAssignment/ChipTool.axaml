@@ -6,7 +6,8 @@
         x:Class="Chronokeep.UI.ChipAssignment.ChipTool"
         ExtendClientAreaToDecorationsHint="True"
         WindowStartupLocation="CenterScreen"
-        SizeToContent="Height">
+        SizeToContent="Height"
+        Closing="Window_Closing">
     <Grid Margin="20,30,20,20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

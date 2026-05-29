@@ -11,7 +11,7 @@ namespace Chronokeep.IO
         public ImportData? Data { get; private set; }
         readonly string FilePath;
 
-        XLWorkbook? workbook;
+        XLWorkbook workbook;
         IXLWorksheet? worksheet;
 
         public List<string> SheetNames { get; private set; } = [];
@@ -21,26 +21,19 @@ namespace Chronokeep.IO
         {
             Log.D("IO.ExcelImporter", "Creating importer object.");
             FilePath = filename;
-            try
+            Log.D("IO.ExcelImporter", "Opening workbook.");
+            workbook = new(filename);
+            NumSheets = workbook.Worksheets.Count;
+            if (NumSheets > 0)
             {
-                Log.D("IO.ExcelImporter", "Opening workbook.");
-                workbook = new(filename);
-                NumSheets = workbook.Worksheets.Count;
-                if (NumSheets > 0)
-                {
-                    worksheet = workbook.Worksheets.Worksheet(1);
-                }
-                SheetNames = [];
-                for (int i = 1; i <= NumSheets; i++)
-                {
-                    string name = workbook.Worksheets.Worksheet(i).Name;
-                    SheetNames.Add(name);
-                    Log.D("IO.ExcelImporter", "Sheet name is " + name);
-                }
+                worksheet = workbook.Worksheets.Worksheet(1);
             }
-            catch (Exception excep)
+            SheetNames = [];
+            for (int i = 1; i <= NumSheets; i++)
             {
-                Log.E("IO.ExcelImporter", $"Something went wrong when trying to open workseet. {excep.StackTrace}");
+                string name = workbook.Worksheets.Worksheet(i).Name;
+                SheetNames.Add(name);
+                Log.D("IO.ExcelImporter", "Sheet name is " + name);
             }
         }
 

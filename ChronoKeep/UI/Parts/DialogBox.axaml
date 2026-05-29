@@ -40,7 +40,7 @@
                     Content="No"
                     Width="150"
                     Height="35"
-                    Margin="5,25,15,15"
+                    Margin="5,15,15,15"
                     HorizontalAlignment="Stretch"/>
         </StackPanel>
     </StackPanel>

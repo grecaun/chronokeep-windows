@@ -315,14 +315,16 @@ public partial class ChipAssignmentPage : UserControl, IMainPage
                 string ext = Path.GetExtension(files[0].Name);
                 try
                 {
+                    string? filePath = files[0].TryGetLocalPath();
+                    Log.E("TEST", string.Format("Name: {0} -- Path: {1}", files[0].Name, filePath ?? "null"));
                     IDataImporter importer;
                     if (ext == ".xlsx" || ext == ".xls")
                     {
-                        importer = new ExcelImporter(files[0].Name);
+                        importer = new ExcelImporter(filePath!);
                     }
                     else
                     {
-                        importer = new CSVImporter(files[0].Name);
+                        importer = new CSVImporter(filePath!);
                     }
                     await Task.Run(() =>
                     {
@@ -342,6 +344,7 @@ public partial class ChipAssignmentPage : UserControl, IMainPage
                 catch (Exception ex)
                 {
                     Log.E("UI.MainPages.ChipAssignmentPage", $"Something went wrong when trying to read the CSV file. {ex.StackTrace}");
+                    DialogBox.Show("Unable to open file.");
                 }
             }
         }
