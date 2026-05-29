@@ -6,10 +6,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chronokeep.UI.API.APIPage2">
     <UserControl.Styles>
-        <Style Selector="ListBoxItem">
-            <Setter Property="Margin" Value="0"/>
-            <Setter Property="Padding" Value="0"/>
-        </Style>
         <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
             <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
             <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>

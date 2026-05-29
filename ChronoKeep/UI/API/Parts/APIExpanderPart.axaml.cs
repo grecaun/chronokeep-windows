@@ -17,6 +17,8 @@ public partial class APIExpanderPart : UserControl
         IDBInterface database,
         IMainWindow mainWindow)
     {
+        InitializeComponent();
+        APINameBlock.Text = api.Nickname;
         foreach (RemoteReader reader in readers)
         {
             reader.APIIDentifier = api.Identifier;

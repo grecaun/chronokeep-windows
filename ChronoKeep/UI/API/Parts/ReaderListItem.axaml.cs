@@ -26,6 +26,7 @@ public partial class ReaderListItem : UserControl
         IMainWindow mWindow
         )
     {
+        InitializeComponent();
         this.database = database;
         this.mWindow = mWindow;
         this.api = api;

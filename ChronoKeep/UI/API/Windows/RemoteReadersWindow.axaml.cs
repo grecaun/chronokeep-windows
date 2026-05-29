@@ -25,10 +25,7 @@ public partial class RemoteReadersWindow : Window
 
     public static RemoteReadersWindow CreateWindow(IMainWindow window, IDBInterface database)
     {
-        if (theOne == null)
-        {
-            theOne = new(window, database);
-        }
+        theOne ??= new(window, database);
         return theOne;
     }
 

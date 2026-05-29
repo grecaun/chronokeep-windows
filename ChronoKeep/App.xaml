@@ -49,6 +49,14 @@
             <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
             <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
         </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="Expander">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
+        </Style>
     </Application.Styles>
 
     <Application.Resources>
