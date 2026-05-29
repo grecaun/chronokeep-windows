@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -47,19 +48,19 @@ public partial class AboutPage : UserControl, IMainPage
 
     public void UpdateView() { }
 
-    private void Update_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Update_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.AboutPage", "Version clicked, checking for new version.");
         Updates.Check.Do(mWindow, true);
     }
 
-    private void Changelog_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Changelog_Click(object? sender, RoutedEventArgs e)
     {
         ChangeLogWindow clw = ChangeLogWindow.NewWindow(mWindow, database);
         clw.Show();
     }
 
-    private void OpenDataFolder_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void OpenDataFolder_Click(object? sender, RoutedEventArgs e)
     {
         string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
         if (!Directory.Exists(dirPath))
@@ -69,11 +70,13 @@ public partial class AboutPage : UserControl, IMainPage
         Process.Start("explorer", dirPath);
     }
 
-    private void UrlBtn_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void HelpDocsButton_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender != null && sender is Button button && button.Tag != null)
+        string dirPath = Path.Combine(AppContext.BaseDirectory, "help");
+        if (!Directory.Exists(dirPath))
         {
-            // click Tag...
+            return;
         }
+        Process.Start("explorer", dirPath);
     }
 }

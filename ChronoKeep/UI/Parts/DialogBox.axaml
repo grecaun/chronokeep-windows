@@ -29,23 +29,19 @@
                      IsVisible="False"
                      HorizontalAlignment="Stretch"/>
         </StackPanel>
-        <Grid Margin="35,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="0"
-                    Name="LeftButton"
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Name="LeftButton"
                     Content="Yes"
+                    Width="150"
                     Height="35"
                     Margin="15,15,5,15"
                     HorizontalAlignment="Stretch"/>
-            <Button Grid.Column="1"
-                    Name="RightButton"
+            <Button Name="RightButton"
                     Content="No"
+                    Width="150"
                     Height="35"
-                    Margin="5,15,15,15"
+                    Margin="5,25,15,15"
                     HorizontalAlignment="Stretch"/>
-        </Grid>
+        </StackPanel>
     </StackPanel>
 </Window>

@@ -1,4 +1,5 @@
 <Window xmlns="https://github.com/avaloniaui"
+        xmlns:changelog="using:Chronokeep.Objects.Changelog"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -20,15 +21,31 @@
             <RowDefinition Height="55" />
         </Grid.RowDefinitions>
 		<ListBox Grid.Row="0"
-                 x:Name="logList"
+                 Name="logList"
                  Margin="10,30,10,0"
                  CornerRadius="8"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Expander HorizontalAlignment="Stretch" IsExpanded="{Binding IsExpanded}" x:DataType="changelog:Entry">
+                        <Expander.Header>
+                            <TextBlock Text="{Binding Version}" x:DataType="changelog:Entry" HorizontalAlignment="Center" Margin="0,0,-45,0" FontSize="20"/>
+                        </Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="Changes" FontSize="18" HorizontalAlignment="Center" Margin="0,5,0,15"/>
+                            <ListBox ItemsSource="{Binding ChangesList}" x:DataType="changelog:Entry"/>
+                            <TextBlock Text="Fixes" FontSize="18" HorizontalAlignment="Center" Margin="0,15,0,15"/>
+                            <ListBox ItemsSource="{Binding FixesList}" x:DataType="changelog:Entry"/>
+                        </StackPanel>
+                    </Expander> 
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <StackPanel Grid.Row="1"
                     Orientation="Horizontal"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center">
-            <ToggleSwitch x:Name="autoChangelogToggleSwitch"
+            <ToggleSwitch Name="autoChangelogToggleSwitch"
                           FontSize="14"
                           OnContent=""
                           OffContent=""
