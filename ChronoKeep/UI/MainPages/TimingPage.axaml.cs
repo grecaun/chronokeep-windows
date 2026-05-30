@@ -1105,7 +1105,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                     }
                     CSVExporter exporter = new(format.ToString());
                     exporter.SetData(headers, data);
-                    exporter.ExportData(file.Name);
+                    exporter.ExportData(file.TryGetLocalPath()!);
                 }
                 // Multiple locations, save each individually.
                 else
@@ -1136,7 +1136,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                         }
                         CSVExporter exporter = new(format.ToString());
                         exporter.SetData(headers, data);
-                        string outFileName = string.Format("{0}\\{1}-{2}", Path.GetDirectoryName(file.Name), FileSaveRegex().Replace(key.ToLower(), ""), Path.GetFileName(file.Name));
+                        string outFileName = string.Format("{0}\\{1}-{2}", Path.GetDirectoryName(file.TryGetLocalPath()!), FileSaveRegex().Replace(key.ToLower(), ""), file.Name);
                         Log.D("UI.MainPages.TimingPage", string.Format("Saving file to: {0}", outFileName));
                         exporter.ExportData(outFileName);
                     }
@@ -1599,7 +1599,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                 List<TimeResult> finishResults = database.GetFinishTimes(theEvent!.Identifier);
                 Dictionary<int, Participant> partDict = database.GetParticipants(theEvent.Identifier).ToDictionary(v => v.EventSpecific.Identifier, v => v);
                 HtmlResultsTemplate template = new(theEvent, finishResults);
-                File.WriteAllText(file.Name, template.TransformText());
+                File.WriteAllText(file.TryGetLocalPath()!, template.TransformText());
                 DialogBox.Show("File saved.");
             }
         }

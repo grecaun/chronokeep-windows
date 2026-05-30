@@ -562,16 +562,21 @@ public partial class DashboardPage : UserControl, IMainPage
             if (file is not null)
             {
                 Log.D("UI.DashboardPage", "Creating database file.");
+                var filePath = file.TryGetLocalPath();
                 try
                 {
-                    SQLiteConnection.CreateFile(file.Name);
+                    SQLiteConnection.CreateFile(filePath);
                 }
                 catch
                 {
                     DialogBox.Show("Unable to save to file");
                     return;
                 }
-                SQLiteInterface savedDatabase = new(file.Name);
+                if (filePath == null)
+                {
+                    return;
+                }
+                SQLiteInterface savedDatabase = new(filePath);
                 savedDatabase.Initialize();
                 Event theEvent = database.GetCurrentEvent()!;
                 Save_Event(theEvent, database, savedDatabase);

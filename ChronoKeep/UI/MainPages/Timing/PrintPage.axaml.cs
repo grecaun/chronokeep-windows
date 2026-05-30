@@ -453,15 +453,16 @@ public partial class PrintPage : UserControl, ISubPage
                     streamwriter.Write(HTML_String);
                     streamwriter.Close();
                     // Delete old file if it exists.
-                    if (File.Exists(file.Name))
+                    var filePath = file.TryGetLocalPath()!;
+                    if (File.Exists(filePath))
                     {
-                        File.Delete(file.Name);
+                        File.Delete(filePath);
                     }
                     // Use wkhtmltopdf to convert our temp html file to a saved pdf file.
                     using Process create_pdf = new();
                     // TODO - Turn code into cross compatible code.
                     create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
-                    create_pdf.StartInfo.Arguments = $"-s A4 {tmpFile} {file.Name}";
+                    create_pdf.StartInfo.Arguments = $"-s A4 {tmpFile} {filePath}";
                     create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                     create_pdf.StartInfo.UseShellExecute = true;
                     create_pdf.Start();

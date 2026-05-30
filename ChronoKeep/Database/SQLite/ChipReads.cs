@@ -261,11 +261,14 @@ namespace Chronokeep.Database.SQLite
             }
             List<ChipRead> output = [];
             Dictionary<string, Participant> partDictionary = [];
-            foreach (Participant p in Participants.GetParticipants(theEvent!.Identifier, connection))
+            if (theEvent != null)
             {
-                if (p.Bib.Length > 0)
+                foreach (Participant p in Participants.GetParticipants(theEvent!.Identifier, connection))
                 {
-                    partDictionary[p.Bib] = p;
+                    if (p.Bib.Length > 0)
+                    {
+                        partDictionary[p.Bib] = p;
+                    }
                 }
             }
             while (reader.Read())

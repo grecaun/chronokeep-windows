@@ -813,7 +813,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
                         if (exporter != null)
                         {
                             exporter.SetData(headers, data);
-                            exporter.ExportData(file.Name);
+                            exporter.ExportData(file.TryGetLocalPath()!);
                         }
                     });
                     DialogBox.Show("File saved.");

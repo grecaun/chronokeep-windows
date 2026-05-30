@@ -421,7 +421,7 @@ public partial class ChipAssignmentPage : UserControl, IMainPage
                     exporter = new CSVExporter(format.ToString());
                 }
                 exporter.SetData(headers, data);
-                exporter.ExportData(file.Name);
+                exporter.ExportData(file.TryGetLocalPath()!);
                 DialogBox.Show("File saved.");
             }
         }

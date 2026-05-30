@@ -167,7 +167,7 @@ public partial class ExportDistanceResults : Window
             {
                 string extension = Path.GetExtension(file.Name);
                 string fileName = Path.GetFileNameWithoutExtension(file.Name);
-                string filePath = Path.GetDirectoryName(file.Name)!;
+                string filePath = file.TryGetLocalPath()!;
                 foreach (Distance distance in distanceDictionary!.Values)
                 {
                     SaveBostonInternal(
@@ -205,7 +205,7 @@ public partial class ExportDistanceResults : Window
             {
                 string extension = Path.GetExtension(file.Name);
                 string fileName = Path.GetFileNameWithoutExtension(file.Name);
-                string filePath = Path.GetDirectoryName(file.Name)!;
+                string filePath = file.TryGetLocalPath()!;
                 foreach (Distance distance in distanceDictionary!.Values)
                 {
                     SaveUltraSignupInternal(
@@ -242,7 +242,7 @@ public partial class ExportDistanceResults : Window
             {
                 string extension = Path.GetExtension(file.Name);
                 string fileName = Path.GetFileNameWithoutExtension(file.Name);
-                string filePath = Path.GetDirectoryName(file.Name)!;
+                string filePath = file.TryGetLocalPath()!;
                 foreach (Distance distance in distanceDictionary!.Values)
                 {
                     SaveRunsignupInternal(
@@ -277,7 +277,7 @@ public partial class ExportDistanceResults : Window
             });
             if (file is not null)
             {
-                SaveAbbotInternal(distance, file.Name, Path.GetExtension(file.Name));
+                SaveAbbotInternal(distance, file.TryGetLocalPath()!, Path.GetExtension(file.Name));
                 DialogBox.Show("File saved.");
             }
         }
@@ -473,7 +473,7 @@ public partial class ExportDistanceResults : Window
             });
             if (file is not null)
             {
-                SaveBostonInternal(distance, file.Name, Path.GetExtension(file.Name));
+                SaveBostonInternal(distance, file.TryGetLocalPath()!, Path.GetExtension(file.Name));
                 DialogBox.Show("File saved.");
             }
         }
@@ -634,7 +634,7 @@ public partial class ExportDistanceResults : Window
             });
             if (file is not null)
             {
-                string filename = file.Name;
+                string filename = file.TryGetLocalPath()!;
                 string[] fileSplit = filename.Split('.');
                 if (fileSplit.Length != 2)
                 {
@@ -673,7 +673,7 @@ public partial class ExportDistanceResults : Window
             });
             if (file is not null)
             {
-                string filename = file.Name;
+                string filename = file.TryGetLocalPath()!;
                 string[] fileSplit = filename.Split('.');
                 if (fileSplit.Length != 2)
                 {

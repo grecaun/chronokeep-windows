@@ -556,7 +556,7 @@ public partial class ExportResults : Window
                 exporter.SetData(headers, data);
                 try
                 {
-                    exporter.ExportData(file.Name);
+                    exporter.ExportData(file.TryGetLocalPath()!);
                     DialogBox.Show("File saved.");
                 }
                 catch (Exception ex)
