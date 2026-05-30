@@ -25,7 +25,6 @@ public partial class ManualEntryWindow : Window
         InitializeComponent();
         this.MinHeight = 275;
         this.MinWidth = 300;
-        this.Height = 385;
         this.Width = 300;
         this.Topmost = true;
         this.window = window;
@@ -48,8 +47,6 @@ public partial class ManualEntryWindow : Window
         this.Width = 300;
         this.Height = 320;
         this.Topmost = true;
-        this.Title = "Add DNF Entry";
-        LocationPanel.IsVisible = false;
         this.window = window;
         this.database = database;
         theEvent = database.GetCurrentEvent();
@@ -58,6 +55,12 @@ public partial class ManualEntryWindow : Window
             return;
         }
         dnf = true;
+        List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
+        if (locations != null)
+        {
+            locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+            UpdateLocations(locations);
+        }
     }
 
     private void ClearBib()
@@ -128,7 +131,7 @@ public partial class ManualEntryWindow : Window
             return;
         }
         string timeVal = TimeBox.Text!.Replace('_', '0');
-        int locationId = Constants.Timing.LOCATION_FINISH;
+        int locationId = Convert.ToInt32(((ComboBoxItem)LocationBox.SelectedItem!).Tag);
         DateTime time;
         long hours, minutes, seconds, milliseconds;
         hours = Convert.ToInt32(timeVal[..2]);

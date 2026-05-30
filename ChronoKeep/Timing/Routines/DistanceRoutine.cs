@@ -778,6 +778,7 @@ namespace Chronokeep.Timing.Routines
                 if (finishTimes.TryGetValue(TimeResult.ChipToIdentifier(chip), out TimeResult? finish))
                 {
                     finish.ReadId = chipDNFDictionary[chip].ReadId;
+                    finish.LocationId = chipDNFDictionary[chip].LocationID;
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
                     finish.Occurrence = theEvent.FinishMaxOccurrences;
                 }
@@ -787,7 +788,7 @@ namespace Chronokeep.Timing.Routines
                     finish = new(theEvent.Identifier,
                         dnfRead.ReadId,
                         Constants.Timing.TIMERESULT_DUMMYPERSON,
-                        Constants.Timing.LOCATION_FINISH,
+                        dnfRead.LocationID,
                         Constants.Timing.SEGMENT_FINISH,
                         chipLastReadDictionary.TryGetValue((chip, Constants.Timing.LOCATION_FINISH), out (ChipRead Read, int Occurrence) chipLastReads) ? chipLastReads.Occurrence + 1 : 1,
                         0,
@@ -817,6 +818,7 @@ namespace Chronokeep.Timing.Routines
                 if (finishTimes.TryGetValue(TimeResult.BibToIdentifier(bib), out TimeResult? finish))
                 {
                     finish.ReadId = bibDNFDictionary[bib].ReadId;
+                    finish.LocationId = bibDNFDictionary[bib].LocationID;
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
                     finish.Occurrence = occurrence;
                 }
@@ -826,7 +828,7 @@ namespace Chronokeep.Timing.Routines
                     finish = new(theEvent.Identifier,
                         bibDNS.ReadId,
                         part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
-                        Constants.Timing.LOCATION_FINISH,
+                        bibDNS.LocationID,
                         Constants.Timing.SEGMENT_FINISH,
                         occurrence,
                         0,

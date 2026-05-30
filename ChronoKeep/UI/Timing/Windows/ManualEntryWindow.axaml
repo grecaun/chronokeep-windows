@@ -9,10 +9,9 @@
         WindowStartupLocation="CenterScreen"
         Title="Manual Entry"
         Width="300"
-        Height="345"
         SizeToContent="Height"
         Closing="Window_Closing">
-    <StackPanel VerticalAlignment="Center">
+    <StackPanel VerticalAlignment="Center" Margin="0,30,0,15">
         <DockPanel>
             <TextBlock Text="Bib"
                        Width="80"
