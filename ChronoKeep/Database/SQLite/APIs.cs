@@ -46,7 +46,7 @@ namespace Chronokeep.Database.SQLite
             using var transaction = connection.BeginTransaction();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE events SET api_id=-1, api_event_id='' WHERE api_id=@id; DELETE FROM results_api WHERE api_id=@id;";
-            command.Parameters.Add(("@id", identifier));
+            command.Parameters.Add(new("@id", identifier));
             command.ExecuteNonQuery();
             transaction.Commit();
         }
