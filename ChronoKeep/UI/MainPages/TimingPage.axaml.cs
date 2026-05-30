@@ -136,18 +136,9 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             }
         }
 
-        // Check if we've already started the event.  Show a clock if we have.
-        if (theEvent != null && theEvent.StartSeconds >= 0)
-        {
-            StartTime.Text = Constants.Timing.ToTimeOfDay(theEvent.StartSeconds, theEvent.StartMilliseconds);
-            UpdateStartTime();
-        }
-
         // Check for multiple wave times, show an ellapsed relative to box if so
         waves.Clear();
         waveTimes.Clear();
-        EllapsedRelativeToBox.ItemsSource = relativeToWaveList;
-        relativeToWaveList.Clear();
         relativeToWaveList.Add(new()
         {
             Name = "Start Time",
@@ -163,11 +154,19 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             waveTimes[div.Wave] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
             waves.Add(div.Wave);
         }
+        EllapsedRelativeToBox.ItemsSource = relativeToWaveList;
         EllapsedRelativeToBox.SelectedIndex = 0;
+
+        // Check if we've already started the event.  Show a clock if we have.
+        if (theEvent != null && theEvent.StartSeconds >= 0)
+        {
+            StartTime.Text = Constants.Timing.ToTimeOfDay(theEvent.StartSeconds, theEvent.StartMilliseconds);
+            UpdateStartTime();
+        }
 
         // Populate the list of readers with connected readers (or at least 4 readers)
         ReadersBox.Items.Clear();
-        locations = database.GetTimingLocations(theEvent.Identifier);
+        locations = database.GetTimingLocations(theEvent!.Identifier);
         int locCount = locations.Count;
         if (!theEvent.CommonStartFinish)
         {
@@ -497,50 +496,6 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
         UpdateDNSButton();
 
-        // Check if there are waves we don't know about and only update the box if so.
-        HashSet<int> newWaves = [];
-        foreach (Distance div in database.GetDistances(theEvent.Identifier))
-        {
-            newWaves.Add(div.Wave);
-        }
-        bool newWavesExist = false;
-        foreach (int wave in newWaves)
-        {
-            if (!waves.Contains(wave))
-            {
-                newWavesExist = true;
-                break;
-            }
-        }
-        if (newWavesExist == true)
-        {
-            waves.Clear();
-            waveTimes.Clear();
-            relativeToWaveList.Clear();
-            relativeToWaveList.Add(new()
-            {
-                Name = "Start Time",
-                Wave = -1
-            });
-            foreach (Distance div in database.GetDistances(theEvent.Identifier))
-            {
-                relativeToWaveList.Add(new()
-                {
-                    Name = div.Name + " (Wave " + div.Wave + ")",
-                    Wave = div.Wave
-                });
-                waveTimes[div.Wave] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
-                waves.Add(div.Wave);
-            }
-            if (waves.Count > 1)
-            {
-                EllapsedRelativeToBox.IsVisible = true;
-            }
-            else
-            {
-                EllapsedRelativeToBox.IsVisible = false;
-            }
-        }
         List<ReaderMessage> readerMsgs = GetReaderMessages();
         if (readerMsgs.Count > 0)
         {
@@ -627,7 +582,6 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
         string startTimeValue = StartTime.Text!.Replace('_', '0');
         StartRace.IsEnabled = false;
-        EllapsedRelativeToBox.IsEnabled = true;
         if (waves.Count > 1)
         {
             EllapsedRelativeToBox.IsVisible = true;
@@ -861,7 +815,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     private void EllapsedRelativeToBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        Log.D("UI.MainPages.TimingPage", "EllapsedRelativeToBox selection changed.");
+        Log.E("UI.MainPages.TimingPage", "EllapsedRelativeToBox selection changed.");
         selectedWave = -1;
         if (EllapsedRelativeToBox.SelectedIndex >= 0 && EllapsedRelativeToBox.SelectedItem is TimeRelativeWave wave)
         {

@@ -1,6 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Chronokeep.UI.MainPages"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
              x:Class="Chronokeep.UI.MainPages.TimingPage"
@@ -46,13 +47,10 @@
                         HorizontalAlignment="Stretch"
                         SelectionChanged="EllapsedRelativeToBox_SelectionChanged"
                         IsVisible="False"
-                        IsEnabled="False"
                     >
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel>
-                                <TextBlock  TextAlignment="Center"/>
-                            </StackPanel>
+                            <TextBlock Text="{Binding Name}" TextAlignment="Center" x:DataType="local:TimeRelativeWave"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
