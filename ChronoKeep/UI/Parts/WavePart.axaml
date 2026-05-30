@@ -14,7 +14,7 @@
         </Style>
     </UserControl.Styles>
     <DockPanel VerticalAlignment="Center">
-        <TextBlock Name="WaveType" Width="60" Text="{Binding Wave}" x:DataType="local:WavePart"/>
+        <TextBlock Name="WaveName" Width="60"/>
         <Button Name="WavePlus"
                 Classes="invis"
                 Click="SwapWaveType_Click"
@@ -23,8 +23,8 @@
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center">
             <Grid>
-                <PathIcon Data="{StaticResource add_regular}" IsVisible="{Binding PlusWave}" x:DataType="local:WavePart"/>
-                <PathIcon Data="{StaticResource subtract_regular}" IsVisible="{Binding MinusWave}" x:DataType="local:WavePart"/>
+                <PathIcon Data="{StaticResource add_regular}" Name="PlusIcon" x:DataType="local:WavePart"/>
+                <PathIcon Data="{StaticResource subtract_regular}" Name="MinusIcon" x:DataType="local:WavePart"/>
             </Grid>
         </Button>
         <MaskedTextBox Name="StartOffset"

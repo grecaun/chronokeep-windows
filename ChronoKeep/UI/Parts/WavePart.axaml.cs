@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Chronokeep.Helpers;
 using System;
 
@@ -7,8 +9,8 @@ namespace Chronokeep.UI.Parts;
 public partial class WavePart : UserControl
 {
     public int Wave { get; private set; }
+    public string WaveStr { get => string.Format("{0}", Wave); }
     public bool PlusWave { get; set; }
-    public bool MinusWave { get => !PlusWave; }
 
     private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
 
@@ -32,6 +34,7 @@ public partial class WavePart : UserControl
         StartOffset.Text = string.Format(TimeFormat, startSeconds / 3600,
             (startSeconds % 3600) / 60, startSeconds % 60,
             startMilliseconds);
+        WaveName.Text = WaveStr;
     }
 
     public void SetTime(long seconds, int milliseconds)
@@ -57,7 +60,7 @@ public partial class WavePart : UserControl
                 seconds = Convert.ToInt32(secondparts[0]),
                 milliseconds = Convert.ToInt32(secondparts[1]);
             seconds = (hours * 3600) + (minutes * 60) + seconds;
-            if (MinusWave)
+            if (!PlusWave)
             {
                 Log.D("UI.Timing.WaveWindow", "Negative wave, setting values to match.");
                 seconds *= -1;
@@ -72,15 +75,25 @@ public partial class WavePart : UserControl
         return (Wave, 0, 0);
     }
 
-    private void SelectAll(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SelectAll(object sender, FocusChangedEventArgs e)
     {
         TextBox src = (TextBox)e.Source!;
         src.SelectAll();
     }
 
-    private void SwapWaveType_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SwapWaveType_Click(object sender, RoutedEventArgs e)
     {
         Log.D("UI.Timing.WaveWindow", "Plus/Minus sign clicked. WaveType is: " + (PlusWave ? "+" : "-"));
         PlusWave = !PlusWave;
+        if (PlusWave)
+        {
+            PlusIcon.IsVisible = true;
+            MinusIcon.IsVisible = false;
+        }
+        else
+        {
+            PlusIcon.IsVisible = false;
+            MinusIcon.IsVisible = true;
+        }
     }
 }

@@ -5,7 +5,6 @@
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
         x:Class="Chronokeep.UI.Timing.Windows.WaveWindow"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         Title="Set Wave Times"
         Width="300"
@@ -13,46 +12,27 @@
         CanResize="False"
         SizeToContent="Height"
         Closing="Window_Closing">
-    <Grid>
+    <Grid Margin="0,35,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0"
-                      VerticalScrollBarVisibility="Auto">
-            <StackPanel Name="mainPanel">
-                <DockPanel>
-                    <TextBlock Text="Wave"
-                               Width="60"
-                               FontSize="14"
-                               TextAlignment="Center"
-                               VerticalAlignment="Center"/>
-                    <Separator/>
-                    <TextBlock Text="Time"
-                               Width="150"
-                               FontSize="14"
-                               TextAlignment="Center"
-                               VerticalAlignment="Center"/>
-                </DockPanel>
-                <Separator/>
-                <ListBox Name="WaveList"
-                    BorderThickness="0"
-                    KeyboardNavigation.TabNavigation="Continue">
-                </ListBox>
-            </StackPanel>
-        </ScrollViewer>
+        <ListBox Name="WaveList"
+                 Grid.Row="0"
+                 BorderThickness="0"
+                 Margin="15,0,15,10"
+                 KeyboardNavigation.TabNavigation="Continue"/>
         <DockPanel Grid.Row="1"
                    HorizontalAlignment="Center"
                    Margin="5">
             <RadioButton Name="NetTimeButton"
                          Content="Net Time"
                          GroupName="TimeGroup"
-                         IsCheckedChanged="NetTimeButton_Checked"
+                         IsCheckedChanged="TimeofDayButton_Checked"
                          Width="100"
                          FontSize="14"
                          Margin="0,0,0,0"
-                         IsChecked="True"
                          VerticalContentAlignment="Center"/>
             <RadioButton Name="TimeofDayButton"
                          Content="Time of Day"
@@ -63,10 +43,10 @@
                          Margin="0,0,0,0"
                          VerticalContentAlignment="Center"/>
         </DockPanel>
-        <DockPanel Grid.Row="2"
-                   LastChildFill="False"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center">
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
             <Button Name="SetButton"
                     Content="Set"
                     Click="SetButton_Click"
@@ -81,6 +61,6 @@
                     Height="35"
                     FontSize="14"
                     Margin="10,10,0,10"/>
-        </DockPanel>
+        </StackPanel>
     </Grid>
 </Window>

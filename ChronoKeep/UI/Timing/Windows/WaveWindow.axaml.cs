@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -43,6 +44,7 @@ public partial class WaveWindow : Window
             Log.D("UI.Timing.WaveWindow", string.Format("Seconds {0} - Milliseconds {1}", seconds, milliseconds));
             WaveList.Items.Add(new WavePart(waveNum, waveTimes[waveNum].seconds, waveTimes[waveNum].milliseconds));
         }
+        NetTimeButton.IsChecked = true;
     }
 
     private void Window_Closing(object sender, WindowClosingEventArgs e)
@@ -50,27 +52,28 @@ public partial class WaveWindow : Window
         window?.WindowFinalize(this);
     }
 
-    private void NetTimeButton_Checked(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        Log.D("UI.Timing.WaveWindow", "Net Time Selected.");
-        foreach (WavePart? wave in WaveList.Items.Cast<WavePart?>())
-        {
-            int waveId = wave!.GetWave();
-            wave.SetTime(waveTimes[waveId].seconds, waveTimes[waveId].milliseconds);
-        }
-    }
-
-    private void TimeofDayButton_Checked(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void TimeofDayButton_Checked(object sender, RoutedEventArgs e)
     {
         Log.D("UI.Timing.WaveWindow", "Time of day selected.");
-        foreach (WavePart? wave in WaveList.Items.Cast<WavePart?>())
+        if (TimeofDayButton.IsChecked == true)
         {
-            int waveId = wave!.GetWave();
-            wave.SetTime(waveTimes[waveId].seconds + theEvent!.StartSeconds, waveTimes[waveId].milliseconds + theEvent.StartMilliseconds);
+            foreach (WavePart? wave in WaveList.Items.Cast<WavePart?>())
+            {
+                int waveId = wave!.GetWave();
+                wave.SetTime(waveTimes[waveId].seconds + theEvent!.StartSeconds, waveTimes[waveId].milliseconds + theEvent.StartMilliseconds);
+            }
+        }
+        else
+        {
+            foreach (WavePart? wave in WaveList.Items.Cast<WavePart?>())
+            {
+                int waveId = wave!.GetWave();
+                wave.SetTime(waveTimes[waveId].seconds, waveTimes[waveId].milliseconds);
+            }
         }
     }
 
-    private void SetButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SetButton_Click(object sender, RoutedEventArgs e)
     {
         Log.D("UI.Timing.WaveWindow", "Aye aye! Updating!");
         foreach (WavePart? wave in WaveList.Items.Cast<WavePart?>())
@@ -113,7 +116,7 @@ public partial class WaveWindow : Window
         Close();
     }
 
-    private void DoneButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void DoneButton_Click(object sender, RoutedEventArgs e)
     {
         Log.D("UI.Timing.WaveWindow", "We don't really want to set the wave times.");
         Close();
