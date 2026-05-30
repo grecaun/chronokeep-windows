@@ -10,7 +10,7 @@
         SizeToContent="Height"
         Width="400"
         Topmost="True"
-        Title="New Event">
+        >
     <Window.Styles>
        <Style Selector="ListBoxItem">
           <Setter Property="Padding" Value="10"/> 

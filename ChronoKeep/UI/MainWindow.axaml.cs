@@ -1172,6 +1172,7 @@ namespace Chronokeep.UI
         public void WindowFinalize(Window? w)
         {
             CurrentPage?.UpdateView();
+            UpdateStatus();
         }
     }
 }

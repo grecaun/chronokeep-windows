@@ -218,6 +218,7 @@ public partial class DashboardPage : UserControl, IMainPage
                                     {
                                         database.RemoveEvent(theEvent!.Identifier);
                                         database.SetCurrentEvent(-1);
+                                        mWindow.WindowFinalize(null);
                                     }
                                     );
                             }
@@ -644,6 +645,7 @@ public partial class DashboardPage : UserControl, IMainPage
                 {
                     database.RemoveEvent(theEvent!.Identifier);
                     database.SetCurrentEvent(-1);
+                    mWindow.WindowFinalize(null);
                 }
                 );
         }
