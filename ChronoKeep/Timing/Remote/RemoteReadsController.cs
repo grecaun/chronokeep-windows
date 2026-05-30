@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace Chronokeep.Timing.Remote
 {
-    class RemoteReadsController(IMainWindow mainWindow, IDBInterface database) : IRemoteReadersChangeSubscriber
+    public class RemoteReadsController(IMainWindow mainWindow, IDBInterface database) : IRemoteReadersChangeSubscriber
     {
         private static readonly Lock remRLock = new();
         private static readonly Semaphore waiter = new(0, 1);
@@ -26,14 +26,16 @@ namespace Chronokeep.Timing.Remote
         private readonly Dictionary<RemoteReader, DateTime> lastReaderTime = [];
         private readonly Dictionary<RemoteReader, long> RemoteNotificationDictionary = [];
 
-        public static bool IsRunning()
+        public enum RemoteStatus { UNKNOWN, RUNNING, STOPPED }
+
+        public static RemoteStatus IsRunning()
         {
-            bool output = false;
-            if (remRLock.TryEnter(6000))
+            RemoteStatus output = RemoteStatus.UNKNOWN;
+            if (remRLock.TryEnter(100))
             {
                 try
                 {
-                    output = Running;
+                    output = Running ? RemoteStatus.RUNNING : RemoteStatus.STOPPED;
                 }
                 finally
                 {

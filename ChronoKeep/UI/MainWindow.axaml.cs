@@ -640,12 +640,12 @@ namespace Chronokeep.UI
             }));
         }
 
-        public async void StartRemote()
+        public void StartRemote()
         {
-            await Task.Run(() =>
+            Task.Run(() =>
             {
                 Log.D("UI.MainWindow", "Checking Remote Thread");
-                if (!RemoteReadsController.IsRunning())
+                if (RemoteReadsController.IsRunning() == RemoteReadsController.RemoteStatus.STOPPED)
                 {
                     Log.D("UI.MainWindow", "Starting Remote Thread");
                     RemoteController = new RemoteReadsController(this, database!);
@@ -655,23 +655,17 @@ namespace Chronokeep.UI
             });
         }
 
-        public bool StopRemote()
+        public void StopRemote()
         {
-            try
+            Task.Run(() =>
             {
                 Log.D("UI.MainWindow", "Stopping Remote Controller");
                 RemoteReadsController.Shutdown();
                 RemoteController = null;
-            }
-            catch
-            {
-                return false;
-            }
-            CurrentPage?.UpdateView();
-            return true;
+            });
         }
 
-        public bool IsRemoteRunning()
+        public RemoteReadsController.RemoteStatus IsRemoteRunning()
         {
             return RemoteReadsController.IsRunning();
         }
@@ -1004,7 +998,7 @@ namespace Chronokeep.UI
 
         public bool BackgroundProcessesRunning()
         {
-            return TimingController.IsRunning() || AnnouncerOpen() || IsRegistrationRunning() || IsAPIControllerRunning() || IsRemoteRunning();
+            return TimingController.IsRunning() || AnnouncerOpen() || IsRegistrationRunning() || IsAPIControllerRunning() || IsRemoteRunning() == RemoteReadsController.RemoteStatus.RUNNING;
         }
 
         public void StopBackgroundProcesses()

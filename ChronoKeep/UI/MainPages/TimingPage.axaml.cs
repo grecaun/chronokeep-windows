@@ -14,6 +14,7 @@ using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.Notifications;
 using Chronokeep.Timing.API;
+using Chronokeep.Timing.Remote;
 using Chronokeep.UI.API.Windows;
 using Chronokeep.UI.Export;
 using Chronokeep.UI.MainPages.Timing;
@@ -287,17 +288,19 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             ManualAPIButton.IsEnabled = true;
         }
 
-        if (mWindow.IsRemoteRunning())
+        RemoteReadsController.RemoteStatus rStatus = mWindow.IsRemoteRunning();
+        if (rStatus == RemoteReadsController.RemoteStatus.RUNNING)
         {
             remoteControllerSwitch.IsChecked = true;
             remoteErrorsBlock.Text = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
+            remoteControllerSwitch.IsEnabled = true;
         }
-        else
+        else if (rStatus == RemoteReadsController.RemoteStatus.STOPPED)
         {
             remoteControllerSwitch.IsChecked = false;
+            remoteControllerSwitch.IsEnabled = true;
             remoteErrorsBlock.Text = "";
         }
-        remoteControllerSwitch.IsEnabled = true;
 
         UpdateDNSButton();
 
@@ -482,17 +485,19 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             ManualAPIButton.IsEnabled = true;
         }
 
-        if (mWindow.IsRemoteRunning())
+        RemoteReadsController.RemoteStatus rStatus = mWindow.IsRemoteRunning();
+        if (rStatus == RemoteReadsController.RemoteStatus.RUNNING)
         {
             remoteControllerSwitch.IsChecked = true;
             remoteErrorsBlock.Text = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
+            remoteControllerSwitch.IsEnabled = true;
         }
-        else
+        else if (rStatus == RemoteReadsController.RemoteStatus.STOPPED)
         {
             remoteControllerSwitch.IsChecked = false;
+            remoteControllerSwitch.IsEnabled = true;
             remoteErrorsBlock.Text = "";
         }
-        remoteControllerSwitch.IsEnabled = true;
 
         UpdateDNSButton();
 
@@ -1651,18 +1656,19 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         win.Show();
     }
 
-    private void RemoteControllerSwitch_Checked(object? sender, RoutedEventArgs e)
+    private async void RemoteControllerSwitch_Checked(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Remote toggle switch checked.");
-        remoteControllerSwitch.IsEnabled = false;
-        mWindow.StartRemote();
-    }
-
-    private void RemoteControllerSwitch_Unchecked(object? sender, RoutedEventArgs e)
-    {
-        Log.D("UI.MainPages.TimingPage", "Remote toggle switch unchecked.");
-        remoteControllerSwitch.IsEnabled = false;
-        mWindow.StopRemote();
+        if (remoteControllerSwitch.IsChecked == false)
+        {
+            remoteControllerSwitch.IsEnabled = false;
+            mWindow.StopRemote();
+        }
+        else
+        {
+            remoteControllerSwitch.IsEnabled = false;
+            mWindow.StartRemote();
+        }
     }
 
     private void ReaderMessageButton_Click(object? sender, RoutedEventArgs e)

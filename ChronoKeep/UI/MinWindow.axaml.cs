@@ -1,13 +1,13 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Styling;
-using Avalonia.Themes.Fluent;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing;
+using Chronokeep.Timing.Remote;
 using Chronokeep.UI.EventWindows;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.Parts;
@@ -446,9 +446,9 @@ public partial class MinWindow : Window, IMainWindow
 
     public void StartRemote() { }
 
-    public bool StopRemote() { return false; }
+    public void StopRemote() { }
 
-    public bool IsRemoteRunning() { return false; }
+    public RemoteReadsController.RemoteStatus IsRemoteRunning() { return RemoteReadsController.RemoteStatus.UNKNOWN; }
 
     public int RemoteErrors() { return 0; }
 

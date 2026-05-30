@@ -2,6 +2,7 @@
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using System.Collections.Generic;
+using static Chronokeep.Timing.Remote.RemoteReadsController;
 
 namespace Chronokeep.Interfaces.UI
 {
@@ -55,8 +56,8 @@ namespace Chronokeep.Interfaces.UI
 
         // Remote Controller related calls.
         void StartRemote();
-        bool StopRemote();
-        bool IsRemoteRunning();
+        void StopRemote();
+        RemoteStatus IsRemoteRunning();
         int RemoteErrors();
         void ShowNotificationDialog(string ReaderName, string Address, RemoteNotification notification);
 

@@ -316,7 +316,6 @@ public partial class ChipAssignmentPage : UserControl, IMainPage
                 try
                 {
                     string? filePath = files[0].TryGetLocalPath();
-                    Log.E("TEST", string.Format("Name: {0} -- Path: {1}", files[0].Name, filePath ?? "null"));
                     IDataImporter importer;
                     if (ext == ".xlsx" || ext == ".xls")
                     {
