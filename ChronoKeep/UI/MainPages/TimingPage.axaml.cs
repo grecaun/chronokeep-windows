@@ -82,7 +82,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         this.database = database;
         this.mWindow = window;
         theEvent = database.GetCurrentEvent();
-        viewOnlyBox.SelectedIndex = 0;
+        ViewOnlyBox.SelectedIndex = 0;
         SortBy.SelectedIndex = 0;
         loaded = true;
 
@@ -181,10 +181,10 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             locations.Insert(0, new(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
         }
 
-        locationBox.Items.Clear();
+        LocationBox.Items.Clear();
         if (locCount > 0)
         {
-            locationBox.Items.Add(new ComboBoxItem()
+            LocationBox.Items.Add(new ComboBoxItem()
             {
                 Content = "All Locations"
             });
@@ -192,18 +192,18 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             {
                 if (!loc.Name.Equals("Announcer", StringComparison.OrdinalIgnoreCase))
                 {
-                    locationBox.Items.Add(new ComboBoxItem()
+                    LocationBox.Items.Add(new ComboBoxItem()
                     {
                         Content = loc.Name,
                     });
                 }
             }
-            locationBox.SelectedIndex = 0;
-            locationBox.IsVisible = true;
+            LocationBox.SelectedIndex = 0;
+            LocationBox.IsVisible = true;
         }
         else
         {
-            locationBox.IsVisible = false;
+            LocationBox.IsVisible = false;
         }
 
         List<TimingSystem> systems = mWindow.GetConnectedSystems();
@@ -244,7 +244,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         subPage = new TimingResultsPage(this, database);
         TimingFrame.Content = subPage;
         List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier, true);
-        statsListView.ItemsSource = stats;
+        StatsListView.ItemsSource = stats;
         stats.Clear();
         foreach (DistanceStat s in inStats)
         {
@@ -271,11 +271,11 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
         if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
         {
-            apiPanel.IsVisible = true;
+            ApiPanel.IsVisible = true;
         }
         else
         {
-            apiPanel.IsVisible = false;
+            ApiPanel.IsVisible = false;
         }
         if (mWindow.IsAPIControllerRunning())
         {
@@ -291,15 +291,15 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         RemoteReadsController.RemoteStatus rStatus = mWindow.IsRemoteRunning();
         if (rStatus == RemoteReadsController.RemoteStatus.RUNNING)
         {
-            remoteControllerSwitch.IsChecked = true;
-            remoteErrorsBlock.Text = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
-            remoteControllerSwitch.IsEnabled = true;
+            RemoteControllerSwitch.IsChecked = true;
+            RemoteErrorsBlock.Text = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
+            RemoteControllerSwitch.IsEnabled = true;
         }
         else if (rStatus == RemoteReadsController.RemoteStatus.STOPPED)
         {
-            remoteControllerSwitch.IsChecked = false;
-            remoteControllerSwitch.IsEnabled = true;
-            remoteErrorsBlock.Text = "";
+            RemoteControllerSwitch.IsChecked = false;
+            RemoteControllerSwitch.IsEnabled = true;
+            RemoteErrorsBlock.Text = "";
         }
 
         UpdateDNSButton();
@@ -309,13 +309,13 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         {
             if (api.Type == APIConstants.CHRONOKEEP_REMOTE_SELF || api.Type == APIConstants.CHRONOKEEP_REMOTE)
             {
-                if (remoteControllerSwitch != null)
+                if (RemoteControllerSwitch != null)
                 {
-                    remoteControllerSwitch.IsVisible = true;
+                    RemoteControllerSwitch.IsVisible = true;
                 }
-                if (remoteReadersButton != null)
+                if (RemoteReadersButton != null)
                 {
-                    remoteReadersButton.IsVisible = readerExpander.IsExpanded;
+                    RemoteReadersButton.IsVisible = ReaderExpander.IsExpanded;
                 }
                 remote_api = true;
                 break;
@@ -336,11 +336,11 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
         if (alreadyRecalculating)
         {
-            recalculateButton.Content = "Working...";
+            RecalculateButton.Content = "Working...";
         }
         else
         {
-            recalculateButton.Content = "Recalculate";
+            RecalculateButton.Content = "Recalculate";
         }
     }
 
@@ -448,7 +448,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                     system),
                     locations!));
         }
-        List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier, condenseSwitch.IsChecked == false);
+        List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier, CondenseSwitch.IsChecked == false);
         stats.Clear();
         foreach (DistanceStat s in inStats)
         {
@@ -468,11 +468,11 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
         if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
         {
-            apiPanel.IsVisible = true;
+            ApiPanel.IsVisible = true;
         }
         else
         {
-            apiPanel.IsVisible = false;
+            ApiPanel.IsVisible = false;
         }
         if (mWindow.IsAPIControllerRunning())
         {
@@ -488,15 +488,15 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         RemoteReadsController.RemoteStatus rStatus = mWindow.IsRemoteRunning();
         if (rStatus == RemoteReadsController.RemoteStatus.RUNNING)
         {
-            remoteControllerSwitch.IsChecked = true;
-            remoteErrorsBlock.Text = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
-            remoteControllerSwitch.IsEnabled = true;
+            RemoteControllerSwitch.IsChecked = true;
+            RemoteControllerSwitch.IsEnabled = true;
+            RemoteErrorsBlock.Text = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
         }
         else if (rStatus == RemoteReadsController.RemoteStatus.STOPPED)
         {
-            remoteControllerSwitch.IsChecked = false;
-            remoteControllerSwitch.IsEnabled = true;
-            remoteErrorsBlock.Text = "";
+            RemoteControllerSwitch.IsChecked = false;
+            RemoteControllerSwitch.IsEnabled = true;
+            RemoteErrorsBlock.Text = "";
         }
 
         UpdateDNSButton();
@@ -515,11 +515,11 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         UpdateSubView();
         if (alreadyRecalculating)
         {
-            recalculateButton.Content = "Working...";
+            RecalculateButton.Content = "Working...";
         }
         else
         {
-            recalculateButton.Content = "Recalculate";
+            RecalculateButton.Content = "Recalculate";
         }
     }
 
@@ -692,7 +692,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     public PeopleType GetPeopleType()
     {
-        switch (((ComboBoxItem)viewOnlyBox.SelectedItem!).Content)
+        switch (((ComboBoxItem)ViewOnlyBox.SelectedItem!).Content)
         {
             case "Show All":
                 return PeopleType.ALL;
@@ -736,12 +736,12 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     public string GetSearchValue()
     {
-        return searchBox.Text == null ? "" : searchBox.Text.Trim();
+        return SearchBox.Text == null ? "" : SearchBox.Text.Trim();
     }
 
     public string GetLocation()
     {
-        ComboBoxItem locItem = (ComboBoxItem)locationBox.SelectedItem!;
+        ComboBoxItem locItem = (ComboBoxItem)LocationBox.SelectedItem!;
         if (locItem == null)
         {
             return "";
@@ -784,7 +784,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         {
             await APIController.UploadResults(results, api, event_ids, database, null, null, theEvent);
         }
-        Application.Current!.Dispatcher.Invoke( new Action(delegate ()
+        Application.Current!.Dispatcher.Invoke(new Action(delegate ()
         {
             ManualAPIButton.Content = "Manual Upload";
         }));
@@ -794,28 +794,28 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     {
         if (mWindow.InDidNotStartMode())
         {
-            dnsMode.Content = "Stop DNS Mode";
+            DnsMode.Content = "Stop DNS Mode";
         }
         else
         {
-            dnsMode.Content = "Start DNS Mode";
+            DnsMode.Content = "Start DNS Mode";
         }
     }
 
     public void SetReaders(string[] readers, bool visible)
     {
-        readerSelectionBox.Items.Clear();
+        ReaderSelectionBox.Items.Clear();
         foreach (string reader in readers)
         {
-            readerSelectionBox.Items.Add(reader);
+            ReaderSelectionBox.Items.Add(reader);
         }
-        readerSelectionBox.SelectedIndex = 0;
-        readerSelectionBox.IsVisible = visible;
+        ReaderSelectionBox.SelectedIndex = 0;
+        ReaderSelectionBox.IsVisible = visible;
     }
 
     public string GetReader()
     {
-        return readerSelectionBox.SelectedItem != null ? readerSelectionBox.SelectedItem.ToString()! : "";
+        return ReaderSelectionBox.SelectedItem != null ? ReaderSelectionBox.SelectedItem.ToString()! : "";
     }
 
     private void EllapsedRelativeToBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -1113,7 +1113,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         cts = new();
         try
         {
-            subPage!.Search(cts.Token, searchBox.Text!.Trim());
+            subPage!.Search(cts.Token, SearchBox.Text!.Trim());
             cts = null;
         }
         catch
@@ -1129,7 +1129,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         {
             return;
         }
-        switch (((ComboBoxItem)viewOnlyBox.SelectedItem!).Content)
+        switch (((ComboBoxItem)ViewOnlyBox.SelectedItem!).Content)
         {
             case "Show Only Unknown":
                 subPage.Show(PeopleType.UNKNOWN);
@@ -1159,7 +1159,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     {
         if (!loaded) { return; }
         if (subPage == null) return;
-        string readerItem = (string)readerSelectionBox.SelectedItem!;
+        string readerItem = (string)ReaderSelectionBox.SelectedItem!;
         if (readerItem == null)
         {
             subPage.Reader("");
@@ -1177,7 +1177,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         {
             return;
         }
-        ComboBoxItem locItem = (ComboBoxItem)locationBox.SelectedItem!;
+        ComboBoxItem locItem = (ComboBoxItem)LocationBox.SelectedItem!;
         if (locItem == null)
         {
             subPage.Location("");
@@ -1200,25 +1200,25 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     private void StatsListView_MouseDoubleClick(object? sender, TappedEventArgs e)
     {
-        DistanceStat selected = (DistanceStat)statsListView.SelectedItem;
+        DistanceStat selected = (DistanceStat)StatsListView.SelectedItem;
         if (selected == null)
         {
             return;
         }
         Log.D("UI.MainPages.TimingPage", "Stats double cliked. Distance is " + selected.DistanceName);
         SetRawReadsFinished();
-        subPage = new DistanceStatsPage(this, mWindow, database, selected.DistanceID, selected.DistanceName, condenseSwitch.IsChecked == false);
+        subPage = new DistanceStatsPage(this, mWindow, database, selected.DistanceID, selected.DistanceName, CondenseSwitch.IsChecked == false);
         TimingFrame.Content = subPage;
     }
 
     private async void Recalculate_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Recalculate results clicked.");
-        if ((string)recalculateButton.Content! == "Working..." || alreadyRecalculating)
+        if ((string)RecalculateButton.Content! == "Working..." || alreadyRecalculating)
         {
             return;
         }
-        recalculateButton.Content = "Working...";
+        RecalculateButton.Content = "Working...";
         alreadyRecalculating = true;
         if (APIController.SetUploadableFalse(uploadTimer))
         {
@@ -1255,7 +1255,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                         }
                     }
                 });
-                recalculateButton.Content = "Recalculate";
+                RecalculateButton.Content = "Recalculate";
                 alreadyRecalculating = false;
                 DialogBox.Show("Unable to recalculate results.");
                 return;
@@ -1263,7 +1263,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         }
         else
         {
-            recalculateButton.Content = "Recalculate";
+            RecalculateButton.Content = "Recalculate";
             alreadyRecalculating = false;
             return;
         }
@@ -1319,7 +1319,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                 }
             }
         });
-        recalculateButton.Content = "Recalculate";
+        RecalculateButton.Content = "Recalculate";
         alreadyRecalculating = false;
         UpdateSubView();
         mWindow.NetworkClearResults();
@@ -1360,11 +1360,11 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private async void SendEmailsButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Send Emails button clicked.");
-        if ((string)sendEmailsButton.Content! != "Send Emails")
+        if ((string)SendEmailsButton.Content! != "Send Emails")
         {
             return;
         }
-        sendEmailsButton.Content = "Sending...";
+        SendEmailsButton.Content = "Sending...";
         await Task.Run(() =>
         {
             HashSet<int> sentIDs = [];
@@ -1437,7 +1437,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         });
         Log.D("UI.MainPages.TimingPage", "Changing button back and sending dialog box.");
         DialogBox.Show("Emails sent.");
-        sendEmailsButton.Content = "Send Emails";
+        SendEmailsButton.Content = "Send Emails";
     }
 
     private void ModifySMSButton_Click(object? sender, RoutedEventArgs e)
@@ -1450,7 +1450,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private void DnsMode_Click(object? sender, RoutedEventArgs e)
     {
         bool worked;
-        if (dnsMode.Content!.Equals("Start DNS Mode"))
+        if (DnsMode.Content!.Equals("Start DNS Mode"))
         {
             Log.D("UI.MainPages.TimingPage", "Starting DNS Mode.");
             worked = mWindow.StartDidNotStartMode();
@@ -1636,16 +1636,14 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     private void Expander_Expanded(object? sender, RoutedEventArgs e)
     {
-        if (remoteReadersButton != null)
+        if (RemoteReadersButton == null) { return; }
+        if (ReaderExpander.IsExpanded == true && remote_api)
         {
-            if (readerExpander.IsExpanded == true && remote_api)
-            {
-                remoteReadersButton.IsVisible = true;
-            }
-            else
-            {
-                remoteReadersButton.IsVisible = false;
-            }
+            RemoteReadersButton.IsVisible = true;
+        }
+        else
+        {
+            RemoteReadersButton.IsVisible = false;
         }
     }
 
@@ -1659,14 +1657,14 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
     private async void RemoteControllerSwitch_Checked(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.TimingPage", "Remote toggle switch checked.");
-        if (remoteControllerSwitch.IsChecked == false)
+        if (RemoteControllerSwitch.IsChecked == false)
         {
-            remoteControllerSwitch.IsEnabled = false;
+            RemoteControllerSwitch.IsEnabled = false;
             mWindow.StopRemote();
         }
         else
         {
-            remoteControllerSwitch.IsEnabled = false;
+            RemoteControllerSwitch.IsEnabled = false;
             mWindow.StartRemote();
         }
     }
@@ -1688,11 +1686,17 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
 
     private void CondenseSwitch_Checked(object? sender, RoutedEventArgs e)
     {
-        List<DistanceStat> inStats = database.GetDistanceStats(theEvent!.Identifier, condenseSwitch.IsChecked == false);
+        List<DistanceStat> inStats = database.GetDistanceStats(theEvent!.Identifier, CondenseSwitch.IsChecked == false);
         stats.Clear();
         foreach (DistanceStat s in inStats)
         {
             stats.Add(s);
         }
+    }
+
+    private void StatsExpander_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (StatsExpander == null || CondenseSwitch == null) { return; }
+        CondenseSwitch.IsVisible = StatsExpander.IsExpanded == true;
     }
 }

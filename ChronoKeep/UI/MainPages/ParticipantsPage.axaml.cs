@@ -72,59 +72,7 @@ public partial class ParticipantsPage : UserControl, IMainPage
                 newList.AddRange(database.GetParticipants(theEvent.Identifier, distanceId));
             }
         });
-        Dictionary<string, BibStats> bibStats = [];
-        foreach (Participant p in allParticipants)
-        {
-            if (!bibStats.TryGetValue(p.Distance, out BibStats? bStats))
-            {
-                bStats = new()
-                {
-                    With = 0,
-                    Without = 0,
-                    DistanceName = p.Distance,
-                };
-                bibStats[p.Distance] = bStats;
-            }
-            if (p.Bib.Length > 0)
-            {
-                bStats.With += 1;
-            }
-            else
-            {
-                bStats.Without += 1;
-            }
-        }
-        BibStats totals = new()
-        {
-            With = 0,
-            Without = 0,
-            DistanceName = "All"
-        };
-        List<BibStats> listStats = [];
-        foreach (BibStats b in bibStats.Values)
-        {
-            listStats.Add(b);
-            totals.With += b.With;
-            totals.Without += b.Without;
-        }
-        if (bibStats.Values.Count > 1)
-        {
-            listStats.Insert(0, totals);
-            ViewPanel.IsVisible = true;
-        }
-        else
-        {
-            ViewPanel.IsVisible = false;
-        }
-        statsListView.ItemsSource = listStats;
-        if (totals.Without > 0)
-        {
-            statsExpander.IsVisible = true;
-        }
-        else
-        {
-            statsExpander.IsVisible = false;
-        }
+        UpdateBibStats();
         if (SortBox.SelectedItem != null)
         {
             switch (((ComboBoxItem)SortBox.SelectedItem).Content)
@@ -1008,5 +956,117 @@ public partial class ParticipantsPage : UserControl, IMainPage
             mWindow.AddWindow(modifyParticipant);
             modifyParticipant.ShowDialog((Window)mWindow);
         }
+    }
+
+    private void UpdateBibStats()
+    {
+        if (CondenseSwitch == null) { return; }
+        Dictionary<int, BibStats> bibStats = [];
+        // Checked value is the value after the change.
+        if (CondenseSwitch.IsChecked != true)
+        {
+            Dictionary<int, int> divisionTranslator = [];
+            Dictionary<int, string> divisionNames = [];
+            foreach (Distance d in database.GetDistances(theEvent!.Identifier))
+            {
+                divisionTranslator[d.Identifier] = d.LinkedDistance >= 0 ? d.LinkedDistance : d.Identifier;
+                if (d.LinkedDistance < 0)
+                {
+                    divisionNames[d.Identifier] = d.Name;
+                }
+            }
+            foreach (Participant p in allParticipants)
+            {
+                int divId = divisionTranslator[p.EventSpecific.DistanceIdentifier];
+                if (!divisionNames.TryGetValue(divId, out string? name))
+                {
+                    name = p.Distance;
+                }
+                if (!bibStats.TryGetValue(divId, out BibStats? bStats))
+                {
+                    bStats = new()
+                    {
+                        With = 0,
+                        Without = 0,
+                        DistanceName = name,
+                    };
+                    bibStats[divId] = bStats;
+                }
+                if (p.Bib.Length > 0)
+                {
+                    bStats.With += 1;
+                }
+                else
+                {
+                    bStats.Without += 1;
+                }
+            }
+        }
+        else
+        {
+            foreach (Participant p in allParticipants)
+            {
+                if (!bibStats.TryGetValue(p.EventSpecific.DistanceIdentifier, out BibStats? bStats))
+                {
+                    bStats = new()
+                    {
+                        With = 0,
+                        Without = 0,
+                        DistanceName = p.Distance,
+                    };
+                    bibStats[p.EventSpecific.DistanceIdentifier] = bStats;
+                }
+                if (p.Bib.Length > 0)
+                {
+                    bStats.With += 1;
+                }
+                else
+                {
+                    bStats.Without += 1;
+                }
+            }
+        }
+        BibStats totals = new()
+        {
+            With = 0,
+            Without = 0,
+            DistanceName = "All"
+        };
+        List<BibStats> listStats = [];
+        foreach (BibStats b in bibStats.Values)
+        {
+            listStats.Add(b);
+            totals.With += b.With;
+            totals.Without += b.Without;
+        }
+        if (bibStats.Values.Count > 1)
+        {
+            listStats.Insert(0, totals);
+            ViewPanel.IsVisible = true;
+        }
+        else
+        {
+            ViewPanel.IsVisible = false;
+        }
+        StatsListView.ItemsSource = listStats;
+        if (totals.Without > 0)
+        {
+            StatsExpander.IsVisible = true;
+        }
+        else
+        {
+            StatsExpander.IsVisible = false;
+        }
+    }
+
+    private void CondenseSwitch_IsCheckedChanged(object? sender, RoutedEventArgs e)
+    {
+        UpdateBibStats();
+    }
+
+    private void StatsExpander_PropertyChanged(object? sender, Avalonia.AvaloniaPropertyChangedEventArgs e)
+    {
+        if (CondenseSwitch == null || StatsExpander == null) { return; }
+        CondenseSwitch.IsVisible = StatsExpander.IsExpanded == true;
     }
 }

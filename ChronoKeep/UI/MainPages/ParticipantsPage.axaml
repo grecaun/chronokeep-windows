@@ -157,23 +157,45 @@
                     Classes="part"
                     />
                 <Expander
-                    Name="statsExpander"
-                    Header="Bibs"
+                    Name="StatsExpander"
                     Margin="5"
+                    Padding="0"
                     IsExpanded="True"
                     HorizontalAlignment="Stretch"
                     IsVisible="False"
+                    PropertyChanged="StatsExpander_PropertyChanged"
                     >
+                    <Expander.Header>
+                        <DockPanel
+                            LastChildFill="False"
+                            VerticalAlignment="Center"
+                            >
+                            <TextBlock
+                                Text="Bibs"
+                                Margin="0,0,0,0"
+                                VerticalAlignment="Center"
+                                />
+                            <ToggleSwitch 
+                                Name="CondenseSwitch"
+                                Margin="0,-7,-25,-7"
+                                VerticalAlignment="Center"
+                                DockPanel.Dock="Right"
+                                OnContent=""
+                                OffContent=""
+                                IsCheckedChanged="CondenseSwitch_IsCheckedChanged"
+                                />
+                        </DockPanel>
+                    </Expander.Header>
                     <DataGrid Grid.Row="0"
-                              Name="statsListView"
-                              Margin="3,0"
+                              Name="StatsListView"
+                              Margin="0"
                               FontSize="10"
                               GridLinesVisibility="None"
                               >
                         <DataGrid.Columns>
                             <DataGridTextColumn FontSize="10" Header="Distance" Width="*" Binding="{Binding DistanceName}" x:DataType="objects:BibStats"/>
-                            <DataGridTextColumn FontSize="10" Header="w/" Width="50" Binding="{Binding With}" x:DataType="objects:BibStats"/>
-                            <DataGridTextColumn FontSize="10" Header="w/o" Width="50" Binding="{Binding Without}" x:DataType="objects:BibStats"/>
+                            <DataGridTextColumn FontSize="10" Header="w/" Width="60" Binding="{Binding With}" x:DataType="objects:BibStats"/>
+                            <DataGridTextColumn FontSize="10" Header="w/o" Width="60" Binding="{Binding Without}" x:DataType="objects:BibStats"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>

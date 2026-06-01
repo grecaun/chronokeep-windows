@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="using:Chronokeep.UI.MainPages"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:objects="using:Chronokeep.Objects"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
              x:Class="Chronokeep.UI.MainPages.TimingPage"
              Padding="16"
@@ -103,7 +104,7 @@
             <ScrollViewer
                 Grid.Row="1"
                 VerticalScrollBarVisibility="Auto"
-                Name="controlScroll"
+                Name="ControlScroll"
                 >
                 <StackPanel>
                     <Grid Width="250">
@@ -174,7 +175,7 @@
                             />
                     </Grid>
                     <TextBox
-                        Name="searchBox"
+                        Name="SearchBox"
                         TextChanged="SearchBox_TextChanged"
                         Width="250" 
                         Height="35"
@@ -185,7 +186,7 @@
                         PlaceholderText="Search"
                         />
                     <ComboBox
-                        Name="viewOnlyBox"
+                        Name="ViewOnlyBox"
                         Width="250"
                         Height="35"
                         Margin="0,5,0,0"
@@ -201,7 +202,7 @@
                         <ComboBoxItem Content="Show Only Unknown Finishes" />
                     </ComboBox>
                     <ComboBox
-                        Name="locationBox"
+                        Name="LocationBox"
                         Width="250"
                         Height="35"
                         HorizontalAlignment="Stretch"
@@ -210,7 +211,7 @@
                         IsVisible="False"
                         />
                     <ComboBox
-                        Name="readerSelectionBox"
+                        Name="ReaderSelectionBox"
                         Width="250"
                         Height="35"
                         HorizontalAlignment="Stretch"
@@ -235,10 +236,11 @@
                         <ComboBoxItem Content="Gender"/>
                     </ComboBox>
                     <Expander
-                        Name="statsExpander"
+                        Name="StatsExpander"
                         Margin="5,5,5,0"
+                        Padding="0"
                         IsExpanded="True"
-                        Padding="4"
+                        PropertyChanged="StatsExpander_PropertyChanged"
                         >
                             <Expander.Header>
                                 <DockPanel
@@ -251,8 +253,8 @@
                                         VerticalAlignment="Center"
                                         />
                                     <ToggleSwitch 
-                                        Name="condenseSwitch" 
-                                        Margin="0,-7,3,-7" 
+                                        Name="CondenseSwitch" 
+                                        Margin="0,-7,-25,-7" 
                                         VerticalAlignment="Center"
                                         DockPanel.Dock="Right"
                                         OnContent=""
@@ -261,61 +263,37 @@
                                         />
                                 </DockPanel>
                             </Expander.Header>
-                            <DataGrid Name="statsListView"
+                            <DataGrid Name="StatsListView"
                                       SelectionMode="Single"
                                       FontSize="10"
-                                      CornerRadius="8"
                                       CanUserResizeColumns="False"
+                                      Margin="0"
                                       DoubleTapped="StatsListView_MouseDoubleClick">
 								<DataGrid.Columns>
-                                    <DataGridTextColumn Width="80">
-                                        <DataGridTextColumn.Header>
-											<Label Content="Distance" Margin="0,0,-20,0"/>
-                                        </DataGridTextColumn.Header>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Width="42">
-                                        <DataGridTextColumn.Header>
-											<Label Content="DNS" Margin="-8,0,-25,0"/>
-                                        </DataGridTextColumn.Header>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Width="42">
-                                        <DataGridTextColumn.Header>
-											<Label Content="DNF" Margin="-8,0,-25,0"/>
-                                        </DataGridTextColumn.Header>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Width="42">
-                                        <DataGridTextColumn.Header>
-											<Label Content="Fin" Margin="-8,0,-25,0"/>
-                                        </DataGridTextColumn.Header>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Width="42">
-                                        <DataGridTextColumn.Header>
-											<Label Content="Act" Margin="-8,0,-25,0"/>
-                                        </DataGridTextColumn.Header>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Width="42">
-                                        <DataGridTextColumn.Header>
-											<Label Content="Tot" Margin="-8,0,-25,0"/>
-                                        </DataGridTextColumn.Header>
-                                    </DataGridTextColumn>
+                                    <DataGridTextColumn FontSize="10" Width="80" Header="Distance" Binding="{Binding DistanceName}" x:DataType="objects:DistanceStat"/>
+                                    <DataGridTextColumn FontSize="10" Width="42" Header="DNS" Binding="{Binding DNS}" x:DataType="objects:DistanceStat"/>
+                                    <DataGridTextColumn FontSize="10" Width="42" Header="DNF" Binding="{Binding DNF}" x:DataType="objects:DistanceStat"/>
+                                    <DataGridTextColumn FontSize="10" Width="42" Header="Fin" Binding="{Binding Finished}" x:DataType="objects:DistanceStat"/>
+                                    <DataGridTextColumn FontSize="10" Width="42" Header="Act" Binding="{Binding Active}" x:DataType="objects:DistanceStat"/>
+                                    <DataGridTextColumn FontSize="10" Width="42" Header="Tot" Binding="{Binding Total}" x:DataType="objects:DistanceStat"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                     </Expander>
                     <Expander
-                        Name="extraExpander"
+                        Name="ExtraExpander"
                         Header="More"
                         Margin="5,5,5,0"
                         IsExpanded="True"
                         >
                         <StackPanel>
                             <Button
-                                Name="recalculateButton" 
+                                Name="RecalculateButton" 
                                 Content="Recalculate"
                                 Click="Recalculate_Click"
                                 Classes="tim"
                                 Margin="0,0,0,0" 
                                 />
-                            <Grid Name="apiPanel">
+                            <Grid Name="ApiPanel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="1*" />
@@ -344,21 +322,21 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
                                     <Button
-                                        Name="sendEmailsButton" 
+                                        Name="SendEmailsButton" 
                                         Content="Send Emails"
                                         Click="SendEmailsButton_Click"
                                         Classes="tim"
                                         Margin="0,5,5,0" 
                                         />
                                     <Button
-                                        Name="modifySMSButton" 
+                                        Name="ModifySMSButton" 
                                         Content="Modify SMS"
                                         Click="ModifySMSButton_Click"
                                         Classes="tim"
                                         Margin="0,5,5,0" 
                                         />
                                     <Button
-                                        Name="dnsMode"
+                                        Name="DnsMode"
                                         Content="Start DNS Mode"
                                         Click="DnsMode_Click"
                                         Classes="tim"
@@ -383,7 +361,7 @@
                                         Margin="5,5,0,0"
                                         />
                                     <Button 
-                                        Name="printButton"
+                                        Name="PrintButton"
                                         Content="Print"
                                         Click="Print_Click"
                                         Classes="tim"
@@ -453,7 +431,7 @@
                         </StackPanel>
                     </Expander>
                     <Expander
-                        Name="exportExpander"
+                        Name="ExportExpander"
                         Header="Export"
                         Margin="5,5,5,0"
                         IsExpanded="False"
@@ -465,7 +443,7 @@
                                 Classes="tim"
                                 Margin="0,0,0,0"
                                 />
-                            <Grid Name="exportPanel">
+                            <Grid Name="ExportPanel">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="1*" />
@@ -523,7 +501,7 @@
                 Grid.Row="0"
                 Expanded="Expander_Expanded"
                 Collapsed="Expander_Expanded"
-                Name="readerExpander"
+                Name="ReaderExpander"
                 >
                 <Expander.Header>
                     <DockPanel
@@ -551,16 +529,16 @@
                         </Button>
                         <ToggleSwitch 
                             DockPanel.Dock="Right"
-                            Name="remoteControllerSwitch" 
+                            Name="RemoteControllerSwitch" 
                             IsCheckedChanged="RemoteControllerSwitch_Checked"
-                            Margin="-2,-7,-15,-7" 
+                            Margin="-2,-7,-25,-7" 
                             VerticalAlignment="Center"
                             IsVisible="False"
                             OffContent=""
                             OnContent=""
                             />
                         <TextBlock 
-                            Name="remoteErrorsBlock"
+                            Name="RemoteErrorsBlock"
                             Margin="0,0,5,0"
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
@@ -568,7 +546,7 @@
                             />
                         <Button
                             DockPanel.Dock="Right" 
-                            Name="remoteReadersButton" 
+                            Name="RemoteReadersButton" 
                             Content="Remote Readers" 
                             Click="RemoteReadersButton_Click"
                             Classes="tim"
