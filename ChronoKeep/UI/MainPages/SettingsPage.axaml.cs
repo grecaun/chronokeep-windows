@@ -5,7 +5,9 @@ using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
+using NAudio.Wave;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Chronokeep.UI.MainPages;
@@ -309,55 +311,14 @@ public partial class SettingsPage : UserControl, IMainPage
     private void PlayBtn_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.MainPages.SettingsPage", "Play alarm sound clicked.");
-        string soundFile = Environment.CurrentDirectory;
-        switch (AlarmSoundBox.SelectedIndex)
-        {
-            case 0:
-                soundFile += "\\Sounds\\alert-1.wav";
-                break;
-            case 1:
-                soundFile += "\\Sounds\\alert-2.wav";
-                break;
-            case 2:
-                soundFile += "\\Sounds\\alert-3.wav";
-                break;
-            case 3:
-                soundFile += "\\Sounds\\alert-4.wav";
-                break;
-            case 4:
-                soundFile += "\\Sounds\\alert-5.wav";
-                break;
-            case 5:
-                soundFile += "\\Sounds\\emily-runner-here.wav";
-                break;
-            case 6:
-                soundFile += "\\Sounds\\emily-runner-arrived.wav";
-                break;
-            case 7:
-                soundFile += "\\Sounds\\emily-alert-runner-here.wav";
-                break;
-            case 8:
-                soundFile += "\\Sounds\\michael-runner-here.wav";
-                break;
-            case 9:
-                soundFile += "\\Sounds\\michael-runner-arrived.wav";
-                break;
-            case 10:
-                soundFile += "\\Sounds\\michael-alert-runner-here.wav";
-                break;
-            default:
-                DialogBox.Show("Sound not selected.");
-                return;
-        }
-        Log.D("UI.MainPages.SettingsPage", "Path we're trying to play: " + soundFile);
         try
         {
-            // Windows Only TODO fix sound
-            //new SoundPlayer(soundFile).Play();
+            AudioPlaybackEngine.PlaySound(AlarmSoundBox.SelectedIndex);
         }
+        catch (ArgumentException) { }
         catch (Exception ex)
         {
-            DialogBox.Show("Error trying to play sound. " + ex.Message);
+            DialogBox.Show("Error trying to play sound. " + ex.Message + ex.GetType());
         }
     }
 

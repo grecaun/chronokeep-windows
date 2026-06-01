@@ -1084,30 +1084,20 @@ namespace Chronokeep.UI
                     Alarm.SaveAlarm(theEvent!.Identifier, database, alarm);
                     string soundFile = Environment.CurrentDirectory;
                     int sound = alarm.AlarmSound;
-                    // Any value not between 1-5 (inclusive both) is defined to be the default sound.
-                    if (sound < 1 || sound > 5)
+                    // Any value not between 1-10 (inclusive both) is defined to be the default sound.
+                    if (sound < 1 || sound > 11)
                     {
                         // If for some reason we can't parse the value into integer, set it to 1.
                         if (!int.TryParse(database.GetAppSetting(Constants.Settings.ALARM_SOUND)!.Value, out sound))
                         {
-                            sound = 1;
+                            sound = 0;
                         }
                     }
-                    soundFile += sound switch
+                    else
                     {
-                        2 => "\\Sounds\\alert-2.wav",
-                        3 => "\\Sounds\\alert-3.wav",
-                        4 => "\\Sounds\\alert-4.wav",
-                        5 => "\\Sounds\\alert-5.wav",
-                        6 => "\\Sounds\\emily-runner-here.wav",
-                        7 => "\\Sounds\\emily-runner-arrived.wav",
-                        8 => "\\Sounds\\emily-alert-runner-here.wav",
-                        9 => "\\Sounds\\michael-runner-here.wav",
-                        10 => "\\Sounds\\michael-runner-arrived.wav",
-                        11 => "\\Sounds\\michael-alert-runner-here.wav",
-                        _ => "\\Sounds\\alert-1.wav",
-                    };
-                    // Play the sound. -- TODO --
+                        sound -= 1; // Sound in the 1-11 range is off by 1.
+                    }
+                    AudioPlaybackEngine.PlaySound(sound);
                 }
                 if (CurrentPage is TimingPage page)
                 {

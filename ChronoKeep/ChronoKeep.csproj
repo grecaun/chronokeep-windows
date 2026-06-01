@@ -179,15 +179,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.0.3" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.0.3" />
+    <PackageReference Include="Avalonia" Version="12.0.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.0.4" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.0.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.3" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.3" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />
-    <PackageReference Include="Hardware.Info" Version="110.0.0" />
+    <PackageReference Include="Hardware.Info" Version="110.0.0.1" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.18.0" />
-    <PackageReference Include="Sentry" Version="6.5.0" />
+    <PackageReference Include="NAudio" Version="2.3.0" />
+    <PackageReference Include="Sentry" Version="6.6.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
     <PackageReference Include="System.IO.Ports" Version="10.0.8" />
     <PackageReference Include="Twilio" Version="7.14.9" />
