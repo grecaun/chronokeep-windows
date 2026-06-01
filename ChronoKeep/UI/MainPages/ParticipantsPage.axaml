@@ -187,28 +187,94 @@
                   DoubleTapped="ParticipantsList_DoubleTapped"
                   >
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Distance" Binding="{Binding Distance}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="First" Binding="{Binding FirstName}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Last" Binding="{Binding LastName}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Gender" Binding="{Binding Gender}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Birthday" Binding="{Binding Birthdate}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Goodies" Binding="{Binding Apparel}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Division" Binding="{Binding Division}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Mobile" Binding="{Binding Mobile}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="EC Name" Binding="{Binding ECName}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="EC Phone" Binding="{Binding ECPhone}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Anon" Binding="{Binding PrettyAnonymous}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Comments" Binding="{Binding Comments}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Other" Binding="{Binding Other}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Email" Binding="{Binding Email}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Street" Binding="{Binding Street}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Apt" Binding="{Binding Street2}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="City" Binding="{Binding City}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="State" Binding="{Binding State}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Zip" Binding="{Binding Zip}" x:DataType="objects:Participant"/>
-                <DataGridTextColumn Header="Country" Binding="{Binding Country}" x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Bib"
+                                    Binding="{Binding Bib}"
+                                    Width="60"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Distance"
+                                    Binding="{Binding Distance}"
+                                    Width="120"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="First"
+                                    Binding="{Binding FirstName}"
+                                    Width="100"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Last"
+                                    Binding="{Binding LastName}"
+                                    Width="170"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Gender"
+                                    Binding="{Binding Gender}"
+                                    Width="80"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Birthday"
+                                    Binding="{Binding Birthdate}"
+                                    Width="105"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Goodies"
+                                    Binding="{Binding Apparel}"
+                                    Width="155"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Division"
+                                    Binding="{Binding Division}"
+                                    Width="155"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Phone"
+                                    Binding="{Binding Phone}"
+                                    Width="130"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Mobile"
+                                    Binding="{Binding Mobile}"
+                                    Width="130"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="EC Name"
+                                    Binding="{Binding ECName}"
+                                    Width="155"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="EC Phone"
+                                    Binding="{Binding ECPhone}"
+                                    Width="155"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Anon"
+                                    Binding="{Binding PrettyAnonymous}"
+                                    Width="40"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Comments"
+                                    Binding="{Binding Comments}"
+                                    Width="205"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Other"
+                                    Binding="{Binding Other}"
+                                    Width="155"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Email"
+                                    Binding="{Binding Email}"
+                                    Width="205"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Street"
+                                    Binding="{Binding Street}"
+                                    Width="180"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Apt"
+                                    Binding="{Binding Street2}"
+                                    Width="55"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="City"
+                                    Binding="{Binding City}"
+                                    Width="125"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="State"
+                                    Binding="{Binding State}"
+                                    Width="55"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Zip"
+                                    Binding="{Binding Zip}"
+                                    Width="75"
+                                    x:DataType="objects:Participant"/>
+                <DataGridTextColumn Header="Country"
+                                    Binding="{Binding Country}"
+                                    Width="65"
+                                    x:DataType="objects:Participant"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
