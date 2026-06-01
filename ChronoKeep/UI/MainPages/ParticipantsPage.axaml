@@ -13,7 +13,7 @@
         <Style Selector="Button.part">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Height" Value="35"/>
-            <Setter Property="Margin" Value="10,10,10,5"/>
+            <Setter Property="Margin" Value="10,0,10,5"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
         </Style>
         <Style Selector="DataGrid">
@@ -131,10 +131,9 @@
                 </ComboBox>
                 <TextBox 
                     Name="SearchBox"
-                    Margin="10,0,10,0"
+                    Margin="10,0,10,5"
                     TextChanged="SearchBox_TextChanged"
-                    FontSize="16" 
-                    Height="45"
+                    FontSize="16"
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
                     PlaceholderText="Search"
