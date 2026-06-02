@@ -8,7 +8,6 @@
         WindowStartupLocation="CenterScreen"
         Title="Set Wave Times"
         Width="300"
-        Height="300"
         CanResize="False"
         SizeToContent="Height"
         Closing="Window_Closing">

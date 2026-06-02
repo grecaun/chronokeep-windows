@@ -45,7 +45,6 @@ public partial class ManualEntryWindow : Window
         this.MinHeight = 275;
         this.MinWidth = 300;
         this.Width = 300;
-        this.Height = 320;
         this.Topmost = true;
         this.window = window;
         this.database = database;
