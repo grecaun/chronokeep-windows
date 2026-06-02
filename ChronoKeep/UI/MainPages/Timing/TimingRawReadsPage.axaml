@@ -25,12 +25,20 @@
         <Style Selector="DataGrid">
             <Setter Property="IsReadOnly" Value="True"/>
             <Setter Property="SelectionMode" Value="Extended"/>
-            <Setter Property="GridLinesVisibility" Value="All"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
 			<Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="CanUserResizeColumns" Value="True"/>
             <Setter Property="CanUserSortColumns" Value="False"/>
             <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+        <Style Selector="DataGridCell">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="FontSize" Value="12"/>
         </Style>
     </UserControl.Styles>
 
@@ -41,15 +49,15 @@
         </Grid.RowDefinitions>
         <DataGrid Grid.Row="0" Name="updateListView">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Box" Binding="{Binding Box}" MinWidth="80" x:DataType="objects:ChipRead"/>
-                <DataGridTextColumn Header="Location" Binding="{Binding LocationName}" MinWidth="80" x:DataType="objects:ChipRead"/>
-                <DataGridTextColumn Header="Chip" Binding="{Binding ChipNumber}" MinWidth="120" x:DataType="objects:ChipRead"/>
-                <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="70" x:DataType="objects:ChipRead"/>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" MinWidth="140" x:DataType="objects:ChipRead"/>
-                <DataGridTextColumn Header="Clock" Binding="{Binding TimeString}" MinWidth="170" x:DataType="objects:ChipRead"/>
-                <DataGridTextColumn Header="Net Time" Binding="{Binding NetTime}" MinWidth="100" x:DataType="objects:ChipRead"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding StatusName}" MinWidth="100" x:DataType="objects:ChipRead"/>
-                <DataGridTextColumn Header="Type" Binding="{Binding TypeName}" MinWidth="100" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Box" Binding="{Binding Box}" Width="80" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Location" Binding="{Binding LocationName}" Width="80" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Chip" Binding="{Binding ChipNumber}" Width="120" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" Width="70" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="140" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Clock" Binding="{Binding TimeString}" Width="170" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Net Time" Binding="{Binding NetTime}" Width="100" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding StatusName}" Width="100" x:DataType="objects:ChipRead"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding TypeName}" Width="100" x:DataType="objects:ChipRead"/>
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">

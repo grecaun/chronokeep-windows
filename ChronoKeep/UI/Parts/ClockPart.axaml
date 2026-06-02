@@ -1,7 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="using:Chronokeep.UI.Parts"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="450"
              x:Class="Chronokeep.UI.Parts.ClockPart">
@@ -13,80 +12,85 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
     </UserControl.Styles>
-<StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
-    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-        <ToggleSwitch Name="enabledSwitch"
-                      Height="35"
-                      OnContent=""
-                      OffContent=""
-                      Margin="0,-7,-7,-7"
-                      VerticalAlignment="Center"/>
-        <TextBox Name="nameBlock"
-                 VerticalAlignment="Center"
-                 Width="120"
-                 Margin="5"/>
-        <TextBox Name="urlBlock"
-                 Width="200"
-                 Margin="5"
-                 VerticalAlignment="Center"/>
-        <Button Name="lockedSwitch"
-                Click="LockedChanged"
-                Margin="5"
-                Height="35"
-                IsEnabled="False"
-                VerticalAlignment="Center">
-            <Panel>
-                <PathIcon IsVisible="{Binding IsLocked}" Data="{StaticResource lock_regular}" x:DataType="local:ClockPart"/>
-                <PathIcon IsVisible="{Binding IsOpen}" Data="{StaticResource unlock_regular}" x:DataType="local:ClockPart"/>
-            </Panel>
-        </Button>
-        <Label VerticalAlignment="Center">
-            <PathIcon Data="{StaticResource lightbulb_regular}"/>
-        </Label>
-        <ComboBox Name="brightnessBox"
-                  SelectionChanged="BrightnessChanged"
-                  Height="35"
-                  Margin="5"
-                  IsEnabled="False"
-                  VerticalAlignment="Center">
-            <ComboBoxItem Content="1"/>
-            <ComboBoxItem Content="2"/>
-            <ComboBoxItem Content="3"/>
-            <ComboBoxItem Content="4"/>
-            <ComboBoxItem Content="5"/>
-            <ComboBoxItem Content="6"/>
-            <ComboBoxItem Content="7"/>
-            <ComboBoxItem Content="8"/>
-            <ComboBoxItem Content="9"/>
-            <ComboBoxItem Content="10"/>
-            <ComboBoxItem Content="11"/>
-            <ComboBoxItem Content="12"/>
-            <ComboBoxItem Content="13"/>
-            <ComboBoxItem Content="14"/>
-            <ComboBoxItem Content="15"/>
-        </ComboBox>
-        <Button Name="Delete"
-                Click="Delete_Click"
-                Height="35"
-                Margin="5">
-            <PathIcon Data="{StaticResource delete_regular}"/>
-        </Button>
-    </StackPanel>
-    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-        <DatePicker Name="CountDatePicker"
+    <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <ToggleSwitch Name="EnabledSwitch"
+                          Height="35"
+                          OnContent=""
+                          OffContent=""
+                          Margin="0,-7,-7,-7"
+                          VerticalAlignment="Center"/>
+            <TextBox Name="NameBlock"
+                     VerticalAlignment="Center"
+                     Width="120"
+                     Margin="5"/>
+            <TextBox Name="UrlBlock"
+                     Width="200"
+                     Margin="5"
+                     VerticalAlignment="Center"/>
+            <Button Name="LockedSwitch"
+                    Click="LockedChanged"
                     Margin="5"
-                    Width="230"
-                    Height="35"
-                    IsEnabled="False"/>
-        <MaskedTextBox Name="countTimeBox"
-                       Mask="00:00:00"
-                       Height="35"
-                       Width="80"
-                       VerticalAlignment="Center"
-                       TextAlignment="Center"/>
-        <Button Name="Start" Height="5" Margin="5" Click="Start_Click">
-            <PathIcon Data="{StaticResource stop_regular}"/>
-        </Button>
+                    IsEnabled="False"
+                    VerticalAlignment="Center">
+                <Grid>
+                    <PathIcon Name="UnlockedImage" Data="{StaticResource unlock_regular}"/>
+                    <PathIcon Name="LockedImage" IsVisible="False" Data="{StaticResource lock_regular}"/>
+                </Grid>
+            </Button>
+            <Label VerticalAlignment="Center">
+                <PathIcon Data="{StaticResource lightbulb_regular}"/>
+            </Label>
+            <ComboBox Name="BrightnessBox"
+                      SelectionChanged="BrightnessChanged"
+                      Margin="5"
+                      IsEnabled="False"
+                      VerticalAlignment="Center">
+                <ComboBoxItem Content="1"/>
+                <ComboBoxItem Content="2"/>
+                <ComboBoxItem Content="3"/>
+                <ComboBoxItem Content="4"/>
+                <ComboBoxItem Content="5"/>
+                <ComboBoxItem Content="6"/>
+                <ComboBoxItem Content="7"/>
+                <ComboBoxItem Content="8"/>
+                <ComboBoxItem Content="9"/>
+                <ComboBoxItem Content="10"/>
+                <ComboBoxItem Content="11"/>
+                <ComboBoxItem Content="12"/>
+                <ComboBoxItem Content="13"/>
+                <ComboBoxItem Content="14"/>
+                <ComboBoxItem Content="15"/>
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <MaskedTextBox Name="CountDatePicker"
+                           Mask="90/90/0000"
+                           Margin="2"
+                           IsEnabled="False"/>
+            <MaskedTextBox Name="CountTimeBox"
+                           Mask="00:00:00"
+                           Margin="2"
+                           VerticalAlignment="Center"
+                           TextAlignment="Center"/>
+            <Button Name="Start" Margin="2" Click="Start_Click">
+                <PathIcon Data="{StaticResource play_regular}"/>
+            </Button>
+            <Button Name="Stop" Margin="2" Click="Stop_Click">
+                <PathIcon Data="{StaticResource stop_regular}"/>
+            </Button>
+            <Button Name="GetTime" Margin="2" Click="GetTime_Click">
+                <PathIcon Data="{StaticResource clock_regular}"/>
+            </Button>
+            <Button Name="SetTime" Margin="2" Click="SetTime_Click">
+                <PathIcon Data="{StaticResource wrench_regular}"/>
+            </Button>
+            <Button Name="Refresh" Margin="2" Click="Refresh_Click">
+                <PathIcon Data="{StaticResource arrow_sync_regular}"/>
+            </Button>
+            <Button Name="Delete" Margin="2" Click="Delete_Click">
+                <PathIcon Data="{StaticResource delete_regular}"/>
+            </Button>
+        </StackPanel>
     </StackPanel>
-</StackPanel>
 </UserControl>

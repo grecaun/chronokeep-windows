@@ -40,7 +40,7 @@ public partial class ClockControl : Window
         return theOne;
     }
 
-    private void RemoveClock(Chronoclock clock)
+    internal void RemoveClock(Chronoclock clock)
     {
         database.RemoveClocks([clock]);
         ClockDict.Remove(clock.Identifier);
@@ -50,19 +50,24 @@ public partial class ClockControl : Window
     private void UpdateView()
     {
         Log.D("UI.Timing.ClockControl", "UpdateView");
-        foreach (ClockPart? clItem in clockListView.Items)
+        foreach (object? clItem in clockListView.Items.Cast<ClockPart?>())
         {
-            Chronoclock clock = clItem!.GetUpdatedClock();
-            ClockDict[clock.Identifier] = clock;
+            if (clItem is ClockPart clPart)
+            {
+                Chronoclock clock = clPart.GetUpdatedClock();
+                ClockDict[clock.Identifier] = clock;
+            }
         }
         clockListView.Items.Clear();
+        Event? theEvent = database.GetCurrentEvent();
+        if (theEvent == null) { return; }
         foreach (Chronoclock clock in ClockDict.Values)
         {
-            clockListView.Items.Add(new ClockPart(clock, this, database.GetCurrentEvent()!));
+            clockListView.Items.Add(new ClockPart(clock, this, theEvent));
         }
     }
 
-    private void UpdateTime(string time)
+    internal void UpdateTime(string time)
     {
         TimeLabel.Text = string.Format("Clock time is {0}", time);
         TimeLabel.IsVisible = true;
