@@ -5,14 +5,13 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Chronokeep.UI.Timing.Windows.EditRawReadsWindow"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         Title="Edit"
-        Height="240"
         Width="250"
         CanResize="False"
+        SizeToContent="Height"
         Closed="Window_Closed">
-    <Grid Grid.Row="1" HorizontalAlignment="Center">
+    <Grid Margin="0,30,0,0" HorizontalAlignment="Center">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="140"/>

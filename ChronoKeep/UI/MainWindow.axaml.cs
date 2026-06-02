@@ -232,7 +232,11 @@ namespace Chronokeep.UI
                 StopRegistration();
             }
             catch { }
-            httpServer?.Stop();
+            try
+            {
+                httpServer?.Stop();
+            }
+            catch { }
             foreach (Window w in openWindows)
             {
                 try
@@ -244,8 +248,16 @@ namespace Chronokeep.UI
                     Log.D("UI.MainWindow", "Oh well!");
                 }
             }
-            CurrentPage?.Closing();
-            TimingUpdater.Stop();
+            try
+            {
+                CurrentPage?.Closing();
+            }
+            catch { }
+            try
+            {
+                TimingUpdater.Stop();
+            }
+            catch { }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -869,19 +881,27 @@ namespace Chronokeep.UI
 
         public void TimingSystemDisconnected(TimingSystem system)
         {
-            Application.Current!.Dispatcher.Invoke(new Action(delegate ()
+            try
             {
-                if (system.SystemInterface != null)
+                Application.Current!.Dispatcher.Invoke(new Action(delegate ()
                 {
-                    if (!system.SystemInterface.WasShutdown())
+                    if (system.SystemInterface != null)
                     {
-                        DialogBox.Show(string.Format("Reader at {0} has unexpectedly disconnected. IP Address was {1}.", system.LocationName, system.IPAddress));
+                        if (!system.SystemInterface.WasShutdown())
+                        {
+                            DialogBox.Show(string.Format("Reader at {0} has unexpectedly disconnected. IP Address was {1}.", system.LocationName, system.IPAddress));
+                        }
                     }
-                }
-                system.Status = SYSTEM_STATUS.DISCONNECTED;
-                UpdateTiming();
-                announcerWindow?.UpdateView();
-            }));
+                    system.Status = SYSTEM_STATUS.DISCONNECTED;
+                    UpdateTiming();
+                    announcerWindow?.UpdateView();
+                }));
+            }
+            catch (TaskCanceledException) { }
+            catch (Exception e)
+            {
+                Log.E("UI.MainWindow", string.Format("Exception occurred trying to update disconnected timing system. {0}", e));
+            }
         }
 
         public void NotifyTimingWorker()

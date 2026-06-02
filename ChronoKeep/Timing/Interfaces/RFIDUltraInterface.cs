@@ -313,7 +313,7 @@ namespace Chronokeep.Timing.Interfaces
 
                     timeList.Clear();
                     DateTime timeDT = DateTime.ParseExact(match.Groups[1].Value, "H:m:s d-M-yyyy", CultureInfo.CurrentCulture);
-                    timeList.Add(timeDT.ToString("dd MMM yyyy  HH:mm:ss"));
+                    timeList.Add(timeDT.ToString("dd MMM yyyy HH:mm:ss"));
                 }
                 // If "S=[...]" then status
                 else if (Status().IsMatch(message))

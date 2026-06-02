@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.Timing.Interfaces;
 using Chronokeep.UI.Parts;
@@ -10,9 +11,10 @@ namespace Chronokeep.UI.Timing.Windows;
 
 public partial class RewindWindow : Window
 {
+    private readonly ITimingPage parent;
     private readonly TimingSystem system;
 
-    public RewindWindow(TimingSystem system)
+    public RewindWindow(TimingSystem system, ITimingPage parent)
     {
         InitializeComponent();
         this.MinWidth = 0;
@@ -20,6 +22,7 @@ public partial class RewindWindow : Window
         this.SizeToContent = SizeToContent.Height;
         this.Width = 400;
         this.system = system;
+        this.parent = parent;
         String dateStr = DateTime.Now.ToString("MM/dd/yyyy");
         FromDate.Text = dateStr;
         ToDate.Text = dateStr;
@@ -37,7 +40,10 @@ public partial class RewindWindow : Window
         return this.system.Equals(timingSystem);
     }
 
-    private void Window_Closing(object sender, WindowClosingEventArgs e) { }
+    private void Window_Closing(object sender, WindowClosingEventArgs e)
+    {
+        parent.CloseRewindWindow();
+    }
 
     private void SetYesterday_Click(object sender, RoutedEventArgs e)
     {

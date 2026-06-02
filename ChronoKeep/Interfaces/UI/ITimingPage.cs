@@ -15,7 +15,9 @@ namespace Chronokeep.Interfaces.UI
         public void UpdateView();
         public void SetAllTimingSystemsToTime(DateTime date, bool now);
         public void OpenRewindWindow(TimingSystem reader);
+        public void CloseRewindWindow();
         public void OpenTimeWindow(TimingSystem reader);
+        public void CloseTimeWindow();
         public bool ConnectSystem(TimingSystem reader);
         public bool DisconnectSystem(TimingSystem reader);
         public void RemoveSystem(TimingSystem reader);

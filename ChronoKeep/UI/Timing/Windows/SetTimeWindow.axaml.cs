@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System;
@@ -15,10 +16,6 @@ public partial class SetTimeWindow : Window
         InitializeComponent();
         this.parent = parent;
         this.timingSystem = timingSystem;
-        this.MinHeight = 0;
-        this.MinWidth = 0;
-        this.Width = 400;
-        this.SizeToContent = SizeToContent.Height;
     }
 
     public bool IsTimingSystem(TimingSystem timingSystem)
@@ -30,18 +27,23 @@ public partial class SetTimeWindow : Window
     {
         TimeLabel.Text = string.Format("Reader time is {0}", timingSystem.SystemTime);
         CurrentTimeLabel.Text = string.Format("System time is {0}", DateTime.Now.ToString("dd MMM yyyy HH:mm:ss"));
+        TimeLabel.IsVisible = true;
+        CurrentTimeLabel.IsVisible = true;
     }
 
-    private void Window_Closing(object sender, WindowClosingEventArgs e) { }
+    private void Window_Closing(object sender, WindowClosingEventArgs e)
+    {
+        parent.CloseTimeWindow();
+    }
 
-    private void Check_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Check_Click(object sender, RoutedEventArgs e)
     {
         timingSystem.SystemInterface!.GetTime();
     }
 
-    private void Set_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Set_Click(object sender, RoutedEventArgs e)
     {
-        if (DateTime.TryParse(string.Format("{0} {1}", SpecificDateBox.SelectedDate, SpecificTimeBox.Text!.Replace('_', '0')), out DateTime alternateDate) == false)
+        if (DateTime.TryParse(string.Format("{0} {1}", SpecificDateBox.Text!.Replace('_', '0'), SpecificTimeBox.Text!.Replace('_', '0')), out DateTime alternateDate) == false)
         {
             alternateDate = DateTime.Now;
         }
@@ -59,8 +61,8 @@ public partial class SetTimeWindow : Window
         }
     }
 
-    private void Done_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Done_Click(object sender, RoutedEventArgs e)
     {
-        this.Close();
+        Close();
     }
 }

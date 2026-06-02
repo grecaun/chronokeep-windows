@@ -92,7 +92,7 @@ namespace Chronokeep.Timing
                     else
                     {
                         TimingSystemDict.Remove(sock);
-                        if (!TimingSystemDict.Values.Contains(system))
+                        if (!TimingSystemDict.ContainsValue(system))
                         {
                             system.Status = SYSTEM_STATUS.DISCONNECTED;
                         }

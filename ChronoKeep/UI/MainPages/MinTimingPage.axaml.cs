@@ -242,16 +242,23 @@ public partial class MinTimingPage : UserControl, IMainPage, ITimingPage
         Log.D("UI.MainPages.TimingPage", "Opening Set Time Window.");
         timeWindow = new(this, system);
         timeWindow.ShowDialog((Window)mWindow);
+    }
+
+    public void CloseTimeWindow()
+    {
         timeWindow = null;
     }
 
     public void OpenRewindWindow(TimingSystem system)
     {
         Log.D("UI.MainPages.TimingPage", "Opening Rewind Window.");
-        rewindWindow = new(system);
+        rewindWindow = new(system, this);
         rewindWindow.ShowDialog((Window)mWindow);
-        rewindWindow = null;
+    }
 
+    public void CloseRewindWindow()
+    {
+        rewindWindow = null;
     }
 
     public void SetAllTimingSystemsToTime(DateTime time, bool now)
