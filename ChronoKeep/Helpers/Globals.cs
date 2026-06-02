@@ -69,46 +69,6 @@ namespace Chronokeep.Helpers
             }
         }
 
-        public class ReaderMessage : IComparable
-        {
-            public SeverityLevel Severity;
-            public RemoteNotification Message = new();
-            public bool Notified = false;
-            public string SystemName = "";
-            public string Address = "";
-
-            public enum SeverityLevel
-            {
-                High,
-                Moderate,
-                Low
-            }
-
-            public string Who { get => SystemName; }
-            public string Where { get => Address; }
-            public string When { get => Message.When; }
-            public string Information { get => PortalNotification.GetRemoteNotificationMessage(Message.Type); }
-            public string DialogBoxString { get => PortalNotification.GetRemoteNotificationMessage(SystemName, Address, Message); }
-            public string SeverityString { get => Severity == SeverityLevel.High ? "High" : Severity == SeverityLevel.Moderate ? "Moderate" : "Low"; }
-            public string Background { get => Severity == SeverityLevel.High ? "#3FFF0000" : Severity == SeverityLevel.Moderate ? "#4FF75605" : "#3FF7CF05"; }
-
-            public int CompareTo(object? other)
-            {
-                if (other is not ReaderMessage) return -1;
-                if (DateTime.TryParse(Message.When, out DateTime thisWhen)
-                    && DateTime.TryParse(((ReaderMessage)other).Message.When, out DateTime otherWhen))
-                {
-                    return thisWhen.CompareTo(otherWhen);
-                }
-                return Message.Type.CompareTo(((ReaderMessage)other).Message.Type);
-            }
-
-            public bool Equals(ReaderMessage other)
-            {
-                return Severity == other.Severity && When.Equals(other.When, StringComparison.Ordinal) && Address.Equals(other.Address, StringComparison.Ordinal) && Message.Type.Equals(other.Message.Type, StringComparison.Ordinal);
-            }
-        }
-
         private static readonly Dictionary<(string, RemoteNotification), ReaderMessage> readerMessages = [];
         private static readonly Lock readerMessageLock = new();
 
@@ -198,6 +158,45 @@ namespace Chronokeep.Helpers
                 return true;
             }
             return false;
+        }
+    }
+    public class ReaderMessage : IComparable
+    {
+        public SeverityLevel Severity;
+        public RemoteNotification Message = new();
+        public bool Notified = false;
+        public string SystemName = "";
+        public string Address = "";
+
+        public enum SeverityLevel
+        {
+            High,
+            Moderate,
+            Low
+        }
+
+        public string Who { get => SystemName; }
+        public string Where { get => Address; }
+        public string When { get => Message.When; }
+        public string Information { get => PortalNotification.GetRemoteNotificationMessage(Message.Type); }
+        public string DialogBoxString { get => PortalNotification.GetRemoteNotificationMessage(SystemName, Address, Message); }
+        public string SeverityString { get => Severity == SeverityLevel.High ? "High" : Severity == SeverityLevel.Moderate ? "Moderate" : "Low"; }
+        public string Background { get => Severity == SeverityLevel.High ? "#3FFF0000" : Severity == SeverityLevel.Moderate ? "#4FF75605" : "#3FF7CF05"; }
+
+        public int CompareTo(object? other)
+        {
+            if (other is not ReaderMessage) return -1;
+            if (DateTime.TryParse(Message.When, out DateTime thisWhen)
+                && DateTime.TryParse(((ReaderMessage)other).Message.When, out DateTime otherWhen))
+            {
+                return thisWhen.CompareTo(otherWhen);
+            }
+            return Message.Type.CompareTo(((ReaderMessage)other).Message.Type);
+        }
+
+        public bool Equals(ReaderMessage other)
+        {
+            return Severity == other.Severity && When.Equals(other.When, StringComparison.Ordinal) && Address.Equals(other.Address, StringComparison.Ordinal) && Message.Type.Equals(other.Message.Type, StringComparison.Ordinal);
         }
     }
 }

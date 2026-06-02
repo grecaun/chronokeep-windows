@@ -12,7 +12,6 @@
              >
     <UserControl.Styles>
         <Style Selector="Button.tim">
-            <Setter Property="Height" Value="35"/>
             <Setter Property="Margin" Value="0,5,5,0"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
         </Style>
@@ -510,20 +509,6 @@
                             Margin="5,0,0,0"
                             VerticalAlignment="Center"
                             />
-                        <Button
-                            DockPanel.Dock="Right"
-                            Name="ReaderMessageButton"
-                            Click="ReaderMessageButton_Click"
-                            IsVisible="False"
-                            Margin="0,0,-10,0"
-                            Background="Orange"
-                            CornerRadius="30"
-                            >
-                            <TextBlock
-                                Name="ReaderMessageNumberBox"
-                                Text="0"
-                                />
-                        </Button>
                         <ToggleSwitch 
                             DockPanel.Dock="Right"
                             Name="RemoteControllerSwitch" 
@@ -533,6 +518,16 @@
                             IsVisible="False"
                             OffContent=""
                             OnContent=""
+                            />
+                        <Button
+                            DockPanel.Dock="Right"
+                            Name="ReaderMessageButton"
+                            Click="ReaderMessageButton_Click"
+                            IsVisible="False"
+                            Margin="0,0,10,0"
+                            Background="Orange"
+                            CornerRadius="30"
+                            Content="0"
                             />
                         <TextBlock 
                             Name="RemoteErrorsBlock"
@@ -547,7 +542,7 @@
                             Content="Remote Readers" 
                             Click="RemoteReadersButton_Click"
                             Classes="tim"
-                            Margin="0,0,10,0"
+                            Margin="0,0,5,0"
                             IsVisible="False"
                             />
                     </DockPanel>

@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:helpers="using:Chronokeep.Helpers"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Chronokeep.UI.Timing.Notifications.ReaderNotificationWindow"
@@ -8,23 +9,56 @@
         ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         Title="Change Event"
-        Height="400"
         Width="700"
         MinWidth="700"
+        MaxHeight="800"
         Topmost="True"
+        SizeToContent="Height"
         Closing="Window_Closing">
     <StackPanel Margin="0,30,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
         <ListBox Name="notificationsList"
-                 Margin="10,0"
+                 Margin="0,5"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 Background="Transparent"/>
+                 Background="Transparent">
+            <ListBox.ItemTemplate>
+               <DataTemplate x:DataType="helpers:ReaderMessage">
+                    <StackPanel Orientation="Horizontal" Background="{Binding Background}">
+                        <TextBlock Text="{Binding Who}"
+                                   Width="60"
+                                   Margin="5,10"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontSize="14"/>
+                        <TextBlock Text="{Binding Where}"
+                                   Width="70"
+                                   Margin="5,10"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontSize="14"/>
+                        <TextBlock Text="{Binding When}"
+                                   Width="150"
+                                   Margin="5,10"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontSize="14"/>
+                        <TextBlock Text="{Binding Information}"
+                                   Width="380"
+                                   Margin="5,10"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   FontSize="14"/>
+                    </StackPanel>
+                </DataTemplate> 
+            </ListBox.ItemTemplate>
+        </ListBox>
         <Button Name="cancelButton"
                 Content="Done"
                 Click="CancelButton_Click"
                 Height="35"
                 Width="150"
                 FontSize="16"
-                Margin="10,-5,10,0"
+                Margin="10,5,10,10"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"/>
     </StackPanel>

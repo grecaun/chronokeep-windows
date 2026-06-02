@@ -27,11 +27,11 @@ public partial class ReaderNotificationWindow : Window
     {
         List<ReaderMessage> messages = GetReaderMessages();
         messages.Sort();
-        notificationsList.ItemsSource = messages;
         foreach (ReaderMessage msg in messages)
         {
             msg.Notified = true;
         }
+        notificationsList.ItemsSource = messages;
         UpdateReaderMessages(messages);
     }
 
@@ -43,6 +43,6 @@ public partial class ReaderNotificationWindow : Window
     private void CancelButton_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.Timing.Notifications.ReaderNotificationWindow", "Done button clicked.");
-        this.Close();
+        Close();
     }
 }

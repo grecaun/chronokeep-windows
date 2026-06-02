@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Chronokeep.Constants;
@@ -327,12 +328,21 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (readerMsgs.Count > 0)
         {
             ReaderMessageButton.IsVisible = true;
-            ReaderMessageNumberBox.Text = readerMsgs.FindAll(x => !x.Notified).Count.ToString();
+            int count = readerMsgs.FindAll(x => !x.Notified).Count;
+            ReaderMessageButton.Content = count.ToString();
+            if (count > 0)
+            {
+                ReaderMessageButton.Background = (SolidColorBrush?)Resources["AlertColor"] ?? Brush.Parse("Orange");
+            }
+            else
+            {
+                ReaderMessageButton.Background = (SolidColorBrush?)Resources["LightPrimaryColor"] ?? Brush.Parse("LightBlue");
+            }
         }
         else
         {
             ReaderMessageButton.IsVisible = false;
-            ReaderMessageNumberBox.Text = 0.ToString();
+            ReaderMessageButton.Content = 0.ToString();
         }
 
         if (alreadyRecalculating)
@@ -506,12 +516,21 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (readerMsgs.Count > 0)
         {
             ReaderMessageButton.IsVisible = true;
-            ReaderMessageNumberBox.Text = readerMsgs.FindAll(x => !x.Notified).Count.ToString();
+            int count = readerMsgs.FindAll(x => !x.Notified).Count;
+            ReaderMessageButton.Content = count.ToString();
+            if (count > 0)
+            {
+                ReaderMessageButton.Background = Brush.Parse("orange");
+            }
+            else
+            {
+                ReaderMessageButton.Background = Brush.Parse("#479ef5");
+            }
         }
         else
         {
             ReaderMessageButton.IsVisible = false;
-            ReaderMessageNumberBox.Text = 0.ToString();
+            ReaderMessageButton.Content = 0.ToString();
         }
         UpdateSubView();
         if (alreadyRecalculating)
