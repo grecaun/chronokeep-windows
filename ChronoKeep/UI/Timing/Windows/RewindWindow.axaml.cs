@@ -3,7 +3,7 @@ using Avalonia.Interactivity;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.Timing.Interfaces;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 using System;
 using System.ComponentModel;
 

@@ -4,7 +4,7 @@ using Avalonia.Interactivity;
 using Chronokeep.Helpers;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Timing.Interfaces;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 using System.Text.RegularExpressions;
 
 namespace Chronokeep.UI.Timing.ReaderSettings.Parts;

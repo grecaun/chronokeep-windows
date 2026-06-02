@@ -10,7 +10,7 @@ using Chronokeep.Timing;
 using Chronokeep.Timing.Remote;
 using Chronokeep.UI.EventWindows;
 using Chronokeep.UI.MainPages;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;

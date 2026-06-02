@@ -10,6 +10,7 @@
         SizeToContent="Height"
         Title="Link Event"
         Closing="Window_Closing"
+        Topmost="True"
         >
     <UserControl Name="APIFrame" IsTabStop="False" />
 </Window>

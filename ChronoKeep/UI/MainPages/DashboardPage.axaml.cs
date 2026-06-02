@@ -7,7 +7,7 @@ using Chronokeep.Objects;
 using Chronokeep.UI.API.Windows;
 using Chronokeep.UI.EventWindows;
 using Chronokeep.UI.MainPages.Dashboard;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 using Chronokeep.UI.UhfRfidReader;
 using System;
 using System.Collections.Generic;

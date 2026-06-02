@@ -22,7 +22,7 @@
 			<Setter Property="HorizontalAlignment" Value="Right"/>
         </Style>
     </Window.Styles>
-    <Grid Name="MainGrid">
+    <Grid Margin="0,30,0,0" Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>

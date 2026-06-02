@@ -5,23 +5,21 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Chronokeep.UI.Timing.ReaderSettings.RFIDSettings"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
-        Title="RFID Settings"
-        Width="300"
-        Height="500"
         CanResize="False"
         SizeToContent="WidthAndHeight"
+        Title=""
+        Topmost="True"
         Closed="Window_Closed">
-    <StackPanel Margin="20,10,20,20">
-        <StackPanel Name="settingsPanel" IsVisible="True" Margin="0,10,0,0">
+    <StackPanel Margin="20,30,20,20">
+        <StackPanel Name="SettingsPanel" IsVisible="True" Margin="0,10,0,0">
             <StackPanel Orientation="Horizontal" Height="45">
                 <TextBlock Text="Ultra ID"
                             Width="100"
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <Slider Name="idSlider"
+                <Slider Name="IdSlider"
                         ValueChanged="IdSlider_ValueChanged"
                         Width="200"
                         Minimum="1"
@@ -30,13 +28,13 @@
                         TickFrequency="1"
                         IsSnapToTickEnabled="True"
                         VerticalAlignment="Center"/>
-                <TextBlock Name="idDisplay"
+                <TextBlock Name="IdDisplay"
                             Text="255"
                             Width="35"
                             Margin="5,5,5,5"
                             TextAlignment="Left"
                             VerticalAlignment="Center"/>
-                <Button Name="saveID"
+                <Button Name="SaveID"
                         Click="SaveID_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
@@ -48,14 +46,14 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <ComboBox Name="chipBox"
+                <ComboBox Name="ChipBox"
                             Width="250"
                             Margin="5,5,5,5"
                             VerticalAlignment="Center">
                     <ComboBoxItem Content="Decimal" IsSelected="True" />
                     <ComboBoxItem Content="Hexadecimal" />
                 </ComboBox>
-                <Button Name="saveChip"
+                <Button Name="SaveChip"
                         Click="SaveChip_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
@@ -67,7 +65,7 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <ComboBox Name="gatingModeBox"
+                <ComboBox Name="GatingModeBox"
                             Width="250"
                             Margin="5,5,5,5"
                             VerticalAlignment="Center">
@@ -75,7 +73,7 @@
                     <ComboBoxItem Content ="Per Box" />
                     <ComboBoxItem Content ="First Time Seen"/>
                 </ComboBox>
-                <Button Name="saveGatingMode"
+                <Button Name="SaveGatingMode"
                         Click="SaveGatingMode_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
@@ -87,7 +85,7 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <Slider Name="gatingSlider"
+                <Slider Name="GatingSlider"
                         ValueChanged="GatingSlider_ValueChanged"
                         Width="200"
                         Minimum="0"
@@ -97,14 +95,14 @@
                         VerticalAlignment="Center"
                         IsSnapToTickEnabled="True"/>
                 <TextBlock
-                    Name="gatingDisplay"
+                    Name="GatingDisplay"
                     Text="20"
                     TextAlignment="Left"
                     VerticalAlignment="Center"
                     Width="35"
                     Margin="5,5,5,5"
                     />
-                <Button Name="saveGatingInterval"
+                <Button Name="SaveGatingInterval"
                         Click="SaveGatingInterval_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
@@ -116,14 +114,14 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <ComboBox Name="whenBeepBox"
+                <ComboBox Name="WhenBeepBox"
                             Width="250"
                             Margin="5,5,5,5"
                             VerticalAlignment="Center">
                     <ComboBoxItem Content="Always" IsSelected="True" />
                     <ComboBoxItem Content="Only First Seen" />
                 </ComboBox>
-                <Button Name="saveWhenBeep"
+                <Button Name="SaveWhenBeep"
                         Click="SaveWhenBeep_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
@@ -135,7 +133,7 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <ComboBox Name="volumeBox"
+                <ComboBox Name="VolumeBox"
                             Width="250"
                             Margin="5,5,5,5"
                             VerticalAlignment="Center">
@@ -143,7 +141,7 @@
                     <ComboBoxItem Content="Soft" />
                     <ComboBoxItem Content="Loud" />
                 </ComboBox>
-                <Button Name="saveVolume"
+                <Button Name="SaveVolume"
                         Click="SaveVolume_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
@@ -155,7 +153,7 @@
                             Margin="5,5,5,5"
                             TextAlignment="Right"
                             VerticalAlignment="Center"/>
-                <Slider Name="timeZoneSlider"
+                <Slider Name="TimeZoneSlider"
                         ValueChanged="TimeZoneSlider_ValueChanged"
                         Width="200"
                         Minimum="-23"
@@ -164,13 +162,13 @@
                         TickFrequency="1"
                         VerticalAlignment="Center"
                         IsSnapToTickEnabled="True"/>
-                <TextBlock Name="timeZoneDisplay"
+                <TextBlock Name="TimeZoneDisplay"
                             Text="10"
                             Width="35"
                             Margin="5,5,5,5"
                             TextAlignment="Left"
                             VerticalAlignment="Center"/>
-                <Button Name="saveTimezone"
+                <Button Name="SaveTimezone"
                         Click="SaveTimezone_Click"
                         Margin="5,5,5,5">
                     <PathIcon Data="{StaticResource save_regular}"/>
@@ -181,7 +179,7 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
                 <ToggleSwitch
-                    Name="setGPSSwitch"
+                    Name="SetGPSSwitch"
                     Click="SetGPSSwitch_Click"
                     OnContent=""
                     OffContent=""
@@ -194,7 +192,7 @@
                         Orientation="Horizontal"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
-                <ToggleSwitch Name="readingSwitch"
+                <ToggleSwitch Name="ReadingSwitch"
                                 Click="ReadingSwitch_Click"
                                 OnContent=""
                                 OffContent=""
@@ -206,7 +204,7 @@
             <StackPanel Height="45"
                         Orientation="Horizontal"
                         HorizontalAlignment="Center">
-                <Button Name="closeButton"
+                <Button Name="CloseButton"
                         Content="Close"
                         Click="CloseButton_Click"
                         Width="165"

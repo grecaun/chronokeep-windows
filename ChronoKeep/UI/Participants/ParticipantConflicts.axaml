@@ -11,6 +11,7 @@
         Title="Participant Conflicts"
         Height="450"
         Width="800"
+        Topmost="True"
         Closing="Window_Closing">
     <Window.Styles>
         <Style Selector="DataGrid">
@@ -23,7 +24,7 @@
             <Setter Property="CanUserSortColumns" Value="False"/>
         </Style>
     </Window.Styles>
-    <DataGrid Name="ParticipantsList" CanUserSortColumns="False" IsReadOnly="True">
+    <DataGrid Margin="0,30,0,0" Name="ParticipantsList" CanUserSortColumns="False" IsReadOnly="True">
         <DataGrid.Columns>
             <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" MinWidth="45" x:DataType="objects:Participant"/>
             <DataGridTextColumn Header="Distance" Binding="{Binding Distance}" MinWidth="125" x:DataType="objects:Participant"/>

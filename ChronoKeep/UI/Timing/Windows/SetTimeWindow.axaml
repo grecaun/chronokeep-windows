@@ -11,6 +11,7 @@
         Width="300"
         CanResize="False"
         SizeToContent="Height"
+        Topmost="True"
         Closing="Window_Closing">
     <StackPanel Margin="10,30,10,10"
                 VerticalAlignment="Top"

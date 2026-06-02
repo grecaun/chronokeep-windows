@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-namespace Chronokeep.UI;
+namespace Chronokeep.UI.Util;
 
 public partial class ChangeLogWindow : Window
 {

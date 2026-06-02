@@ -6,7 +6,7 @@ using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
 
@@ -133,20 +133,23 @@ public partial class ModifyParticipantWindow : Window
         AgeBox.Text = person.Age(theEvent.Date);
         bool genderFound = false;
         ComboBoxItem? otherBoxItem = null, notSpecifiedBoxItem = null;
-        foreach (ComboBoxItem? item in GenderBox.Items)
+        foreach (object? item in GenderBox.Items)
         {
-            if (person.Gender.Equals(item!.Content!.ToString()))
+            if (item is ComboBoxItem cbi)
             {
-                GenderBox.SelectedItem = item;
-                genderFound = true;
-            }
-            if (item.Content.ToString() == "Not Specified")
-            {
-                notSpecifiedBoxItem = item;
-            }
-            else if (item.Content.ToString() == "Other")
-            {
-                otherBoxItem = item;
+                if (person.Gender.Equals(cbi!.Content!.ToString()))
+                {
+                    GenderBox.SelectedItem = cbi;
+                    genderFound = true;
+                }
+                if (cbi.Content.ToString() == "Not Specified")
+                {
+                    notSpecifiedBoxItem = cbi;
+                }
+                else if (cbi.Content.ToString() == "Other")
+                {
+                    otherBoxItem = cbi;
+                }
             }
         }
         if (person.Gender.Equals("NS", StringComparison.OrdinalIgnoreCase))
@@ -261,11 +264,17 @@ public partial class ModifyParticipantWindow : Window
             }
         }
         int checkedin = 0;
-        int.TryParse(AgeBox.Text, out int age);
+        if (!int.TryParse(AgeBox.Text, out int age))
+        {
+            age = 0;
+        }
         string birthdate = BirthdayBox.Text!;
         if (age != 0 && birthdate.Length < 1)
         {
-            int.TryParse(theEvent.Date.Split('/')[2], out int year);
+            if (!int.TryParse(theEvent.Date.Split('/')[2], out int year))
+            {
+                year = 0;
+            }
             year = year < 1969 ? DateTime.Now.Year : year;
             birthdate = "1/1/" + (year - age);
         }

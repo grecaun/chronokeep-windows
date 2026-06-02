@@ -4,7 +4,7 @@ using System;
 using Chronokeep.Database;
 using Chronokeep.Objects;
 using Avalonia;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 
 namespace Chronokeep.Helpers
 {

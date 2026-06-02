@@ -8,6 +8,7 @@
         Title="AnnouncerWindow"
         Closing="Window_Closing"
         ExtendClientAreaToDecorationsHint="True"
+        Topmost="True"
         >
     <Window.Styles>
         <Style Selector="DataGrid">

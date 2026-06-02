@@ -12,8 +12,9 @@
         Height="300"
         Width="230"
         SizeToContent="Height"
+        Topmost="True"
         Closing="Window_Closing">
-    <Grid Grid.Row="1">
+    <Grid Margin="0,30,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>

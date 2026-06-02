@@ -11,6 +11,7 @@
         CanResize="False"
         Title="Participant"
         SizeToContent="Height"
+        Topmost="True"
         Closing="Window_Closing">
     <StackPanel VerticalAlignment="Center" Margin="0,30,0,0">
             <DockPanel>

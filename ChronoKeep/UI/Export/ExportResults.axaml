@@ -9,8 +9,9 @@
         Width="300"
         MaxWidth="300"
         MinWidth="300"
+        Topmost="True"
         Closing="Window_Closing">
-    <Grid>
+    <Grid Margin="0,30,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>

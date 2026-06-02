@@ -4,7 +4,7 @@ using Chronokeep.Interfaces.Timing;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.Objects.RFID;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 using Chronokeep.UI.Timing.ReaderSettings;
 using System;
 using System.Collections.Generic;

@@ -9,6 +9,7 @@
         SizeToContent="WidthAndHeight"
         Title="Remote Readers"
         Closed="Window_Closed"
+        Topmost="True"
         >
     <StackPanel Width="1100" Margin="0,30,0,0">
         <StackPanel Name="loadingPanel"

@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Chronokeep.UI.Parts;
+namespace Chronokeep.UI.Util;
 
 public partial class DialogBox : Window
 {

@@ -1,10 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
-using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Timing.Interfaces;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,20 +13,18 @@ namespace Chronokeep.UI.Timing.ReaderSettings;
 public partial class ChronokeepSettings : Window
 {
     private readonly ChronokeepInterface? reader = null;
-    private readonly IDBInterface? database = null;
 
     private bool saving = false;
 
     private Dictionary<long, Parts.ReaderSubPart> readerDict = [];
     private Dictionary<long, Parts.APIPart> apiDict = [];
 
-    internal ChronokeepSettings(ChronokeepInterface reader, IDBInterface database)
+    internal ChronokeepSettings(ChronokeepInterface reader)
     {
         InitializeComponent();
         this.MinWidth = 100;
         this.MinHeight = 100;
         this.reader = reader;
-        this.database = database;
         reader?.SendGetSettings();
     }
 
@@ -42,43 +39,44 @@ public partial class ChronokeepSettings : Window
             }
             if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.SETTINGS))
             {
-                nameBox.Text = allSettings.Name;
-                readWindowBox.Text = allSettings.ReadWindow.ToString();
-                chipTypeBox.SelectedIndex = allSettings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? 0 : 1;
-                volumeSlider.Value = allSettings.Volume * 10;
-                uploadSlider.Value = allSettings.UploadInterval;
-                soundBox.IsChecked = allSettings.PlaySound;
+                NameBox.Text = allSettings.Name;
+                ReadWindowBox.Text = allSettings.ReadWindow.ToString();
+                ChipTypeBox.SelectedIndex = allSettings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? 0 : 1;
+                VolumeSlider.Value = allSettings.Volume * 10;
+                UploadSlider.Value = allSettings.UploadInterval;
+                BeepSlider.Value = allSettings.BeepInterval;
+                SoundBox.IsChecked = allSettings.PlaySound;
                 switch (allSettings.Voice)
                 {
                     case PortalSettingsHolder.VoiceType.EMILY:
-                        voiceBox.SelectedIndex = 0;
+                        VoiceBox.SelectedIndex = 0;
                         break;
                     case PortalSettingsHolder.VoiceType.MICHAEL:
-                        voiceBox.SelectedIndex = 1;
+                        VoiceBox.SelectedIndex = 1;
                         break;
                     case PortalSettingsHolder.VoiceType.CUSTOM:
-                        voiceBox.SelectedIndex = 2;
+                        VoiceBox.SelectedIndex = 2;
                         break;
                 }
-                ntfyUrlBox.Text = allSettings.NtfyURL;
-                ntfyTopicBox.Text = allSettings.NtfyTopic;
-                ntfyUserBox.Text = allSettings.NtfyUser;
-                ntfyPassBox.Text = allSettings.NtfyPass;
-                enableNTFYSwitch.IsChecked = allSettings.EnableNTFY;
+                NtfyUrlBox.Text = allSettings.NtfyURL;
+                NtfyTopicBox.Text = allSettings.NtfyTopic;
+                NtfyUserBox.Text = allSettings.NtfyUser;
+                NtfyPassBox.Text = allSettings.NtfyPass;
+                EnableNTFYSwitch.IsChecked = allSettings.EnableNTFY;
                 if (allSettings.ScreenType == Constants.Readers.CHRONOKEEP_SCREEN_ADAFRUIT)
                 {
-                    screenPanel.IsVisible = true;
-                    screenBox.SelectedIndex = 0;
+                    ScreenPanel.IsVisible = true;
+                    ScreenBox.SelectedIndex = 0;
                 }
                 else if (allSettings.ScreenType == Constants.Readers.CHRONOKEEP_SCREEN_PCF8574T)
                 {
-                    screenPanel.IsVisible = true;
-                    screenBox.SelectedIndex = 1;
+                    ScreenPanel.IsVisible = true;
+                    ScreenBox.SelectedIndex = 1;
                 }
                 else
                 {
-                    screenPanel.IsVisible = false;
-                    screenBox.SelectedIndex = -1;
+                    ScreenPanel.IsVisible = false;
+                    ScreenBox.SelectedIndex = -1;
                 }
             }
             // add readers and apis to views
@@ -102,10 +100,10 @@ public partial class ChronokeepSettings : Window
                 }
                 var newDictionary = readerDict.Where(pair => found.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
                 readerDict = newDictionary;
-                readerListView.Items.Clear();
+                ReaderListView.Items.Clear();
                 foreach (Parts.ReaderSubPart item in readerDict.Values)
                 {
-                    readerListView.Items.Add(item);
+                    ReaderListView.Items.Add(item);
                 }
             }
             if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.APIS))
@@ -127,10 +125,10 @@ public partial class ChronokeepSettings : Window
                 }
                 var newDictionary = apiDict.Where(pair => found.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
                 apiDict = newDictionary;
-                apiListView.Items.Clear();
+                ApiListView.Items.Clear();
                 foreach (Parts.APIPart item in apiDict.Values)
                 {
-                    apiListView.Items.Add(item);
+                    ApiListView.Items.Add(item);
                 }
             }
             if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.ANTENNAS))
@@ -149,17 +147,17 @@ public partial class ChronokeepSettings : Window
             switch (allSettings.AutoUpload)
             {
                 case PortalStatus.RUNNING:
-                    autoResultsSwitch.IsEnabled = true;
-                    autoResultsSwitch.IsChecked = true;
+                    AutoResultsSwitch.IsEnabled = true;
+                    AutoResultsSwitch.IsChecked = true;
                     break;
                 case PortalStatus.UNKNOWN:
                 case PortalStatus.STOPPED:
-                    autoResultsSwitch.IsEnabled = true;
-                    autoResultsSwitch.IsChecked = false;
+                    AutoResultsSwitch.IsEnabled = true;
+                    AutoResultsSwitch.IsChecked = false;
                     break;
                 case PortalStatus.STOPPING:
-                    autoResultsSwitch.IsEnabled = false;
-                    autoResultsSwitch.IsChecked = true;
+                    AutoResultsSwitch.IsEnabled = false;
+                    AutoResultsSwitch.IsChecked = true;
                     break;
             }
         }));
@@ -178,22 +176,22 @@ public partial class ChronokeepSettings : Window
 
     private void VolumeSlider_ValueChanged(object? sender, Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (volumeSlider != null && volumeBlock != null)
+        if (VolumeSlider != null && VolumeBlock != null)
         {
-            volumeBlock.Text = volumeSlider.Value.ToString();
+            VolumeBlock.Text = VolumeSlider.Value.ToString();
         }
     }
 
     private void ReaderExpander_Changed(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Reader expander expanding/contracting.");
-        if (readerExpander.IsExpanded)
+        if (ReaderExpander.IsExpanded)
         {
-            addReaderButton.IsVisible = true;
+            AddReaderButton.IsVisible = true;
         }
         else
         {
-            addReaderButton.IsVisible = false;
+            AddReaderButton.IsVisible = false;
         }
     }
 
@@ -214,13 +212,13 @@ public partial class ChronokeepSettings : Window
     private void APIExpander_Changed(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "API expander expanding/contracting.");
-        if (apiExpander.IsExpanded)
+        if (ApiExpander.IsExpanded)
         {
-            addAPIButton.IsVisible = true;
+            AddAPIButton.IsVisible = true;
         }
         else
         {
-            addAPIButton.IsVisible = false;
+            AddAPIButton.IsVisible = false;
         }
     }
 
@@ -239,9 +237,17 @@ public partial class ChronokeepSettings : Window
 
     private void UploadSlider_ValueChanged(object? sender, Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        if (uploadSlider != null && uploadBlock != null)
+        if (UploadSlider != null && UploadBlock != null)
         {
-            uploadBlock.Text = uploadSlider.Value.ToString();
+            UploadBlock.Text = UploadSlider.Value.ToString();
+        }
+    }
+
+    private void BeepSlider_ValueChanged(object? sender, Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+    {
+        if (BeepSlider != null && BeepBlock != null)
+        {
+            BeepBlock.Text = BeepSlider.Value.ToString();
         }
     }
 
@@ -333,22 +339,23 @@ public partial class ChronokeepSettings : Window
         {
             PortalSettingsHolder sett = new()
             {
-                Name = nameBox.Text!.Trim(),
-                ReadWindow = int.Parse(readWindowBox.Text!.Trim()),
-                ChipType = chipTypeBox.SelectedIndex == 0 ? PortalSettingsHolder.ChipTypeEnum.DEC
+                Name = NameBox.Text!.Trim(),
+                ReadWindow = int.Parse(ReadWindowBox.Text!.Trim()),
+                ChipType = ChipTypeBox.SelectedIndex == 0 ? PortalSettingsHolder.ChipTypeEnum.DEC
                     : PortalSettingsHolder.ChipTypeEnum.HEX,
-                Volume = volumeSlider.Value / 10,
-                UploadInterval = (int)uploadSlider.Value,
-                PlaySound = soundBox.IsChecked == true,
-                Voice = voiceBox.SelectedIndex == 0 ? PortalSettingsHolder.VoiceType.EMILY
-                    : voiceBox.SelectedIndex == 1 ? PortalSettingsHolder.VoiceType.MICHAEL
+                Volume = VolumeSlider.Value / 10,
+                UploadInterval = (int)UploadSlider.Value,
+                BeepInterval = (int)BeepSlider.Value,
+                PlaySound = SoundBox.IsChecked == true,
+                Voice = VoiceBox.SelectedIndex == 0 ? PortalSettingsHolder.VoiceType.EMILY
+                    : VoiceBox.SelectedIndex == 1 ? PortalSettingsHolder.VoiceType.MICHAEL
                     : PortalSettingsHolder.VoiceType.CUSTOM,
-                NtfyURL = ntfyUrlBox.Text!.Trim(),
-                NtfyTopic = ntfyTopicBox.Text!.Trim(),
-                NtfyUser = ntfyUserBox.Text!.Trim(),
-                NtfyPass = ntfyPassBox.Text!.Trim(),
-                EnableNTFY = enableNTFYSwitch.IsChecked == true,
-                ScreenType = screenBox.SelectedItem != null ? (string)((ComboBoxItem)screenBox.SelectedItem).Tag! : ""
+                NtfyURL = NtfyUrlBox.Text!.Trim(),
+                NtfyTopic = NtfyTopicBox.Text!.Trim(),
+                NtfyUser = NtfyUserBox.Text!.Trim(),
+                NtfyPass = NtfyPassBox.Text!.Trim(),
+                EnableNTFY = EnableNTFYSwitch.IsChecked == true,
+                ScreenType = ScreenBox.SelectedItem != null ? (string)((ComboBoxItem)ScreenBox.SelectedItem).Tag! : ""
             };
             reader?.SendSetSettings(sett);
         }
@@ -368,11 +375,11 @@ public partial class ChronokeepSettings : Window
     private void AutoResultsSwitch_Checked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Auto upload switched.");
-        if (autoResultsSwitch.IsEnabled == false)
+        if (AutoResultsSwitch.IsEnabled == false)
         {
             return;
         }
-        if (autoResultsSwitch.IsChecked == false)
+        if (AutoResultsSwitch.IsChecked == false)
         {
             reader?.SendAutoUploadResults(Objects.ChronokeepPortal.Requests.AutoUploadQuery.STOP);
         }

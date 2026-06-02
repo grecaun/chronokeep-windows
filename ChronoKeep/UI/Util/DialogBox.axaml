@@ -3,15 +3,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
-        x:Class="Chronokeep.UI.Parts.DialogBox"
+        x:Class="Chronokeep.UI.Util.DialogBox"
         ExtendClientAreaToDecorationsHint="True"
         WindowStartupLocation="CenterScreen"
         Title=""
         Width="400"
         CanResize="False"
+        Topmost="True"
         SizeToContent="Height"
         >
-    <StackPanel VerticalAlignment="Center" Margin="0,35">
+    <StackPanel VerticalAlignment="Center" Margin="0,25,0,0">
         <StackPanel VerticalAlignment="Center"
                     HorizontalAlignment="Center">
             <TextBlock Name="MessageBox"

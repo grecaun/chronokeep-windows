@@ -17,7 +17,7 @@ using Chronokeep.Timing.API;
 using Chronokeep.Timing.Remote;
 using Chronokeep.UI.Announcer;
 using Chronokeep.UI.MainPages;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;

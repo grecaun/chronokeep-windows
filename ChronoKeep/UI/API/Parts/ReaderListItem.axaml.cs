@@ -5,7 +5,7 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
 

@@ -6,10 +6,10 @@
         x:Class="Chronokeep.UI.Timing.Windows.EditRawReadsWindow"
         ExtendClientAreaToDecorationsHint="True"
         WindowStartupLocation="CenterScreen"
-        Title="Edit"
         Width="250"
         CanResize="False"
         SizeToContent="Height"
+        Topmost="True"
         Closed="Window_Closed">
     <Grid Margin="0,30,0,0" HorizontalAlignment="Center">
         <Grid.ColumnDefinitions>

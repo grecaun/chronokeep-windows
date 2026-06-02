@@ -9,6 +9,7 @@
         SizeToContent="Height"
         Title="Edit Linked Event"
         Closing="Window_Closing"
+        Topmost="True"
         >
     <UserControl Name="EditAPIFrame" IsTabStop="False"/>
 </Window>

@@ -9,7 +9,7 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.ChipAssignment;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;

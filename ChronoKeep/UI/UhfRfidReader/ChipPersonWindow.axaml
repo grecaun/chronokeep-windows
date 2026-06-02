@@ -8,6 +8,7 @@
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         KeyUp="Window_KeyUp"
+        Topmost="True"
         Closing="Window_Closing">
     <Window.Styles>
         <Style Selector="WindowDrawnDecorations /template/ Button#PART_MaximizeButton">

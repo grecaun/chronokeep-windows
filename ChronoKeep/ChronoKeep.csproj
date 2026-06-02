@@ -135,7 +135,7 @@
     <Compile Update="UI\API\Parts\APIExpanderPart.axaml.cs">
       <DependentUpon>APIExpanderPart.axaml</DependentUpon>
     </Compile>
-    <Compile Update="UI\DownloadWindow.axaml.cs">
+    <Compile Update="UI\Util\DownloadWindow.axaml.cs">
       <DependentUpon>DownloadWindow.axaml</DependentUpon>
     </Compile>
     <Compile Update="UI\ChipAssignment\Parts\TagRangePart.axaml.cs">

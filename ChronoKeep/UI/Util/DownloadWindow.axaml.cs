@@ -2,7 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
-using Chronokeep.UI.Parts;
 using Chronokeep.Updates;
 using System;
 using System.Diagnostics;
@@ -12,7 +11,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Chronokeep.UI
+namespace Chronokeep.UI.Util
 {
     /// <summary>
     /// Interaction logic for DownloadWindow.xaml

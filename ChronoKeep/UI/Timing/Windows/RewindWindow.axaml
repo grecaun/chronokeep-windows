@@ -10,6 +10,7 @@
         Title="Rewind"
         Width="400"
         CanResize="False"
+        Topmost="True"
         Closing="Window_Closing">
     <StackPanel VerticalAlignment="Top" Margin="10,30,10,10" Grid.Row="1">
         <ProgressBar Name="busyIndicator" IsIndeterminate="True" IsVisible="False" Margin="25"/>

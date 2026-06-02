@@ -12,6 +12,7 @@
         Width="770"
         Height="450"
         MinWidth="770"
+        Topmost="True"
         Closing="Window_Closing">
     <Window.Styles>
         <Style Selector="DataGrid">

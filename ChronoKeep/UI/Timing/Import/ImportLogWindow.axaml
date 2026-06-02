@@ -9,6 +9,7 @@
         WindowStartupLocation="CenterScreen"
         Title="Load Log"
         SizeToContent="Height"
+        Topmost="True"
         Closing="Window_Closing">
     <UserControl Name="Frame" IsTabStop="False"/>
 </Window>

@@ -7,7 +7,7 @@ using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronokeepPortal.Requests;
 using Chronokeep.Objects.ChronokeepPortal.Responses;
-using Chronokeep.UI.Parts;
+using Chronokeep.UI.Util;
 using Chronokeep.UI.Timing.ReaderSettings;
 using System;
 using System.Collections.Generic;
@@ -281,6 +281,9 @@ namespace Chronokeep.Timing.Interfaces
                                             case PortalSetting.SETTING_UPLOAD_INTERVAL:
                                                 updSettings.UploadInterval = int.Parse(set.Value);
                                                 break;
+                                            case PortalSetting.SETTING_BEEP_INTERVAL:
+                                                updSettings.BeepInterval = int.Parse(set.Value);
+                                                break;
                                             case PortalSetting.SETTING_NTFY_URL:
                                                 updSettings.NtfyURL = set.Value;
                                                 break;
@@ -405,6 +408,9 @@ namespace Chronokeep.Timing.Interfaces
                                                 break;
                                             case PortalSetting.SETTING_UPLOAD_INTERVAL:
                                                 updSettings.UploadInterval = int.Parse(set.Value);
+                                                break;
+                                            case PortalSetting.SETTING_BEEP_INTERVAL:
+                                                updSettings.BeepInterval = int.Parse(set.Value);
                                                 break;
                                             case PortalSetting.SETTING_NTFY_URL:
                                                 updSettings.NtfyURL = set.Value;
@@ -800,6 +806,11 @@ namespace Chronokeep.Timing.Interfaces
             });
             settingsReq.Settings.Add(new()
             {
+                Name = PortalSetting.SETTING_BEEP_INTERVAL,
+                Value = settings.BeepInterval.ToString()!
+            });
+            settingsReq.Settings.Add(new()
+            {
                 Name = PortalSetting.SETTING_VOICE,
                 Value = settings.Voice == PortalSettingsHolder.VoiceType.EMILY ? PortalSetting.VOICE_EMILY
                     : settings.Voice == PortalSettingsHolder.VoiceType.MICHAEL ? PortalSetting.VOICE_MICHAEL
@@ -949,7 +960,7 @@ namespace Chronokeep.Timing.Interfaces
                 DialogBox.Show("Settings window already open.");
                 return;
             }
-            settingsWindow = new(this, database);
+            settingsWindow = new(this);
             window.AddWindow(settingsWindow);
             settingsWindow.Show();
         }
