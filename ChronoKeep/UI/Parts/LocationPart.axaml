@@ -65,5 +65,9 @@
               FontSize="16"
               VerticalAlignment="Center"
               HorizontalAlignment="Center"/>
+        <Panel Background="{DynamicResource BackgroundBrush}"
+               Margin="0,5,0,0"
+               Height="1"
+               HorizontalAlignment="Stretch"/>
   </StackPanel>
 </UserControl>

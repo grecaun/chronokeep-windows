@@ -245,7 +245,9 @@ public partial class DistancePart : UserControl
         OccurrencePanel.IsVisible = Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType;
         if (parent != null)
         {
-            MainPanel.Margin = new Thickness(50, 0, 0, 0);
+            MainPanel.Margin = new Thickness(50, 0);
+            MainPanel.MaxWidth = 500;
+            SepPanel.Margin = new Thickness(-50, 5, -50, 0);
         }
     }
 
