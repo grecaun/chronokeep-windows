@@ -23,6 +23,7 @@ public partial class DistanceAlternatePart : UserControl
                 Tag = d.Identifier.ToString()
             });
         }
+        Distances.SelectedIndex = 0;
     }
 
     public string NameFromFile()

@@ -129,7 +129,7 @@ public partial class ModifyParticipantWindow : Window
         BibBox.Text = person.Bib.ToString();
         FirstBox.Text = person.FirstName;
         LastBox.Text = person.LastName;
-        BirthdayBox.Text = person.Birthdate;
+        BirthdayBox.Text = DateTime.Parse(person.Birthdate).ToString("MM/dd/yyyy");
         AgeBox.Text = person.Age(theEvent.Date);
         bool genderFound = false;
         ComboBoxItem? otherBoxItem = null, notSpecifiedBoxItem = null;
@@ -268,7 +268,7 @@ public partial class ModifyParticipantWindow : Window
         {
             age = 0;
         }
-        string birthdate = BirthdayBox.Text!;
+        string birthdate = BirthdayBox.Text!.Replace('_','0');
         if (age != 0 && birthdate.Length < 1)
         {
             if (!int.TryParse(theEvent.Date.Split('/')[2], out int year))

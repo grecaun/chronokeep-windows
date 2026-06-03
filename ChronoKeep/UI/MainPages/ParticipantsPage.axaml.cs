@@ -623,11 +623,11 @@ public partial class ParticipantsPage : UserControl, IMainPage
                     IDataImporter importer;
                     if (ext == ".xlsx" || ext == ".xls")
                     {
-                        importer = new ExcelImporter(files[0].Name);
+                        importer = new ExcelImporter(files[0].TryGetLocalPath()!);
                     }
                     else
                     {
-                        importer = new CSVImporter(files[0].Name);
+                        importer = new CSVImporter(files[0].TryGetLocalPath()!);
                     }
                     importer.FetchHeaders();
                     ImportFileWindow importWindow = ImportFileWindow.NewWindow(mWindow, importer, database);

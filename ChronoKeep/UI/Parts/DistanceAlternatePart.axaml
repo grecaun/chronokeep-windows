@@ -5,18 +5,20 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chronokeep.UI.Parts.DistanceAlternatePart"
              IsTabStop="False">
-    <Grid>
+    <Grid Margin="20,2">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="150"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Column="0"
                    Name="DistanceName"
                    FontSize="18"
+                   Margin="0,0,5,0"
                    VerticalAlignment="Center"/>
         <ComboBox Grid.Column="1"
                   Name="Distances"
                   FontSize="18"
+                  HorizontalAlignment="Stretch"
                   VerticalAlignment="Center"
                   VerticalContentAlignment="Center"/>
     </Grid>

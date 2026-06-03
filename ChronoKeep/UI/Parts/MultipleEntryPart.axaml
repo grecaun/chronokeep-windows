@@ -5,7 +5,13 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chronokeep.UI.Parts.MultipleEntryPart"
              IsTabStop="False">
-    <Grid>
+    <UserControl.Styles>
+       <Style Selector="TextBlock">
+          <Setter Property="FontSize" Value="14"/>
+          <Setter Property="VerticalAlignment" Value="Center"/>
+       </Style>
+    </UserControl.Styles>
+    <Grid Margin="10,2" Height="25">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50"/>
             <ColumnDefinition Width="30"/>
@@ -15,12 +21,12 @@
             <ColumnDefinition Width="50"/>
             <ColumnDefinition Width="50"/>
         </Grid.ColumnDefinitions>
-        <ToggleSwitch Grid.Column="0" Name="Keep" Margin="0,-7,-7,-7"/>
-        <TextBlock Grid.Column="1" Name="Existing" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="2" Name="Bib" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="3" Name="Distance" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="4" Name="PartName" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="5" Name="Sex" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="6" Name="Age" VerticalAlignment="Center"/>
+        <ToggleSwitch Grid.Column="0" Name="Keep" Margin="0,-7,-7,-7" OnContent="" OffContent=""/>
+        <TextBlock Grid.Column="1" Name="Existing"/>
+        <TextBlock Grid.Column="2" Name="Bib"/>
+        <TextBlock Grid.Column="3" Name="Distance"/>
+        <TextBlock Grid.Column="4" Name="PartName"/>
+        <TextBlock Grid.Column="5" Name="Sex"/>
+        <TextBlock Grid.Column="6" Name="Age"/>
     </Grid>
 </UserControl>

@@ -27,44 +27,35 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0" VerticalAlignment="Center">
-            <ComboBox DockPanel.Dock="Left"
+        <Grid Grid.Row="0" VerticalAlignment="Center" ColumnDefinitions="*,110,110">
+            <ComboBox Grid.Column="0"
                       Name="SheetsBox"
                       SelectionChanged="SheetsBox_SelectionChanged"
                       Height="35"
                       Width="250"
                       TabIndex="1"
-                      Margin="10,10,5,5"
+                      Margin="10,10,10,5"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Stretch"
                       VerticalContentAlignment="Center"
                       />
-            <Button DockPanel.Dock="Right"
-                    Name="Cancel"
-                    Content="Cancel"
-                    Click="Cancel_Click"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    Height="35"
-                    FontSize="16"
-                    Margin="10"
-                    />
-            <Button DockPanel.Dock="Right"
+            <Button Grid.Column="1"
                     Name="Done"
                     Content="Next"
                     Click="Done_Click"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    Height="35"
                     FontSize="16"
-                    Margin="10"
                     />
-        </DockPanel>
+            <Button Grid.Column="2"
+                    Name="Cancel"
+                    Content="Cancel"
+                    Click="Cancel_Click"
+                    FontSize="16"
+                    />
+        </Grid>
         <UserControl Grid.Row="1"
                      Name="Frame"
                      IsTabStop="False"
-                     Background="Black"
                      CornerRadius="8"
-                     Margin="5"/>
+                     />
     </Grid>
 </Window>

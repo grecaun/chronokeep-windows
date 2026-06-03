@@ -23,32 +23,32 @@ public partial class ImportFileWindow : Window
     private readonly bool init = true;
     internal static readonly string[] human_fields = [
         "",
-            "Age",
-            "Anonymous",
-            "Apparel",
-            "Bib",
-            "Birthday",
-            "City",
-            "Comments",
-            "Country",
-            "Distance",
-            "Division",
-            "Email",
-            "Emergency Contact Name",
-            "Emergency Contact Phone",
-            "First Name",
-            "Gender",
-            "Last Name",
-            "Mobile",
-            "Other",
-            "Owes",
-            "Parent",
-            "Phone",
-            "Registration Date",
-            "State",
-            "Street",
-            "Street 2",
-            "Zip"
+        "Age",
+        "Anonymous",
+        "Apparel",
+        "Bib",
+        "Birthday",
+        "City",
+        "Comments",
+        "Country",
+        "Distance",
+        "Division",
+        "Email",
+        "Emergency Contact Name",
+        "Emergency Contact Phone",
+        "First Name",
+        "Gender",
+        "Last Name",
+        "Mobile",
+        "Other",
+        "Owes",
+        "Parent",
+        "Phone",
+        "Registration Date",
+        "State",
+        "Street",
+        "Street 2",
+        "Zip"
     ];
     internal static readonly int AGE = 1;
     internal static readonly int ANONYMOUS = 2;
@@ -98,11 +98,13 @@ public partial class ImportFileWindow : Window
         this.window = window;
         this.database = database;
         theEvent = database.GetCurrentEvent();
+        SheetsBox.IsVisible = false;
         if (importer.Data!.Type == ImportData.FileType.EXCEL)
         {
             SheetsBox.ItemsSource = ((ExcelImporter)importer).SheetNames;
             SheetsBox.SelectedIndex = 0;
             init = false;
+            SheetsBox.IsVisible = true;
         }
         page = new ImportFilePage1(importer);
         Frame.Content = page;
@@ -681,7 +683,7 @@ public partial class ImportFileWindow : Window
         {
             List<string> repeats = page1.RepeatHeaders();
             List<string> requiredNotFound = page1.RequiredNotFound();
-            if (repeats != null)
+            if (repeats.Count > 0)
             {
                 StringBuilder sb = new("Repeats for the following headers were found:");
                 foreach (string s in repeats)
@@ -691,7 +693,7 @@ public partial class ImportFileWindow : Window
                 }
                 DialogBox.Show(sb.ToString());
             }
-            else if (requiredNotFound != null)
+            else if (requiredNotFound.Count > 0)
             {
                 StringBuilder sb = new("Required fields not found:");
                 foreach (string s in requiredNotFound)

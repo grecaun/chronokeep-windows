@@ -19,7 +19,6 @@
         <ListBox Grid.Row="1"
                  Name="distanceListBox"
                  KeyboardNavigation.TabNavigation="Continue"
-                 IsTabStop="False">
-        </ListBox>
+                 IsTabStop="False"/>
     </Grid>
 </UserControl>

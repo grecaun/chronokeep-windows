@@ -28,7 +28,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Old" Grid.Column="1"/>
                 <TextBlock Text="Bib" Grid.Column="2"/>
-                <TextBlock Text="Div" Grid.Column="3"/>
+                <TextBlock Text="Dist" Grid.Column="3"/>
                 <TextBlock Text="Name" Grid.Column="4"/>
                 <TextBlock Text="Gender" Grid.Column="5"/>
                 <TextBlock Text="Age" Grid.Column="6"/>
