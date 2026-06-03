@@ -23,7 +23,6 @@ public partial class SMSWaveEnabledWindow : Window
         InitializeComponent();
         this.MinHeight = 275;
         this.MinWidth = 300;
-        this.Height = 385;
         this.Width = 300;
         this.Topmost = true;
         this.window = window;

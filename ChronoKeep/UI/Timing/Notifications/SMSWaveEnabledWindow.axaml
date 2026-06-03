@@ -9,7 +9,6 @@
         ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         Title="SMS Waves"
-        Height="300"
         Width="230"
         SizeToContent="Height"
         Topmost="True"
@@ -19,30 +18,28 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Name="mainPanel">
-                <ListBox Name="WaveList"
-                         Margin="15,0"
-                         BorderThickness="0"
-                         KeyboardNavigation.TabNavigation="Continue">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding WaveName}" Margin="4,4" x:DataType="local:WaveSMS"/>
-                                <ToggleSwitch Name="smsEnabledSwitch"
-                                              DockPanel.Dock="Right"
-                                              IsChecked="{Binding SMSEnabled}"
-                                              Margin="4,4"
-                                              OnContent=""
-                                              OffContent=""
-                                              VerticalAlignment="Center"
-                                              x:DataType="local:WaveSMS"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </StackPanel>
-        </ScrollViewer>
+        <StackPanel Grid.Row="0" Name="MainPanel">
+            <ListBox Name="WaveList"
+                        Margin="15,0"
+                        BorderThickness="0"
+                        KeyboardNavigation.TabNavigation="Continue">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <ToggleSwitch Name="SmsEnabledSwitch"
+                                            DockPanel.Dock="Right"
+                                            IsChecked="{Binding SMSEnabled}"
+                                            Margin="0,-7"
+                                            OnContent=""
+                                            OffContent=""
+                                            VerticalAlignment="Center"
+                                            x:DataType="local:WaveSMS"/>
+                            <TextBlock Text="{Binding WaveName}" Margin="5" x:DataType="local:WaveSMS"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
         <StackPanel Grid.Row="1"
                     Margin="10,10,10,15"
                     Orientation="Horizontal"
