@@ -41,7 +41,7 @@
                Margin="0,0,0,0"
                >
 		<SplitView.Pane>
-            <Grid RowDefinitions="*,auto">
+            <Grid RowDefinitions="*,auto" Background="{DynamicResource SecondaryBackground}">
                 <Grid.Styles>
                     <!-- Button (Nav) -->
 		            <Style Selector="Button.nav">
@@ -77,6 +77,9 @@
                     <Style Selector="ToggleButton.nav:checked /template/ ContentPresenter">
 			            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
                     </Style>
+                    <Style Selector="ToggleButton.nav:pointerover /template/ ContentPresenter">
+			            <Setter Property="Background" Value="{DynamicResource HoverBackground}"/>
+                    </Style>
                     <Style Selector="ToggleButton.nav:checked Rectangle">
 			            <Setter Property="Opacity" Value="1"/>
                     </Style>
@@ -108,7 +111,7 @@
                 </Grid.Styles>
                 <StackPanel Grid.Row="0">
 			        <Button Name="NavigationButton" Click="NavigationButton_Click" Classes="nav">
-                        <PathIcon Data="{StaticResource navigation_regular}" Margin="7,0,0,0" />
+                        <PathIcon Data="{StaticResource navigation_regular}" Margin="7,0,0,0" HorizontalAlignment="Left"/>
                     </Button>
                     <Separator/>
 			        <ToggleButton Name="DashboardButton" Click="DashboardButton_Click" Classes="nav" IsChecked="True">

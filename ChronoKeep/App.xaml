@@ -26,16 +26,16 @@
             <Setter Property="MinWidth" Value="10"/>
         </Style>
         <Style Selector="TextBox:disabled">
-            <Setter Property="Opacity" Value="0.5"/>
+            <Setter Property="Opacity" Value="0.2"/>
         </Style>
         <Style Selector="ComboBox:disabled">
-            <Setter Property="Opacity" Value="0.5"/>
+            <Setter Property="Opacity" Value="0.2"/>
         </Style>
         <Style Selector="ToggleSwitch:disabled">
-            <Setter Property="Opacity" Value="0.5"/>
+            <Setter Property="Opacity" Value="0.2"/>
         </Style>
         <Style Selector="Button:disabled">
-            <Setter Property="Opacity" Value="0.5"/>
+            <Setter Property="Opacity" Value="0.2"/>
         </Style>
         <Style Selector="WindowDrawnDecorations /template/ Button#PART_FullScreenButton">
             <Setter Property="IsVisible" Value="False"/>

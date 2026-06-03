@@ -2,10 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key='Light'>
-            <SolidColorBrush x:Key='BackgroundBrush'>LightGray</SolidColorBrush>
+            <SolidColorBrush x:Key='BackgroundBrush'>#d9d9d9</SolidColorBrush>
             <SolidColorBrush x:Key='ForegroundBrush'>Black</SolidColorBrush>
             <SolidColorBrush x:Key='PrimaryBackground'>White</SolidColorBrush>
             <SolidColorBrush x:Key='SecondaryBackground'>#efefef</SolidColorBrush>
+            <SolidColorBrush x:Key='HoverBackground'>#e4e4e4</SolidColorBrush>
             <SolidColorBrush x:Key='ButtonBackground'>#ffffff</SolidColorBrush>
             <SolidColorBrush x:Key='ButtonHoverBackground'>#f8f8f8</SolidColorBrush>
             <SolidColorBrush x:Key='ButtonHoverForeground'>Black</SolidColorBrush>
@@ -15,6 +16,7 @@
             <SolidColorBrush x:Key='ForegroundBrush'>White</SolidColorBrush>
             <SolidColorBrush x:Key='PrimaryBackground'>#1c1c1c</SolidColorBrush>
             <SolidColorBrush x:Key='SecondaryBackground'>#181818</SolidColorBrush>
+            <SolidColorBrush x:Key='HoverBackground'>#232323</SolidColorBrush>
             <SolidColorBrush x:Key='ButtonBackground'>#101010</SolidColorBrush>
             <SolidColorBrush x:Key='ButtonHoverBackground'>#262626</SolidColorBrush>
             <SolidColorBrush x:Key='ButtonHoverForeground'>White</SolidColorBrush>
