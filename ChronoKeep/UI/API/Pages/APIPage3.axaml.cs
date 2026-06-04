@@ -73,7 +73,7 @@ public partial class APIPage3 : UserControl
             newPanel.IsVisible = false;
         }
         yearBox.Text = theEvent.YearCode;
-        dateBox.Text = theEvent.Date;
+        dateBox.Text = DateTime.Parse(theEvent.Date).ToString("MM/dd/yyyy");
         if (theEvent != null && theEvent.EventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
         {
             rankBox.Items.Add(new ComboBoxItem
