@@ -40,8 +40,23 @@
 			<Setter Property="SelectionMode" Value="Multiple"/>
 			<Setter Property="FontSize" Value="12"/>
         </Style>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource SecondaryBackground}"/>
+        </Style>
+        <Style Selector="ListBoxItem:focus /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource SecondaryBackground}"/>
+        </Style>
+        <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
     </UserControl.Styles>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -50,7 +65,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="0">
             <StackPanel HorizontalAlignment="Center">
                 <TextBlock Text="Distances" FontSize="16"/>
-                <ListBox Name="DistancesBox">
+                <ListBox Name="DistancesBox" Margin="0,10,0,5" BorderThickness="1" BorderBrush="{DynamicResource ForegroundBrush}">
                     <ListBoxItem Content="All" IsSelected="True"/>
                 </ListBox>
                 <TextBlock Text="Overall" Margin="0,10"/>
@@ -93,11 +108,11 @@
                              Text="3"
                              Width="40"/>
                 </DockPanel>
-                <DataGrid Name="customGroupsListView" SelectionMode="Extended" Margin="0,0,0,5" FontSize="12">
+                <DataGrid Name="customGroupsListView" SelectionMode="Extended" Margin="0,0,0,5" FontSize="12" CanUserResizeColumns="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Start Age" Binding="{Binding StartAge}" MinWidth="100" x:DataType="objects:AgeGroup"/>
-                        <DataGridTextColumn Header="End Age" Binding="{Binding EndAge}" MinWidth="100" x:DataType="objects:AgeGroup"/>
-                        <DataGridTextColumn Header="Name" Binding="{Binding CustomName}" MinWidth="100" x:DataType="objects:AgeGroup"/>
+                        <DataGridTextColumn Header="Start Age" Binding="{Binding StartAge}" Width="110" x:DataType="objects:AgeGroup"/>
+                        <DataGridTextColumn Header="End Age" Binding="{Binding EndAge}" Width="110" x:DataType="objects:AgeGroup"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding CustomName}" Width="110" x:DataType="objects:AgeGroup"/>
                     </DataGrid.Columns>
                 </DataGrid>
                 <DockPanel HorizontalAlignment="Center" Margin="0,0,0,5">
