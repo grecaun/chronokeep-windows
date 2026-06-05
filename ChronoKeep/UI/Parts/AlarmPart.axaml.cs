@@ -16,6 +16,10 @@ public partial class AlarmPart : UserControl
         InitializeComponent();
         this.page = page;
         this.theAlarm = alarm;
+        BibBox.Text = theAlarm.Bib;
+        ChipBox.Text = theAlarm.Chip;
+        EnabledBox.IsChecked = theAlarm.Enabled;
+        AlarmSoundBox.SelectedIndex = theAlarm.AlarmSound;
     }
 
     public Alarm GetUpdatedAlarm()
