@@ -35,10 +35,11 @@ public partial class ChronokeepSettings : Window
         {
             if (saving)
             {
-                this.Close();
+                Close();
             }
             if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.SETTINGS))
             {
+                Title = allSettings.PortalVersion;
                 NameBox.Text = allSettings.Name;
                 ReadWindowBox.Text = allSettings.ReadWindow.ToString();
                 ChipTypeBox.SelectedIndex = allSettings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? 0 : 1;

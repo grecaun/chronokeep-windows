@@ -180,7 +180,7 @@ public partial class DashboardPage : UserControl, IMainPage
                                 });
                                 if (files.Count > 0)
                                 {
-                                    SQLiteInterface savedDatabase = new(files[0].Name);
+                                    SQLiteInterface savedDatabase = new(files[0].TryGetLocalPath()!);
                                     savedDatabase.Initialize();
                                     List<Event> events = savedDatabase.GetEvents();
                                     int lastID = -1;
@@ -613,7 +613,7 @@ public partial class DashboardPage : UserControl, IMainPage
             });
             if (files.Count > 0)
             {
-                SQLiteInterface savedDatabase = new(files[0].Name);
+                SQLiteInterface savedDatabase = new(files[0].TryGetLocalPath()!);
                 savedDatabase.Initialize();
                 List<Event> events = savedDatabase.GetEvents();
                 int lastID = -1;

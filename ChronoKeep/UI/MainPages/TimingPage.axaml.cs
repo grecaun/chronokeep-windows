@@ -965,7 +965,7 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             IStorageFolder? startingFolder;
             try
             {
-                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
             catch
             {
@@ -981,11 +981,8 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             {
                 try
                 {
-                    LogImporter importer = new(files[0].Name);
-                    await Task.Run(() =>
-                    {
-                        importer.FindType();
-                    });
+                    LogImporter importer = new(files[0].TryGetLocalPath()!);
+                    await Task.Run(importer.FindType);
                     ImportLogWindow logWindow = ImportLogWindow.NewWindow(mWindow, importer, database);
                     if (logWindow != null)
                     {

@@ -34,7 +34,7 @@
                       VerticalAlignment="Center"
                       VerticalContentAlignment="Center"/>
         </DockPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
             <Button Grid.Column="0"
                     Name="NextButton"
                     Content="Next"

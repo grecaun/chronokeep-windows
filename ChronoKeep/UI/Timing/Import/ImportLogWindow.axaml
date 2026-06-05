@@ -11,5 +11,5 @@
         SizeToContent="Height"
         Topmost="True"
         Closing="Window_Closing">
-    <UserControl Name="Frame" IsTabStop="False"/>
+    <UserControl Name="Frame" IsTabStop="False" Margin="0,30,0,0"/>
 </Window>

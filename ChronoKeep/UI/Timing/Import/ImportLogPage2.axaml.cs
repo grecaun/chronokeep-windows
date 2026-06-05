@@ -14,8 +14,8 @@ public partial class ImportLogPage2 : UserControl
     internal static string[] human_fields =
     [
         "",
-            "Chip",
-            "Time"
+        "Chip",
+        "Time"
     ];
     private static readonly int CHIP = 1;
     private static readonly int TIME = 2;
