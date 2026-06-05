@@ -40,6 +40,9 @@
 			<Setter Property="SelectionMode" Value="Multiple"/>
 			<Setter Property="FontSize" Value="12"/>
         </Style>
+        <Style Selector="ListBoxItem">
+           <Setter Property="Padding" Value="2"/>
+        </Style>
         <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
             <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
             <Setter Property="Background" Value="{DynamicResource SecondaryBackground}"/>

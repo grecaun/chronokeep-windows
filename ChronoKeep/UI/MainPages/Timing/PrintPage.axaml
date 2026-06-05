@@ -22,8 +22,30 @@
 		    <Setter Property="VerticalAlignment" Value="Center"/>
 		    <Setter Property="Margin" Value="0,-7,-15,-7"/>
         </Style>
+        <Style Selector="ListBox">
+           <Setter Property="BorderBrush" Value="{DynamicResource ForegroundBrush}"/>
+           <Setter Property="BorderThickness" Value="1"/> 
+        </Style>
+        <Style Selector="ListBoxItem">
+           <Setter Property="Padding" Value="2"/>
+        </Style>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource SecondaryBackground}"/>
+        </Style>
+        <Style Selector="ListBoxItem:focus /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource SecondaryBackground}"/>
+        </Style>
+        <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
     </UserControl.Styles>
-
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
         <StackPanel HorizontalAlignment="Center">
             <Grid Margin="5,5,5,5">

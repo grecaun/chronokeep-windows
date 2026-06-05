@@ -77,7 +77,10 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
         updateListView.SelectedItems.Clear();
         updateListView.ItemsSource = reads;
-        updateListView.ScrollIntoView(reads[^1], null);
+        if (reads.Count > 0)
+        {
+            updateListView.ScrollIntoView(reads[^1], null);
+        }
     }
 
     internal void SafemodeUpdateView()
@@ -100,7 +103,10 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
         updateListView.SelectedItems.Clear();
         updateListView.ItemsSource = reads;
-        updateListView.ScrollIntoView(reads[^1], null);
+        if (reads.Count > 0)
+        {
+            updateListView.ScrollIntoView(reads[^1], null);
+        }
     }
 
     public void Closing() { }
@@ -176,7 +182,10 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         });
         updateListView.SelectedItems.Clear();
         updateListView.ItemsSource = reads;
-        updateListView.ScrollIntoView(reads[^1], null);
+        if (reads.Count > 0)
+        {
+            updateListView.ScrollIntoView(reads[^1], null);
+        }
     }
 
     public async void SortBy(SortType sortType)
@@ -194,7 +203,10 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         });
         updateListView.SelectedItems.Clear();
         updateListView.ItemsSource = reads;
-        updateListView.ScrollIntoView(reads[^1], null);
+        if (reads.Count > 0)
+        {
+            updateListView.ScrollIntoView(reads[^1], null);
+        }
     }
 
     public async void Location(string location)
@@ -212,7 +224,10 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         });
         updateListView.SelectedItems.Clear();
         updateListView.ItemsSource = reads;
-        updateListView.ScrollIntoView(reads[^1], null);
+        if (reads.Count > 0)
+        {
+            updateListView.ScrollIntoView(reads[^1], null);
+        }
     }
 
     public void Reader(string reader)
@@ -228,7 +243,10 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
         updateListView.SelectedItems.Clear();
         updateListView.ItemsSource = reads;
-        updateListView.ScrollIntoView(reads[^1], null);
+        if (reads.Count > 0)
+        {
+            updateListView.ScrollIntoView(reads[^1], null);
+        }
     }
 
     private void OnlyIgnoreBox_Unchecked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -245,7 +263,10 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
         updateListView.SelectedItems.Clear();
         updateListView.ItemsSource = reads;
-        updateListView.ScrollIntoView(reads[^1], null);
+        if (reads.Count > 0)
+        {
+            updateListView.ScrollIntoView(reads[^1], null);
+        }
     }
 
     private void OnlyManualBox_Unchecked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -262,7 +283,10 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
         updateListView.SelectedItems.Clear();
         updateListView.ItemsSource = reads;
-        updateListView.ScrollIntoView(reads[^1], null);
+        if (reads.Count > 0)
+        {
+            updateListView.ScrollIntoView(reads[^1], null);
+        }
     }
 
     private void DeleteButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
