@@ -47,6 +47,9 @@ namespace Chronokeep.Timing.Routines
             // Keep track of the last LAP FINISH time for each person.
             Dictionary<string, TimeResult> bibLastLoopFinishDictionary = [];
             Dictionary<string, TimeResult> chipLastLoopFinishDictionary = [];
+            // Keep track of the last completed hour per chip/bib
+            Dictionary<string, int> bibLastFinishedHour = [];
+            Dictionary<string, int> chipLastFinishedHour = [];
             List<TimeResult> toRemove = [];
             // Get the rest of the times.
             foreach (TimeResult result in database.GetFinishTimes(theEvent.Identifier))
@@ -69,6 +72,10 @@ namespace Chronokeep.Timing.Routines
                     {
                         bibLastLoopFinishDictionary[result.Bib] = res;
                     }
+                    if (!bibLastFinishedHour.TryGetValue(result.Bib, out int hour) || hour < result.Occurrence / 2)
+                    {
+                        bibLastFinishedHour[result.Bib] = result.Occurrence / 2;
+                    }
                 }
                 if (result.Chip.Length > 0)
                 {
@@ -81,12 +88,15 @@ namespace Chronokeep.Timing.Routines
                     {
                         chipLastLoopFinishDictionary[result.Chip] = res;
                     }
+                    if (!chipLastFinishedHour.TryGetValue(result.Chip, out int hour) || hour < result.Occurrence / 2)
+                    {
+                        chipLastFinishedHour[result.Chip] = result.Occurrence / 2;
+                    }
                 }
                 // Pull out old results if they're in the dictionary already.
-                (TimeResult? start, TimeResult? end) tmpRes = (null, null);
-                if (backyardResultDictionary.TryGetValue((result.Occurrence / 2, result.Identifier), out (TimeResult?, TimeResult?) oTmp))
+                if (!backyardResultDictionary.TryGetValue((result.Occurrence / 2, result.Identifier), out (TimeResult? start, TimeResult? end) tmpRes))
                 {
-                    tmpRes = oTmp;
+                    tmpRes = (null, null);
                 }
                 // If start time
                 if (result.Occurrence % 2 == 0)
@@ -114,7 +124,7 @@ namespace Chronokeep.Timing.Routines
                 // Modification 2 should result in either a 0 or a 1, this code should be unreachable.
                 else
                 {
-                    Log.D("Timing.Routines.BackyardUltraRoutine", "Made it to code that should be unreachable somehow.");
+                    Log.E("Timing.Routines.BackyardUltraRoutine", "Made it to code that should be unreachable somehow.");
                 }
                 // Update dictionary.
                 backyardResultDictionary[(result.Occurrence / 2, result.Identifier)] = tmpRes;
@@ -129,9 +139,6 @@ namespace Chronokeep.Timing.Routines
             // (Bib, Location), Last Chip Read
             Dictionary<(string, int), (ChipRead Read, int Occurrence)> bibLastReadDictionary = [];
             Dictionary<(string, int), (ChipRead Read, int Occurrence)> chipLastReadDictionary = [];
-            // Keep track of the last completed hour per chip/bib
-            Dictionary<string, int> bibLastFinishedHour = [];
-            Dictionary<string, int> chipLastFinishedHour = [];
             // Keep a list of DNF participants so we can mark them as DNF in results.
             // Keep a record of the DNF chipread so we can link it with the TimeResult.
             Dictionary<string, int> dnfHourDictionary = [];
@@ -230,7 +237,7 @@ namespace Chronokeep.Timing.Routines
                         }
                     }
                     // Otherwise if its a start read at the proper location.
-                    else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME ==  read.Status &&
+                    else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status &&
                         (Constants.Timing.LOCATION_START == read.LocationID ||
                         (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                     {
@@ -1202,7 +1209,7 @@ namespace Chronokeep.Timing.Routines
                     lastResult[res.Identifier] = res;
                 }
             }
-            List<TimeResult> lastResultList = [..lastResult.Values];
+            List<TimeResult> lastResultList = [.. lastResult.Values];
             // Rank By Gun (Clock) is assumed to be rank by elapsed time
             // !Rank By Gun is rank by cumulative
             if (theEvent != null && !theEvent.RankByGun)
