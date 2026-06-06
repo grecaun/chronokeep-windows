@@ -7,6 +7,7 @@
   ],
   "fixes": [
     "Fixed an issue where saving an event was not working.",
-    "Fixed an issue where milliseconds were somehow managing to become negative."
+    "Fixed an issue where milliseconds were somehow managing to become negative.",
+    "Fixed an issue where the Backyard Ultra routine was giving automatic DNF entries regardless of finish status in the last hour."
   ]
 }
