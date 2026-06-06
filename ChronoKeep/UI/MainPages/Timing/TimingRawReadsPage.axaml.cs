@@ -79,7 +79,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         updateListView.ItemsSource = reads;
         if (reads.Count > 0)
         {
-            updateListView.ScrollIntoView(reads[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => { updateListView.ScrollIntoView(reads[^1], null); });
         }
     }
 
@@ -105,7 +105,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         updateListView.ItemsSource = reads;
         if (reads.Count > 0)
         {
-            updateListView.ScrollIntoView(reads[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => { updateListView.ScrollIntoView(reads[^1], null); });
         }
     }
 
@@ -184,7 +184,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         updateListView.ItemsSource = reads;
         if (reads.Count > 0)
         {
-            updateListView.ScrollIntoView(reads[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => { updateListView.ScrollIntoView(reads[^1], null); });
         }
     }
 
@@ -205,7 +205,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         updateListView.ItemsSource = reads;
         if (reads.Count > 0)
         {
-            updateListView.ScrollIntoView(reads[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => { updateListView.ScrollIntoView(reads[^1], null); });
         }
     }
 
@@ -226,7 +226,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         updateListView.ItemsSource = reads;
         if (reads.Count > 0)
         {
-            updateListView.ScrollIntoView(reads[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => { updateListView.ScrollIntoView(reads[^1], null); });
         }
     }
 
@@ -245,7 +245,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         updateListView.ItemsSource = reads;
         if (reads.Count > 0)
         {
-            updateListView.ScrollIntoView(reads[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => { updateListView.ScrollIntoView(reads[^1], null); });
         }
     }
 
@@ -265,7 +265,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         updateListView.ItemsSource = reads;
         if (reads.Count > 0)
         {
-            updateListView.ScrollIntoView(reads[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => { updateListView.ScrollIntoView(reads[^1], null); });
         }
     }
 
@@ -285,7 +285,7 @@ public partial class TimingRawReadsPage : UserControl, ISubPage
         updateListView.ItemsSource = reads;
         if (reads.Count > 0)
         {
-            updateListView.ScrollIntoView(reads[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => { updateListView.ScrollIntoView(reads[^1], null); });
         }
     }
 

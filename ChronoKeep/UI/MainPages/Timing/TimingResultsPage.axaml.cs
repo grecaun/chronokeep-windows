@@ -174,7 +174,10 @@ public partial class TimingResultsPage : UserControl, ISubPage
         updateListView.ItemsSource = newResults;
         if (newResults.Count > 0)
         {
-            updateListView.ScrollIntoView(newResults[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                updateListView.ScrollIntoView(newResults[^1], null);
+            });
         }
     }
 
@@ -193,7 +196,10 @@ public partial class TimingResultsPage : UserControl, ISubPage
         updateListView.ItemsSource = newResults;
         if (newResults.Count > 0)
         {
-            updateListView.ScrollIntoView(newResults[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                updateListView.ScrollIntoView(newResults[^1], null);
+            });
         }
 
     }
@@ -220,9 +226,11 @@ public partial class TimingResultsPage : UserControl, ISubPage
         updateListView.ItemsSource = newResults;
         if (newResults.Count > 0)
         {
-            updateListView.ScrollIntoView(newResults[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                updateListView.ScrollIntoView(newResults[^1], null);
+            });
         }
-        updateListView.SelectedItem = null;
         if (theEvent!.DisplayPlacements)
         {
             DisplayPlacements();
@@ -274,7 +282,10 @@ public partial class TimingResultsPage : UserControl, ISubPage
         updateListView.ItemsSource = newResults;
         if (newResults.Count > 0)
         {
-            updateListView.ScrollIntoView(newResults[^1], null);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                updateListView.ScrollIntoView(newResults[^1], null);
+            });
         }
     }
 

@@ -56,13 +56,19 @@ public partial class APIPage2 : UserControl
         APIEvent maybeEvent = ev.Find(x => x.Name.Equals(theEvent.Name, StringComparison.OrdinalIgnoreCase))!;
         if (maybeEvent != null)
         {
-            eventList.SelectedItem = maybeEvent;
-            eventList.ScrollIntoView(maybeEvent);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                eventList.SelectedItem = maybeEvent;
+                eventList.ScrollIntoView(maybeEvent);
+            });
         }
         else
         {
-            eventList.SelectedIndex = 0;
-            eventList.ScrollIntoView(ev[0]);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                eventList.SelectedIndex = 0;
+                eventList.ScrollIntoView(ev[0]);
+            });
         }
         nameBox.Text = theEvent.Name;
         slugBox.Text = theEvent.Name.Replace(' ', '-').Replace("'", "").Replace("/", "").Replace("\\", "").ToLower();
@@ -86,13 +92,19 @@ public partial class APIPage2 : UserControl
         APIEvent maybeEvent = ev.Find(x => x.Name.Equals(theEvent.Name, StringComparison.OrdinalIgnoreCase))!;
         if (maybeEvent != null)
         {
-            eventList.SelectedItem = maybeEvent;
-            eventList.ScrollIntoView(maybeEvent);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                eventList.SelectedItem = maybeEvent;
+                eventList.ScrollIntoView(maybeEvent);
+            });
         }
         else
         {
-            eventList.SelectedIndex = 0;
-            eventList.ScrollIntoView(ev[0]);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                eventList.SelectedIndex = 0;
+                eventList.ScrollIntoView(ev[0]);
+            });
         }
     }
 
