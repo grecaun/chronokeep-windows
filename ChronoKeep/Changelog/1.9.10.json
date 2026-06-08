@@ -1,0 +1,7 @@
+{
+  "version": "v1.9.10",
+  "changes": [],
+  "fixes": [
+    "Fixed an issue where backyard ultra cumulative times were not updating properly when not calculated in a single pass."
+  ]
+}

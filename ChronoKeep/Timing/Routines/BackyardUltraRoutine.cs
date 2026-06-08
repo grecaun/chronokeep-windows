@@ -70,7 +70,7 @@ namespace Chronokeep.Timing.Routines
                     }
                     if (result.Occurrence > res.Occurrence)
                     {
-                        bibLastLoopFinishDictionary[result.Bib] = res;
+                        bibLastLoopFinishDictionary[result.Bib] = result;
                     }
                     if (!bibLastFinishedHour.TryGetValue(result.Bib, out int hour) || hour < result.Occurrence / 2)
                     {
@@ -86,7 +86,7 @@ namespace Chronokeep.Timing.Routines
                     }
                     if (result.Occurrence > res.Occurrence)
                     {
-                        chipLastLoopFinishDictionary[result.Chip] = res;
+                        chipLastLoopFinishDictionary[result.Chip] = result;
                     }
                     if (!chipLastFinishedHour.TryGetValue(result.Chip, out int hour) || hour < result.Occurrence / 2)
                     {
