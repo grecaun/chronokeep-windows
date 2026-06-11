@@ -8,20 +8,12 @@
              Background="{DynamicResource PrimaryBackground}"
              CornerRadius="8,0,0,0"
              >
-    <UserControl.Styles>
-        <Style Selector="Button.age">
-            <Setter Property="Margin" Value="5,10,5,0"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Height" Value="35"/>
-        </Style>
-    </UserControl.Styles>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="55"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -65,29 +57,31 @@
                  CornerRadius="8"
                  KeyboardNavigation.TabNavigation="Continue"
                  />
-        <DockPanel LastChildFill="False" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+        <DockPanel LastChildFill="False"
+                   Grid.Row="3"
+                   Grid.ColumnSpan="2"
+                   HorizontalAlignment="Center"
+                   Margin="0"
+                   >
             <Button Name="Add"
                     Content="Add Group"
                     Click="Add_Click"
-                    Classes="age"
-                    Width="150"/>
+                    Classes="mainpage"/>
             <Button Name="Save"
                     Content="Save"
                     Click="Update_Click"
-                    Classes="age"
-                    Width="150"/>
+                    Classes="mainpage"/>
             <Button Name="ResetBtn"
                     Content="Reset"
                     Click="Revert_Click"
-                    Classes="age"
-                    Width="150"/>
+                    Classes="mainpage"/>
         </DockPanel>
         <StackPanel Grid.Row="1" Grid.Column="1">
             <ComboBox Name="DefaultGroupsBox"
                       Height="35"
                       FontSize="16"
                       SelectedIndex="0"
-                      Margin="10,100,0,10"
+                      Margin="10,100,10,10"
                       HorizontalAlignment="Stretch"
                       VerticalContentAlignment="Center"
                       HorizontalContentAlignment="Center">
@@ -99,8 +93,10 @@
             <Button Content="Change"
                     Name="AddDefault"
                     Click="AddDefault_Click"
-                    Classes="age"
-                    Margin="10,0,0,0"
+                    Height="35"
+                    Width="150"
+                    FontSize="16"
+                    Margin="10,0"
                     HorizontalAlignment="Stretch"
                     />
         </StackPanel>
