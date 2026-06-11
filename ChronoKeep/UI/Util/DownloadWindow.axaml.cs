@@ -22,8 +22,6 @@ namespace Chronokeep.UI.Util
         private readonly string download_uri;
         private readonly string version;
 
-        private readonly string appName = "Chronokeep";
-        private readonly string dbName = "Chronokeep.sqlite";
 
         private CancellationTokenSource? cancellationToken = null;
 
@@ -165,14 +163,15 @@ namespace Chronokeep.UI.Util
             BackupDatabaseButton.IsVisible = false;
             BackupPanel.IsVisible = true;
             backupBlock.Text = $"{backupBlock.Text}\nChecking for old database files.";
-            string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), appName);
-            string path = Path.Combine(dirPath, dbName);
+            // TODO - Might be windows specific -- turn into non-platform specific code.
+            string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
+            string path = Path.Combine(dirPath, MainWindow.DatabaseFileName);
             Log.D("Updates.DownloadWindow", "Looking for database file.");
             if (Directory.Exists(dirPath))
             {
                 if (File.Exists(path))
                 {
-                    string backup = Path.Combine(dirPath, $"Chronokeep-{DateTime.Now:yyyy-MM-dd}-backup.sqlite");
+                    string backup = Path.Combine(dirPath, $"{DateTime.Now:yyyy-MM-dd}-backup-{MainWindow.DatabaseFileName}");
                     try
                     {
                         backupBlock.Text = $"{backupBlock.Text}\nBacking up database.";

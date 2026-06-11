@@ -36,7 +36,7 @@ namespace Chronokeep.UI
         internal static bool ForceClose = false;
 
         private readonly MemStore.MemStore? database;
-        private readonly string dbName = "Chronokeep.sqlite";
+        internal static string DatabaseFileName = "Chronokeep.sqlite";
 
         // Network objects
         private HttpServer? httpServer = null;
@@ -98,9 +98,9 @@ namespace Chronokeep.UI
 
             string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
 #if DEBUG
-            dbName = "Chronokeep_test.sqlite";
+            DatabaseFileName = "Chronokeep_test.sqlite";
 #endif
-            string path = Path.Combine(dirPath, dbName);
+            string path = Path.Combine(dirPath, DatabaseFileName);
             Log.D("UI.MainWindow", "Looking for database file.");
             if (!Directory.Exists(dirPath))
             {

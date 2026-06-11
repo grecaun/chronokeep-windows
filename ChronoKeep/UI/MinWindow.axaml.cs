@@ -25,7 +25,6 @@ public partial class MinWindow : Window, IMainWindow
 {
     private readonly MemStore.MemStore? database;
     private readonly MinTimingPage? page;
-    private readonly string dbName = "Chronokeep.sqlite";
 
     // Timing objects.
     private Thread? TimingControllerThread;
@@ -54,7 +53,7 @@ public partial class MinWindow : Window, IMainWindow
         OneWindow.ReleaseMutex();
 
         string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
-        string path = Path.Combine(dirPath, dbName);
+        string path = Path.Combine(dirPath, MainWindow.DatabaseFileName);
         Log.D("UI.MainWindow", "Looking for database file.");
         if (!Directory.Exists(dirPath))
         {
