@@ -13,8 +13,8 @@ namespace Chronokeep.Objects.Changelog
         [JsonPropertyName("fixes")]
         public List<string> FixesList { get; set; } = [];
 
-        public string ChangesVisibility { get => ChangesList.Count > 0 ? "Visible" : "Collapsed"; }
-        public string FixesVisibility { get => FixesList.Count > 0 ? "Visible" : "Collapsed"; }
+        public bool ChangesVisibility { get => ChangesList.Count > 0; }
+        public bool FixesVisibility { get => FixesList.Count > 0; }
         public bool IsExpanded { get; set; }
 
         public int CompareTo(object? other)

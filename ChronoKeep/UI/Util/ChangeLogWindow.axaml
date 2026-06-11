@@ -15,6 +15,26 @@
         MinHeight="500"
         Topmost="True"
         Closing="Window_Closing">
+    <Window.Styles>
+        <Style Selector="TextBlock.inner">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Margin" Value="0,5,0,15"/>
+        </Style>
+        <Style Selector="ListBox.inner">
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+        <Style Selector="ListBox.inner TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style Selector="ListBox.inner ListBoxItem">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="10,2,0,2"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BackgroundBrush}"/>
+            <Setter Property="BorderThickness" Value="5,0,0,0"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+    </Window.Styles>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -23,19 +43,18 @@
 		<ListBox Grid.Row="0"
                  Name="logList"
                  Margin="10,30,10,0"
-                 CornerRadius="8"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Expander HorizontalAlignment="Stretch" IsExpanded="{Binding IsExpanded}" x:DataType="changelog:Entry">
+                <DataTemplate x:DataType="changelog:Entry">
+                    <Expander HorizontalAlignment="Stretch" IsExpanded="{Binding IsExpanded}" CornerRadius="8" Margin="0,0,0,5">
                         <Expander.Header>
-                            <TextBlock Text="{Binding Version}" x:DataType="changelog:Entry" HorizontalAlignment="Center" Margin="0,0,-45,0" FontSize="20"/>
+                            <TextBlock Text="{Binding Version}" Margin="0,0,-45,0" FontSize="20"/>
                         </Expander.Header>
                         <StackPanel>
-                            <TextBlock Text="Changes" FontSize="18" HorizontalAlignment="Center" Margin="0,5,0,15"/>
-                            <ListBox ItemsSource="{Binding ChangesList}" x:DataType="changelog:Entry"/>
-                            <TextBlock Text="Fixes" FontSize="18" HorizontalAlignment="Center" Margin="0,15,0,15"/>
-                            <ListBox ItemsSource="{Binding FixesList}" x:DataType="changelog:Entry"/>
+                            <TextBlock Text="Changes" IsVisible="{Binding ChangesVisibility}" Classes="inner"/>
+                            <ListBox ItemsSource="{Binding ChangesList}" IsVisible="{Binding ChangesVisibility}" Classes="inner"/>
+                            <TextBlock Text="Fixes" IsVisible="{Binding FixesVisibility}" Classes="inner"/>
+                            <ListBox ItemsSource="{Binding FixesList}" IsVisible="{Binding FixesVisibility}" Classes="inner"/>
                         </StackPanel>
                     </Expander> 
                 </DataTemplate>
