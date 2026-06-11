@@ -35,6 +35,7 @@ public partial class AboutPage : UserControl, IMainPage
             HelpDocsButton.Tag = dirPath;
         }
         VersionLabel.Text = gitVersion.Trim();
+        HelpDocsButton.NavigateUri = new(Path.Combine(AppContext.BaseDirectory, "help", "index.html"));
         this.database = database;
 
     }
@@ -64,16 +65,6 @@ public partial class AboutPage : UserControl, IMainPage
     private void OpenDataFolder_Click(object? sender, RoutedEventArgs e)
     {
         string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
-        if (!Directory.Exists(dirPath))
-        {
-            return;
-        }
-        Process.Start("explorer", dirPath);
-    }
-
-    private void HelpDocsButton_Click(object? sender, RoutedEventArgs e)
-    {
-        string dirPath = Path.Combine(AppContext.BaseDirectory, "help");
         if (!Directory.Exists(dirPath))
         {
             return;

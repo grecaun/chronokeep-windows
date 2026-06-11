@@ -12,18 +12,49 @@
         <Style Selector="Button.up">
             <Setter Property="HorizontalAlignment" Value="Left"/>
         </Style>
-        <Style Selector="Button.link:focus /template/ ContentPresenter">
-			<Setter Property="Background" Value="{x:Null}"/>
-        </Style>
-        <Style Selector="Button.link:pointerover /template/ ContentPresenter">
-			<Setter Property="Background" Value="{x:Null}"/>
-        </Style>
         <Style Selector="Button.link PathIcon">
             <Setter Property="Margin" Value="0,0,5,0"/>
 			<Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
         </Style>
+        <Style Selector="Button.link:focus PathIcon">
+            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+        <Style Selector="Button.link:pointerover PathIcon">
+            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+        <Style Selector="Button.link TextBlock">
+            <Setter Property="TextDecorations" Value=""/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+            <Setter Property="Margin" Value="5,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.link:focus TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+        <Style Selector="Button.link:pointerover TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+        <Style Selector="HyperlinkButton.link TextBlock">
+            <Setter Property="TextDecorations" Value=""/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+            <Setter Property="Margin" Value="5,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="HyperlinkButton.link:focus TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+        <Style Selector="HyperlinkButton.link:pointerover TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+        <Style Selector="HyperlinkButton.link:focus /template/ ContentPresenter">
+			<Setter Property="Background" Value="{x:Null}"/>
+            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
+        <Style Selector="HyperlinkButton.link:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="{x:Null}"/>
+            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+        </Style>
     </UserControl.Styles>
-
     <StackPanel Margin="10,10,10,10">
         <TextBlock
             Margin="0,0,0,14"
@@ -73,14 +104,14 @@
         <HyperlinkButton Name="ProjectGithubBtn" Classes="link" NavigateUri="https://github.com/grecaun/chronokeep-windows">
             <StackPanel Orientation="Horizontal">
                 <PathIcon Data="{StaticResource link_regular}" />
-                <Label>Project website on Github</Label>
+                <TextBlock Classes="link">Project website on Github</TextBlock>
             </StackPanel>
         </HyperlinkButton>
         <!-- NavigateUri="https://github.com/grecaun/chronokeep-windows/releases/latest" -->
         <HyperlinkButton Name="LatestReleaseBtn" Classes="link" NavigateUri="https://github.com/grecaun/chronokeep-windows/releases/latest">
             <StackPanel Orientation="Horizontal">
                 <PathIcon Data="{StaticResource link_regular}" />
-                <Label>Latest release on Github</Label>
+                <TextBlock Classes="link">Latest release on Github</TextBlock>
             </StackPanel>
         </HyperlinkButton>
         <TextBlock
@@ -91,72 +122,82 @@
             />
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Margin="0,0,32,0">
                 <!-- NavigateUri="https://system.data.sqlite.org/" -->
-                <HyperlinkButton Name="SQLiteBtn" Classes="link" NavigateUri="https://system.data.sqlite.org/">
+                <HyperlinkButton Classes="link" NavigateUri="https://system.data.sqlite.org/">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
-                        <Label>SQLite</Label>
+                        <TextBlock Classes="link">SQLite</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
                 <!-- NavigateUri="https://wkhtmltopdf.org/" -->
-                <HyperlinkButton Name="WkHtmltoPdfBtn" Classes="link" NavigateUri="https://wkhtmltopdf.org/">
+                <HyperlinkButton Classes="link" NavigateUri="https://wkhtmltopdf.org/">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
-                        <Label>wkhtmltopdf</Label>
+                        <TextBlock Classes="link">wkhtmltopdf</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
             </StackPanel>
             <StackPanel Grid.Column="1" Margin="0,0,32,0">
                 <!-- NavigateUri="https://avaloniaui.net/" -->
-                <HyperlinkButton Name="AvaloniaBtn" Classes="link" NavigateUri="https://avaloniaui.net/">
+                <HyperlinkButton Classes="link" NavigateUri="https://avaloniaui.net/">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
-                        <Label>Avalonia UI</Label>
+                        <TextBlock Classes="link">Avalonia UI</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
                 <!-- NavigateUri="https://www.ghostscript.com/" -->
-                <HyperlinkButton Name="GhostscriptBtn" Classes="link" NavigateUri="https://www.ghostscript.com/">
+                <HyperlinkButton Classes="link" NavigateUri="https://www.ghostscript.com/">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
-                        <Label>Ghostscript</Label>
+                        <TextBlock Classes="link">Ghostscript</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
             </StackPanel>
             <StackPanel Grid.Column="2">
-                <!-- NavigateUri="https://github.com/xceedsoftware/wpftoolkit" -->
-                <HyperlinkButton Name="WpfToolkitBtn" Classes="link" NavigateUri="https://github.com/xceedsoftware/wpftoolkit">
+                <!-- NavigateUri="https://github.com/naudio/NAudio" -->
+                <HyperlinkButton Classes="link" NavigateUri="https://github.com/naudio/NAudio">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
-                        <Label>Extended WPF Toolkit</Label>
+                        <TextBlock Classes="link">NAudio</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
                 <!-- NavigateUri="https://closedxml.github.io/ClosedXML/" -->
-                <HyperlinkButton Name="ClosedXmlBtn" Classes="link" NavigateUri="https://closedxml.github.io/ClosedXML/">
+                <HyperlinkButton Classes="link" NavigateUri="https://closedxml.github.io/ClosedXML/">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
-                        <Label>ClosedXML</Label>
+                        <TextBlock Classes="link">ClosedXML</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
             </StackPanel>
             <StackPanel Grid.Column="3">
                 <!-- NavigateUri="https://github.com/Jinjinov/Hardware.Info" -->
-                <HyperlinkButton Name="HWInfoBtn" Classes="link" NavigateUri="https://github.com/Jinjinov/Hardware.Info">
+                <HyperlinkButton Classes="link" NavigateUri="https://github.com/Jinjinov/Hardware.Info">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
-                        <Label>Hardware.Info</Label>
+                        <TextBlock Classes="link">Hardware.Info</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
                 <!-- NavigateUri="https://sentry.io" -->
-                <HyperlinkButton Name="SentryBtn" Classes="link" NavigateUri="https://sentry.io">
+                <HyperlinkButton Classes="link" NavigateUri="https://sentry.io">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
-                        <Label>Sentry</Label>
+                        <TextBlock Classes="link">Sentry</TextBlock>
+                    </StackPanel>
+                </HyperlinkButton>
+            </StackPanel>
+            <StackPanel Grid.Column="4">
+                <!-- NavigateUri="https://github.com/twilio/twilio-csharp" -->
+                <HyperlinkButton Classes="link" NavigateUri="https://github.com/twilio/twilio-csharp">
+                    <StackPanel Orientation="Horizontal">
+                        <PathIcon Data="{StaticResource link_regular}" />
+                        <TextBlock Classes="link">Twilio</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
             </StackPanel>
@@ -171,15 +212,15 @@
             <Button Click="OpenDataFolder_Click" Classes="link" Margin="0,0,5,0">
                 <StackPanel Orientation="Horizontal">
                     <PathIcon Data="{StaticResource folder_regular}" />
-                    <Label>Data</Label>
+                    <TextBlock Classes="link">Data</TextBlock>
                 </StackPanel>
             </Button>
-            <Button Name="HelpDocsButton" Click="HelpDocsButton_Click" Classes="link" Margin="5,0,0,0">
+            <HyperlinkButton Name="HelpDocsButton" Classes="link" Margin="5,0,0,0">
                 <StackPanel Orientation="Horizontal">
                     <PathIcon Data="{StaticResource folder_regular}" />
-                    <Label>Help Docs</Label>
+                    <TextBlock Classes="link">Help Docs</TextBlock>
                 </StackPanel>
-            </Button>
+            </HyperlinkButton>
         </StackPanel>
     </StackPanel>
 </UserControl>
