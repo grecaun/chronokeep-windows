@@ -16,11 +16,11 @@
         </Style>
         <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
             <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
             <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
     </UserControl.Styles>
     <StackPanel VerticalAlignment="Center" Margin="0,35,0,10">

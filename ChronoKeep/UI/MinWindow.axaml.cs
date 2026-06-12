@@ -43,6 +43,10 @@ public partial class MinWindow : Window, IMainWindow
     public MinWindow()
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         // Check that no other instance of this program are running.
         if (!OneWindow.WaitOne(TimeSpan.Zero, true))
         {
@@ -52,7 +56,9 @@ public partial class MinWindow : Window, IMainWindow
         }
         OneWindow.ReleaseMutex();
 
-        string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
+        string dirPath = App.IsWindows ?
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR)
+            : Path.Combine(Directory.GetCurrentDirectory(), "data");
         string path = Path.Combine(dirPath, MainWindow.DatabaseFileName);
         Log.D("UI.MainWindow", "Looking for database file.");
         if (!Directory.Exists(dirPath))

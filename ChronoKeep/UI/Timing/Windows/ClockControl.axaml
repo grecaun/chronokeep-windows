@@ -14,7 +14,7 @@
         Topmost="True"
         SizeToContent="WidthAndHeight"
         Closed="Window_Closed">
-    <StackPanel Margin="0,30,0,0">
+    <StackPanel Margin="0,30,0,0" Name="MainPanel">
         <ListBox Name="clockListView" Margin="25,0,25,10"/>
         <TextBlock Name="CurrentTimeLabel"
                    FontSize="14"

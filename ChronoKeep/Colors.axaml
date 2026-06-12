@@ -28,7 +28,6 @@
             <SolidColorBrush x:Key='ExpanderHeaderBackgroundPressed'>#232323</SolidColorBrush>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
-    <SolidColorBrush x:Key='PrimaryColor'>#0f6cbd</SolidColorBrush>
     <SolidColorBrush x:Key='LightPrimaryColor'>#479ef5</SolidColorBrush>
     <SolidColorBrush x:Key='AlertColor'>Orange</SolidColorBrush>
 </ResourceDictionary>

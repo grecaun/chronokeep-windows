@@ -22,7 +22,7 @@
             <Setter Property="CanUserSortColumns" Value="True"/>
         </Style>
     </Window.Styles>
-    <StackPanel Margin="0,20,0,0">
+    <StackPanel Margin="0,20,0,0" Name="MainPanel">
         <DataGrid Name="AnnouncerBox" IsVisible="False" BorderThickness="1">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="When" Binding="{Binding AnnouncerWhen}" MinWidth="180" x:DataType="objects:AnnouncerParticipant"/>

@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Chronokeep.UI.MainPages;
 
@@ -62,13 +63,39 @@ public partial class AboutPage : UserControl, IMainPage
         clw.Show();
     }
 
-    private void OpenDataFolder_Click(object? sender, RoutedEventArgs e)
+    private async void OpenDataFolder_Click(object? sender, RoutedEventArgs e)
     {
-        string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
+        string dirPath = App.IsWindows ?
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR)
+            : Path.Combine(Directory.GetCurrentDirectory(), "data/");
         if (!Directory.Exists(dirPath))
         {
             return;
         }
-        Process.Start("explorer", dirPath);
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            Process.Start("explorer", dirPath);            
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            using Process dbusShowItemsProcess = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "dbus-send",
+                    Arguments =
+                        "--print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:\"file://" +
+                        dirPath + "\" string:\"\"",
+                    UseShellExecute = true
+                }
+            };
+            dbusShowItemsProcess.Start();
+            await dbusShowItemsProcess.WaitForExitAsync();
+            if (dbusShowItemsProcess.ExitCode != 0)
+            {
+                Log.E("UI.MainPages.AboutPage", "Unable to open data directory.");
+            }
+        }
     }
 }

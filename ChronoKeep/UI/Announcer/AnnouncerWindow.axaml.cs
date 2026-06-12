@@ -8,6 +8,7 @@ using Chronokeep.Timing.Announcer;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Avalonia;
 
 namespace Chronokeep.UI.Announcer;
 
@@ -28,8 +29,12 @@ public partial class AnnouncerWindow : Window
         theEvent = database.GetCurrentEvent();
         AnnouncerParticipant.TheEvent = theEvent;
         announcerWorker = AnnouncerWorker.NewAnnouncer(window, database);
-        announcerThread = new(new ThreadStart(announcerWorker.Run));
+        announcerThread = new Thread(announcerWorker.Run);
         announcerThread.Start();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         UpdateView();
         UpdateTiming();
     }

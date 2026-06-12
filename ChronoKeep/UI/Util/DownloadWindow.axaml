@@ -15,7 +15,7 @@
         Closing="Window_Closing"
         Topmost="True"
         >
-    <StackPanel VerticalAlignment="Center" Margin="0,30,0,0">
+    <StackPanel VerticalAlignment="Center" Margin="0,30,0,0" Name="MainPanel">
         <StackPanel Name="UpdatePanel">
             <TextBlock Name="DownloadLabel"
                        Text="Update Available"
@@ -41,7 +41,7 @@
                       Height="100"
                       HorizontalScrollBarVisibility="Disabled"
                       Padding="10" VerticalScrollBarVisibility="Auto">
-            <TextBlock Name="backupBlock"
+            <TextBlock Name="BackupBlock"
                        TextAlignment="Center"
                        TextWrapping="Wrap"
                        />

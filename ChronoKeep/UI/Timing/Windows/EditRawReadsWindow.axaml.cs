@@ -8,6 +8,7 @@ using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Avalonia;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -24,6 +25,10 @@ public partial class EditRawReadsWindow : Window
     public EditRawReadsWindow(ITimingPage parent, IDBInterface database, List<ChipRead> chipReads)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         this.parent = parent;
         this.database = database;
         this.chipReads = chipReads;

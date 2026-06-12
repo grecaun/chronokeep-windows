@@ -8,6 +8,7 @@ using Chronokeep.UI.ChipAssignment.Parts;
 using Chronokeep.UI.Util;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia;
 
 namespace Chronokeep.UI.ChipAssignment;
 
@@ -21,6 +22,10 @@ public partial class ChipTool : Window
     public ChipTool()
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         correlationBox.Items.Add(new TagRangePart(correlationBox));
     }
 
@@ -34,6 +39,10 @@ public partial class ChipTool : Window
         MinWidth = 550;
         Width = 600;
         CanResize = false;
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(20,0,20,20);
+        }
     }
 
     public static ChipTool NewWindow(IWindowCallback window, IDBInterface database)

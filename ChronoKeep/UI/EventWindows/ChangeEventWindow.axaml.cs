@@ -9,6 +9,7 @@ using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Avalonia;
 
 namespace Chronokeep.UI.EventWindows;
 
@@ -22,6 +23,10 @@ public partial class ChangeEventWindow : Window
         InitializeComponent();
         this.window = window;
         this.database = database;
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(5);
+        }
         UpdateEventBox();
     }
 

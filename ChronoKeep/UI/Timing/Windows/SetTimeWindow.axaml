@@ -16,7 +16,8 @@
         Closing="Window_Closing">
     <StackPanel Margin="10,30,10,10"
                 VerticalAlignment="Top"
-                HorizontalAlignment="Center">
+                HorizontalAlignment="Center"
+                Name="MainPanel">
         <TextBlock Text="Set Time To"
                    FontSize="18"
                    TextAlignment="Center"

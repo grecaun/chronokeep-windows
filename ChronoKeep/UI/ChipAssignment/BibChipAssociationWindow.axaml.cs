@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Avalonia;
 
 namespace Chronokeep.UI.ChipAssignment;
 
@@ -37,6 +38,10 @@ public partial class BibChipAssociationWindow : Window
         this.Height = 300;
         this.Width = 300;
         this.Topmost = true;
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         if (importer.Data!.Type == ImportData.FileType.EXCEL)
         {
             SheetsContainer.IsVisible = true;

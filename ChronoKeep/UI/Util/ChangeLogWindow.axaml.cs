@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using Avalonia;
 
 namespace Chronokeep.UI.Util;
 
@@ -19,10 +20,20 @@ public partial class ChangeLogWindow : Window
     private ChangeLogWindow(IWindowCallback window, IDBInterface database)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            LogList.Margin = new Thickness(10, 10, 10, 0);
+        }
         this.window = window;
         this.database = database;
 
-        string changelogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "changelog");
+        string changelogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Changelog");
+        if (!Path.Exists(changelogPath))
+        {
+            Close();
+            DialogBox.Show("Unable to find changelog folder.");
+            return;
+        }
         string[] changelogFiles = Directory.GetFiles(changelogPath);
         if (changelogFiles.Length < 1)
         {
@@ -38,7 +49,8 @@ public partial class ChangeLogWindow : Window
         }
         changelogEntries.Sort();
         changelogEntries[0].IsExpanded = true;
-        logList.ItemsSource = changelogEntries;
+        changelogEntries = changelogEntries[..5];
+        LogList.ItemsSource = changelogEntries;
         AppSetting autoChangelog = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG)!;
         autoChangelogToggleSwitch.IsChecked = autoChangelog != null && autoChangelog.Value == Constants.Settings.SETTING_TRUE;
     }

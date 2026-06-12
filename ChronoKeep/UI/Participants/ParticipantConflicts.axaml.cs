@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System.Collections.Generic;
+using Avalonia;
 
 namespace Chronokeep.UI.Participants;
 
@@ -12,6 +13,10 @@ public partial class ParticipantConflicts : Window
     public ParticipantConflicts(IMainWindow window, List<Participant> participants)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            ParticipantsList.Margin = new Thickness(0);
+        }
         this.window = window;
 
         ParticipantsList.ItemsSource = participants;

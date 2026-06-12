@@ -6,6 +6,7 @@ using Chronokeep.Timing.Interfaces;
 using Chronokeep.UI.Util;
 using System;
 using System.ComponentModel;
+using Avalonia;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -17,6 +18,10 @@ public partial class RewindWindow : Window
     public RewindWindow(TimingSystem system, ITimingPage parent)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(10, 0, 10, 10);
+        }
         this.MinWidth = 0;
         this.MinHeight = 0;
         this.SizeToContent = SizeToContent.Height;

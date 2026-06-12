@@ -42,7 +42,7 @@
             <RowDefinition Height="55" />
         </Grid.RowDefinitions>
 		<ListBox Grid.Row="0"
-                 Name="logList"
+                 Name="LogList"
                  Margin="10,30,10,0"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemTemplate>

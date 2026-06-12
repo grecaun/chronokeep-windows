@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Database;
 using System;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Chronokeep.Constants
@@ -83,7 +84,9 @@ namespace Chronokeep.Constants
             // Settings 2
             if (database.GetAppSetting(DEFAULT_EXPORT_DIR) == null)
             {
-                string dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), PROGRAM_DIR, "Exports");
+                string dirPath = App.IsWindows ?
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), PROGRAM_DIR, "Exports")
+                    : Path.Combine(Directory.GetCurrentDirectory(), "Exports");
                 database.SetAppSetting(DEFAULT_EXPORT_DIR, dirPath);
             }
             if (database.GetAppSetting(DEFAULT_TIMING_SYSTEM) == null)

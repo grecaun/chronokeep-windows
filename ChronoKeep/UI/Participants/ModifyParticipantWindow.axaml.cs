@@ -9,6 +9,7 @@ using Chronokeep.UI.MainPages;
 using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
+using Avalonia;
 
 namespace Chronokeep.UI.Participants;
 
@@ -25,6 +26,10 @@ public partial class ModifyParticipantWindow : Window
     public ModifyParticipantWindow(IMainWindow window, IDBInterface database, Participant? person)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         this.window = window;
         this.tPage = null;
         this.database = database;
@@ -51,6 +56,10 @@ public partial class ModifyParticipantWindow : Window
     public ModifyParticipantWindow(TimingPage tPage, IDBInterface database, int EventSpecificId, string Bib)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         this.window = null;
         this.tPage = tPage;
         this.database = database;

@@ -5,6 +5,7 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
+using Avalonia;
 
 namespace Chronokeep.UI.Participants;
 
@@ -18,6 +19,10 @@ public partial class ChangeMultiParticipantWindow : Window
     public ChangeMultiParticipantWindow(IMainWindow window, IDBInterface database, List<Participant> toChange)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         this.window = window;
         this.database = database;
         this.toChange = toChange;

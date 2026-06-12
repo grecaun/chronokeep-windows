@@ -7,6 +7,7 @@ using Sentry;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Chronokeep
 {
@@ -15,6 +16,8 @@ namespace Chronokeep
     /// </summary>
     public partial class App : Application
     {
+        internal static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        
         public override void Initialize()
         {
             SentrySdk.Init(options =>
@@ -37,7 +40,9 @@ namespace Chronokeep
                 options.Release = string.Format("chronokeep-windows@{0}", gitVersion);
             });
             Log.D("UI.MainWindow", "Looking for log directory.");
-            string logDirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR, "logs");
+            string logDirPath = IsWindows ?
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR, "logs")
+                : Path.Combine(Directory.GetCurrentDirectory(), "logs");
             if (!Directory.Exists(logDirPath))
             {
                 Log.D("UI.MainWindow", "Creating log directory.");
@@ -84,7 +89,9 @@ namespace Chronokeep
 
         static void CaptureException(Exception ex)
         {
-            string logDirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR, "logs");
+            string logDirPath = IsWindows ?
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR, "logs")
+                : Path.Combine(Directory.GetCurrentDirectory(), "logs");
             if (!Directory.Exists(logDirPath))
             {
                 Log.D("UI.MainWindow", "Creating log directory.");

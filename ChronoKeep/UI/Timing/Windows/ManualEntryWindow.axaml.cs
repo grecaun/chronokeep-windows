@@ -7,6 +7,7 @@ using Chronokeep.Objects;
 using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
+using Avalonia;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -23,6 +24,10 @@ public partial class ManualEntryWindow : Window
     private ManualEntryWindow(IMainWindow window, IDBInterface database, List<TimingLocation> locations)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0, 0, 0, 15);
+        }
         this.MinHeight = 275;
         this.MinWidth = 300;
         this.Width = 300;

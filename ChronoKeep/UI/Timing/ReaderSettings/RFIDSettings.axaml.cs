@@ -15,6 +15,10 @@ public partial class RFIDSettings : Window
     public RFIDSettings(RFIDUltraInterface reader)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(20, 0, 20, 20);
+        }
         this.MinWidth = 100;
         this.MinHeight = 100;
         this.reader = reader;

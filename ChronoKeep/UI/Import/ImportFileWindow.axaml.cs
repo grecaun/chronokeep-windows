@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Avalonia;
 using static Chronokeep.UI.Import.ImportFilePage2Alt;
 
 namespace Chronokeep.UI.Import;
@@ -94,6 +95,10 @@ public partial class ImportFileWindow : Window
     public ImportFileWindow(IMainWindow? window, IDataImporter importer, IDBInterface database)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainGrid.Margin = new Thickness(0);
+        }
         this.importer = importer;
         this.window = window;
         this.database = database;

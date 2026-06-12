@@ -24,14 +24,14 @@
         </Style>
         <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
             <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
             <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-            <Setter Property="Background" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style> 
     </Window.Styles>
-    <Grid Margin="5,35,5,5">
+    <Grid Margin="5,35,5,5" Name="MainPanel">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="30"/>

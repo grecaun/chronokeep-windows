@@ -28,6 +28,10 @@ public partial class ChipReaderWindow : Window
     public ChipReaderWindow(IWindowCallback window, IDBInterface database)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         InstantiateSerialPortList();
         reader = new NewReader(this);
         this.window = window;

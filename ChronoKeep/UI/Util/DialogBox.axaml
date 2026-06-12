@@ -13,7 +13,7 @@
         Topmost="True"
         SizeToContent="Height"
         >
-    <StackPanel VerticalAlignment="Center" Margin="0,25,0,0">
+    <StackPanel VerticalAlignment="Center" Margin="0,25,0,0" Name="MainPanel">
         <StackPanel VerticalAlignment="Center"
                     HorizontalAlignment="Center">
             <TextBlock Name="MessageBox"

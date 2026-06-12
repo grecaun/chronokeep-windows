@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Avalonia;
 
 namespace Chronokeep.UI.Export;
 
@@ -46,6 +47,10 @@ public partial class ExportResults : Window
     public ExportResults(IMainWindow window, IDBInterface database)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         this.window = window;
         this.database = database;
         theEvent = database.GetCurrentEvent();

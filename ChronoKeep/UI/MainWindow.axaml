@@ -15,7 +15,6 @@
         TransparencyLevelHint="Mica,AcrylicBlur"
         Background="{DynamicResource SecondaryBackground}"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="30"
         WindowStartupLocation="CenterScreen"
         x:DataType="vm:MainWindow"
         >
@@ -95,7 +94,7 @@
                     <!-- Toggle Button Side Indicator -->
                     <Style Selector="Rectangle">
 			            <Setter Property="VerticalAlignment" Value="Center"/>
-			            <Setter Property="Fill" Value="{DynamicResource PrimaryColor}"/>
+			            <Setter Property="Fill" Value="{DynamicResource SystemAccentColor}"/>
 			            <Setter Property="Height" Value="16"/>
 			            <Setter Property="Width" Value="3"/>
 			            <Setter Property="RadiusX" Value="2"/>

@@ -16,7 +16,7 @@
         Topmost="True"
         SizeToContent="Height"
         Closing="Window_Closing">
-    <StackPanel Margin="0,30,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
+    <StackPanel Margin="0,30,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" Name="MainPanel">
         <ListBox Name="notificationsList"
                  Margin="0,5"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"

@@ -14,45 +14,45 @@
         </Style>
         <Style Selector="Button.link PathIcon">
             <Setter Property="Margin" Value="0,0,5,0"/>
-			<Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+			<Setter Property="Foreground" Value="{DynamicResource SystemAccentColor}"/>
         </Style>
         <Style Selector="Button.link:focus PathIcon">
-            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
         <Style Selector="Button.link:pointerover PathIcon">
-            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
         <Style Selector="Button.link TextBlock">
             <Setter Property="TextDecorations" Value=""/>
-            <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColor}"/>
             <Setter Property="Margin" Value="5,0,0,0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style Selector="Button.link:focus TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
         <Style Selector="Button.link:pointerover TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
         <Style Selector="HyperlinkButton.link TextBlock">
             <Setter Property="TextDecorations" Value=""/>
-            <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColor}"/>
             <Setter Property="Margin" Value="5,0,0,0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style Selector="HyperlinkButton.link:focus TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
         <Style Selector="HyperlinkButton.link:pointerover TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
         <Style Selector="HyperlinkButton.link:focus /template/ ContentPresenter">
 			<Setter Property="Background" Value="{x:Null}"/>
-            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
         <Style Selector="HyperlinkButton.link:pointerover /template/ ContentPresenter">
 			<Setter Property="Background" Value="{x:Null}"/>
-            <Setter Property="Foreground" Value="{DynamicResource LightPrimaryColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
     </UserControl.Styles>
     <StackPanel Margin="10,10,10,10">

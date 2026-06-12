@@ -25,7 +25,7 @@
             <Setter Property="CanUserResizeColumns" Value="True"/>
         </Style>
     </Window.Styles>
-    <Grid RowDefinitions="*,auto" Margin="0,30,0,0">
+    <Grid RowDefinitions="*,auto" Margin="0,30,0,0" Name="MainPanel">
         <DataGrid Name="chipNumbers" Grid.Row="0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Dec Number" Binding="{Binding DecNumber}" x:DataType="local:RFIDInfo"/>

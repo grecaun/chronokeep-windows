@@ -5,6 +5,7 @@ using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia;
 
 namespace Chronokeep.UI.Timing.Notifications;
 
@@ -21,6 +22,10 @@ public partial class SMSWaveEnabledWindow : Window
     public SMSWaveEnabledWindow(IMainWindow window, IDBInterface database)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainGrid.Margin = new Thickness(0);
+        }
         this.MinHeight = 275;
         this.MinWidth = 300;
         this.Width = 300;

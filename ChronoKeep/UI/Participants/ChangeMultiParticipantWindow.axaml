@@ -13,7 +13,7 @@
         CanResize="False"
         Topmost="True"
         Closing="Window_Closing">
-    <StackPanel VerticalAlignment="Center" Grid.Row="1">
+    <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="0,30,0,0" Name="MainPanel">
         <TextBlock Text="Switch Participants to"
                    FontSize="14"
                    Width="210"

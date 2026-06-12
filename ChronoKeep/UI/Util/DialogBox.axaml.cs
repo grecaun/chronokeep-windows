@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 
 namespace Chronokeep.UI.Util;
@@ -11,6 +12,10 @@ public partial class DialogBox : Window
     public DialogBox(string Message, string LeftButtonContent, string RightButtonContent, bool ShowLeftButton, LeftClickDelegate LeftClick)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         MessageBox.Text = Message;
         LeftButton.Content = LeftButtonContent;
         RightButton.Content = RightButtonContent;

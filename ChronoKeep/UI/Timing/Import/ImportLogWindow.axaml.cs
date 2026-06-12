@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Avalonia;
 
 namespace Chronokeep.UI.Timing.Import;
 
@@ -27,6 +28,10 @@ public partial class ImportLogWindow : Window
     private ImportLogWindow(IMainWindow window, LogImporter importer, IDBInterface database)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            Frame.Margin = new Thickness(0);
+        }
         this.window = window;
         this.importer = importer;
         this.database = database;

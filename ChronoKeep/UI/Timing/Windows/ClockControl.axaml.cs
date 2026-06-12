@@ -8,6 +8,7 @@ using Chronokeep.UI.Parts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -23,6 +24,10 @@ public partial class ClockControl : Window
     private ClockControl(IMainWindow window, IDBInterface database)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         this.window = window;
         this.database = database;
         this.MinWidth = 10;

@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System;
+using Avalonia;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -14,6 +15,10 @@ public partial class SetTimeWindow : Window
     public SetTimeWindow(ITimingPage parent, TimingSystem timingSystem)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(10, 0, 10, 10);
+        }
         this.parent = parent;
         this.timingSystem = timingSystem;
     }

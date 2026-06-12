@@ -85,6 +85,10 @@ namespace Chronokeep.UI
         public MainWindow()
         {
             InitializeComponent();
+            if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+            {
+                CurrentContent.Margin = new Thickness(0);
+            }
             mWindow = this;
 
             // Check that no other instance of this program are running.
@@ -96,7 +100,9 @@ namespace Chronokeep.UI
             }
             OneWindow.ReleaseMutex();
 
-            string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
+            string dirPath = App.IsWindows ?
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR)
+                : Path.Combine(Directory.GetCurrentDirectory(), "data");
 #if DEBUG
             DatabaseFileName = "Chronokeep_test.sqlite";
 #endif
@@ -126,7 +132,7 @@ namespace Chronokeep.UI
             Constants.Settings.SetupSettings(database);
 
             // Ensure Global values are set up.
-            Globals.SetupValues(database);
+            SetupValues(database);
 
             // Setup AgeGroup static variables
             Event? theEvent = database.GetCurrentEvent();
@@ -145,7 +151,7 @@ namespace Chronokeep.UI
             DataContext = this;
 
             // Set timing update to every two tenths of a second.
-            TimingUpdater.Tick += new EventHandler(UpdateTimingTick);
+            TimingUpdater.Tick += UpdateTimingTick;
             TimingUpdater.Interval = new TimeSpan(0, 0, 0, 0, 200);
             TimingUpdater.Start();
 

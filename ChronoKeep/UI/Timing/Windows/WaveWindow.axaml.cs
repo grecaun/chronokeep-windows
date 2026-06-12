@@ -7,6 +7,7 @@ using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia;
 
 namespace Chronokeep.UI.Timing.Windows;
 
@@ -22,6 +23,10 @@ public partial class WaveWindow : Window
     public WaveWindow(IMainWindow window, IDBInterface database)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0, 5, 0, 0);
+        }
         this.MinHeight = 300;
         this.MinWidth = 230;
         this.Width = 300;

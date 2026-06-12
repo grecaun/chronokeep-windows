@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Avalonia;
 
 namespace Chronokeep.UI.Export;
 
@@ -32,6 +33,10 @@ public partial class ExportDistanceResults : Window
         this.window = window;
         this.database = database;
         theEvent = database.GetCurrentEvent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         if (theEvent == null || theEvent.Identifier == -1)
         {
             noOpen = true;

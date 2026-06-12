@@ -12,7 +12,7 @@
         Closed="Window_Closed"
         Topmost="True"
         >
-    <StackPanel Width="1100" Margin="0,30,0,0">
+    <StackPanel Width="1100" Margin="0,30,0,0" Name="MainPanel">
         <StackPanel Name="loadingPanel"
                     Width="300"
                     Height="300"

@@ -17,7 +17,7 @@
           <Setter Property="Padding" Value="10"/> 
        </Style> 
     </Window.Styles>
-    <StackPanel Margin="5,30,5,5">
+    <StackPanel Margin="5,30,5,5" Name="MainPanel">
         <DockPanel Margin="10,0,10,0">
             <TextBlock Text="Name"
                        Margin="10,10,5,10"

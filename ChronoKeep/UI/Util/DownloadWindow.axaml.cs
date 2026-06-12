@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia;
 
 namespace Chronokeep.UI.Util
 {
@@ -30,18 +31,32 @@ namespace Chronokeep.UI.Util
         public DownloadWindow(GithubRelease r, Updates.Version v, IMainWindow mWindow)
         {
             InitializeComponent();
-            DownloadProgress.IsVisible = false;
-            this.version = v.ToString();
-            download_uri = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\chronokeep-setup-{version}.exe";
-            Log.D("Updates.Check", string.Format("Download URL - {0}", r.Assets[0].BrowserDownloadURL));
-            uri = r.Assets[0].BrowserDownloadURL;
-            Activate();
+            if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+            {
+                MainPanel.Margin = new Thickness(0);
+            }
             Topmost = true;
             this.mWindow = mWindow;
             this.MinHeight = 0;
             this.Height = 250;
             this.MinWidth = 0;
             this.Width = 400;
+            DownloadProgress.IsVisible = false;
+            this.version = v.ToString();
+            if (App.IsWindows)
+            {
+                download_uri = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\chronokeep-setup-{version}.exe";
+            }
+            else
+            {
+                download_uri = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\chronokeep-{version}.tar.gz";
+                Close();
+                DialogBox.Show("Linux downloads not yet implemented.");
+                return;
+            }
+            Log.D("Updates.Check", string.Format("Download URL - {0}", r.Assets[0].BrowserDownloadURL));
+            uri = r.Assets[0].BrowserDownloadURL;
+            Activate();
         }
 
         private static HttpClient GetHttpClient()
@@ -162,9 +177,11 @@ namespace Chronokeep.UI.Util
             UpdatePanel.IsVisible = false;
             BackupDatabaseButton.IsVisible = false;
             BackupPanel.IsVisible = true;
-            backupBlock.Text = $"{backupBlock.Text}\nChecking for old database files.";
+            BackupBlock.Text = $"{BackupBlock.Text}\nChecking for old database files.";
             // TODO - Might be windows specific -- turn into non-platform specific code.
-            string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
+            string dirPath = App.IsWindows ?
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR)
+                : Path.Combine(Directory.GetCurrentDirectory(), "data");
             string path = Path.Combine(dirPath, MainWindow.DatabaseFileName);
             Log.D("Updates.DownloadWindow", "Looking for database file.");
             if (Directory.Exists(dirPath))
@@ -174,13 +191,13 @@ namespace Chronokeep.UI.Util
                     string backup = Path.Combine(dirPath, $"{DateTime.Now:yyyy-MM-dd}-backup-{MainWindow.DatabaseFileName}");
                     try
                     {
-                        backupBlock.Text = $"{backupBlock.Text}\nBacking up database.";
+                        BackupBlock.Text = $"{BackupBlock.Text}\nBacking up database.";
                         File.Copy(path, backup, false);
-                        backupBlock.Text = $"{backupBlock.Text}\n{backup}";
+                        BackupBlock.Text = $"{BackupBlock.Text}\n{backup}";
                     }
                     catch
                     {
-                        backupBlock.Text = $"{backupBlock.Text}\nError backing up database.";
+                        BackupBlock.Text = $"{BackupBlock.Text}\nError backing up database.";
                     }
                 }
             }

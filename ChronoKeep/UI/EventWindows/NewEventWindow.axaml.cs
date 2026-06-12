@@ -8,6 +8,7 @@ using Chronokeep.Objects;
 using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
+using Avalonia;
 
 namespace Chronokeep.UI.EventWindows;
 
@@ -27,6 +28,10 @@ public partial class NewEventWindow : Window
         this.MinHeight = 200;
         this.Width = 350;
         this.Height = 310;
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(5);
+        }
         List<Event> events = database.GetEvents();
         events.Sort();
         List<string> eventNames = [];

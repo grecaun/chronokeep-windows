@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
 using System.Collections.Generic;
+using Avalonia;
 using static Chronokeep.Helpers.Globals;
 
 namespace Chronokeep.UI.Timing.Notifications;
@@ -14,6 +15,10 @@ public partial class ReaderNotificationWindow : Window
     private ReaderNotificationWindow(IWindowCallback window)
     {
         InitializeComponent();
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         this.window = window;
         UpdateNotificatonsBox();
     }

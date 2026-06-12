@@ -10,7 +10,7 @@
         SizeToContent="Height"
         Topmost="True"
         Closing="Window_Closing">
-    <Grid Margin="0,30,0,0">
+    <Grid Margin="0,30,0,0" Name="MainPanel">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>

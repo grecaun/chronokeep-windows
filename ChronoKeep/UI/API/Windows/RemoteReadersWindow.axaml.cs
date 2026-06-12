@@ -10,6 +10,7 @@ using Chronokeep.UI.API.Parts;
 using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
+using Avalonia;
 
 namespace Chronokeep.UI.API.Windows;
 
@@ -45,6 +46,10 @@ public partial class RemoteReadersWindow : Window
         }
         remoteAPIs = database.GetAllAPI();
         remoteAPIs.RemoveAll(x => x.Type != Constants.APIConstants.CHRONOKEEP_REMOTE && x.Type != Constants.APIConstants.CHRONOKEEP_REMOTE_SELF);
+        if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
+        {
+            MainPanel.Margin = new Thickness(0);
+        }
         GetReaders();
     }
 
