@@ -71,6 +71,11 @@
         </Style>
         <Style Selector="DataGrid">
             <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
+        </Style>
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
         </Style>
         <Style Selector="Button.mainpage">
             <Setter Property="Margin" Value="5,15,5,0"/>

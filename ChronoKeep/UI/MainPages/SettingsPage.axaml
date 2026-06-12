@@ -22,13 +22,13 @@
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
         </Style>
-        <Style Selector="TextBlock">
+        <Style Selector="TextBlock.settings">
 			<Setter Property="Width" Value="170"/>
 			<Setter Property="Margin" Value="10,0,10,5"/>
 			<Setter Property="FontSize" Value="14"/>
 			<Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
-        <Style Selector="TextBox">
+        <Style Selector="TextBox.settings">
 			<Setter Property="Margin" Value="0,0,10,5"/>
 			<Setter Property="FontSize" Value="14"/>
             <Setter Property="Height" Value="30"/>
@@ -112,23 +112,32 @@
                 <ColumnDefinition Width="4*"/>
                 <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
-            <ScrollViewer VerticalScrollBarVisibility="Visible" Padding="5,0,5,5">
+            <ScrollViewer VerticalScrollBarVisibility="Visible"
+                          Padding="5,0,5,5">
                 <StackPanel Grid.Column="0">
                     <DockPanel>
-                        <TextBlock Text="Company Name" />
-                        <TextBox Name="CompanyNameBox" />
+                        <TextBlock Text="Company Name"
+                                   Classes="settings"/>
+                        <TextBox Name="CompanyNameBox"
+                                 Classes="settings"/>
                     </DockPanel>
                     <DockPanel>
-                        <TextBlock Text="Contact Email" />
-                        <TextBox Name="ContactEmailBox" />
+                        <TextBlock Text="Contact Email"
+                                   Classes="settings"/>
+                        <TextBox Name="ContactEmailBox"
+                                 Classes="settings"/>
                     </DockPanel>
                     <DockPanel Grid.Column="0">
-                        <TextBlock Text="Default Timing System" />
-                        <ComboBox Name="DefaultTimingBox" />
+                        <TextBlock Text="Default Timing System"
+                                   Classes="settings"/>
+                        <ComboBox Name="DefaultTimingBox"
+                                  Classes="settings"/>
                     </DockPanel>
                     <DockPanel Grid.Column="0">
-                        <TextBlock Text="Theme Color" />
-                        <ComboBox Name="ThemeColorBox" SelectionChanged="ThemeColorBox_SelectionChanged" />
+                        <TextBlock Text="Theme Color"
+                                   Classes="settings"/>
+                        <ComboBox Name="ThemeColorBox"
+                                  SelectionChanged="ThemeColorBox_SelectionChanged" />
                     </DockPanel>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -136,8 +145,12 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="100"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Export Directory" Grid.Column="0" />
-                        <TextBox Name="DefaultExportDirBox" Grid.Column="1" />
+                        <TextBlock Text="Export Directory"
+                                   Grid.Column="0"
+                                   Classes="settings"/>
+                        <TextBox Name="DefaultExportDirBox"
+                                 Grid.Column="1"
+                                 Classes="settings"/>
                         <Button Grid.Column="2"
                                 Name="ChangeExport"
                                 Content="Change"
@@ -150,7 +163,9 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="40" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Upload Interval" Grid.Column="0"/>
+                        <TextBlock Text="Upload Interval"
+                                   Grid.Column="0"
+                                   Classes="settings"/>
                         <Slider Grid.Column="1"
                                 Name="uploadSlider"
                                 ValueChanged="UploadSlider_ValueChanged" />
@@ -158,7 +173,8 @@
                                    Name="uploadBlock"
                                    Width="30"
                                    HorizontalAlignment="Center"
-                                   TextAlignment="Center" />
+                                   TextAlignment="Center"
+                                   Classes="settings"/>
                     </Grid>
                     <Grid Margin="0,-10">
                         <Grid.ColumnDefinitions>
@@ -166,7 +182,8 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="40" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Download Interval" />
+                        <TextBlock Text="Download Interval"
+                                   Classes="settings"/>
                         <Slider Grid.Column="1"
                                 Name="downloadSlider"
                                 ValueChanged="DownloadSlider_ValueChanged" />
@@ -174,7 +191,8 @@
                                    Name="downloadBlock"
                                    Width="30"
                                    HorizontalAlignment="Center"
-                                   TextAlignment="Center"/>
+                                   TextAlignment="Center"
+                                   Classes="settings"/>
                     </Grid>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -182,7 +200,8 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="40" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Announcer Window" />
+                        <TextBlock Text="Announcer Window"
+                                   Classes="settings"/>
                         <Slider Grid.Column="1"
                                 Name="announcerSlider"
                                 ValueChanged="AnnouncerSlider_ValueChanged"
@@ -195,10 +214,12 @@
                                    Name="announcerBlock"
                                    Width="30"
                                    HorizontalAlignment="Center"
-                                   TextAlignment="Center"/>
+                                   TextAlignment="Center"
+                                   Classes="settings"/>
                     </Grid>
                     <DockPanel>
-                        <TextBlock Text="Alarm Sound" />
+                        <TextBlock Text="Alarm Sound"
+                                   Classes="settings"/>
                         <Button Name="PlayBtn"
                                 Content="Play"
                                 Click="PlayBtn_Click"
@@ -224,7 +245,9 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="105"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Program Identifier" />
+                        <TextBlock Grid.Column="0"
+                                   Text="Program Identifier"
+                                   Classes="settings"/>
                         <TextBox Grid.Column="1"
                                  Name="UniqueProgramID"
                                  HorizontalContentAlignment="Stretch"
@@ -236,53 +259,73 @@
                                 Click="RegenerateUniqueProgramIDButton_Click" />
                     </Grid>
                     <DockPanel>
-                        <TextBlock Text="Registration Server Name" />
-                        <TextBox Name="RegistrationServerNameBox" />
+                        <TextBlock Text="Registration Server Name"
+                                   Classes="settings"/>
+                        <TextBox Name="RegistrationServerNameBox"
+                                 Classes="settings"/>
                     </DockPanel>
                     <DockPanel>
-                        <TextBlock Text="Twilio Account SID" />
-                        <TextBox Name="TwilioAccountSIDBox" />
+                        <TextBlock Text="Twilio Account SID"
+                                   Classes="settings"/>
+                        <TextBox Name="TwilioAccountSIDBox"
+                                 Classes="settings"/>
                     </DockPanel>
                     <DockPanel>
-                        <TextBlock Text="Twilio Auth Token" />
-                        <TextBox Name="TwilioAuthTokenBox" />
+                        <TextBlock Text="Twilio Auth Token"
+                                   Classes="settings"/>
+                        <TextBox Name="TwilioAuthTokenBox"
+                                 Classes="settings"/>
                     </DockPanel>
                     <DockPanel>
-                        <TextBlock Text="Twilio Phone Number" />
-                        <TextBox Name="TwilioPhoneNumberBox" />
+                        <TextBlock Text="Twilio Phone Number"
+                                   Classes="settings"/>
+                        <TextBox Name="TwilioPhoneNumberBox"
+                                 Classes="settings"/>
                     </DockPanel>
                     <DockPanel>
-                        <TextBlock Text="Mailgun From Name" />
-                        <TextBox Name="MailgunFromNameBox" />
+                        <TextBlock Text="Mailgun From Name"
+                                   Classes="settings"/>
+                        <TextBox Name="MailgunFromNameBox"
+                                 Classes="settings"/>
                     </DockPanel>
                     <DockPanel>
-                        <TextBlock Text="Mailgun From Email" />
-                        <TextBox Name="MailgunFromEmailBox" />
+                        <TextBlock Text="Mailgun From Email"
+                                   Classes="settings"/>
+                        <TextBox Name="MailgunFromEmailBox"
+                                 Classes="settings"/>
                     </DockPanel>
                     <DockPanel>
-                        <TextBlock Text="Mailgun API Key" />
-                        <TextBox Name="MailgunAPIKeyBox" />
+                        <TextBlock Text="Mailgun API Key"
+                                   Classes="settings"/>
+                        <TextBox Name="MailgunAPIKeyBox"
+                                 Classes="settings"/>
                     </DockPanel>
                     <DockPanel>
-                        <TextBlock Text="Mailgun Domain" />
-                        <TextBox Name="MailgunAPIURLBox" />
+                        <TextBlock Text="Mailgun Domain"
+                                   Classes="settings"/>
+                        <TextBox Name="MailgunAPIURLBox"
+                                 Classes="settings"/>
                     </DockPanel>
                 </StackPanel>
             </ScrollViewer>
             <StackPanel Grid.Column="1">
-                <StackPanel Orientation="Horizontal" Classes="toggle">
+                <StackPanel Orientation="Horizontal"
+                            Classes="toggle">
                     <ToggleSwitch Name="UpdatePage"/>
                     <Label VerticalAlignment="Center">Auto-save changes</Label>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Classes="toggle">
+                <StackPanel Orientation="Horizontal"
+                            Classes="toggle">
                     <ToggleSwitch Name="ExitNoPrompt"/>
                     <Label VerticalAlignment="Center">Do not prompt before exit</Label>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Classes="toggle">
+                <StackPanel Orientation="Horizontal"
+                            Classes="toggle">
                     <ToggleSwitch Name="CheckUpdates"/>
                     <Label VerticalAlignment="Center">Check for updates</Label>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Classes="toggle">
+                <StackPanel Orientation="Horizontal"
+                            Classes="toggle">
                     <ToggleSwitch Name="AutoChangelog"/>
                     <Label VerticalAlignment="Center">Show changelog after update</Label>
                 </StackPanel>

@@ -163,9 +163,8 @@ public partial class ChipAssignmentPage : UserControl, IMainPage
     private void Delete_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Delete clicked.");
-        IList selected = bibChipList.SelectedItems;
         List<BibChipAssociation> items = [];
-        foreach (BibChipAssociation b in selected)
+        foreach (BibChipAssociation b in bibChipList.SelectedItems)
         {
             items.Add(b);
         }
@@ -192,9 +191,8 @@ public partial class ChipAssignmentPage : UserControl, IMainPage
     private void DeleteIgnored_Click(object? sender, RoutedEventArgs? e)
     {
         Log.D("UI.MainPages.ChipAssignmentPage", "Delete ignored clicked.");
-        IList selected = ignoredChipList.SelectedItems;
         List<BibChipAssociation> items = [];
-        foreach (BibChipAssociation b in selected)
+        foreach (BibChipAssociation b in ignoredChipList.SelectedItems)
         {
             items.Add(b);
         }

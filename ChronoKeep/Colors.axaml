@@ -10,6 +10,9 @@
             <SolidColorBrush x:Key='ButtonBackground'>#ffffff</SolidColorBrush>
             <SolidColorBrush x:Key='ButtonHoverBackground'>#f8f8f8</SolidColorBrush>
             <SolidColorBrush x:Key='ButtonHoverForeground'>Black</SolidColorBrush>
+            <SolidColorBrush x:Key='ExpanderHeaderBackground'>White</SolidColorBrush>
+            <SolidColorBrush x:Key='ExpanderHeaderBackgroundPointerOver'>#f9f9f9</SolidColorBrush>
+            <SolidColorBrush x:Key='ExpanderHeaderBackgroundPressed'>#f9f9f9</SolidColorBrush>
         </ResourceDictionary>
         <ResourceDictionary x:Key='Dark'>
             <SolidColorBrush x:Key='BackgroundBrush'>#2e2e2e</SolidColorBrush>
@@ -20,6 +23,9 @@
             <SolidColorBrush x:Key='ButtonBackground'>#101010</SolidColorBrush>
             <SolidColorBrush x:Key='ButtonHoverBackground'>#262626</SolidColorBrush>
             <SolidColorBrush x:Key='ButtonHoverForeground'>White</SolidColorBrush>
+            <SolidColorBrush x:Key='ExpanderHeaderBackground'>#1c1c1c</SolidColorBrush>
+            <SolidColorBrush x:Key='ExpanderHeaderBackgroundPointerOver'>#232323</SolidColorBrush>
+            <SolidColorBrush x:Key='ExpanderHeaderBackgroundPressed'>#232323</SolidColorBrush>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
     <SolidColorBrush x:Key='PrimaryColor'>#0f6cbd</SolidColorBrush>

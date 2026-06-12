@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Chronokeep.Helpers;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
@@ -19,8 +20,6 @@ public partial class SegmentPart : UserControl
 
     [GeneratedRegex("[^0-9.]+")]
     private static partial Regex AllowedChars();
-    [GeneratedRegex("[^0-9]+")]
-    private static partial Regex AllowedNums();
 
     public SegmentPart(Event theEvent, SegmentsPage page, Segment segment, List<TimingLocation> locations)
     {
@@ -123,7 +122,14 @@ public partial class SegmentPart : UserControl
                 mySegment.LocationId = Constants.Timing.LOCATION_DUMMY;
             }
             mySegment.CumulativeDistance = Convert.ToDouble(CumDistance.Text);
-            mySegment.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem!).Tag!);
+            mySegment.DistanceUnit = DistanceUnit.SelectedIndex switch
+            {
+                1 => Constants.Distances.KILOMETERS,
+                2 => Constants.Distances.METERS,
+                3 => Constants.Distances.YARDS,
+                4 => Constants.Distances.FEET,
+                _ => Constants.Distances.MILES,
+            };
             if (Occurrence != null && Occurrence.SelectedItem != null) mySegment.Occurrence = Convert.ToInt32(((ComboBoxItem)Occurrence.SelectedItem).Tag!);
             else mySegment.Occurrence = -1;
             mySegment.GPS = GPS.Text!;
@@ -167,12 +173,12 @@ public partial class SegmentPart : UserControl
         Occurrence.SelectedIndex = 0;
     }
 
-    private void DoubleValidation(object? sender, Avalonia.Input.TextInputEventArgs e)
+    private void DoubleValidation(object? sender, TextInputEventArgs e)
     {
         e.Handled = AllowedChars().IsMatch(e.Text!);
     }
 
-    private void Remove_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Remove_Click(object? sender, RoutedEventArgs e)
     {
         Log.D("UI.MainPages.SegmentsPage", "Removing an item.");
         page.RemoveSegment(mySegment);

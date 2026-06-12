@@ -41,7 +41,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*"/>
                 <RowDefinition Height="55"/>
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="55"/>
             </Grid.RowDefinitions>
@@ -49,7 +49,7 @@
                 Grid.Row="0"
                 Name="bibChipList">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" Width="auto" x:DataType="objects:BibChipAssociation"/>
+                    <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" Width="70" x:DataType="objects:BibChipAssociation"/>
                     <DataGridTextColumn Header="Chip" Binding="{Binding Chip}" Width="*" x:DataType="objects:BibChipAssociation"/>
                 </DataGrid.Columns>
             </DataGrid>
@@ -75,12 +75,12 @@
                     Classes="chip"
                     />
             </Grid>
-            <TextBlock Grid.Row="2" Text="Ignored Chips" HorizontalAlignment="Center" Margin="14,0" />
+            <TextBlock Grid.Row="2" Text="Ignored Chips" HorizontalAlignment="Center" Margin="14,0,14,10" />
             <DataGrid
                 Grid.Row="3"
                 Name="ignoredChipList">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" Width="auto" x:DataType="objects:BibChipAssociation"/>
+                    <DataGridTextColumn Header="Bib" Binding="{Binding Bib}" Width="70" x:DataType="objects:BibChipAssociation"/>
                     <DataGridTextColumn Header="Chip" Binding="{Binding Chip}" Width="*" x:DataType="objects:BibChipAssociation"/>
                 </DataGrid.Columns>
             </DataGrid>
