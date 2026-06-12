@@ -95,7 +95,7 @@ namespace Chronokeep.Objects
             if (event_id != other.event_id)
             {
                 return event_id.CompareTo(other.event_id);
-            } 
+            }
             if (other.distance_id != distance_id)
             {
                 return distance_id.CompareTo(other.distance_id);

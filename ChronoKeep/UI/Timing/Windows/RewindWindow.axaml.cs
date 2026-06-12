@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Chronokeep.Interfaces.UI;
@@ -6,7 +7,6 @@ using Chronokeep.Timing.Interfaces;
 using Chronokeep.UI.Util;
 using System;
 using System.ComponentModel;
-using Avalonia;
 
 namespace Chronokeep.UI.Timing.Windows;
 

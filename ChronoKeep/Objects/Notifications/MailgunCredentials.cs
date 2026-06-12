@@ -17,7 +17,7 @@ namespace Chronokeep.Objects.Notifications
 
         public string From()
         {
-            if (FromName.Length  > 0)
+            if (FromName.Length > 0)
             {
                 return string.Format("{0} <{1}>", FromName, FromEmail);
             }

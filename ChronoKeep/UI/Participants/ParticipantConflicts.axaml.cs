@@ -1,8 +1,8 @@
+using Avalonia;
 using Avalonia.Controls;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System.Collections.Generic;
-using Avalonia;
 
 namespace Chronokeep.UI.Participants;
 

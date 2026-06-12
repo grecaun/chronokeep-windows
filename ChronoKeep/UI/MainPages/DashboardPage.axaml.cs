@@ -7,8 +7,8 @@ using Chronokeep.Objects;
 using Chronokeep.UI.API.Windows;
 using Chronokeep.UI.EventWindows;
 using Chronokeep.UI.MainPages.Dashboard;
-using Chronokeep.UI.Util;
 using Chronokeep.UI.UhfRfidReader;
+using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -725,7 +725,7 @@ public partial class DashboardPage : UserControl, IMainPage
             }
             theEvent.Name = EventNameTextBox.Text!;
             theEvent.YearCode = EventYearCodeTextBox.Text!;
-            theEvent.Date = DateTime.Parse(EventDatePicker.Text!.Replace('_','0')).ToString("MM/dd/yyyy");
+            theEvent.Date = DateTime.Parse(EventDatePicker.Text!.Replace('_', '0')).ToString("MM/dd/yyyy");
             theEvent.RankByGun = RankByGunCheckBox.IsChecked ?? false;
             theEvent.CommonAgeGroups = CommonAgeCheckBox.IsChecked ?? false;
             theEvent.CommonStartFinish = CommonStartCheckBox.IsChecked ?? false;

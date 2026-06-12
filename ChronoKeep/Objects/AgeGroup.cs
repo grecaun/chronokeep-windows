@@ -34,8 +34,11 @@ namespace Chronokeep.Objects
         public int StartAge { get => start_age; set => start_age = value; }
         public int EndAge { get => end_age; set => end_age = value; }
         public int GroupId { get => group_id; set => group_id = value; }
-        public bool LastGroup { get => last_group == Constants.Timing.AGEGROUPS_LASTGROUP_TRUE;
-            set => last_group = value ? Constants.Timing.AGEGROUPS_LASTGROUP_TRUE : Constants.Timing.AGEGROUPS_LASTGROUP_FALSE; }
+        public bool LastGroup
+        {
+            get => last_group == Constants.Timing.AGEGROUPS_LASTGROUP_TRUE;
+            set => last_group = value ? Constants.Timing.AGEGROUPS_LASTGROUP_TRUE : Constants.Timing.AGEGROUPS_LASTGROUP_FALSE;
+        }
         public string Name { get => LastGroup ? string.Format("Over {0}", start_age) : string.Format("{0}-{1}", start_age, end_age); }
         public string CustomName { get => custom_name; set => custom_name = value; }
         public string PrettyName()

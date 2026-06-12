@@ -7,8 +7,8 @@ using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronokeepPortal.Requests;
 using Chronokeep.Objects.ChronokeepPortal.Responses;
-using Chronokeep.UI.Util;
 using Chronokeep.UI.Timing.ReaderSettings;
+using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -127,10 +127,10 @@ namespace Chronokeep.Timing.Interfaces
                             {
                                 ReadersResponse readRes = JsonSerializer.Deserialize<ReadersResponse>(message)!;
                                 settingsWindow?.UpdateView(new()
-                                    {
-                                        Readers = readRes.List,
-                                        Changes = [PortalSettingsHolder.ChangeType.READERS]
-                                    });
+                                {
+                                    Readers = readRes.List,
+                                    Changes = [PortalSettingsHolder.ChangeType.READERS]
+                                });
                                 int oneReadingCount = 0;
                                 foreach (PortalReader reader in readRes.List)
                                 {
@@ -182,14 +182,14 @@ namespace Chronokeep.Timing.Interfaces
                             {
                                 ReaderAntennasResponse antRes = JsonSerializer.Deserialize<ReaderAntennasResponse>(message)!;
                                 settingsWindow?.UpdateView(new()
+                                {
+                                    Antennas = new()
                                     {
-                                        Antennas = new()
-                                        {
-                                            ReaderName = antRes.ReaderName,
-                                            Antennas = antRes.Antennas,
-                                        },
-                                        Changes = [PortalSettingsHolder.ChangeType.ANTENNAS]
-                                    });
+                                        ReaderName = antRes.ReaderName,
+                                        Antennas = antRes.Antennas,
+                                    },
+                                    Changes = [PortalSettingsHolder.ChangeType.ANTENNAS]
+                                });
                             }
                             catch (Exception e)
                             {
@@ -332,10 +332,10 @@ namespace Chronokeep.Timing.Interfaces
                             {
                                 ApiListResponse apiList = JsonSerializer.Deserialize<ApiListResponse>(message)!;
                                 settingsWindow?.UpdateView(new()
-                                    {
-                                        APIs = apiList.List,
-                                        Changes = [PortalSettingsHolder.ChangeType.APIS]
-                                    });
+                                {
+                                    APIs = apiList.List,
+                                    Changes = [PortalSettingsHolder.ChangeType.APIS]
+                                });
                                 if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string>? settingList))
                                 {
                                     settingList = [];
@@ -569,9 +569,9 @@ namespace Chronokeep.Timing.Interfaces
                             {
                                 ReadAutoUploadResponse autoUploadResponse = JsonSerializer.Deserialize<ReadAutoUploadResponse>(message)!;
                                 settingsWindow?.UpdateView(new()
-                                    {
-                                        AutoUpload = autoUploadResponse.Status,
-                                    }
+                                {
+                                    AutoUpload = autoUploadResponse.Status,
+                                }
                                     );
                             }
                             catch (Exception e)

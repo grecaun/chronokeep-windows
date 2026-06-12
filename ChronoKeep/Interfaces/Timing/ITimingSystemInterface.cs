@@ -27,7 +27,8 @@ namespace Chronokeep.Interfaces.Timing
         bool WasShutdown();
     }
 
-    public enum MessageType {
+    public enum MessageType
+    {
         CONNECTED,
         VOLTAGENORMAL,
         VOLTAGELOW,

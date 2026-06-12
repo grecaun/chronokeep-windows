@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Chronokeep.Objects;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using Chronokeep.Objects;
 
 namespace Chronokeep.Database.SQLite
 {

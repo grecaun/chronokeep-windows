@@ -52,7 +52,7 @@ namespace Chronokeep.Constants
                         }
                     }
                 }
-                
+
             }
             catch
             {

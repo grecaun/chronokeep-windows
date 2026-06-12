@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -8,7 +9,6 @@ using Chronokeep.Objects;
 using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
-using Avalonia;
 
 namespace Chronokeep.UI.EventWindows;
 
@@ -56,7 +56,7 @@ public partial class NewEventWindow : Window
         long dateVal = DateTime.Now.Date.Ticks;
         if (datePicker.Text != null)
         {
-            dateVal = DateTime.Parse(datePicker.Text.Replace('_','0')).Ticks;
+            dateVal = DateTime.Parse(datePicker.Text.Replace('_', '0')).Ticks;
         }
         Log.D("NewEventWindow", "Name given for event: '" + nameString + "' Date Given: " + dateVal + " Date Value: " + dateVal);
         if (nameString == "")

@@ -54,7 +54,7 @@ namespace Chronokeep.Database.SQLite
             return (int)outVal;
         }
 
-        internal static List<Alarm> GetAlarms(int eventId,  SQLiteConnection connection)
+        internal static List<Alarm> GetAlarms(int eventId, SQLiteConnection connection)
         {
             List<Alarm> output = [];
             SQLiteCommand command = connection.CreateCommand();

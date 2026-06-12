@@ -74,7 +74,7 @@ public partial class ImportFilePage1 : UserControl
     internal HeaderPart[] GetListBoxItems()
     {
         HeaderPart[] output = new HeaderPart[headerListBox.Items.Count];
-        for (int i=0; i<headerListBox.Items.Count; i++)
+        for (int i = 0; i < headerListBox.Items.Count; i++)
         {
             output[i] = (HeaderPart)headerListBox.Items[i]!;
         }

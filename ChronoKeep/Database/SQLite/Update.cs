@@ -1243,7 +1243,7 @@ namespace Chronokeep.Database.SQLite
                     case 47:
                         Log.D("Database.SQLite.Update", "Upgrading from version 47.");
                         command = connection.CreateCommand();
-                        command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO old_bib_chip_assoc; "+
+                        command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO old_bib_chip_assoc; " +
                             "CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
                                 "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                                 "bib INTEGER NOT NULL," +
@@ -1463,7 +1463,7 @@ namespace Chronokeep.Database.SQLite
                             "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT ''," +
                             "eventspecific_anonymous SMALLINT NOT NULL DEFAULT 0," +
                             "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE" +
-                            "); " + 
+                            "); " +
                             "CREATE TABLE IF NOT EXISTS sms_alert(" +
                             "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
                             "sms_bib INTEGER NOT NULL" +
@@ -1550,7 +1550,7 @@ namespace Chronokeep.Database.SQLite
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD COLUMN event_age_groups_as_divisions " +
                             "INTEGER NOT NULL DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE + ";" +
-                            "UPDATE settings SET value='64' WHERE setting='"+Constants.Settings.DATABASE_VERSION + "';";
+                            "UPDATE settings SET value='64' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 64;
                     case 64:
@@ -1568,7 +1568,7 @@ namespace Chronokeep.Database.SQLite
                                 "phone VARCHAR(100) NOT NULL DEFAULT '', " +
                                 "UNIQUE(event_id, bib, first, last, phone)" +
                                 ");" +
-                            "UPDATE settings SET VALUE='65' WHERE setting='"+Constants.Settings.DATABASE_VERSION+"';";
+                            "UPDATE settings SET VALUE='65' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 65;
                     case 65:
@@ -1580,7 +1580,7 @@ namespace Chronokeep.Database.SQLite
                             "CREATE INDEX idx_chipread_id ON chipreads(read_id);" +
                             "CREATE INDEX idx_participant_id ON participants(participant_id);" +
                             "CREATE INDEX idx_distance_id ON distances(distance_id);" +
-                            "UPDATE settings SET VALUE='66' WHERE setting='"+Constants.Settings.DATABASE_VERSION+"'";
+                            "UPDATE settings SET VALUE='66' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
                         command.ExecuteNonQuery();
                         goto case 66;
                     case 66:
@@ -1588,7 +1588,7 @@ namespace Chronokeep.Database.SQLite
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD COLUMN event_upload_specific_distance_results INTEGER NOT NULL DEFAULT 0; " +
                             "ALTER TABLE distances ADD COLUMN distance_upload_results INTEGER NOT NULL DEFAULT 1; " +
-                            "UPDATE settings SET VALUE='67' WHERE setting='"+Constants.Settings.DATABASE_VERSION+"';";
+                            "UPDATE settings SET VALUE='67' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 67;
                     case 67:

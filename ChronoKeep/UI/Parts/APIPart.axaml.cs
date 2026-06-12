@@ -51,7 +51,8 @@ public partial class APIPart : UserControl
         Log.D("UI.MainPages.APIPage", "Updating api.");
         theAPI.Nickname = APINickname.Text!;
         theAPI.URL = APIURL.Text!;
-        if (!theAPI.URL!.EndsWith('/'))        {
+        if (!theAPI.URL!.EndsWith('/'))
+        {
             theAPI.URL += "/";
         }
         theAPI.AuthToken = APIToken.Text!;

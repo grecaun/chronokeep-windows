@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -9,7 +10,6 @@ using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Avalonia;
 
 namespace Chronokeep.UI.EventWindows;
 

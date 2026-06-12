@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
@@ -11,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Avalonia;
 using static Chronokeep.UI.Import.ImportFilePage2Alt;
 
 namespace Chronokeep.UI.Import;

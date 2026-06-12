@@ -75,7 +75,7 @@ public partial class AboutPage : UserControl, IMainPage
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            Process.Start("explorer", dirPath);            
+            Process.Start("explorer", dirPath);
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {

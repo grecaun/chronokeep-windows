@@ -73,9 +73,9 @@ namespace Chronokeep.IO
                 }
                 Log.D("IO.ExcelImporter", "Value array populated. Rows " + numDataRows + " Columns " + numHeaders);
                 string[] headers = new string[numHeaders];
-                for (int i=1; i<=numHeaders; i++)
+                for (int i = 1; i <= numHeaders; i++)
                 {
-                    headers[i-1] = worksheet.Cell(1, i).Value.IsBlank ? "" : worksheet.Cell(1,i).Value.ToString();
+                    headers[i - 1] = worksheet.Cell(1, i).Value.IsBlank ? "" : worksheet.Cell(1, i).Value.ToString();
                 }
                 Data = new(headers, FilePath, ImportData.FileType.EXCEL);
             }
@@ -106,18 +106,18 @@ namespace Chronokeep.IO
                     numDataRows++;
                 }
                 object[,] valueArray = new object[numDataRows, numHeaders];
-                for (int i=1; i<= numDataRows; i++)
+                for (int i = 1; i <= numDataRows; i++)
                 {
-                    for (int j=1; j<=numHeaders; j++)
+                    for (int j = 1; j <= numHeaders; j++)
                     {
-                        valueArray[i-1, j-1] = worksheet.Cell(i, j).Value;
+                        valueArray[i - 1, j - 1] = worksheet.Cell(i, j).Value;
                     }
                 }
                 Log.D("IO.ExcelImporter", "Value array populated. Rows " + numDataRows + " Columns " + numHeaders);
                 for (int row = 1; row < numDataRows; row++)
                 {
                     string[] dataLine = new string[numHeaders];
-                    for (int column=0; column < numHeaders; column++)
+                    for (int column = 0; column < numHeaders; column++)
                     {
                         dataLine[column] = valueArray[row, column] == null ? "" : valueArray[row, column].ToString()!;
                     }

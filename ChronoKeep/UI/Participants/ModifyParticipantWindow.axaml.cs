@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -9,7 +10,6 @@ using Chronokeep.UI.MainPages;
 using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
-using Avalonia;
 
 namespace Chronokeep.UI.Participants;
 
@@ -277,7 +277,7 @@ public partial class ModifyParticipantWindow : Window
         {
             age = 0;
         }
-        string birthdate = BirthdayBox.Text!.Replace('_','0');
+        string birthdate = BirthdayBox.Text!.Replace('_', '0');
         if (age != 0 && birthdate.Length < 1)
         {
             if (!int.TryParse(theEvent.Date.Split('/')[2], out int year))

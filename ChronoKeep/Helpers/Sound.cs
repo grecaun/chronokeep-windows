@@ -150,7 +150,7 @@ namespace Chronokeep.Helpers
         public float[] AudioData { get; private set; }
         public WaveFormat WaveFormat { get; private set; }
 
-        public CachedSound (string audioFileName)
+        public CachedSound(string audioFileName)
         {
             using var audioFileReader = new AudioFileReader(audioFileName);
             WaveFormat = audioFileReader.WaveFormat;

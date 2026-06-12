@@ -136,11 +136,11 @@
                         <TextBlock Classes="link">SQLite</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
-                <!-- NavigateUri="https://wkhtmltopdf.org/" -->
-                <HyperlinkButton Classes="link" NavigateUri="https://wkhtmltopdf.org/">
+                <!-- NavigateUri="https://github.com/Kozea/WeasyPrint" -->
+                <HyperlinkButton Classes="link" NavigateUri="https://github.com/Kozea/WeasyPrint">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
-                        <TextBlock Classes="link">wkhtmltopdf</TextBlock>
+                        <TextBlock Classes="link">WeasyPrint</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
             </StackPanel>

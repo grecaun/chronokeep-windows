@@ -61,7 +61,7 @@ namespace Chronokeep.IO.HtmlTemplates
             }
             if (finish != null)
             {
-                resultList.RemoveAll(r => 
+                resultList.RemoveAll(r =>
                     (r.Occurrence == finish.Occurrence && r.LocationId == Constants.Timing.LOCATION_FINISH)
                     || (r.SegmentId == Constants.Timing.SEGMENT_START)
                     );
@@ -104,7 +104,7 @@ namespace Chronokeep.IO.HtmlTemplates
             distanceName = "";
             if (!singleDist)
             {
-                distanceName = string.Format(" {0}", result.DistanceName); 
+                distanceName = string.Format(" {0}", result.DistanceName);
             }
             participantName = result.First;
             time = result.ChipTimeNoMilliseconds;

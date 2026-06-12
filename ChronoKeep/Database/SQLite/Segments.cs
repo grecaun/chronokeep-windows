@@ -24,7 +24,7 @@ namespace Chronokeep.Database.SQLite
                 new("@dcum",seg.CumulativeDistance),
                 new("@dunit",seg.DistanceUnit),
                 new("@gps",seg.GPS),
-                new("@map",seg.MapLink) 
+                new("@map",seg.MapLink)
             ]);
             command.ExecuteNonQuery();
             command.CommandText = "SELECT segment_id FROM segments " +

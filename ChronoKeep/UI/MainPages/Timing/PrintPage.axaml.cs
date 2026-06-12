@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Chronokeep.UI.MainPages.Timing;
@@ -349,18 +350,66 @@ public partial class PrintPage : UserControl, ISubPage
         }
         try
         {
+            string weasyName, ghostName;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                weasyName = Path.Combine(Directory.GetCurrentDirectory(), "weasyprint.exe");
+                ghostName = Path.Combine(Directory.GetCurrentDirectory(), "gswin64.exe");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                weasyName = "weasyprint";
+                using Process test_weasy = new();
+                test_weasy.StartInfo.FileName = "which";
+                test_weasy.StartInfo.Arguments = weasyName;
+                test_weasy.Start();
+                test_weasy.WaitForExit(5000);
+                test_weasy.Kill();
+                test_weasy.Close();
+                ghostName = "ghostscript";
+                using Process test_ghost = new();
+                test_ghost.StartInfo.FileName = "which";
+                test_ghost.StartInfo.Arguments = ghostName;
+                test_ghost.Start();
+                test_ghost.WaitForExit(5000);
+                test_ghost.Kill();
+                test_ghost.Close();
+                if (test_weasy.ExitCode != 0 && test_ghost.ExitCode != 0)
+                {
+                    DialogBox.Show("This function requires Weasyprint & Ghostscript to function. Please install them and try again.",
+                        "https://doc.courtbouillon.org/weasyprint/stable/first_steps.html\nhttps://github.com/ArtifexSoftware/ghostpdl");
+                    return;
+                }
+                if (test_weasy.ExitCode != 0)
+                {
+                    DialogBox.Show("This function requires Weasyprint to function. Please install it and try again.",
+                        "https://doc.courtbouillon.org/weasyprint/stable/first_steps.html");
+                    return;
+                }
+                if (test_ghost.ExitCode != 0)
+                {
+                    DialogBox.Show("This function requires Ghostscript to function. Please install it and try again.",
+                        "https://github.com/ArtifexSoftware/ghostpdl");
+                    return;
+                }
+            }
+            else
+            {
+                DialogBox.Show("Operating System detected does not support this function currently.");
+                return;
+            }
             // Printing is a very weird process that I would love to streamline... but printing is hard.
             // Get two temp file names.
             string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
             string tmpPdf = Path.Combine(Path.GetTempPath(), "print_pdf.pdf");
-            // Write the HTML file to a temp file because wkhtmltopdf requires a URI.
+            // Write the HTML file to a temp file because weasyprint requires a URI.
             using StreamWriter streamwriter = new(File.Open(tmpFile, FileMode.Create));
             streamwriter.Write(HTML_String);
             streamwriter.Close();
-            // Use wkhtmltopdf to convert the temp HTML file to a temp PDF file.
+            // Use weasyprint to convert the temp HTML file to a temp PDF file.
             using Process create_pdf = new();
-            create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
-            create_pdf.StartInfo.Arguments = $"-s A4 -B 30mm {tmpFile} {tmpPdf}";
+            create_pdf.StartInfo.FileName = weasyName;
+            create_pdf.StartInfo.Arguments = $"{tmpFile} {tmpPdf} -s <(echo \"@page {{ size: A4 portrait; margin: 10mm }}\")";
             create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             create_pdf.StartInfo.UseShellExecute = true;
             create_pdf.Start();
@@ -370,7 +419,7 @@ public partial class PrintPage : UserControl, ISubPage
             create_pdf.Close();
             // Use ghostscript to print the temp PDF file.
             using Process print_pdf = new();
-            print_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "gswin32.exe");
+            print_pdf.StartInfo.FileName = ghostName;
             print_pdf.StartInfo.Arguments = $"-dPrinted -dBATCH -dNOPAUSE -dNOSAFER -dNumCopies=1 -sDEVICE=mswinpr2 {tmpPdf}";
             print_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             print_pdf.StartInfo.UseShellExecute = true;
@@ -447,6 +496,33 @@ public partial class PrintPage : UserControl, ISubPage
                 }
                 try
                 {
+                    string weasyName;
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        weasyName = Path.Combine(Directory.GetCurrentDirectory(), "weasyprint.exe");
+                    }
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    {
+                        weasyName = "weasyprint";
+                        using Process test_weasy = new();
+                        test_weasy.StartInfo.FileName = "which";
+                        test_weasy.StartInfo.Arguments = weasyName;
+                        test_weasy.Start();
+                        test_weasy.WaitForExit(5000);
+                        test_weasy.Kill();
+                        test_weasy.Close();
+                        if (test_weasy.ExitCode != 0)
+                        {
+                            DialogBox.Show("This function requires Weasyprint to function. Please install it and try again.",
+                                "https://doc.courtbouillon.org/weasyprint/stable/first_steps.html");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        DialogBox.Show("Operating System detected does not support this function currently.");
+                        return;
+                    }
                     // Write HTML to a temp file.
                     string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
                     using StreamWriter streamwriter = new(File.Open(tmpFile, FileMode.Create));
@@ -458,11 +534,11 @@ public partial class PrintPage : UserControl, ISubPage
                     {
                         File.Delete(filePath);
                     }
-                    // Use wkhtmltopdf to convert our temp html file to a saved pdf file.
+                    // Use weasyprint to convert our temp html file to a saved pdf file.
                     using Process create_pdf = new();
                     // TODO - Turn code into cross compatible code.
-                    create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
-                    create_pdf.StartInfo.Arguments = $"-s A4 {tmpFile} {filePath}";
+                    create_pdf.StartInfo.FileName = weasyName;
+                    create_pdf.StartInfo.Arguments = $"{tmpFile} {filePath} -s <(echo \"@page {{ size: A4 portrait; margin: 10mm }}\")";
                     create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                     create_pdf.StartInfo.UseShellExecute = true;
                     create_pdf.Start();

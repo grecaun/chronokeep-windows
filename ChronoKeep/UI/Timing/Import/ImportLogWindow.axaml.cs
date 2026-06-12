@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
@@ -9,7 +10,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Avalonia;
 
 namespace Chronokeep.UI.Timing.Import;
 

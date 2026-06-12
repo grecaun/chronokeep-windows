@@ -124,7 +124,8 @@ public partial class DistancesPage : UserControl, IMainPage
                         "Distance has participants, continue?",
                         "Yes",
                         "No",
-                        () => {
+                        () =>
+                        {
                             keepDeleting = true;
                             ignoreParticipantCheck = true;
                             database.RemoveDistance(d);
@@ -148,7 +149,8 @@ public partial class DistancesPage : UserControl, IMainPage
                 "Distance has participants, continue?",
                 "Yes",
                 "No",
-                () => {
+                () =>
+                {
                     keepDeleting = true;
                     ignoreParticipantCheck = true;
                     database.RemoveDistance(distance);

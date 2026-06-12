@@ -17,7 +17,8 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public const string BATTERY_LOW = "BATTERY_LOW";
         public const string BATTERY_CRITICAL = "BATTERY_CRITICAL";
 
-        public static string GetRemoteNotificationMessage(string reader, string address, RemoteNotification message) {
+        public static string GetRemoteNotificationMessage(string reader, string address, RemoteNotification message)
+        {
             if (message.Message != null && message.Message.Length > 0)
             {
                 Log.E("Objects.ChronokeepPortal.PortalNotification", $"Unknown message: '{message.Type}' '{message.Message}'");

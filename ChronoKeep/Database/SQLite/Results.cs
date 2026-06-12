@@ -168,11 +168,13 @@ namespace Chronokeep.Database.SQLite
                 chipReadDict.Add(cr.ReadId, cr);
             }
             Dictionary<int, Participant> partDict = [];
-            foreach (Participant p in Participants.GetParticipants(eventId, connection)) {
+            foreach (Participant p in Participants.GetParticipants(eventId, connection))
+            {
                 partDict.Add(p.EventSpecific.Identifier, p);
             }
             Dictionary<int, Distance> distanceDict = [];
-            foreach (Distance d in Distances.GetDistances(eventId, connection)) {
+            foreach (Distance d in Distances.GetDistances(eventId, connection))
+            {
                 distanceDict.Add(d.Identifier, d);
             }
             SQLiteCommand command = connection.CreateCommand();

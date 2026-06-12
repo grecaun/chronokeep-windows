@@ -7,7 +7,7 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace Chronokeep.Objects
 {
-    public partial class TimeResult: IEquatable<TimeResult>
+    public partial class TimeResult : IEquatable<TimeResult>
     {
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, readId, place, agePlace, genderPlace,
@@ -213,7 +213,7 @@ namespace Chronokeep.Objects
             this.linked_distance_name = linked_distance_name ?? "";
             this.chip = chip ?? "";
             this.anonymous = anonymous;
-            this.participantId = participantId ?? First+Last;
+            this.participantId = participantId ?? First + Last;
             this.theEvent = theEvent;
             this.division = division ?? "";
             this.divisionPlace = divisionPlace;

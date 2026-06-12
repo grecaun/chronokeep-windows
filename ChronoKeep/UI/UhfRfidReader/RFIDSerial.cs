@@ -91,10 +91,10 @@ namespace Chronokeep.UI.UhfRfidReader
             DeviceDeinit();
         }
 
-        internal static byte CheckSum (byte[] buffer, int buffLen)
+        internal static byte CheckSum(byte[] buffer, int buffLen)
         {
             byte sum = 0;
-            for (int i=0; i < buffLen; i++)
+            for (int i = 0; i < buffLen; i++)
             {
                 sum += buffer[i];
             }
@@ -120,7 +120,7 @@ namespace Chronokeep.UI.UhfRfidReader
                 }
                 if (pos > 0 && pos < 256)
                 {
-                    for (int i=0; i<256-pos; i++)
+                    for (int i = 0; i < 256 - pos; i++)
                     {
                         InMsg[i] = InMsg[i + pos];
                     }

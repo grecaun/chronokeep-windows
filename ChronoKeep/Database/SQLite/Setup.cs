@@ -89,7 +89,7 @@ namespace Chronokeep.Database.SQLite
                     "event_finish_ignore_within INTEGER NOT NULL DEFAULT 0," +
                     "event_start_window INTEGER NOT NULL DEFAULT -1," +
                     "event_start_max_occurrences INTEGER NOT NULL DEFAULT 1," +
-                    "event_age_groups_as_divisions INTEGER NOT NULL DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE +"," +
+                    "event_age_groups_as_divisions INTEGER NOT NULL DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE + "," +
                     "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
                     "event_days_allowed INTEGER NOT NULL DEFAULT 1," +
                     "event_upload_specific_distance_results INTEGER NOT NULL DEFAULT 0," +
@@ -270,7 +270,7 @@ namespace Chronokeep.Database.SQLite
                 queries.Add("CREATE TABLE IF NOT EXISTS sms_alert(" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
                     "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
-                    "segment_id INTEGER NOT NULL DEFAULT '"+Constants.Timing.SEGMENT_FINISH+"'," +
+                    "segment_id INTEGER NOT NULL DEFAULT '" + Constants.Timing.SEGMENT_FINISH + "'," +
                     "UNIQUE(event_id, eventspecific_id, segment_id)" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS sms_ban_list(" +

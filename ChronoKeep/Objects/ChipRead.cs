@@ -29,7 +29,8 @@ namespace Chronokeep.Objects
         // RawReads window functions
         internal DateTime Start { get; set; }
         public string LocationName { get; set; } = "";
-        public string Bib {
+        public string Bib
+        {
             get
             {
                 return Constants.Timing.CHIPREAD_TYPE_CHIP == Type ? ChipBib : ReadBib;
@@ -38,18 +39,18 @@ namespace Chronokeep.Objects
 
         // This constructor is used when receiving a read from a RFID Ultra 8
         public ChipRead(
-            int eventId, 
-            int locationId, 
-            string chipNumber, 
-            long seconds, 
+            int eventId,
+            int locationId,
+            string chipNumber,
+            long seconds,
             int millisec,
-            int antenna, 
-            string rssi, 
-            int isRewind, 
-            string reader, 
-            string box, 
+            int antenna,
+            string rssi,
+            int isRewind,
+            string reader,
+            string box,
             string readertime,
-            long starttime, 
+            long starttime,
             int logid
             )
         {
@@ -75,11 +76,11 @@ namespace Chronokeep.Objects
 
         // This constructor is used when receiving a read from an Ipico system
         public ChipRead(
-            int eventId, 
-            int locationId, 
-            string chipNumber, 
-            DateTime time, 
-            int antenna, 
+            int eventId,
+            int locationId,
+            string chipNumber,
+            DateTime time,
+            int antenna,
             int isRewind
             )
         {
@@ -105,15 +106,15 @@ namespace Chronokeep.Objects
 
         // This constructor is used when receiving a read from a Chronokeep Portal system
         public ChipRead(
-            int eventId, 
-            int locationId, 
-            bool chipIsChip, 
+            int eventId,
+            int locationId,
+            bool chipIsChip,
             string chipNumber,
-            long seconds, 
-            int millisec, 
-            int antenna, 
-            string rssi, 
-            string reader, 
+            long seconds,
+            int millisec,
+            int antenna,
+            string rssi,
+            string reader,
             int readType,
             string readertime,
             string box
@@ -149,22 +150,22 @@ namespace Chronokeep.Objects
 
         // This is the OLD database' constructor.
         public ChipRead(
-            int readId, 
-            int eventId, 
-            int status, 
-            int locationId, 
-            long chipNumber, 
+            int readId,
+            int eventId,
+            int status,
+            int locationId,
+            long chipNumber,
             long seconds,
-            int millisec, 
-            int antenna, 
-            string rssi, 
-            int isRewind, 
-            string reader, 
+            int millisec,
+            int antenna,
+            string rssi,
+            int isRewind,
+            string reader,
             string box,
             string readertime,
-            long starttime, 
-            int logid, 
-            DateTime time, 
+            long starttime,
+            int logid,
+            DateTime time,
             int readbib,
             int type
             )
@@ -192,28 +193,28 @@ namespace Chronokeep.Objects
 
         // new database constructor
         public ChipRead(
-            int readId, 
+            int readId,
             int eventId,
-            int status, 
-            int locationId, 
-            string chipNumber, 
+            int status,
+            int locationId,
+            string chipNumber,
             long seconds,
-            int millisec, 
-            int antenna, 
-            string rssi, 
-            int isRewind, 
-            string reader, 
-            string box, 
+            int millisec,
+            int antenna,
+            string rssi,
+            int isRewind,
+            string reader,
+            string box,
             string readertime,
-            long starttime, 
-            int logid, 
-            long time_seconds, 
-            int time_millisec, 
-            string readbib, 
-            int type, 
+            long starttime,
+            int logid,
+            long time_seconds,
+            int time_millisec,
+            string readbib,
+            int type,
             string chipbib,
             string first,
-            string last, 
+            string last,
             DateTime start,
             string locationName
             )
@@ -305,8 +306,8 @@ namespace Chronokeep.Objects
             int eventId,
             int locationId,
             int status,
-            string chipNumber, 
-            long seconds, 
+            string chipNumber,
+            long seconds,
             int milliseconds,
             long time_seconds,
             int time_milliseconds,
@@ -486,8 +487,8 @@ namespace Chronokeep.Objects
             if (one == null || two == null) return 1;
             // Check if they're the same bib
             // Make sure they're not the dummy bib numer, then compare them.
-            if ( Constants.Timing.CHIPREAD_DUMMYBIB != one.ReadBib && (one.ReadBib == two.ReadBib || one.ReadBib == two.ChipBib) ||
-                 Constants.Timing.CHIPREAD_DUMMYBIB != one.ChipBib && (one.ChipBib == two.ChipBib || one.ChipBib == two.ReadBib) )
+            if (Constants.Timing.CHIPREAD_DUMMYBIB != one.ReadBib && (one.ReadBib == two.ReadBib || one.ReadBib == two.ChipBib) ||
+                 Constants.Timing.CHIPREAD_DUMMYBIB != one.ChipBib && (one.ChipBib == two.ChipBib || one.ChipBib == two.ReadBib))
             {
                 return one.Time.CompareTo(two.Time);
             }
@@ -509,7 +510,7 @@ namespace Chronokeep.Objects
 
         public bool IsIgnored()
         {
-            return  Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE == Status ||
+            return Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE == Status ||
                     Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE == Status ||
                     Constants.Timing.CHIPREAD_STATUS_IGNORE == Status;
         }

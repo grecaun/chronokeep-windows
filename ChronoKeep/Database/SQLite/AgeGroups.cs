@@ -142,9 +142,9 @@ namespace Chronokeep.Database.SQLite
             {
                 output.Add(
                     new AgeGroup(
-                        Convert.ToInt32(reader["group_id"]), 
+                        Convert.ToInt32(reader["group_id"]),
                         Convert.ToInt32(reader["event_id"]),
-                        Convert.ToInt32(reader["distance_id"]), 
+                        Convert.ToInt32(reader["distance_id"]),
                         Convert.ToInt32(reader["start_age"]),
                         Convert.ToInt32(reader["end_age"]),
                         Convert.ToInt32(reader["last_group"]),

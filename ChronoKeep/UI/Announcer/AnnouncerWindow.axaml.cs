@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
@@ -8,7 +9,6 @@ using Chronokeep.Timing.Announcer;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Avalonia;
 
 namespace Chronokeep.UI.Announcer;
 

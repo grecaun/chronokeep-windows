@@ -11,9 +11,9 @@ namespace Chronokeep.MemStore
 {
     internal partial class MemStore : IDBInterface
     {
-        internal class ChronoLockException(string message) : Exception(message) {}
+        internal class ChronoLockException(string message) : Exception(message) { }
 
-        internal class InvalidEventID(string message) : Exception(message) {}
+        internal class InvalidEventID(string message) : Exception(message) { }
 
         private readonly int lockTimeout = 5000;
 

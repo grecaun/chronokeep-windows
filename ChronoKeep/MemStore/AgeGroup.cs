@@ -20,7 +20,7 @@ namespace Chronokeep.MemStore
             {
                 foreach (AgeGroup g in groups)
                 {
-                    for (int i = g.StartAge; i<= g.EndAge; i++)
+                    for (int i = g.StartAge; i <= g.EndAge; i++)
                     {
                         currentAgeGroups[(g.DistanceId, i)] = g;
                     }

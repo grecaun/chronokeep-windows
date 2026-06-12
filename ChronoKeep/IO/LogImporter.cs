@@ -38,6 +38,6 @@ namespace Chronokeep.IO
         }
 
         public enum Type
-        {  RFID, IPICO, CHRONOKEEP, CUSTOM }
+        { RFID, IPICO, CHRONOKEEP, CUSTOM }
     }
 }

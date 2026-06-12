@@ -78,7 +78,7 @@ namespace Chronokeep.MemStore
                                 }
                             }
                             output.AddRange(distStatDict.Values);
-                            output.Sort((x1, x2) => x1.Active != x2.Active? x2.Active.CompareTo(x1.Active) : x1.DistanceName.CompareTo(x2.DistanceName));
+                            output.Sort((x1, x2) => x1.Active != x2.Active ? x2.Active.CompareTo(x1.Active) : x1.DistanceName.CompareTo(x2.DistanceName));
                             if (output.Count > 1)
                             {
                                 output.Insert(0, allstats);

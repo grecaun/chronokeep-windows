@@ -210,7 +210,7 @@ namespace Chronokeep.Network
                 }
                 else if (filename.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
                 {
-                    context.Response.ContentType= "text/javascript";
+                    context.Response.ContentType = "text/javascript";
                 }
                 else if (filename.EndsWith(".html", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".html"))
                 {

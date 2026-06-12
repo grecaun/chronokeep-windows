@@ -3,12 +3,10 @@ using Chronokeep.Network.API;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static Chronokeep.Network.Util.Helpers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Chronokeep.Objects
 {
@@ -469,7 +467,7 @@ namespace Chronokeep.Objects
         [JsonPropertyName("timeZone")]
         public string TimeZone { get; set; } = "";
         [JsonPropertyName("brightness")]
-        public uint Brightness {  get; set; }
+        public uint Brightness { get; set; }
         [JsonPropertyName("flipDisplay")]
         public bool FlipDisplay { get; set; }
         [JsonPropertyName("twelveHour")]

@@ -11,7 +11,6 @@ using Chronokeep.Objects;
 using Chronokeep.UI.ChipAssignment;
 using Chronokeep.UI.Util;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;

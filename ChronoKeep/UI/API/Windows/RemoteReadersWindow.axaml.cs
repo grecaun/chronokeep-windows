@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
@@ -10,7 +11,6 @@ using Chronokeep.UI.API.Parts;
 using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
-using Avalonia;
 
 namespace Chronokeep.UI.API.Windows;
 

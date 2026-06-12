@@ -4,8 +4,8 @@ using Chronokeep.Interfaces.Timing;
 using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.Objects.RFID;
-using Chronokeep.UI.Util;
 using Chronokeep.UI.Timing.ReaderSettings;
+using Chronokeep.UI.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -452,7 +452,7 @@ namespace Chronokeep.Timing.Interfaces
                 return;
             }
             char[] vals = new char[4];
-            for (int i = 0; i<4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 vals[i] = (char)Convert.ToByte(nums[i]);
             }
@@ -782,7 +782,7 @@ namespace Chronokeep.Timing.Interfaces
         {
             SendMessage("u" + RFIDUltraCodes.WhenBeep + value + RFIDUltraCodes.SettingsTerm);
         }
-        
+
         public void SetUploadURL(string url)
         {
             SendMessage("u" + RFIDUltraCodes.UploadURL + url + RFIDUltraCodes.SettingsTerm);

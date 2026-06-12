@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Chronokeep.Database;
@@ -8,7 +9,6 @@ using Chronokeep.UI.ChipAssignment.Parts;
 using Chronokeep.UI.Util;
 using System.Collections.Generic;
 using System.Linq;
-using Avalonia;
 
 namespace Chronokeep.UI.ChipAssignment;
 
@@ -41,7 +41,7 @@ public partial class ChipTool : Window
         CanResize = false;
         if (!App.IsWindows && !IsExtendedIntoWindowDecorations)
         {
-            MainPanel.Margin = new Thickness(20,0,20,20);
+            MainPanel.Margin = new Thickness(20, 0, 20, 20);
         }
     }
 

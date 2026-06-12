@@ -192,7 +192,7 @@ namespace Chronokeep.Network.Registration
                                                 }));
                                                 break;
                                             case Request.GET_PARTICIPANTS:
-                                                Log.D("Network.Registration.RegistrationWorker","Received get participant message.");
+                                                Log.D("Network.Registration.RegistrationWorker", "Received get participant message.");
                                                 SendMessage(sock, JsonSerializer.Serialize(new ParticipantsResponse
                                                 {
                                                     Participants = GetParticipants(theEvent),
@@ -483,7 +483,7 @@ namespace Chronokeep.Network.Registration
 
         public void SendParticipants(Event theEvent)
         {
-            Log.D("Network.Registration.RegistrationWorker", "Attempting to send participants message. There are " + clients.Count + " clients connected.") ;
+            Log.D("Network.Registration.RegistrationWorker", "Attempting to send participants message. There are " + clients.Count + " clients connected.");
             foreach (Socket sock in clients)
             {
                 if (sock != null && sock != server && sock.Connected)

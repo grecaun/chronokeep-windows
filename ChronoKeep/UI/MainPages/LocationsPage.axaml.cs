@@ -159,5 +159,5 @@ public partial class LocationsPage : UserControl, IMainPage
         UpdateView();
     }
 
-    private void ResetBtn_Click(object? sender, RoutedEventArgs e) {}
+    private void ResetBtn_Click(object? sender, RoutedEventArgs e) { }
 }

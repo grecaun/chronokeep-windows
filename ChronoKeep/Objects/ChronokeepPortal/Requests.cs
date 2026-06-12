@@ -233,7 +233,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
     {
         public ReaderDisconnectRequest()
         {
-            Command= READER_DISCONNECT;
+            Command = READER_DISCONNECT;
         }
 
         [JsonPropertyName("id")]
@@ -320,7 +320,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
     {
         public ReadsDeleteRequest()
         {
-            Command= READS_DELETE;
+            Command = READS_DELETE;
         }
 
         [JsonPropertyName("start_seconds")]
@@ -361,7 +361,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public List<PortalSetting> Settings { get; set; } = [];
     }
 
-    public class SettingsGetRequest : Request 
+    public class SettingsGetRequest : Request
     {
         public SettingsGetRequest()
         {

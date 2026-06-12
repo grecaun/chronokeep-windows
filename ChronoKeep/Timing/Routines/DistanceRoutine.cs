@@ -695,7 +695,7 @@ namespace Chronokeep.Timing.Routines
                                 // Check if part of the DNF list
                                 // And if the read is AFTER they were marked as DNF
                                 else if (chipDNFDictionary.TryGetValue(chip, out ChipRead? dnfRead)
-                                    && (dnfRead.TimeSeconds < read.TimeSeconds || 
+                                    && (dnfRead.TimeSeconds < read.TimeSeconds ||
                                         (dnfRead.TimeSeconds == read.TimeSeconds && dnfRead.TimeMilliseconds < read.TimeMilliseconds)))
                                 {
                                     Log.D("Timing.Routines.DistanceRoutine", "chipDNFDictionary contains DNF for chip " + chip);

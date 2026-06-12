@@ -1,10 +1,10 @@
-﻿using Hardware.Info;
-using System.Text;
-using System;
+﻿using Avalonia;
 using Chronokeep.Database;
 using Chronokeep.Objects;
-using Avalonia;
 using Chronokeep.UI.Util;
+using Hardware.Info;
+using System;
+using System.Text;
 
 namespace Chronokeep.Helpers
 {

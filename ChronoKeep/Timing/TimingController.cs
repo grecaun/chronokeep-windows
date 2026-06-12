@@ -258,7 +258,8 @@ namespace Chronokeep.Timing
                             TimingSystemSockets.Remove(sock);
                             TimingSystemDict.Remove(sock);
                             mainWindow.TimingSystemDisconnected(system);
-                        } else
+                        }
+                        else
                         {
                             Log.D("Timing.TimingController", "Successful disconnect.");
                         }

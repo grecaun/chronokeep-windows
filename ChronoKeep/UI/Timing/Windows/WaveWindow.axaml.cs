@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Chronokeep.Database;
@@ -7,7 +8,6 @@ using Chronokeep.Objects;
 using Chronokeep.UI.Parts;
 using System.Collections.Generic;
 using System.Linq;
-using Avalonia;
 
 namespace Chronokeep.UI.Timing.Windows;
 
