@@ -22,6 +22,9 @@
         <Style Selector="Button.link:pointerover PathIcon">
             <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
+        <Style Selector="Button.link:visited PathIcon">
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorDark1}"/>
+        </Style>
         <Style Selector="Button.link TextBlock">
             <Setter Property="TextDecorations" Value=""/>
             <Setter Property="Foreground" Value="{DynamicResource SystemAccentColor}"/>
@@ -33,6 +36,9 @@
         </Style>
         <Style Selector="Button.link:pointerover TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
+        </Style>
+        <Style Selector="Button.link:visited TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorDark1}"/>
         </Style>
         <Style Selector="HyperlinkButton.link TextBlock">
             <Setter Property="TextDecorations" Value=""/>
@@ -46,6 +52,9 @@
         <Style Selector="HyperlinkButton.link:pointerover TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
         </Style>
+        <Style Selector="HyperlinkButton.link:visited TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorDark1}"/>
+        </Style>
         <Style Selector="HyperlinkButton.link:focus /template/ ContentPresenter">
 			<Setter Property="Background" Value="{x:Null}"/>
             <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
@@ -53,6 +62,10 @@
         <Style Selector="HyperlinkButton.link:pointerover /template/ ContentPresenter">
 			<Setter Property="Background" Value="{x:Null}"/>
             <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorLight1}"/>
+        </Style>
+        <Style Selector="HyperlinkButton.link:visited /template/ ContentPresenter">
+			<Setter Property="Background" Value="{x:Null}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorDark1}"/>
         </Style>
     </UserControl.Styles>
     <StackPanel Margin="10,10,10,10">
@@ -152,11 +165,11 @@
                         <TextBlock Classes="link">Avalonia UI</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
-                <!-- NavigateUri="https://www.ghostscript.com/" -->
-                <HyperlinkButton Classes="link" NavigateUri="https://www.ghostscript.com/">
+                <!-- NavigateUri="https://github.com/twilio/twilio-csharp" -->
+                <HyperlinkButton Classes="link" NavigateUri="https://github.com/twilio/twilio-csharp">
                     <StackPanel Orientation="Horizontal">
                         <PathIcon Data="{StaticResource link_regular}" />
-                        <TextBlock Classes="link">Ghostscript</TextBlock>
+                        <TextBlock Classes="link">Twilio</TextBlock>
                     </StackPanel>
                 </HyperlinkButton>
             </StackPanel>
@@ -193,13 +206,6 @@
                 </HyperlinkButton>
             </StackPanel>
             <StackPanel Grid.Column="4">
-                <!-- NavigateUri="https://github.com/twilio/twilio-csharp" -->
-                <HyperlinkButton Classes="link" NavigateUri="https://github.com/twilio/twilio-csharp">
-                    <StackPanel Orientation="Horizontal">
-                        <PathIcon Data="{StaticResource link_regular}" />
-                        <TextBlock Classes="link">Twilio</TextBlock>
-                    </StackPanel>
-                </HyperlinkButton>
             </StackPanel>
         </Grid>
         <TextBlock

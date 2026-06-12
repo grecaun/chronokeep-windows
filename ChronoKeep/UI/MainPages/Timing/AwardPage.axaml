@@ -130,7 +130,6 @@
             </StackPanel>
         </ScrollViewer>
         <DockPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">
-            <Button Name="printButton" Content="Print" Click="PrintButton_Click"/>
             <Button Name="saveButton" Content="Save" Click="SaveButton_Click"/>
             <Button Name="doneButton" Content="Done" Click="DoneButton_Click"/>
         </DockPanel>

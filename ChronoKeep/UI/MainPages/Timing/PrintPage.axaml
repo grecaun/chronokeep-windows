@@ -47,7 +47,7 @@
         </Style>
     </UserControl.Styles>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-        <StackPanel HorizontalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid Margin="5,5,5,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200" />
@@ -71,10 +71,6 @@
                 </ListBox>
             </Grid>
             <DockPanel LastChildFill="False" HorizontalAlignment="Center">
-                <Button Name="Print"
-                        Content="Print"
-                        Click="Print_Click"
-                        />
                 <Button Name="Save"
                         Content="Save"
                         Click="Save_Click"

@@ -253,7 +253,7 @@
     <None Update="Sounds\*.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="wkhtmltopdf.exe">
+    <None Update="weasyprint.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Chronokeep.Database;
 using Chronokeep.Helpers;
 using Chronokeep.Interfaces.UI;
@@ -9,6 +10,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -41,10 +45,13 @@ public partial class AwardPage : UserControl, ISubPage
         distances.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
         foreach (Distance d in distances)
         {
-            DistancesBox.Items.Add(new ListBoxItem()
+            if (d.LinkedDistance <= 0)
             {
-                Content = d.Name
-            });
+                DistancesBox.Items.Add(new ListBoxItem()
+                {
+                    Content = d.Name
+                });
+            }
         }
         parent.SetReaders([], false);
         UpdateView();
@@ -77,8 +84,9 @@ public partial class AwardPage : UserControl, ISubPage
         List<TimeResult> results = database.GetTimingResults(theEvent!.Identifier);
         // Remove all unknown participants.
         results.RemoveAll(x => x.Bib == Constants.Timing.CHIPREAD_DUMMYBIB);
+        results.RemoveAll(x => x.DistanceName.Length < 1);
         // Remove all from unselected divisions.
-        if (distances != null)
+        if (distances.Count > 0)
         {
             results.RemoveAll(x => !distances.Contains(x.DistanceName));
         }
@@ -134,25 +142,25 @@ public partial class AwardPage : UserControl, ISubPage
                 distResultsDict = [];
                 resultsDictionary[result.DistanceName] = distResultsDict;
             }
-            // Get the overall results.
-            if (result.Place <= options.NumOverall)
+            // Get the overall (gender) results.
+            if (result.GenderPlace <= options.NumOverall)
             {
                 // Check if we're printing the overall results.
                 if (options.PrintOverall == true)
                 {
-                    if (!distResultsDict.TryGetValue("Overall", out List<TimeResult>? ovResults))
+                    if (!distResultsDict.TryGetValue(gend, out List<TimeResult>? ovResults))
                     {
                         ovResults = [];
-                        distResultsDict["Overall"] = ovResults;
+                        distResultsDict[gend] = ovResults;
                     }
                     ovResults.Add(result);
                 }
                 // Check if we were told to exclude overall from age group awards.
                 // Also ensure we've been told to print age groups and that the person is in the age group results.
-                // The place check is easy here because we can check the result.Place value.
+                // The place check is easy here because we can check the result.GenderPlace value.
                 // Exclude any genders we don't know about.
                 if (options.ExcludeOverallAG == false
-                    && result.Place <= options.NumAgeGroups
+                    && result.GenderPlace <= options.NumAgeGroups
                     && gend != "")
                 {
                     string ageGroup = string.Format("{0} {1}", gend, result.AgeGroupName);
@@ -423,141 +431,110 @@ public partial class AwardPage : UserControl, ISubPage
         UpdateView();
     }
 
-    private void PrintButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void SaveButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        Log.D("UI.Timing.AwardPage", "Print clicked.");
-        /*
-        System.Windows.Forms.PrintDialog printDialog = new()
+        Log.D("UI.Timing.AwardPage", "Save clicked.");
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel != null)
         {
-            AllowSomePages = true,
-            UseEXDialog = true
-        };
-        AwardOptions options = GetOptions();
-        List<string> divsToPrint = [];
-        foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
-        {
-            if (divItem.Content.Equals("All"))
-            {
-                divsToPrint = null;
-                break;
-            }
-            divsToPrint.Add(divItem.Content.ToString());
-        }
-        if (divsToPrint != null && divsToPrint.Count < 1)
-        {
-            divsToPrint = null;
-        }
-        if (printDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-        {
+            IStorageFolder? startingFolder;
             try
             {
-                // Printing is a very weird process that I would love to streamline... but printing is hard.
-                // Get two temp file names.
-                string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
-                string tmpPdf = Path.Combine(Path.GetTempPath(), "print_pdf.pdf");
-                // Write the HTML file to a temp file because wkhtmltopdf requires a URI.
-                using StreamWriter streamwriter = new(File.Open(tmpFile, FileMode.Create));
-                streamwriter.Write(GetPrintableAwards(divsToPrint, options));
-                streamwriter.Close();
-                // Use wkhtmltopdf to convert the temp HTML file to a temp PDF file.
-                using Process create_pdf = new();
-                create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
-                create_pdf.StartInfo.Arguments = $"-s A4 -B 30mm {tmpFile} {tmpPdf}";
-                create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                create_pdf.StartInfo.UseShellExecute = true;
-                create_pdf.Start();
-                // Process shouldn't take more than 15 seconds, so wait for it to finish and kill it when done (or not done).
-                create_pdf.WaitForExit(15000);
-                create_pdf.Kill();
-                create_pdf.Close();
-                // Use ghostscript to print the temp PDF file.
-                using Process print_pdf = new();
-                print_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "gswin32.exe");
-                print_pdf.StartInfo.Arguments = $"-dPrinted -dBATCH -dNOPAUSE -dNOSAFER -dNumCopies=1 -sDEVICE=mswinpr2 {tmpPdf}";
-                print_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                print_pdf.StartInfo.UseShellExecute = true;
-                print_pdf.Start();
-                // wait for up to two minutes and make sure to kill the process
-                print_pdf.WaitForExit(120000);
-                print_pdf.Kill();
-                print_pdf.Close();
-                // remove temp files
-                File.Delete(tmpFile);
-                File.Delete(tmpPdf);
-                DialogBox.Show("Printing is a go.");
+                startingFolder = await topLevel.StorageProvider.TryGetFolderFromPathAsync(new Uri(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR)!.Value));
             }
             catch
             {
-                DialogBox.Show("Something went wrong when attempting to print.");
+                startingFolder = null;
             }
-        } //*/
-    }
-
-    private void SaveButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        Log.D("UI.Timing.AwardPage", "Save clicked.");
-        /*
-        SaveFileDialog saveFileDialog = new()
-        {
-            Filter = "PDF (*.pdf)|*.pdf",
-            FileName = string.Format("{0} {1} Awards.{2}", theEvent.YearCode, theEvent.Name, "pdf"),
-            InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
-        };
-        AwardOptions options = GetOptions();
-        List<string> divsToPrint = [];
-        foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
-        {
-            if (divItem.Content.Equals("All"))
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                divsToPrint = null;
-                break;
-            }
-            divsToPrint.Add(divItem.Content.ToString());
-        }
-        if (divsToPrint != null && divsToPrint.Count < 1)
-        {
-            divsToPrint = null;
-        }
-        if (options.PrintCustom != true && options.PrintAgeGroups != true && options.PrintOverall != true)
-        {
-            DialogBox.Show("No awards group selected to print/save.");
-            return;
-        }
-        if (saveFileDialog.ShowDialog() == true)
-        {
-            try
+                FileTypeChoices = [Utils.PDFType],
+                SuggestedFileName = string.Format("{0}-{1}-Awards.{2}", theEvent!.YearCode, theEvent.Name, "pdf").Replace(' ', '-'),
+                SuggestedStartLocation = startingFolder,
+            });
+            AwardOptions options = GetOptions();
+            List<string> divsToPrint = [];
+            if (DistancesBox.SelectedItems != null)
             {
-                // Write HTML to a temp file.
-                string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
-                using StreamWriter streamwriter = new(File.Open(tmpFile, FileMode.Create));
-                streamwriter.Write(GetPrintableAwards(divsToPrint, options));
-                streamwriter.Close();
-                // Delete old file if it exists.
-                if (File.Exists(saveFileDialog.FileName))
+                foreach (object? divItem in DistancesBox.SelectedItems)
                 {
-                    File.Delete(saveFileDialog.FileName);
+                    if (divItem is ListBoxItem div && div.Content != null)
+                    {
+                        if (div.Content.Equals("All"))
+                        {
+                            divsToPrint.Clear();
+                            break;
+                        }
+                        divsToPrint.Add(div.Content.ToString()!);
+                    }
                 }
-                // Use wkhtmltopdf to convert our temp html file to a saved pdf file.
-                using Process create_pdf = new();
-                create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
-                create_pdf.StartInfo.Arguments = $"-s A4 {tmpFile} {saveFileDialog.FileName}";
-                create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                create_pdf.StartInfo.UseShellExecute = true;
-                create_pdf.Start();
-                // wait for it to exit then kill it, even if the wait timed out
-                create_pdf.WaitForExit(15000);
-                create_pdf.Kill();
-                create_pdf.Close();
-                // delete old file
-                File.Delete(tmpFile);
-                DialogBox.Show("File saved.");
             }
-            catch (Exception ex)
+            if (options.PrintCustom != true && options.PrintAgeGroups != true && options.PrintOverall != true)
             {
-                Log.E("UI.Timing.AwardPage", "Exception caught: " + ex.Message);
-                DialogBox.Show("Unable to save file.");
+                DialogBox.Show("No awards group selected to print/save.");
+                return;
             }
-        }//*/
+            if (file is not null)
+            {
+                try
+                {
+                    string HTML_String = GetPrintableAwards(divsToPrint, options);
+                    string weasyName;
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        weasyName = Path.Combine(Directory.GetCurrentDirectory(), "weasyprint.exe");
+                    }
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    {
+                        weasyName = "weasyprint";
+                        using Process test_weasy = new();
+                        test_weasy.StartInfo.FileName = "which";
+                        test_weasy.StartInfo.Arguments = weasyName;
+                        test_weasy.Start();
+                        await test_weasy.WaitForExitAsync();
+                        test_weasy.Close();
+                        if (test_weasy.ExitCode != 0)
+                        {
+                            DialogBox.Show("This function requires Weasyprint to function. Please install it and try again.",
+                                "https://doc.courtbouillon.org/weasyprint/stable/first_steps.html");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        DialogBox.Show("Operating System detected does not support this function currently.");
+                        return;
+                    }
+                    // Write HTML to a temp file.
+                    string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
+                    using StreamWriter streamwriter = new(File.Open(tmpFile, FileMode.Create));
+                    streamwriter.Write(HTML_String);
+                    streamwriter.Close();
+                    // Delete old file if it exists.
+                    var filePath = file.TryGetLocalPath()!.Replace(' ', '-');
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+                    // Use weasyprint to convert our temp html file to a saved pdf file.
+                    using Process create_pdf = new();
+                    create_pdf.StartInfo.FileName = weasyName;
+                    create_pdf.StartInfo.Arguments = $" {tmpFile} {filePath}";
+                    create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    create_pdf.Start();
+                    // wait for it to exit then kill it, even if the wait timed out
+                    await create_pdf.WaitForExitAsync();
+                    create_pdf.Close();
+                    // delete old file
+                    File.Delete(tmpFile);
+                    DialogBox.Show("File saved.");
+                }
+                catch
+                {
+                    DialogBox.Show("Unable to save file.");
+                }
+            }
+        }
     }
 
     private void DoneButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

@@ -68,6 +68,10 @@
 			  border-style: hidden;
 			  box-shadow: 0 0 0 1px #E7E7E7;
 			}
+			@page {
+				size: A4 portrait;
+				margin: 10mm;
+			}
 		</style>
 	</head>
 	<body>
@@ -84,10 +88,9 @@
 					<table>
 						<tr><td colspan='9' class='table-header text-important'><#= group #></td></tr>
 						<tr>
-							<td class="text-important table-label">Place</td>
+							<td class="text-important table-label">Pl</td>
 							<td class="text-important table-label">Bib</td>
 							<td class="text-important table-label">Name</td>
-							<td class="text-important table-label">G</td>
 							<td class="text-important table-label">Age</td>
 							<td class="text-important table-label"><#= theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Laps" : "Finish (Clock)" #></td>
 							<td class="text-important table-label"><#= theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Time" : "Finish (Chip)" #></td>
@@ -100,7 +103,6 @@
 							<td><#= place++ #></td>
 							<td><#= r.Bib.ToString() #></td>
 							<td><#= r.ParticipantName #></td>
-							<td><#= r.Gender #></td>
 							<td><#= r.Age(theEvent.Date) #></td>
 							<td>
 								<#= 
