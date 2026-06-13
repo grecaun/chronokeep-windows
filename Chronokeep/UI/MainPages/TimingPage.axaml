@@ -292,17 +292,17 @@
                             </Expander.Header>
                             <DataGrid Name="StatsListView"
                                       SelectionMode="Single"
-                                      FontSize="10"
+                                      FontSize="12"
                                       CanUserResizeColumns="False"
                                       Margin="0"
                                       DoubleTapped="StatsListView_MouseDoubleClick">
 								<DataGrid.Columns>
-                                    <DataGridTextColumn FontSize="10" Width="80" Header="Distance" Binding="{Binding DistanceName}" x:DataType="objects:DistanceStat"/>
-                                    <DataGridTextColumn FontSize="10" Width="42" Header="DNS" Binding="{Binding DNS}" x:DataType="objects:DistanceStat"/>
-                                    <DataGridTextColumn FontSize="10" Width="42" Header="DNF" Binding="{Binding DNF}" x:DataType="objects:DistanceStat"/>
-                                    <DataGridTextColumn FontSize="10" Width="42" Header="Fin" Binding="{Binding Finished}" x:DataType="objects:DistanceStat"/>
-                                    <DataGridTextColumn FontSize="10" Width="42" Header="Act" Binding="{Binding Active}" x:DataType="objects:DistanceStat"/>
-                                    <DataGridTextColumn FontSize="10" Width="42" Header="Tot" Binding="{Binding Total}" x:DataType="objects:DistanceStat"/>
+                                    <DataGridTextColumn FontSize="12" Width="80" Header="Distance" Binding="{Binding DistanceName}" x:DataType="objects:DistanceStat"/>
+                                    <DataGridTextColumn FontSize="12" Width="42" Header="DNS" Binding="{Binding DNS}" x:DataType="objects:DistanceStat"/>
+                                    <DataGridTextColumn FontSize="12" Width="42" Header="DNF" Binding="{Binding DNF}" x:DataType="objects:DistanceStat"/>
+                                    <DataGridTextColumn FontSize="12" Width="42" Header="Fin" Binding="{Binding Finished}" x:DataType="objects:DistanceStat"/>
+                                    <DataGridTextColumn FontSize="12" Width="42" Header="Act" Binding="{Binding Active}" x:DataType="objects:DistanceStat"/>
+                                    <DataGridTextColumn FontSize="12" Width="42" Header="Tot" Binding="{Binding Total}" x:DataType="objects:DistanceStat"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                     </Expander>
