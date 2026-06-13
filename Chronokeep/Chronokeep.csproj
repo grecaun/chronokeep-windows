@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <TargetCulture>en-US</TargetCulture>
     <PublisherName>James Sentinella</PublisherName>
     <ProjectGuid>{19A9995C-79B6-4A3C-9906-F391FB1BA33D}</ProjectGuid>
@@ -13,6 +13,7 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <AssemblyName>Chronokeep</AssemblyName>
     <RootNamespace>Chronokeep</RootNamespace>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Chronokeep.App</StartupObject>
@@ -26,9 +27,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <IsPublishable>False</IsPublishable>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <IsPublishable>False</IsPublishable>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="App.xaml" />
@@ -250,7 +253,7 @@
     <None Update="changelog\*.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Sounds\*.wav">
+    <None Update="sounds\*.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="weasyprint.exe">

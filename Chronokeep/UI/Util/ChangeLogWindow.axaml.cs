@@ -27,7 +27,7 @@ public partial class ChangeLogWindow : Window
         this.window = window;
         this.database = database;
 
-        string changelogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Changelog");
+        string changelogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "changelog");
         if (!Path.Exists(changelogPath))
         {
             Close();

@@ -208,6 +208,8 @@ public partial class DistancePart : UserControl
                 Content = "Virtual",
                 Tag = Constants.Timing.DISTANCE_TYPE_VIRTUAL
             });
+        Ranking.Text = theDistance.Ranking.ToString();
+        Ranking.IsEnabled = true;
         if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_EARLY)
         {
             TypeBox.SelectedIndex = 1;
@@ -333,6 +335,10 @@ public partial class DistancePart : UserControl
         else
         {
             theDistance.Certification = "";
+        }
+        if (Ranking.Text != null && int.TryParse(Ranking.Text, out int rankVal))
+        {
+            theDistance.Ranking = rankVal;
         }
     }
 
