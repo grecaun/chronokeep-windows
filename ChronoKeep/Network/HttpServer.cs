@@ -98,6 +98,7 @@ namespace Chronokeep.Network
                 }
                 finishResults.AddRange(finishDictionary.Values);
                 finishResults.RemoveAll(r => string.IsNullOrEmpty(r.Bib));
+                finishResults.RemoveAll(r => r.DistanceName.Length < 1);
                 // clear response caches whenever we update information
                 resultsCache = null;
                 participantCache.Clear();

@@ -97,8 +97,9 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         Timer.Tick += new EventHandler(Timer_Tick);
         Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
 
-        IPAdd.Text = "localhost";
-        Port.Text = "6933";
+        string webAddress = string.Format("{0}:{1}", "localhost", 6933);
+        WebBlock.Text = webAddress;
+        WebButton.NavigateUri = new(webAddress);
         // Check for default IP address to give to our reader boxes for connections
         foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces())
         {
@@ -110,7 +111,9 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
                     {
                         if (ipinfo.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                         {
-                            IPAdd.Text = ipinfo.Address.ToString();
+                            webAddress = string.Format("http://{0}:{1}", ipinfo.Address.ToString(), 6933);
+                            WebBlock.Text = webAddress;
+                            WebButton.NavigateUri = new(webAddress);
                             Log.D("UI.MainPages.TimingPage", "IP Address :" + ipinfo.Address);
                             Log.D("UI.MainPages.TimingPage", "IPv4 Mask  :" + ipinfo.IPv4Mask);
                             string[] ipParts = ipinfo.Address.ToString().Split('.');
@@ -262,14 +265,12 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (mWindow.HttpServerActive())
         {
             HttpServerButton.Content = "Stop Web";
-            IPContainer.IsVisible = true;
-            PortContainer.IsVisible = true;
+            WebButton.IsVisible = true;
         }
         else
         {
             HttpServerButton.Content = "Start Web";
-            IPContainer.IsVisible = false;
-            PortContainer.IsVisible = false;
+            WebButton.IsVisible = false;
         }
         if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
         {
@@ -468,14 +469,12 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
         if (mWindow.HttpServerActive())
         {
             HttpServerButton.Content = "Stop Web";
-            IPContainer.IsVisible = true;
-            PortContainer.IsVisible = true;
+            WebButton.IsVisible = true;
         }
         else
         {
             HttpServerButton.Content = "Start Web";
-            IPContainer.IsVisible = false;
-            PortContainer.IsVisible = false;
+            WebButton.IsVisible = false;
         }
         if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
         {
@@ -1519,24 +1518,21 @@ public partial class TimingPage : UserControl, IMainPage, ITimingPage
             {
                 mWindow.StartHttpServer();
                 HttpServerButton.Content = "Stop Web";
-                IPContainer.IsVisible = true;
-                PortContainer.IsVisible = true;
+                WebButton.IsVisible = true;
             }
             catch
             {
                 mWindow.StopHttpServer();
                 HttpServerButton.Content = "Start Web";
                 DialogBox.Show("Unable to start the web server. Please type this command in an elevated command prompt:", "netsh http add urlacl url=http://*:6933/ user=everyone");
-                IPContainer.IsVisible = false;
-                PortContainer.IsVisible = false;
+                WebButton.IsVisible = false;
             }
         }
         else
         {
             mWindow.StopHttpServer();
             HttpServerButton.Content = "Start Web";
-            IPContainer.IsVisible = false;
-            PortContainer.IsVisible = false;
+            WebButton.IsVisible = false;
         }
     }
 

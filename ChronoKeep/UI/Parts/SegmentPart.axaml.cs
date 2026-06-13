@@ -50,6 +50,7 @@ public partial class SegmentPart : UserControl
         }
         SegName.Text = mySegment.Name;
         // Occurrence
+        Occurrence.Items.Clear();
         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
         {
             if (Location.SelectedItem == null || !locationDictionary.TryGetValue((string)((ComboBoxItem)Location.SelectedItem).Tag!, out int maxOccurrences))
